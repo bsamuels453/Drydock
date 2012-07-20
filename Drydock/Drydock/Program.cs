@@ -9,7 +9,7 @@ namespace Drydock {
         /// </summary>
         static void Main(string[] args)
         {
-            using (Game1 game = new Game1())
+            using (Drydock game = new Drydock())
             {
                 game.Run();
             }
