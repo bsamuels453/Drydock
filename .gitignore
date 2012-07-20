@@ -17,9 +17,12 @@ Thumbs.db
 *.bmp
 *.vsp
 *.dds
+*.exe
 *.fbx
 *.png
 *.psess
 *.sbr
+bin*/
+obj*/
 [Rr]elease*/
 _ReSharper*/
