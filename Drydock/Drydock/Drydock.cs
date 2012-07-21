@@ -20,11 +20,12 @@ namespace Drydock{
         }
 
         protected override void Initialize(){
-            _keyboardHandler = new KeyboardHandler();
-            _mouseHandler = new MouseHandler();
+            
+            
             _editorLogic = new EditorLogic();
-            _renderer = new Renderer(_graphics, Content);
-
+            _renderer = new Renderer(_graphics.GraphicsDevice, Content);
+            _mouseHandler = new MouseHandler(_renderer);
+            _keyboardHandler = new KeyboardHandler(_renderer);
             base.Initialize();
         }
 
@@ -36,11 +37,15 @@ namespace Drydock{
 
 
         protected override void Update(GameTime gameTime){
+            _mouseHandler.UpdateMouse();
+            _keyboardHandler.UpdateKeyboard();
+
             base.Update(gameTime);
         }
  
         protected override void Draw(GameTime gameTime){
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            _renderer.Draw();
             base.Draw(gameTime);
         }
     }

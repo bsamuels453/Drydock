@@ -9,10 +9,10 @@ float4 DiffuseColor = float4(1, 1, 1, 1);
 float DiffuseIntensity = 0;
 
 ////constant textures
-texture HullTexture;
+texture BaseTexture;
 
-sampler2D HullSamp = sampler_state {
-    Texture = (HullTexture);
+sampler2D BaseSamp = sampler_state {
+    Texture = (BaseTexture);
     MinFilter = Anisotropic;
     MagFilter = Anisotropic;
     AddressU = Wrap;
@@ -26,8 +26,8 @@ sampler2D HullSamp = sampler_state {
 struct VertexShaderInput
 {
     float4 Position : POSITION0;
+	float2 TexCoord: TEXCOORD0;
     float4 Normal : NORMAL0;
-    float2 TextureCoordinate : TEXCOORD0;
 };
 
 struct VertexShaderOutput
@@ -45,7 +45,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     float4 viewPosition = mul(worldPosition, View);
     output.Position = mul(viewPosition, Projection);
 	output.Normal = mul(input.Normal, WorldInverseTranspose);
-    output.TextureCoordinate = input.TextureCoordinate;
+    output.TextureCoordinate = input.TexCoord;
 
     return output;
 }
@@ -55,11 +55,12 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 ////////////////////////////////////////////
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-	float4 pixelColor = tex2D(HullSamp, input.TextureCoordinate);
-	float4 ambientContribution = (pixelColor) *( AmbientColor * AmbientIntensity);
-	float4 shadedColor = ambientContribution;
-	shadedColor.a = 1;
-	return saturate(shadedColor);
+	//float4 pixelColor = tex2D(HullSamp, input.TextureCoordinate);
+	//float4 pixelColor = (,0,0,1);
+	///float4 ambientContribution = (pixelColor) *( AmbientColor * AmbientIntensity);
+	////float4 shadedColor = ambientContribution;
+	//shadedColor.a = 1;
+	return  (1,0,0,1);
 }
 
 technique Standard

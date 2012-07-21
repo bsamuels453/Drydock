@@ -8,15 +8,49 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render {
     class Renderer {
-        private float _viewportYaw;
-        private float _viewportPitch;
-        private Vector3 _viewportPosition;
-        private ShipVbo _shipVbo;
-        private EnvironmentVbo _environmentVbo; 
+        public float ViewportYaw;
+        public float ViewportPitch;
+        public Vector3 ViewportPosition;
+        //private ShipVbo _shipVbo;
+        public GraphicsDevice Device;
+        private readonly Vector3 _camReference = new Vector3(0, 0, 1);
 
-        public Renderer(GraphicsDeviceManager device, ContentManager content){
+        private readonly EnvironmentBatch _environmentBatch;
+        private readonly TextBatch _textBatch;
+        public Matrix ProjectionMatrix;
+        public float AspectRatio;
+
+        public Renderer(GraphicsDevice device, ContentManager content){
+            ScreenText.Init(content);
+            Device = device;
+
+            ViewportPitch = -0.47f;
+            ViewportPosition = new Vector3(0, 10, 0);
+            ViewportYaw = -6.9f;
+            AspectRatio = Device.Viewport.Bounds.Width / (float)Device.Viewport.Bounds.Height;
+            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+                fieldOfView: 3.14f / 4,
+                aspectRatio: AspectRatio,
+                nearPlaneDistance: 0.1f, 
+                farPlaneDistance: 500
+            );
 
 
+            _environmentBatch = new EnvironmentBatch(device, content);
+            _textBatch = new TextBatch(device, content);
+
+
+
+        }
+
+        public void Draw(){
+            Matrix rotation = Matrix.CreateFromYawPitchRoll(ViewportYaw, -ViewportPitch, 0);
+            Vector3 transformedReference = Vector3.Transform(_camReference, rotation);
+            Vector3 cameraDirection = ViewportPosition + transformedReference;
+            Matrix view = Matrix.CreateLookAt(ViewportPosition, cameraDirection, Vector3.Up);
+
+            _environmentBatch.Draw(Device, view);
+            _textBatch.Draw();
         }
     }
 }

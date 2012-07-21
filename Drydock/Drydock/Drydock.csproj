@@ -115,7 +115,6 @@
     <Compile Include="Drydock.cs" />
     <Compile Include="Render\EnvironmentBatch.cs" />
     <Compile Include="Render\Renderer.cs" />
-    <Compile Include="Render\EnvironmentVbo.cs" />
     <Compile Include="Render\ScreenText.cs" />
     <Compile Include="Render\ShipBatch.cs" />
     <Compile Include="Render\ShipVbo.cs" />
