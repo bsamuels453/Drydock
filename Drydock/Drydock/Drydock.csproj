@@ -115,7 +115,7 @@
     <Compile Include="Logic\CurveHandle.cs" />
     <Compile Include="Logic\IClickSubbable.cs" />
     <Compile Include="Logic\IMouseMoveSubbable.cs" />
-    <Compile Include="Render\Dongle2D.cs" />
+    <Compile Include="Render\Sprite2D.cs" />
     <Compile Include="Logic\EditorLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

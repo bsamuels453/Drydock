@@ -9,7 +9,7 @@ namespace Drydock.Logic {
         private const string _handleTexture = "box";
         private readonly CDraggable _dragComponent;
 
-        public Dongle2D ElementDongle {get;set;}
+        public Sprite2D ElementDongle {get;set;}
 
         public int X{
             get { return _dragComponent.X; }
@@ -22,7 +22,7 @@ namespace Drydock.Logic {
         }
 
         public CurveHandle(int x, int y){
-            ElementDongle = new Dongle2D(_handleTexture, x, y);
+            ElementDongle = new Sprite2D(_handleTexture, x, y);
             _dragComponent = new CDraggable(this, x, y, 8, 8);
         }
 

@@ -3,12 +3,12 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
-    internal class Dongle2D{
+    internal class Sprite2D{
         #region class methods and fields
 
         private readonly int _id;
 
-        public Dongle2D(string textureName, int x, int y){
+        public Sprite2D(string textureName, int x, int y){
             int i = 0;
             while (!_isFrameSlotAvail[i]){ //i cant wait for this to crash
                 i++;

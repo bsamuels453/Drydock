@@ -34,7 +34,7 @@ namespace Drydock.Render{
             _environmentBatch = new EnvironmentBatch(device, content, _projectionMatrix);
             _textBatch = new TextBatch(device, content);
             ScreenData.Init(Device.Viewport.Bounds.Width, Device.Viewport.Bounds.Height);
-            Dongle2D.Init(device, content);
+            Sprite2D.Init(device, content);
         }
 
         public void Draw(){
@@ -44,7 +44,7 @@ namespace Drydock.Render{
             Matrix view = Matrix.CreateLookAt(ViewportPosition, cameraDirection, Vector3.Up);
 
             _environmentBatch.Draw(Device, view);
-            Dongle2D.Draw();
+            Sprite2D.Draw();
             _textBatch.Draw();
         }
     }
