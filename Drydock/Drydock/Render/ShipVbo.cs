@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render {
     class ShipVbo {
-        public DynamicIndexBuffer IndexBuffer;
-        public DynamicVertexBuffer VertexBuffer;
-        public int NumTriangles;
+        //public DynamicIndexBuffer IndexBuffer;
+        //public DynamicVertexBuffer VertexBuffer;
+        //public int NumTriangles;
 
         public ShipVbo(GraphicsDevice device, ContentManager content){
 
