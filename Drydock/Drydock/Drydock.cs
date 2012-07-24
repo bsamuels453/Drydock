@@ -8,11 +8,9 @@ using Microsoft.Xna.Framework.Input;
 namespace Drydock{
     public class Drydock : Game{
         private readonly GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
         private Renderer _renderer;
+       // private EditorLogic _editorLogic;
         private EditorLogic _editorLogic;
-        private KeyboardHandler _keyboardHandler;
-        private MouseHandler _mouseHandler;
 
         public Drydock(){
             _graphics = new GraphicsDeviceManager(this);
@@ -22,10 +20,11 @@ namespace Drydock{
         protected override void Initialize(){
             
             
-            _editorLogic = new EditorLogic();
+         //   _editorLogic = new EditorLogic();
             _renderer = new Renderer(_graphics.GraphicsDevice, Content);
-            _mouseHandler = new MouseHandler(_renderer);
-            _keyboardHandler = new KeyboardHandler(_renderer);
+            _editorLogic = new EditorLogic(_renderer);
+            IsMouseVisible = true;
+
             base.Initialize();
         }
 
@@ -37,8 +36,7 @@ namespace Drydock{
 
 
         protected override void Update(GameTime gameTime){
-            _mouseHandler.UpdateMouse();
-            _keyboardHandler.UpdateKeyboard();
+            _editorLogic.Update();
 
             base.Update(gameTime);
         }
