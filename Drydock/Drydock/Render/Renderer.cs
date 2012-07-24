@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Drydock.Render {
-    public class Renderer {
-        public float ViewportYaw;
-        public float ViewportPitch;
-        public Vector3 ViewportPosition;
-        //private ShipVbo _shipVbo;
-        public GraphicsDevice Device;
+namespace Drydock.Render{
+    public class Renderer{
         private readonly Vector3 _camReference = new Vector3(0, 0, 1);
 
         private readonly EnvironmentBatch _environmentBatch;
-        private readonly TextBatch _textBatch;
         private readonly Matrix _projectionMatrix;
+        private readonly TextBatch _textBatch;
         public float AspectRatio;
+        public GraphicsDevice Device;
+        public float ViewportPitch;
+        public Vector3 ViewportPosition;
+        public float ViewportYaw;
 
         public Renderer(GraphicsDevice device, ContentManager content){
             ScreenText.Init(content);
@@ -27,20 +22,18 @@ namespace Drydock.Render {
             ViewportPitch = -0.47f;
             ViewportPosition = new Vector3(0, 10, 0);
             ViewportYaw = -6.9f;
-            AspectRatio = Device.Viewport.Bounds.Width / (float)Device.Viewport.Bounds.Height;
+            AspectRatio = Device.Viewport.Bounds.Width/(float) Device.Viewport.Bounds.Height;
             _projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-                fieldOfView: 3.14f / 4,
+                fieldOfView: 3.14f/4,
                 aspectRatio: AspectRatio,
-                nearPlaneDistance: 0.1f, 
+                nearPlaneDistance: 0.1f,
                 farPlaneDistance: 500
-            );
+                );
 
 
             _environmentBatch = new EnvironmentBatch(device, content, _projectionMatrix);
             _textBatch = new TextBatch(device, content);
             Dongle2D.Init(device, content);
-
-
         }
 
         public void Draw(){

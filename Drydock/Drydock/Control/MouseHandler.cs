@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Drydock.Logic;
-using Drydock.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,9 +12,6 @@ namespace Drydock.Control{
         private readonly Vector2 _viewportSize;
         private MouseState _previousMouseState;
 
-        public List<IClickSubbable> ClickSubscriptions { get; set; }
-        public List<IMouseMoveSubbable> MovementSubscriptions { get; set; }
-
         public MouseHandler(GraphicsDevice device){
             _viewportSize = new Vector2(device.Viewport.Bounds.Width, device.Viewport.Bounds.Height);
             Mouse.SetPosition((int) _viewportSize.X/2, (int) _viewportSize.Y/2);
@@ -27,21 +23,24 @@ namespace Drydock.Control{
             _previousMouseState = Mouse.GetState();
         }
 
-        public  void UpdateMouse(){
+        public List<IClickSubbable> ClickSubscriptions { get; set; }
+        public List<IMouseMoveSubbable> MovementSubscriptions { get; set; }
+
+        public void UpdateMouse(){
             MouseState newState = Mouse.GetState();
             if (newState.LeftButton != _previousMouseState.LeftButton ||
                 newState.RightButton != _previousMouseState.RightButton ||
                 newState.MiddleButton != _previousMouseState.MiddleButton){
-                    foreach (IClickSubbable t in ClickSubscriptions) {
-                        t.HandleMouseClickEvent(newState);
-                    }
+                foreach (IClickSubbable t in ClickSubscriptions){
+                    t.HandleMouseClickEvent(newState);
+                }
             }
 
             if (newState.X != _previousMouseState.X ||
                 newState.Y != _previousMouseState.Y){
-                    foreach (IMouseMoveSubbable t in ClickSubscriptions) {
-                        t.HandleMouseMovementEvent(newState);
-                    }
+                foreach (IMouseMoveSubbable t in ClickSubscriptions){
+                    t.HandleMouseMovementEvent(newState);
+                }
             }
             _previousMouseState = newState;
 
@@ -90,9 +89,7 @@ namespace Drydock.Control{
             }*/
         }
 
-        public  void ToggleMouseClamp(){
+        public void ToggleMouseClamp(){
         }
     }
-
-
 }

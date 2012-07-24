@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Drydock.Render;
-using Microsoft.Xna.Framework.Input;
+﻿using Drydock.Render;
 
-namespace Drydock.Logic {
-    class Handle : IDraggable{
-        public Dongle2D ElementDongle { get; set; }
+namespace Drydock.Logic{
+    internal class Handle : IDraggable{
         private CDraggable _dragComponent;
 
         public Handle(){
@@ -16,6 +10,10 @@ namespace Drydock.Logic {
             ElementDongle = new Dongle2D(textname, 100, 100);
         }
 
-        
+        #region IDraggable Members
+
+        public Dongle2D ElementDongle { get; set; }
+
+        #endregion
     }
 }

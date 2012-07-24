@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 
 //todo: integrate this into screentext class
+
 namespace Drydock.Render{
     internal class TextBatch{
         private readonly SpriteBatch _spriteBatch;

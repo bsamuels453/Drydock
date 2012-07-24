@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.Logic {
-    interface IMouseMoveSubbable {
+namespace Drydock.Logic{
+    internal interface IMouseMoveSubbable{
         void HandleMouseMovementEvent(MouseState state);
     }
 }

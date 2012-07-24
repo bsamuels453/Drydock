@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Drydock.Control;
+﻿using Drydock.Control;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.Logic {
-    interface IDraggable {
+namespace Drydock.Logic{
+    internal interface IDraggable{
         Dongle2D ElementDongle { get; set; }
     }
 
-    class CDraggable : IClickSubbable, IMouseMoveSubbable{
+    internal class CDraggable : IClickSubbable, IMouseMoveSubbable{
+        private static MouseHandler _mouseHandler;
         private readonly IDraggable _parent;
-        private bool _isMoving;
         private Rectangle _boundingBox;
+        private bool _isMoving;
 
         public CDraggable(IDraggable parent, int initX, int initY, int width, int height){
             _parent = parent;
@@ -25,14 +22,16 @@ namespace Drydock.Logic {
             _isMoving = false;
         }
 
+        #region IClickSubbable Members
+
         public void HandleMouseClickEvent(MouseState state){
-            if (!_isMoving) {
-                if (state.LeftButton == ButtonState.Pressed && _boundingBox.Contains(state.X, state.Y)) {
+            if (!_isMoving){
+                if (state.LeftButton == ButtonState.Pressed && _boundingBox.Contains(state.X, state.Y)){
                     _isMoving = true;
                     return;
                 }
             }
-            if(_isMoving){
+            if (_isMoving){
                 if (state.LeftButton == ButtonState.Released){
                     _isMoving = false;
                     _boundingBox.X = state.X;
@@ -41,13 +40,17 @@ namespace Drydock.Logic {
             }
         }
 
+        #endregion
+
+        #region IMouseMoveSubbable Members
+
         public void HandleMouseMovementEvent(MouseState state){
             if (_isMoving){
                 _parent.ElementDongle.EditDonglePosition(state.X, state.Y);
             }
         }
 
-        private static MouseHandler _mouseHandler;
+        #endregion
 
         public static void Init(MouseHandler mouseHandler){
             _mouseHandler = mouseHandler;

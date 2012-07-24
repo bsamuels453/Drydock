@@ -5,10 +5,9 @@ using Microsoft.Xna.Framework.Input;
 namespace Drydock.Control{
     internal class KeyboardHandler{
         private readonly ScreenText[] _positionDisplay;
+        private readonly Renderer _renderer;
         private KeyboardState _keyState;
         private KeyboardState _prevState;
-        private readonly Renderer _renderer;
-
 
 
         public KeyboardHandler(Renderer renderer){

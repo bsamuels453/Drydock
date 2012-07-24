@@ -2,9 +2,10 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Drydock.Render {
-    class Dongle2D {
+namespace Drydock.Render{
+    internal class Dongle2D{
         #region class methods and fields
+
         private readonly int _id;
 
         public Dongle2D(string textureName, int x, int y){
@@ -38,7 +39,7 @@ namespace Drydock.Render {
         private static bool[] _isFrameSlotAvail;
         private static Texture2D[] _frameTextures;
         private static Vector2[] _frameBlitLocations;
-       // private static float[] _frameLayerLevels;
+        // private static float[] _frameLayerLevels;
         private static ContentManager _contentManager;
         private static SpriteBatch _spriteBatch;
 
@@ -47,7 +48,7 @@ namespace Drydock.Render {
             _isFrameSlotAvail = new bool[_maxDonglesDisplayable];
             _frameTextures = new Texture2D[_maxDonglesDisplayable];
             _frameBlitLocations = new Vector2[_maxDonglesDisplayable];
-           // _frameLayerLevels = new float[_maxDonglesDisplayable];
+            // _frameLayerLevels = new float[_maxDonglesDisplayable];
 
             for (int i = 0; i < _maxDonglesDisplayable; i++){
                 _isFrameSlotAvail[i] = true;
