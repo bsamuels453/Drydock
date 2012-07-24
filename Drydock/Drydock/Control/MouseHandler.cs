@@ -1,29 +1,52 @@
-﻿using Drydock.Render;
+﻿using System.Collections.Generic;
+using Drydock.Logic;
+using Drydock.Render;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Control{
     internal class MouseHandler{
-        private  int _curMousePosX;
-        private  int _curMousePosY;
-        private readonly bool _isMouseClamped;
-        private readonly ScreenText[] _textDisplay;
-        private readonly Renderer _renderer;
+        //private  int _curMousePosX;
+        //private  int _curMousePosY;
+        //private readonly bool _isMouseClamped;
+        private readonly Vector2 _viewportSize;
+        private MouseState _previousMouseState;
 
-        public MouseHandler(Renderer renderer){
-            _renderer = renderer;
-            
-            Mouse.SetPosition(_renderer.Device.Viewport.Bounds.Width/2, _renderer.Device.Viewport.Bounds.Height/2);
-            _curMousePosX = _renderer.Device.Viewport.Bounds.Width/2;
-            _curMousePosY = _renderer.Device.Viewport.Bounds.Height/2;
-            _isMouseClamped = false;
+        public List<IClickSubbable> ClickSubscriptions { get; set; }
+        public List<IMouseMoveSubbable> MovementSubscriptions { get; set; }
 
-            _textDisplay = new ScreenText[2];
-            _textDisplay[0] = new ScreenText(0, 35, "PITCH NOT SET");
-            _textDisplay[1] = new ScreenText(0, 45, "YAW NOT SET");
+        public MouseHandler(GraphicsDevice device){
+            _viewportSize = new Vector2(device.Viewport.Bounds.Width, device.Viewport.Bounds.Height);
+            Mouse.SetPosition((int) _viewportSize.X/2, (int) _viewportSize.Y/2);
+            //_curMousePosX = (int)_viewportSize.X / 2;
+            //_curMousePosY = (int) _viewportSize.Y/ 2;
+            //_isMouseClamped = false;
+            ClickSubscriptions = new List<IClickSubbable>();
+            MovementSubscriptions = new List<IMouseMoveSubbable>();
+            _previousMouseState = Mouse.GetState();
         }
 
         public  void UpdateMouse(){
-            _textDisplay[0].EditText("Pitch: " + _renderer.ViewportPitch);
+            MouseState newState = Mouse.GetState();
+            if (newState.LeftButton != _previousMouseState.LeftButton ||
+                newState.RightButton != _previousMouseState.RightButton ||
+                newState.MiddleButton != _previousMouseState.MiddleButton){
+                    foreach (IClickSubbable t in ClickSubscriptions) {
+                        t.HandleMouseClickEvent(newState);
+                    }
+            }
+
+            if (newState.X != _previousMouseState.X ||
+                newState.Y != _previousMouseState.Y){
+                    foreach (IMouseMoveSubbable t in ClickSubscriptions) {
+                        t.HandleMouseMovementEvent(newState);
+                    }
+            }
+            _previousMouseState = newState;
+
+            //old mouse update code from forge
+            /*_textDisplay[0].EditText("Pitch: " + _renderer.ViewportPitch);
             _textDisplay[1].EditText("Yaw: " + _renderer.ViewportYaw);
 
 
@@ -45,15 +68,15 @@ namespace Drydock.Control{
 
                 //check to see if mouse is outside of permitted area
                 if (
-                    _curMousePosX > _renderer.Device.Viewport.Bounds.Width*(1 - tolerance) ||
-                    _curMousePosX < _renderer.Device.Viewport.Bounds.Width*tolerance ||
-                    _curMousePosY > _renderer.Device.Viewport.Bounds.Height*(1 - tolerance) ||
-                    _curMousePosY < _renderer.Device.Viewport.Bounds.Width*tolerance
+                    _curMousePosX > (int)_viewportSize.X*(1 - tolerance) ||
+                    _curMousePosX < (int)_viewportSize.X*tolerance ||
+                    _curMousePosY > (int)_viewportSize.Y*(1 - tolerance) ||
+                    _curMousePosY < (int)_viewportSize.X*tolerance
                     ){
                     //move mouse to center of screen
-                    Mouse.SetPosition(_renderer.Device.Viewport.Bounds.Width/2, _renderer.Device.Viewport.Bounds.Height/2);
-                    _curMousePosX = _renderer.Device.Viewport.Bounds.Width/2;
-                    _curMousePosY = _renderer.Device.Viewport.Bounds.Height/2;
+                    Mouse.SetPosition((int)_viewportSize.X/2, (int)_viewportSize.Y/2);
+                    _curMousePosX = (int)_viewportSize.X/2;
+                    _curMousePosY = (int)_viewportSize.Y/2;
                 }
             }
 
@@ -64,7 +87,7 @@ namespace Drydock.Control{
                 (_renderer.ViewportPitch - dy*0.005f) < 1.55 &&
                 (_renderer.ViewportPitch - dy*0.005f) > -1.55){
                 _renderer.ViewportPitch -= dy*0.005f;
-            }
+            }*/
         }
 
         public  void ToggleMouseClamp(){

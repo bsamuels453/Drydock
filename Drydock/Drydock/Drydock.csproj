@@ -109,6 +109,11 @@
   <ItemGroup>
     <Compile Include="Control\KeyboardHandler.cs" />
     <Compile Include="Control\MouseHandler.cs" />
+    <Compile Include="Logic\CDraggable.cs" />
+    <Compile Include="Logic\Handle.cs" />
+    <Compile Include="Logic\IClickSubbable.cs" />
+    <Compile Include="Logic\IMouseMoveSubbable.cs" />
+    <Compile Include="Render\Dongle2D.cs" />
     <Compile Include="Logic\EditorLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
