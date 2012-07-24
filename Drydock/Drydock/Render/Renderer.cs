@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render {
-    class Renderer {
+    public class Renderer {
         public float ViewportYaw;
         public float ViewportPitch;
         public Vector3 ViewportPosition;
@@ -17,7 +17,7 @@ namespace Drydock.Render {
 
         private readonly EnvironmentBatch _environmentBatch;
         private readonly TextBatch _textBatch;
-        public Matrix ProjectionMatrix;
+        private readonly Matrix _projectionMatrix;
         public float AspectRatio;
 
         public Renderer(GraphicsDevice device, ContentManager content){
@@ -28,7 +28,7 @@ namespace Drydock.Render {
             ViewportPosition = new Vector3(0, 10, 0);
             ViewportYaw = -6.9f;
             AspectRatio = Device.Viewport.Bounds.Width / (float)Device.Viewport.Bounds.Height;
-            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+            _projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
                 fieldOfView: 3.14f / 4,
                 aspectRatio: AspectRatio,
                 nearPlaneDistance: 0.1f, 
@@ -36,9 +36,9 @@ namespace Drydock.Render {
             );
 
 
-            _environmentBatch = new EnvironmentBatch(device, content);
+            _environmentBatch = new EnvironmentBatch(device, content, _projectionMatrix);
             _textBatch = new TextBatch(device, content);
-
+            Dongle2D.Init(device, content);
 
 
         }
@@ -50,6 +50,7 @@ namespace Drydock.Render {
             Matrix view = Matrix.CreateLookAt(ViewportPosition, cameraDirection, Vector3.Up);
 
             _environmentBatch.Draw(Device, view);
+            Dongle2D.Draw();
             _textBatch.Draw();
         }
     }
