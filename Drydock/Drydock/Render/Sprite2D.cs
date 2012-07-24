@@ -7,6 +7,7 @@ namespace Drydock.Render{
         #region class methods and fields
 
         private readonly int _id;
+        private bool _isDisposed;
 
         public Sprite2D(string textureName, int x, int y){
             int i = 0;
@@ -17,6 +18,13 @@ namespace Drydock.Render{
             _id = i;
             _frameTextures[i] = _contentManager.Load<Texture2D>(textureName);
             _frameBlitLocations[i] = new Vector2(x, y);
+            _isDisposed = false;
+        }
+
+
+
+        ~Sprite2D(){
+            Dispose();
         }
 
         public int X{
@@ -29,8 +37,11 @@ namespace Drydock.Render{
             set { _frameBlitLocations[_id].Y = value; }
         }
 
-        public void DeleteDongle(){
-            _isFrameSlotAvail[_id] = true;
+        public void Dispose(){
+            if (!_isDisposed){
+                _isFrameSlotAvail[_id] = true;
+                _isDisposed = true;
+            }
         }
 
         public void EditDongleTexture(string textureName){
