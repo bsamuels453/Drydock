@@ -5,7 +5,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic{
     internal interface IDraggable{
-        Dongle2D ElementDongle { get; set; }
+        int X { get; set; }
+        int Y { get; set; }
         void ClampDraggedPosition(ref int x, ref int y);
     }
 
@@ -13,6 +14,7 @@ namespace Drydock.Logic{
         private static MouseHandler _mouseHandler;
         private readonly IDraggable _parent;
         private Rectangle _boundingBox;
+
         private bool _isMoving;
 
         public CDraggable(IDraggable parent, int initX, int initY, int width, int height){
@@ -21,6 +23,16 @@ namespace Drydock.Logic{
             _mouseHandler.MovementSubscriptions.Add(this);
             _boundingBox = new Rectangle(initX, initY, width, height);
             _isMoving = false;
+        }
+
+        public int X{
+            get { return _boundingBox.X; }
+            set { _boundingBox.X = value; }
+        }
+
+        public int Y{
+            get { return _boundingBox.Y; }
+            set { _boundingBox.Y = value; }
         }
 
         #region IClickSubbable Members
@@ -35,8 +47,8 @@ namespace Drydock.Logic{
             if (_isMoving){
                 if (state.LeftButton == ButtonState.Released){
                     _isMoving = false;
-                    _boundingBox.X = state.X-3;
-                    _boundingBox.Y = state.Y-3;
+                    _boundingBox.X = state.X - 3;
+                    _boundingBox.Y = state.Y - 3;
                 }
             }
         }
@@ -50,7 +62,8 @@ namespace Drydock.Logic{
                 int x = state.X - 3;
                 int y = state.Y - 3;
                 _parent.ClampDraggedPosition(ref x, ref y);
-                _parent.ElementDongle.EditDonglePosition(x, y);
+                _parent.X = x;
+                _parent.Y = y;
             }
         }
 

@@ -19,13 +19,18 @@ namespace Drydock.Render{
             _frameBlitLocations[i] = new Vector2(x, y);
         }
 
-        public void DeleteDongle(){
-            _isFrameSlotAvail[_id] = true;
+        public int X{
+            get { return (int) _frameBlitLocations[_id].X; }
+            set { _frameBlitLocations[_id].X = value; }
         }
 
-        public void EditDonglePosition(int x, int y){
-            _frameBlitLocations[_id].X = x;
-            _frameBlitLocations[_id].Y = y;
+        public int Y{
+            get { return (int) _frameBlitLocations[_id].Y; }
+            set { _frameBlitLocations[_id].Y = value; }
+        }
+
+        public void DeleteDongle(){
+            _isFrameSlotAvail[_id] = true;
         }
 
         public void EditDongleTexture(string textureName){
