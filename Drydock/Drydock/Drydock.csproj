@@ -112,7 +112,7 @@
     <Compile Include="Control\KeyboardHandler.cs" />
     <Compile Include="Control\MouseHandler.cs" />
     <Compile Include="Logic\CDraggable.cs" />
-    <Compile Include="Logic\Handle.cs" />
+    <Compile Include="Logic\CurveHandle.cs" />
     <Compile Include="Logic\IClickSubbable.cs" />
     <Compile Include="Logic\IMouseMoveSubbable.cs" />
     <Compile Include="Render\Dongle2D.cs" />
@@ -122,6 +122,7 @@
     <Compile Include="Drydock.cs" />
     <Compile Include="Render\EnvironmentBatch.cs" />
     <Compile Include="Render\Renderer.cs" />
+    <Compile Include="Render\ScreenData.cs" />
     <Compile Include="Render\ScreenText.cs" />
     <Compile Include="Render\ShipBatch.cs" />
     <Compile Include="Render\ShipVbo.cs" />
