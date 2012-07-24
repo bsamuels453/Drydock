@@ -33,6 +33,7 @@ namespace Drydock.Render{
 
             _environmentBatch = new EnvironmentBatch(device, content, _projectionMatrix);
             _textBatch = new TextBatch(device, content);
+            ScreenData.Init(Device.Viewport.Bounds.Width, Device.Viewport.Bounds.Height);
             Dongle2D.Init(device, content);
         }
 

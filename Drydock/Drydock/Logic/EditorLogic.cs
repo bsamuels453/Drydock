@@ -5,7 +5,7 @@ namespace Drydock.Logic{
     internal class EditorLogic{
         private readonly KeyboardHandler _keyboardHandler;
         private readonly MouseHandler _mouseHandler;
-        private Handle h;
+        private CurveHandle h;
 
         public EditorLogic(Renderer renderer){
             _mouseHandler = new MouseHandler(renderer.Device);
@@ -13,7 +13,7 @@ namespace Drydock.Logic{
 
             //initalize component classes
             CDraggable.Init(_mouseHandler);
-            h = new Handle();
+            h = new CurveHandle(100,100);
         }
 
         public void Update(){
