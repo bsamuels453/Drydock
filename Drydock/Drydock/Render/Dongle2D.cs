@@ -24,7 +24,8 @@ namespace Drydock.Render{
         }
 
         public void EditDonglePosition(int x, int y){
-            _frameBlitLocations[_id] = new Vector2(x, y);
+            _frameBlitLocations[_id].X = x;
+            _frameBlitLocations[_id].Y = y;
         }
 
         public void EditDongleTexture(string textureName){

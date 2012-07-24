@@ -13,6 +13,7 @@ namespace Drydock.Logic{
         #region IDraggable Members
 
         public Dongle2D ElementDongle { get; set; }
+        public void ClampDraggedPosition(ref int x, ref int y){ }
 
         #endregion
     }

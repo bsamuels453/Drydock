@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 namespace Drydock.Logic{
     internal interface IDraggable{
         Dongle2D ElementDongle { get; set; }
+        void ClampDraggedPosition(ref int x, ref int y);
     }
 
     internal class CDraggable : IClickSubbable, IMouseMoveSubbable{
@@ -34,8 +35,8 @@ namespace Drydock.Logic{
             if (_isMoving){
                 if (state.LeftButton == ButtonState.Released){
                     _isMoving = false;
-                    _boundingBox.X = state.X;
-                    _boundingBox.Y = state.Y;
+                    _boundingBox.X = state.X-3;
+                    _boundingBox.Y = state.Y-3;
                 }
             }
         }
@@ -46,7 +47,10 @@ namespace Drydock.Logic{
 
         public void HandleMouseMovementEvent(MouseState state){
             if (_isMoving){
-                _parent.ElementDongle.EditDonglePosition(state.X, state.Y);
+                int x = state.X - 3;
+                int y = state.Y - 3;
+                _parent.ClampDraggedPosition(ref x, ref y);
+                _parent.ElementDongle.EditDonglePosition(x, y);
             }
         }
 

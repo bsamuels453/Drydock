@@ -1,7 +1,9 @@
 using Drydock.Logic;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
-
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 namespace Drydock{
     public class Drydock : Game{
         private readonly GraphicsDeviceManager _graphics;
@@ -23,8 +25,12 @@ namespace Drydock{
             //   _editorLogic = new EditorLogic();
             _renderer = new Renderer(_graphics.GraphicsDevice, Content);
             _editorLogic = new EditorLogic(_renderer);
-            IsMouseVisible = true;
-
+            IsMouseVisible =true;
+            //var cur = new Bitmap("D:/Projects/assets/untitled-4.png", true);
+            //Graphics g = Graphics.FromImage(cur);
+           // IntPtr ptr = cur.GetHicon();
+           // var c = new Cursor(ptr);
+          //  System.Windows.Forms.Control.FromHandle(this.Window.Handle).Cursor = c;
             base.Initialize();
         }
 
@@ -42,7 +48,7 @@ namespace Drydock{
         }
 
         protected override void Draw(GameTime gameTime){
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.CornflowerBlue);
             _renderer.Draw();
             base.Draw(gameTime);
         }
