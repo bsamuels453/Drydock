@@ -34,7 +34,10 @@ namespace Drydock.Render{
             _environmentBatch = new EnvironmentBatch(device, content, _projectionMatrix);
             _textBatch = new TextBatch(device, content);
             ScreenData.Init(Device.Viewport.Bounds.Width, Device.Viewport.Bounds.Height);
+
+            //initalize advanced primitives
             Sprite2D.Init(device, content);
+            Line2D.Init(device);
         }
 
         public void Draw(){
@@ -45,6 +48,7 @@ namespace Drydock.Render{
 
             _environmentBatch.Draw(Device, view);
             Sprite2D.Draw();
+            Line2D.Draw();
             _textBatch.Draw();
         }
     }
