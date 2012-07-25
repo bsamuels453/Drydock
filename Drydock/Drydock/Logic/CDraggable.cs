@@ -1,5 +1,4 @@
 ﻿using Drydock.Control;
-using Drydock.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -8,12 +7,13 @@ namespace Drydock.Logic{
         int X { get; set; }
         int Y { get; set; }
         void ClampDraggedPosition(ref int x, ref int y);
+        void HandleObjectMovement();
     }
 
     internal class CDraggable : IClickSubbable, IMouseMoveSubbable{
         private static MouseHandler _mouseHandler;
         private readonly IDraggable _parent;
-        private Rectangle _boundingBox;
+        public Rectangle BoundingBox;
 
         private bool _isMoving;
 
@@ -21,25 +21,33 @@ namespace Drydock.Logic{
             _parent = parent;
             _mouseHandler.ClickSubscriptions.Add(this);
             _mouseHandler.MovementSubscriptions.Add(this);
-            _boundingBox = new Rectangle(initX, initY, width, height);
+            BoundingBox = new Rectangle(initX, initY, width, height);
             _isMoving = false;
         }
 
         public int X{
-            get { return _boundingBox.X; }
-            set { _boundingBox.X = value; }
+            get { return BoundingBox.X; }
+            set { BoundingBox.X = value; }
         }
 
         public int Y{
-            get { return _boundingBox.Y; }
-            set { _boundingBox.Y = value; }
+            get { return BoundingBox.Y; }
+            set { BoundingBox.Y = value; }
+        }
+
+        public int CentX{
+            get { return BoundingBox.X + BoundingBox.Width/2; }
+        }
+
+        public int CentY{
+            get { return BoundingBox.Y + BoundingBox.Height/2; }
         }
 
         #region IClickSubbable Members
 
         public void HandleMouseClickEvent(MouseState state){
             if (!_isMoving){
-                if (state.LeftButton == ButtonState.Pressed && _boundingBox.Contains(state.X, state.Y)){
+                if (state.LeftButton == ButtonState.Pressed && BoundingBox.Contains(state.X, state.Y)){
                     _isMoving = true;
                     return;
                 }
@@ -47,8 +55,8 @@ namespace Drydock.Logic{
             if (_isMoving){
                 if (state.LeftButton == ButtonState.Released){
                     _isMoving = false;
-                    _boundingBox.X = state.X - 3;
-                    _boundingBox.Y = state.Y - 3;
+                    BoundingBox.X = state.X - BoundingBox.Width/2;
+                    BoundingBox.Y = state.Y - BoundingBox.Height/2;
                 }
             }
         }
@@ -59,11 +67,14 @@ namespace Drydock.Logic{
 
         public void HandleMouseMovementEvent(MouseState state){
             if (_isMoving){
-                int x = state.X - 3;
-                int y = state.Y - 3;
+                int x = state.X - BoundingBox.Width/2;
+                int y = state.Y - BoundingBox.Height/2;
                 _parent.ClampDraggedPosition(ref x, ref y);
                 _parent.X = x;
                 _parent.Y = y;
+                BoundingBox.X = x;
+                BoundingBox.Y = y;
+                _parent.HandleObjectMovement();
             }
         }
 
