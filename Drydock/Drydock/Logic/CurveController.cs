@@ -12,12 +12,12 @@ namespace Drydock.Logic{
 
         private float _angle;
 
-        public CurveController(int initlX, int initlY, float initlLength1, float initlLength2, float initlAngle){
-            _centerHandle = new CurveHandle(initlX, initlY, 0, this);
-            Vector2 component1 = Common.GetComponent(initlAngle, initlLength1);
-            Vector2 component2 = Common.GetComponent((float) (initlAngle - Math.PI), initlLength2); // minus math.pi to reverse direction
-            _handle1 = new CurveHandle((int) component1.X + initlX, (int) component1.Y + initlY, 1, this);
-            _handle2 = new CurveHandle((int) component2.X + initlX, (int) component2.Y + initlY, 2, this);
+        public CurveController(int initX, int initY, float length1, float length2, float angle1, float angle2){
+            _centerHandle = new CurveHandle(initX, initY, 0, this);
+            Vector2 component1 = Common.GetComponent(angle1, length1);
+            Vector2 component2 = Common.GetComponent(angle2, length2); // minus math.pi to reverse direction
+            _handle1 = new CurveHandle((int) component1.X + initX, (int) component1.Y + initY, 1, this);
+            _handle2 = new CurveHandle((int) component2.X + initX, (int) component2.Y + initY, 2, this);
 
             _line1 = new Line2D(_centerHandle.CentX, _centerHandle.CentY, _handle1.CentX, _handle1.CentY);
             _line2 = new Line2D(_centerHandle.CentX, _centerHandle.CentY, _handle2.CentX, _handle2.CentY);
