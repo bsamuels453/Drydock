@@ -32,14 +32,18 @@ namespace Drydock.Control{
                 newState.RightButton != _previousMouseState.RightButton ||
                 newState.MiddleButton != _previousMouseState.MiddleButton){
                 foreach (IClickSubbable t in ClickSubscriptions){
-                    t.HandleMouseClickEvent(newState);
+                    if (t.HandleMouseClickEvent(newState)){
+                        break;
+                    }
                 }
             }
 
             if (newState.X != _previousMouseState.X ||
                 newState.Y != _previousMouseState.Y){
                 foreach (IMouseMoveSubbable t in ClickSubscriptions){
-                    t.HandleMouseMovementEvent(newState);
+                    if (t.HandleMouseMovementEvent(newState)){
+                        break;
+                    }
                 }
             }
             _previousMouseState = newState;
