@@ -17,6 +17,13 @@ namespace Drydock.Logic{
             _isMoving = false;
         }
 
+        public void ManualTranslation(int dx, int dy){
+            _parent.X += dx;
+            _parent.Y += dy;
+            BoundingBox.X += dx;
+            BoundingBox.Y += dy;
+        }
+
         #region properties
 
         public int X{
@@ -64,6 +71,8 @@ namespace Drydock.Logic{
 
         public bool HandleMouseMovementEvent(MouseState state){
             if (_isMoving){
+                int oldX = BoundingBox.X;
+                int oldY = BoundingBox.Y;
                 int x = state.X - BoundingBox.Width/2;
                 int y = state.Y - BoundingBox.Height/2;
                 _parent.ClampDraggedPosition(ref x, ref y);
@@ -71,7 +80,7 @@ namespace Drydock.Logic{
                 _parent.Y = y;
                 BoundingBox.X = x;
                 BoundingBox.Y = y;
-                _parent.HandleObjectMovement();
+                _parent.HandleObjectMovement(x - oldX, y - oldY);
             }
             return false;
         }
@@ -93,7 +102,7 @@ namespace Drydock.Logic{
         int X { get; set; }
         int Y { get; set; }
         void ClampDraggedPosition(ref int x, ref int y);
-        void HandleObjectMovement();
+        void HandleObjectMovement(int dx, int dy);
     }
 
     #endregion

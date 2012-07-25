@@ -37,10 +37,14 @@ namespace Drydock.Logic{
             _parentController = parent;
         }
 
+        public void ManualTranslation(int dx, int dy){
+            _dragComponent.ManualTranslation(dx, dy);
+        }
+
         #region IDraggable Members
 
-        public void HandleObjectMovement(){
-            _parentController.HandleHandleMovement(CentX, CentY, _id);
+        public void HandleObjectMovement(int dx, int dy){
+            _parentController.HandleHandleMovement(CentX, CentY, dx, dy, _id);
         }
 
         public void ClampDraggedPosition(ref int x, ref int y){

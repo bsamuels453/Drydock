@@ -23,17 +23,27 @@ namespace Drydock.Logic{
             _line2 = new Line2D(_centerHandle.CentX, _centerHandle.CentY, _handle2.CentX, _handle2.CentY);
         }
 
-        public void HandleHandleMovement(int newX, int newY, int id){ //nice naming
+        public void HandleHandleMovement(int newX, int newY, int dx, int dy, int id){ //nice naming
             switch (id){
                 case 0:
-                    _line1.OriginPoint = new Vector2(newX, newY);
-                    _line2.OriginPoint = new Vector2(newX, newY);
+                    //_line1.OriginPoint = new Vector2(newX, newY);
+                    //_line2.OriginPoint = new Vector2(newX, newY);
+                    _line1.TransposeOrigin(dx, dy);
+                    _line1.TransposeDestination(dx, dy);
+                    _line2.TransposeOrigin(dx, dy);
+                    _line2.TransposeDestination(dx, dy);
+
+                    _handle1.ManualTranslation(dx, dy);
+                    _handle2.ManualTranslation(dx, dy);
+
                     break;
                 case 1:
-                    _line1.DestPoint = new Vector2(newX, newY);
+                    //_line1.DestPoint = new Vector2(newX, newY);
+                    _line1.TransposeDestination(dx, dy);
                     break;
                 case 2:
-                    _line2.DestPoint = new Vector2(newX, newY);
+                    //_line2.DestPoint = new Vector2(newX, newY);
+                    _line2.TransposeDestination(dx, dy);
                     break;
             }
         }

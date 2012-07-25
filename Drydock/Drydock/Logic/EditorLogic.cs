@@ -14,7 +14,7 @@ namespace Drydock.Logic{
 
             //initalize component classes
             CDraggable.Init(_mouseHandler);
-            c = new CurveController(200, 200, 10, 10, 0.3f);
+            c = new CurveController(200, 200, 100, 100, 0.3f, 1.5f);
             //line = new Line2D(100, 100, 200, 200);
         }
 

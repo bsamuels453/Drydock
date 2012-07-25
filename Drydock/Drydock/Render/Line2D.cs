@@ -25,6 +25,7 @@ namespace Drydock.Render{
             _isDisposed = false;
         }
 
+        #region properties
         public Vector2 OriginPoint{
             get { return _point1; }
             set{
@@ -40,6 +41,19 @@ namespace Drydock.Render{
                 CalculateLineInfo();
             }
         }
+
+        public void TransposeOrigin(int dx, int dy){
+            _point1.X += dx;
+            _point1.Y += dy;
+            CalculateLineInfo();
+        }
+
+        public void TransposeDestination(int dx, int dy){
+            _point2.X += dx;
+            _point2.Y += dy;
+            CalculateLineInfo();
+        }
+        #endregion
 
         private void CalculateLineInfo(){
             _lineBlitLocations[_id] = new Vector2(_point1.X, _point1.Y);
@@ -87,7 +101,7 @@ namespace Drydock.Render{
             }
         }
 
-        public static void Draw(){
+        public static void Draw() {
             _spriteBatch.Begin();
             for (int i = 0; i < _maxLines; i++){
                 if (_isFrameSlotAvail[i] == false){
