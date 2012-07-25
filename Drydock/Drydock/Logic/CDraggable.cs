@@ -28,12 +28,10 @@ namespace Drydock.Logic{
 
         public int X{
             get { return BoundingBox.X; }
-            set { BoundingBox.X = value; }
         }
 
         public int Y{
             get { return BoundingBox.Y; }
-            set { BoundingBox.Y = value; }
         }
 
         public int CentX{
@@ -58,8 +56,6 @@ namespace Drydock.Logic{
             if (_isMoving){
                 if (state.LeftButton == ButtonState.Released){
                     _isMoving = false;
-                    BoundingBox.X = state.X - BoundingBox.Width/2;
-                    BoundingBox.Y = state.Y - BoundingBox.Height/2;
                 }
             }
             return false;
