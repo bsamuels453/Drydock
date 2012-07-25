@@ -22,11 +22,6 @@ namespace Drydock.Render{
         }
 
 
-
-        ~Sprite2D(){
-            Dispose();
-        }
-
         public int X{
             get { return (int) _frameBlitLocations[_id].X; }
             set { _frameBlitLocations[_id].X = value; }
@@ -35,6 +30,10 @@ namespace Drydock.Render{
         public int Y{
             get { return (int) _frameBlitLocations[_id].Y; }
             set { _frameBlitLocations[_id].Y = value; }
+        }
+
+        ~Sprite2D(){
+            Dispose();
         }
 
         public void Dispose(){
