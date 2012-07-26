@@ -4,9 +4,9 @@ using Drydock.Render;
 
 namespace Drydock.Logic{
     internal class EditorLogic{
+        private readonly CurveControllerCollection _c;
         private readonly KeyboardHandler _keyboardHandler;
         private readonly MouseHandler _mouseHandler;
-        private readonly CurveControllerCollection _c;
 
         public EditorLogic(Renderer renderer){
             _mouseHandler = new MouseHandler(renderer.Device);

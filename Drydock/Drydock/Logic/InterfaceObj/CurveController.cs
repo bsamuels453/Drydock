@@ -20,7 +20,7 @@ namespace Drydock.Logic.InterfaceObj{
             get { return _handle1.CentPosition; }
         }
 
-        public Vector2 NextHandlePos {
+        public Vector2 NextHandlePos{
             get { return _handle2.CentPosition; }
         }
 

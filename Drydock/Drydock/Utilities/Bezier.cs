@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Drydock.Utilities {
-    static class Bezier {
+namespace Drydock.Utilities{
+    internal static class Bezier{
         private static void Lerp(ref Vector2 dest, Vector2 a, Vector2 b, float t){
-            dest.X = a.X + (b.X - a.X) * t;
-            dest.Y = a.Y + (b.Y - a.Y) * t;
+            dest.X = a.X + (b.X - a.X)*t;
+            dest.Y = a.Y + (b.Y - a.Y)*t;
         }
+
         /// <summary>
         /// b and c are controllers. a and d are statics
         /// </summary>
@@ -21,7 +22,7 @@ namespace Drydock.Utilities {
             var cd = new Vector2();
             var abbc = new Vector2();
             var bccd = new Vector2();
-            
+
             dest = new Vector2();
 
             Lerp(ref ab, ptA, ptB, t);

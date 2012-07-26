@@ -28,34 +28,35 @@ namespace Drydock.Logic.InterfaceObj{
 
         public int X{
             get { return _boundingBox.X; }
-            set { 
+            set{
                 _boundingBox.X = value;
-                _centPosition.X = BoundingBox.X + BoundingBox.Width / 2;
+                _centPosition.X = BoundingBox.X + BoundingBox.Width/2;
             }
         }
 
         public int Y{
             get { return _boundingBox.Y; }
-            set { 
+            set{
                 _boundingBox.Y = value;
-                _centPosition.Y = BoundingBox.Y + BoundingBox.Height / 2;
+                _centPosition.Y = BoundingBox.Y + BoundingBox.Height/2;
             }
         }
 
-        public Rectangle BoundingBox{get { return _boundingBox; }}
+        public Rectangle BoundingBox{
+            get { return _boundingBox; }
+        }
 
         #endregion
 
         public CurveHandle(int x, int y, int id, CurveController parent){
             _centPosition = new Vector2();
             _boundingBox = new Rectangle(x, y, 8, 8);
-            _centPosition.X = BoundingBox.X + BoundingBox.Width / 2;
-            _centPosition.Y = BoundingBox.Y + BoundingBox.Height / 2;
+            _centPosition.X = BoundingBox.X + BoundingBox.Width/2;
+            _centPosition.Y = BoundingBox.Y + BoundingBox.Height/2;
             _dragComponent = new CDraggable(this);
             _elementSprite = new Sprite2D(_handleTexture, this);
             _id = id;
             _parentController = parent;
-            
         }
 
         #region IDraggable Members
