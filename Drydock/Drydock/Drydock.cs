@@ -1,3 +1,4 @@
+using System.Threading;
 using Drydock.Logic;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
@@ -41,6 +42,7 @@ namespace Drydock{
 
         protected override void Update(GameTime gameTime){
             _editorLogic.Update();
+            Thread.Sleep(10);
 
             base.Update(gameTime);
         }

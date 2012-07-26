@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Drydock.Logic;
+using Drydock.Logic.InterfaceObj;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

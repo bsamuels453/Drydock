@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.Logic{
+namespace Drydock.Logic.InterfaceObj{
     internal class CDraggable : IClickSubbable, IMouseMoveSubbable{
         private static MouseHandler _mouseHandler;
         private readonly IDraggable _parent;
@@ -14,15 +14,6 @@ namespace Drydock.Logic{
             _mouseHandler.MovementSubscriptions.Add(this);
             _isMoving = false;
         }
-
-        public void ManualTranslation(int dx, int dy){
-            _parent.X += dx;
-            _parent.Y += dy;
-        }
-
-        #region properties
-
-        #endregion
 
         #region IClickSubbable Members
 
@@ -49,8 +40,8 @@ namespace Drydock.Logic{
             if (_isMoving){
                 int oldX = _parent.X;
                 int oldY = _parent.Y;
-                int x = state.X - _parent.BoundingBox.Width / 2;
-                int y = state.Y - _parent.BoundingBox.Height/ 2;
+                int x = state.X - _parent.BoundingBox.Width/2;
+                int y = state.Y - _parent.BoundingBox.Height/2;
                 _parent.ClampDraggedPosition(ref x, ref y);
                 _parent.X = x;
                 _parent.Y = y;
@@ -66,6 +57,15 @@ namespace Drydock.Logic{
         public static void Init(MouseHandler mouseHandler){
             _mouseHandler = mouseHandler;
         }
+
+        #endregion
+
+        public void ManualTranslation(int dx, int dy){
+            _parent.X += dx;
+            _parent.Y += dy;
+        }
+
+        #region properties
 
         #endregion
     }

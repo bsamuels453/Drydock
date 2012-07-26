@@ -9,9 +9,9 @@ namespace Drydock.Render{
         private readonly int _id;
         private bool _isDisposed;
 
-        public Sprite2D(string textureName, IDrawable parent) {
+        public Sprite2D(string textureName, IDrawable parent){
             int i = 0;
-            while (!_isFrameSlotAvail[i]) { //i cant wait for this to crash
+            while (!_isFrameSlotAvail[i]){ //i cant wait for this to crash
                 i++;
             }
             _isFrameSlotAvail[i] = false;

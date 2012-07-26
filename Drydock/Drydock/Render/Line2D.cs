@@ -104,7 +104,7 @@ namespace Drydock.Render{
 
         #region static methods and fields
 
-        private const int _maxLines = 100;
+        private const int _maxLines = 5000;
         private static bool[] _isFrameSlotAvail;
         private static Texture2D _lineTexture;
         private static Vector2[] _lineBlitLocations;
@@ -143,7 +143,7 @@ namespace Drydock.Render{
                         Vector2.Zero,
                         new Vector2(_lineLengths[i], 1),
                         SpriteEffects.None,
-                        0
+                        i/100f
                         );
                 }
             }

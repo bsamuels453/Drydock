@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.Logic{
+namespace Drydock.Logic.InterfaceObj{
     /// <summary>
     /// allows a class to be subscribed for a mouse movement event
     /// </summary>

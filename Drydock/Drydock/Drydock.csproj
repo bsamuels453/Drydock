@@ -112,11 +112,13 @@
     <Compile Include="Common.cs" />
     <Compile Include="Control\KeyboardHandler.cs" />
     <Compile Include="Control\MouseHandler.cs" />
-    <Compile Include="Logic\CDraggable.cs" />
-    <Compile Include="Logic\CurveController.cs" />
-    <Compile Include="Logic\CurveHandle.cs" />
-    <Compile Include="Logic\IClickSubbable.cs" />
-    <Compile Include="Logic\IMouseMoveSubbable.cs" />
+    <Compile Include="Logic\CurveControllerCollection.cs" />
+    <Compile Include="Utilities\Bezier.cs" />
+    <Compile Include="Logic\InterfaceObj\CDraggable.cs" />
+    <Compile Include="Logic\InterfaceObj\CurveController.cs" />
+    <Compile Include="Logic\InterfaceObj\CurveHandle.cs" />
+    <Compile Include="Logic\InterfaceObj\IClickSubbable.cs" />
+    <Compile Include="Logic\InterfaceObj\IMouseMoveSubbable.cs" />
     <Compile Include="Render\IDrawable.cs" />
     <Compile Include="Render\Line2D.cs" />
     <Compile Include="Render\Sprite2D.cs" />
@@ -169,6 +171,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--
