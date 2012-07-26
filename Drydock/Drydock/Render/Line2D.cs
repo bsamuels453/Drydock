@@ -21,16 +21,17 @@ namespace Drydock.Render{
 
             _isFrameSlotAvail[i] = false;
             _id = i;
-            CalculateLineInfo();
+            CalculateInfoFromPoints();
             _isDisposed = false;
         }
 
         #region properties
+
         public Vector2 OriginPoint{
             get { return _point1; }
             set{
                 _point1 = value;
-                CalculateLineInfo();
+                CalculateInfoFromPoints();
             }
         }
 
@@ -38,28 +39,54 @@ namespace Drydock.Render{
             get { return _point2; }
             set{
                 _point2 = value;
-                CalculateLineInfo();
+                CalculateInfoFromPoints();
             }
         }
 
-        public void TransposeOrigin(int dx, int dy){
+        public float Angle{
+            get { return _lineAngles[_id]; }
+            set{
+                _lineAngles[_id] = value;
+                _lineUVectors[_id] = Common.GetComponentFromAngle(value, 1);
+                CalculateDestFromUnitVector();
+            }
+        }
+
+        public void TranslateOrigin(int dx, int dy){
             _point1.X += dx;
             _point1.Y += dy;
-            CalculateLineInfo();
+            CalculateInfoFromPoints();
         }
 
-        public void TransposeDestination(int dx, int dy){
+        public void TranslateDestination(int dx, int dy){
             _point2.X += dx;
             _point2.Y += dy;
-            CalculateLineInfo();
+            CalculateInfoFromPoints();
         }
+
         #endregion
 
-        private void CalculateLineInfo(){
+        #region private calculation functions
+
+        /// <summary>
+        /// calculates the line's destination point from the line's unit vector and length
+        /// </summary>
+        private void CalculateDestFromUnitVector(){
+            _point2.X = _lineUVectors[_id].X*_lineLengths[_id] + _point1.X;
+            _point2.Y = _lineUVectors[_id].Y*_lineLengths[_id] + _point1.Y;
+        }
+
+        /// <summary>
+        /// calculates the line's blit location, angle, length, and unit vector based on the origin point and destination point
+        /// </summary>
+        private void CalculateInfoFromPoints(){
             _lineBlitLocations[_id] = new Vector2(_point1.X, _point1.Y);
             _lineAngles[_id] = (float) Math.Atan2(_point2.Y - _point1.Y, _point2.X - _point1.X);
+            _lineUVectors[_id] = Common.GetComponentFromAngle(_lineAngles[_id], 1);
             _lineLengths[_id] = Vector2.Distance(_point1, _point2);
         }
+
+        #endregion
 
         ~Line2D(){
             Dispose();
@@ -83,6 +110,7 @@ namespace Drydock.Render{
         private static Vector2[] _lineBlitLocations;
         private static float[] _lineAngles;
         private static float[] _lineLengths;
+        private static Vector2[] _lineUVectors;
         // private static float[] _frameLayerLevels;
         private static SpriteBatch _spriteBatch;
 
@@ -91,6 +119,7 @@ namespace Drydock.Render{
             _lineBlitLocations = new Vector2[_maxLines];
             _lineAngles = new float[_maxLines];
             _lineLengths = new float[_maxLines];
+            _lineUVectors = new Vector2[_maxLines];
 
             _spriteBatch = new SpriteBatch(device);
             _lineTexture = new Texture2D(device, 1, 1, false, SurfaceFormat.Color);
@@ -101,7 +130,7 @@ namespace Drydock.Render{
             }
         }
 
-        public static void Draw() {
+        public static void Draw(){
             _spriteBatch.Begin();
             for (int i = 0; i < _maxLines; i++){
                 if (_isFrameSlotAvail[i] == false){

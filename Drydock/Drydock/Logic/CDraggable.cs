@@ -6,41 +6,21 @@ namespace Drydock.Logic{
     internal class CDraggable : IClickSubbable, IMouseMoveSubbable{
         private static MouseHandler _mouseHandler;
         private readonly IDraggable _parent;
-        public Rectangle BoundingBox;
         private bool _isMoving;
 
-        public CDraggable(IDraggable parent, int initX, int initY, int width, int height){
+        public CDraggable(IDraggable parent){
             _parent = parent;
             _mouseHandler.ClickSubscriptions.Add(this);
             _mouseHandler.MovementSubscriptions.Add(this);
-            BoundingBox = new Rectangle(initX, initY, width, height);
             _isMoving = false;
         }
 
         public void ManualTranslation(int dx, int dy){
             _parent.X += dx;
             _parent.Y += dy;
-            BoundingBox.X += dx;
-            BoundingBox.Y += dy;
         }
 
         #region properties
-
-        public int X{
-            get { return BoundingBox.X; }
-        }
-
-        public int Y{
-            get { return BoundingBox.Y; }
-        }
-
-        public int CentX{
-            get { return BoundingBox.X + BoundingBox.Width/2; }
-        }
-
-        public int CentY{
-            get { return BoundingBox.Y + BoundingBox.Height/2; }
-        }
 
         #endregion
 
@@ -48,7 +28,7 @@ namespace Drydock.Logic{
 
         public bool HandleMouseClickEvent(MouseState state){
             if (!_isMoving){
-                if (state.LeftButton == ButtonState.Pressed && BoundingBox.Contains(state.X, state.Y)){
+                if (state.LeftButton == ButtonState.Pressed && _parent.BoundingBox.Contains(state.X, state.Y)){
                     _isMoving = true;
                     return true;
                 }
@@ -67,15 +47,13 @@ namespace Drydock.Logic{
 
         public bool HandleMouseMovementEvent(MouseState state){
             if (_isMoving){
-                int oldX = BoundingBox.X;
-                int oldY = BoundingBox.Y;
-                int x = state.X - BoundingBox.Width/2;
-                int y = state.Y - BoundingBox.Height/2;
+                int oldX = _parent.X;
+                int oldY = _parent.Y;
+                int x = state.X - _parent.BoundingBox.Width / 2;
+                int y = state.Y - _parent.BoundingBox.Height/ 2;
                 _parent.ClampDraggedPosition(ref x, ref y);
                 _parent.X = x;
                 _parent.Y = y;
-                BoundingBox.X = x;
-                BoundingBox.Y = y;
                 _parent.HandleObjectMovement(x - oldX, y - oldY);
             }
             return false;
@@ -97,6 +75,7 @@ namespace Drydock.Logic{
     internal interface IDraggable{
         int X { get; set; }
         int Y { get; set; }
+        Rectangle BoundingBox { get; }
         void ClampDraggedPosition(ref int x, ref int y);
         void HandleObjectMovement(int dx, int dy);
     }

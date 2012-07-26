@@ -9,27 +9,16 @@ namespace Drydock.Render{
         private readonly int _id;
         private bool _isDisposed;
 
-        public Sprite2D(string textureName, int x, int y){
+        public Sprite2D(string textureName, IDrawable parent) {
             int i = 0;
-            while (!_isFrameSlotAvail[i]){ //i cant wait for this to crash
+            while (!_isFrameSlotAvail[i]) { //i cant wait for this to crash
                 i++;
             }
             _isFrameSlotAvail[i] = false;
             _id = i;
             _frameTextures[i] = _contentManager.Load<Texture2D>(textureName);
-            _frameBlitLocations[i] = new Vector2(x, y);
+            _frameParents[i] = parent;
             _isDisposed = false;
-        }
-
-
-        public int X{
-            get { return (int) _frameBlitLocations[_id].X; }
-            set { _frameBlitLocations[_id].X = value; }
-        }
-
-        public int Y{
-            get { return (int) _frameBlitLocations[_id].Y; }
-            set { _frameBlitLocations[_id].Y = value; }
         }
 
         ~Sprite2D(){
@@ -54,7 +43,7 @@ namespace Drydock.Render{
         private const int _maxDonglesDisplayable = 100;
         private static bool[] _isFrameSlotAvail;
         private static Texture2D[] _frameTextures;
-        private static Vector2[] _frameBlitLocations;
+        private static IDrawable[] _frameParents;
         // private static float[] _frameLayerLevels;
         private static ContentManager _contentManager;
         private static SpriteBatch _spriteBatch;
@@ -63,7 +52,7 @@ namespace Drydock.Render{
             _contentManager = content;
             _isFrameSlotAvail = new bool[_maxDonglesDisplayable];
             _frameTextures = new Texture2D[_maxDonglesDisplayable];
-            _frameBlitLocations = new Vector2[_maxDonglesDisplayable];
+            _frameParents = new IDrawable[_maxDonglesDisplayable];
             // _frameLayerLevels = new float[_maxDonglesDisplayable];
 
             for (int i = 0; i < _maxDonglesDisplayable; i++){
@@ -77,7 +66,7 @@ namespace Drydock.Render{
             _spriteBatch.Begin();
             for (int i = 0; i < _maxDonglesDisplayable; i++){
                 if (_isFrameSlotAvail[i] == false){
-                    _spriteBatch.Draw(_frameTextures[i], _frameBlitLocations[i], Color.White);
+                    _spriteBatch.Draw(_frameTextures[i], _frameParents[i].BoundingBox, Color.White);
                 }
             }
             _spriteBatch.End();
