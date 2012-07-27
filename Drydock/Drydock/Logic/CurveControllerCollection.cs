@@ -1,29 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Drydock.Control;
 using Drydock.Logic.InterfaceObj;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic{
     internal class CurveControllerCollection{
         private const int _segmentsBetweenControllers = 40;
-        private const int _initlControllers = 4;
         private readonly List<CurveController> _curveControllers;
         private readonly List<Line2D> _segments;
+        private int _numControllers = 4;
 
         public CurveControllerCollection(){
             _curveControllers = new List<CurveController>();
             _segments = new List<Line2D>(_curveControllers.Count*_segmentsBetweenControllers);
+            //mouseHandler.ClickSubscriptions.Add(this);
 
             //_segments.Add(new Line2D());
             int x = 200;
             int y = 100;
             int dx = 100;
-            for (int i = 0; i < _initlControllers; i++){
+            for (int i = 0; i < _numControllers; i++){
                 _curveControllers.Add(new CurveController(x, y, 100, 100, 1.5f));
                 x += dx;
             }
-            for (int i = 0; i < _initlControllers - 1; i++){
+            for (int i = 0; i < _numControllers - 1; i++){
                 for (int si = 0; si < _segmentsBetweenControllers; si++){
                     float t = (float) si/_segmentsBetweenControllers;
                     Vector2 firstPos, secondPos;
@@ -47,13 +51,21 @@ namespace Drydock.Logic{
                         t
                         );
 
-                    _segments.Add(new Line2D((int) firstPos.X, (int) firstPos.Y, (int) secondPos.X, (int) secondPos.Y));
+                    _segments.Add(new Line2D(firstPos, secondPos, 0.5f));
                 }
             }
         }
 
+        #region IClickSubbable Members
+
+        public bool HandleMouseClickEvent(MouseState state){
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
         public void UpdateCurves(){
-            for (int i = 0; i < _initlControllers - 1; i++){
+            for (int i = 0; i < _numControllers - 1; i++){
                 for (int si = 0; si < _segmentsBetweenControllers; si++){
                     float t = (float) si/_segmentsBetweenControllers;
                     Vector2 firstPos, secondPos;

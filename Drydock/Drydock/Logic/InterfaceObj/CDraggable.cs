@@ -3,19 +3,16 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic.InterfaceObj{
-    internal class CDraggable : IClickSubbable, IMouseMoveSubbable{
-        private static MouseHandler _mouseHandler;
+    internal class CDraggable{
         private readonly IDraggable _parent;
         private bool _isMoving;
 
         public CDraggable(IDraggable parent){
             _parent = parent;
-            _mouseHandler.ClickSubscriptions.Add(this);
-            _mouseHandler.MovementSubscriptions.Add(this);
+            MouseHandler.ClickSubscriptions.Add(HandleMouseClickEvent);
+            MouseHandler.MovementSubscriptions.Add(HandleMouseMovementEvent);
             _isMoving = false;
         }
-
-        #region IClickSubbable Members
 
         public bool HandleMouseClickEvent(MouseState state){
             if (!_isMoving){
@@ -31,10 +28,11 @@ namespace Drydock.Logic.InterfaceObj{
             }
             return false;
         }
+        #region properties
 
         #endregion
 
-        #region IMouseMoveSubbable Members
+        #region event handlers
 
         public bool HandleMouseMovementEvent(MouseState state){
             if (_isMoving){
@@ -54,18 +52,9 @@ namespace Drydock.Logic.InterfaceObj{
 
         #region static initalizer
 
-        public static void Init(MouseHandler mouseHandler){
-            _mouseHandler = mouseHandler;
+        public static void Init(){
+
         }
-
-        #endregion
-
-        public void ManualTranslation(int dx, int dy){
-            _parent.X += dx;
-            _parent.Y += dy;
-        }
-
-        #region properties
 
         #endregion
     }

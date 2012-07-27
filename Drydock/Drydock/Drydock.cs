@@ -14,8 +14,8 @@ namespace Drydock{
             Content.RootDirectory = "Content";
             _graphics = new GraphicsDeviceManager(this)
                         {
-                            PreferredBackBufferWidth = 800,
-                            PreferredBackBufferHeight = 480,
+                            PreferredBackBufferWidth = 1200,
+                            PreferredBackBufferHeight = 800,
                             SynchronizeWithVerticalRetrace = false,
                         };
         }

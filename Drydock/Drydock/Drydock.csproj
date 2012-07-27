@@ -113,12 +113,15 @@
     <Compile Include="Control\KeyboardHandler.cs" />
     <Compile Include="Control\MouseHandler.cs" />
     <Compile Include="Logic\CurveControllerCollection.cs" />
+    <Compile Include="UI\Button.cs" />
+    <Compile Include="UI\DraggableComponent.cs" />
+    <Compile Include="UI\FadeComponent.cs" />
+    <Compile Include="UI\IButtonComponent.cs" />
+    <Compile Include="UI\TextDisplayComponent.cs" />
     <Compile Include="Utilities\Bezier.cs" />
     <Compile Include="Logic\InterfaceObj\CDraggable.cs" />
     <Compile Include="Logic\InterfaceObj\CurveController.cs" />
     <Compile Include="Logic\InterfaceObj\CurveHandle.cs" />
-    <Compile Include="Logic\InterfaceObj\IClickSubbable.cs" />
-    <Compile Include="Logic\InterfaceObj\IMouseMoveSubbable.cs" />
     <Compile Include="Render\IDrawable.cs" />
     <Compile Include="Render\Line2D.cs" />
     <Compile Include="Render\Sprite2D.cs" />
@@ -140,8 +143,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DrydockContent\DrydockContent.contentproj">
-      <Name>DrydockContent</Name>
+      <Name>DrydockContent %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>
+      <Project>{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

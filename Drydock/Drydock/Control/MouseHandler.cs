@@ -1,47 +1,50 @@
 ﻿using System.Collections.Generic;
-using Drydock.Logic.InterfaceObj;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Control{
-    internal class MouseHandler{
+    internal delegate bool MouseMovementHandler(MouseState state);
+
+    internal delegate bool MouseClickHandler(MouseState state);
+
+    internal static class MouseHandler{
         //private  int _curMousePosX;
         //private  int _curMousePosY;
         //private readonly bool _isMouseClamped;
-        private readonly Vector2 _viewportSize;
-        private MouseState _previousMouseState;
+        private static Vector2 _viewportSize;
+        private static MouseState _previousMouseState;
 
-        public MouseHandler(GraphicsDevice device){
+        public static void Init(GraphicsDevice device){
             _viewportSize = new Vector2(device.Viewport.Bounds.Width, device.Viewport.Bounds.Height);
             Mouse.SetPosition((int) _viewportSize.X/2, (int) _viewportSize.Y/2);
             //_curMousePosX = (int)_viewportSize.X / 2;
             //_curMousePosY = (int) _viewportSize.Y/ 2;
             //_isMouseClamped = false;
-            ClickSubscriptions = new List<IClickSubbable>();
-            MovementSubscriptions = new List<IMouseMoveSubbable>();
+            ClickSubscriptions = new List<MouseClickHandler>();
+            MovementSubscriptions = new List<MouseMovementHandler>();
             _previousMouseState = Mouse.GetState();
         }
 
-        public List<IClickSubbable> ClickSubscriptions { get; set; }
-        public List<IMouseMoveSubbable> MovementSubscriptions { get; set; }
+        public static List<MouseClickHandler> ClickSubscriptions { get; set; }
+        public static List<MouseMovementHandler> MovementSubscriptions { get; set; }
 
-        public void UpdateMouse(){
+        public static void UpdateMouse(){
             MouseState newState = Mouse.GetState();
             if (newState.LeftButton != _previousMouseState.LeftButton ||
                 newState.RightButton != _previousMouseState.RightButton ||
                 newState.MiddleButton != _previousMouseState.MiddleButton){
-                foreach (IClickSubbable t in ClickSubscriptions){
-                    if (t.HandleMouseClickEvent(newState)){
-                        break;
+                foreach (MouseClickHandler t in ClickSubscriptions){
+                    if (t(newState)){
+                        //break;
                     }
                 }
             }
 
             if (newState.X != _previousMouseState.X ||
                 newState.Y != _previousMouseState.Y){
-                foreach (IMouseMoveSubbable t in ClickSubscriptions){
-                    if (t.HandleMouseMovementEvent(newState)){
+                foreach (MouseMovementHandler t in MovementSubscriptions){
+                    if (t(newState)){
                         break;
                     }
                 }
@@ -93,7 +96,7 @@ namespace Drydock.Control{
             }*/
         }
 
-        public void ToggleMouseClamp(){
+        public static void ToggleMouseClamp(){
         }
     }
 }

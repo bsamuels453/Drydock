@@ -3,19 +3,41 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drydock", "Drydock\Drydock\Drydock.csproj", "{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "DrydockContent", "Drydock\DrydockContent\DrydockContent.contentproj", "{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrydockContent", "Drydock\DrydockContent\DrydockContent.contentproj", "{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6D600C13-C377-4AC3-941D-3DD3CA3BF8A7}"
+	ProjectSection(SolutionItems) = preProject
+		Drydock.vsmdi = Drydock.vsmdi
+	EndProjectSection
 EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Drydock.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}.Debug|x86.ActiveCfg = Debug|x86
 		{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}.Debug|x86.Build.0 = Debug|x86
+		{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}.Release|Any CPU.ActiveCfg = Release|x86
+		{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}.Release|Mixed Platforms.Build.0 = Release|x86
 		{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}.Release|x86.ActiveCfg = Release|x86
 		{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}.Release|x86.Build.0 = Release|x86
+		{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}.Debug|x86.ActiveCfg = Debug|x86
+		{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}.Release|Any CPU.ActiveCfg = Release|x86
+		{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution

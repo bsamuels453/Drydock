@@ -1,5 +1,8 @@
-﻿using Drydock.Render;
+﻿using System.Diagnostics;
+using Drydock.Control;
+using Drydock.Render;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using IDrawable = Drydock.Render.IDrawable;
 
 namespace Drydock.Logic.InterfaceObj{
@@ -11,6 +14,9 @@ namespace Drydock.Logic.InterfaceObj{
         private readonly CurveController _parentController;
         private Rectangle _boundingBox;
         private Vector2 _centPosition;
+        private bool _isSelected;
+        private readonly Stopwatch _selectionTimer;
+        private bool _didHandleMoveSinceTimerStart;
 
         #region properties
 
@@ -46,23 +52,70 @@ namespace Drydock.Logic.InterfaceObj{
             get { return _boundingBox; }
         }
 
+        public bool IsSelected{
+            get { return _isSelected;  }
+            set {
+                if (value) {
+                    _isSelected = true;
+                    _elementSprite.ChangeTexture("bigbox");
+                    _boundingBox.Width = 20;
+                    _boundingBox.Height = 20;
+                }
+                else{
+                    _isSelected = false;
+                    _elementSprite.ChangeTexture("box");
+                    _boundingBox.Width = 9;
+                    _boundingBox.Height = 9;
+                }
+            }
+        }
+
         #endregion
 
         public CurveHandle(int x, int y, int id, CurveController parent){
             _centPosition = new Vector2();
-            _boundingBox = new Rectangle(x, y, 8, 8);
+            _boundingBox = new Rectangle(x, y, 9, 9);
             _centPosition.X = BoundingBox.X + BoundingBox.Width/2;
             _centPosition.Y = BoundingBox.Y + BoundingBox.Height/2;
             _dragComponent = new CDraggable(this);
-            _elementSprite = new Sprite2D(_handleTexture, this);
+            _elementSprite = new Sprite2D(_handleTexture, this, 1.0f);
             _id = id;
             _parentController = parent;
+            _isSelected = false;
+            _selectionTimer = new Stopwatch();
+            MouseHandler.ClickSubscriptions.Add(HandleMouseClick);
+        }
+
+        private bool HandleMouseClick(MouseState state){
+            if (_boundingBox.Contains(state.X, state.Y)){
+                if (!_selectionTimer.IsRunning && state.LeftButton == ButtonState.Pressed) {
+                    _selectionTimer.Start();
+                    _didHandleMoveSinceTimerStart = false;
+                }
+                else{
+                    if (state.LeftButton == ButtonState.Released){
+                        if (_selectionTimer.ElapsedMilliseconds < 100 && !_didHandleMoveSinceTimerStart) {
+                            _selectionTimer.Stop();
+                            IsSelected = true;
+                            return true;
+                        }
+                        else{
+                            _selectionTimer.Stop();
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         #region IDraggable Members
 
         public void HandleObjectMovement(int dx, int dy){
             _parentController.BalanceHandleMovement(CentX, CentY, dx, dy, _id);
+            if (dx != 0 || dy != 0){
+                _didHandleMoveSinceTimerStart = true;
+            }
         }
 
         public void ClampDraggedPosition(ref int x, ref int y){

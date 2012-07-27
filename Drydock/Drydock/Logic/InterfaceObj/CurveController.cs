@@ -9,6 +9,7 @@ namespace Drydock.Logic.InterfaceObj{
         private readonly CurveHandle _handle2;
         private readonly Line2D _line1;
         private readonly Line2D _line2;
+        private bool _isSelected;
 
         #region properties
 
@@ -29,6 +30,7 @@ namespace Drydock.Logic.InterfaceObj{
         public CurveController(int initX, int initY, float length1, float length2, float angle1){
             Vector2 component1 = Common.GetComponentFromAngle(angle1, length1);
             Vector2 component2 = Common.GetComponentFromAngle((float) (angle1 - Math.PI), length2); // minus math.pi to reverse direction
+            _isSelected = false;
             _handle1 = new CurveHandle(
                 (int) component1.X + initX,
                 (int) component1.Y + initY,
@@ -48,9 +50,10 @@ namespace Drydock.Logic.InterfaceObj{
                 this
                 );
 
-            _line1 = new Line2D(_centerHandle.CentX, _centerHandle.CentY, _handle1.CentX, _handle1.CentY);
-            _line2 = new Line2D(_centerHandle.CentX, _centerHandle.CentY, _handle2.CentX, _handle2.CentY);
+            _line1 = new Line2D(_centerHandle.CentPosition, _handle1.CentPosition, 0.5f);
+            _line2 = new Line2D(_centerHandle.CentPosition, _handle2.CentPosition, 0.5f);
         }
+
 
         /// <summary>
         /// this function balances handle movement so that they stay in a straight line and their movements translate to other handles

@@ -11,7 +11,9 @@ namespace Drydock.Render{
         private Vector2 _point1;
         private Vector2 _point2;
 
-        public Line2D(int x0, int y0, int x1, int y1){
+        #region constructors
+
+        public Line2D(int x0, int y0, int x1, int y1, float depth){
             int i = 0;
             while (!_isFrameSlotAvail[i]){ //i cant wait for this to crash
                 i++;
@@ -23,9 +25,32 @@ namespace Drydock.Render{
             _id = i;
             CalculateInfoFromPoints();
             _isDisposed = false;
+
+            _lineTextures[_id] = new Texture2D(_device, 1, 1, false, SurfaceFormat.Color);
+            _lineTextures[_id].SetData(new[] {Color.Black});
+            _frameLayerLevels[_id] = depth;
         }
 
-        #region properties
+        public Line2D(Vector2 v1, Vector2 v2, float depth){
+            int i = 0;
+            while (!_isFrameSlotAvail[i]){ //i cant wait for this to crash
+                i++;
+            }
+            _point1 = v1;
+            _point2 = v2;
+
+            _isFrameSlotAvail[i] = false;
+            _id = i;
+            CalculateInfoFromPoints();
+            _isDisposed = false;
+            _lineTextures[_id] = new Texture2D(_device, 1, 1, false, SurfaceFormat.Color);
+            _lineTextures[_id].SetData(new[] { Color.Black });
+            _frameLayerLevels[_id] = depth;
+        }
+
+        #endregion
+
+        #region modification methods and properties
 
         public Vector2 OriginPoint{
             get { return _point1; }
@@ -88,10 +113,11 @@ namespace Drydock.Render{
 
         #endregion
 
+        #region destructors
+
         ~Line2D(){
             Dispose();
         }
-
 
         public void Dispose(){
             if (!_isDisposed){
@@ -102,17 +128,20 @@ namespace Drydock.Render{
 
         #endregion
 
+        #endregion
+
         #region static methods and fields
 
         private const int _maxLines = 1000;
         private static bool[] _isFrameSlotAvail;
-        private static Texture2D _lineTexture;
+        private static Texture2D[] _lineTextures;
         private static Vector2[] _lineBlitLocations;
         private static float[] _lineAngles;
         private static float[] _lineLengths;
         private static Vector2[] _lineUVectors;
-        // private static float[] _frameLayerLevels;
+        private static float[] _frameLayerLevels;
         private static SpriteBatch _spriteBatch;
+        private static GraphicsDevice _device;
 
         public static void Init(GraphicsDevice device){
             _isFrameSlotAvail = new bool[_maxLines];
@@ -120,14 +149,15 @@ namespace Drydock.Render{
             _lineAngles = new float[_maxLines];
             _lineLengths = new float[_maxLines];
             _lineUVectors = new Vector2[_maxLines];
+            _frameLayerLevels = new float[_maxLines];
 
             _spriteBatch = new SpriteBatch(device);
-            _lineTexture = new Texture2D(device, 1, 1, false, SurfaceFormat.Color);
-            _lineTexture.SetData(new[] {Color.Black});
+            _lineTextures = new Texture2D[_maxLines];
 
             for (int i = 0; i < _maxLines; i++){
                 _isFrameSlotAvail[i] = true;
             }
+            _device = device;
         }
 
         public static void Draw(){
@@ -135,15 +165,15 @@ namespace Drydock.Render{
             for (int i = 0; i < _maxLines; i++){
                 if (_isFrameSlotAvail[i] == false){
                     _spriteBatch.Draw( //welp
-                        _lineTexture,
+                        _lineTextures[i],
                         _lineBlitLocations[i],
                         null,
-                        Color.Black,
+                        Color.White,
                         _lineAngles[i],
                         Vector2.Zero,
                         new Vector2(_lineLengths[i], 1),
                         SpriteEffects.None,
-                        0f
+                        _frameLayerLevels[i]
                         );
                 }
             }

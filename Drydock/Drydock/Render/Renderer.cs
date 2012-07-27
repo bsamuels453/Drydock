@@ -47,8 +47,9 @@ namespace Drydock.Render{
             Matrix view = Matrix.CreateLookAt(ViewportPosition, cameraDirection, Vector3.Up);
 
             _environmentBatch.Draw(Device, view);
-            Sprite2D.Draw();
+           
             Line2D.Draw();
+            Sprite2D.Draw();
             _textBatch.Draw();
         }
     }
