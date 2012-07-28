@@ -25,7 +25,8 @@ namespace Drydock.Logic{
                 layerDepth: 0.5f,
                 textureName: "box",
                 components: new IButtonComponent[]{
-                    new DraggableComponent()
+                    new DraggableComponent(),
+                    new ButtonEffectComponent()
                 }
                 );
         }

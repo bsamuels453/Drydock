@@ -4,6 +4,6 @@ using System.Linq;
 using System.Text;
 
 namespace Drydock.UI {
-    static class UI {
+    class UIControllableElement {
     }
 }
