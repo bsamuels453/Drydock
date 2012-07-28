@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Drydock.Control;
 using Drydock.Render;
@@ -6,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using IDrawable = Drydock.Render.IDrawable;
 
-namespace Drydock.UI{
+namespace Drydock.UI.Button{
     internal delegate bool OnMouseAction(MouseState state);
 
     internal class Button : IDrawable, IUIPrimitive{
@@ -137,6 +138,16 @@ namespace Drydock.UI{
         }
 
         #endregion
+
+        public TComponent GetComponent<TComponent>(){
+            foreach (var component in Components){
+                if (component.GetType() == typeof(TComponent)){
+                    return (TComponent)component;
+                }
+            }
+            throw new Exception();
+        }
+
 
         public void Update(){
             foreach (var component in Components){

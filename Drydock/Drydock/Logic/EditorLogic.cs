@@ -2,6 +2,7 @@
 using Drydock.Logic.InterfaceObj;
 using Drydock.Render;
 using Drydock.UI;
+using Drydock.UI.Button;
 
 namespace Drydock.Logic{
     internal class EditorLogic{
@@ -25,10 +26,11 @@ namespace Drydock.Logic{
                 layerDepth: 0.5f,
                 textureName: "box",
                 components: new IButtonComponent[]{
-                    new DraggableComponent(),
-                    new ButtonEffectComponent()
+                    new DraggableComponent()
                 }
                 );
+
+            //v.GetComponent<DraggableComponent>().Owner
         }
 
         public void Update(){

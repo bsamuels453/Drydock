@@ -1,8 +1,7 @@
-﻿using Drydock.Control;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.UI{
+namespace Drydock.UI.Button{
     internal delegate void DraggableObjectClamp(Button owner, ref int x, ref int y);
     internal delegate void ReactToDragMovement(Button owner, int dx, int dy);
 
@@ -27,6 +26,7 @@ namespace Drydock.UI{
                 _owner.OnMouseMovement.Add(OnMouseMovement);
             }
         }
+
 
         #endregion
 
