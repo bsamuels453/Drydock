@@ -5,5 +5,9 @@ using System.Text;
 
 namespace Drydock.UI {
     class TextDisplayComponent {
+        //not implemented
+        public TextDisplayComponent(){
+            throw new NotImplementedException();
+        }
     }
 }

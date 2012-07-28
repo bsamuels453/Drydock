@@ -1,9 +1,10 @@
 ﻿using Drydock.Control;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI{
-    internal delegate void DraggableObjectClamp(ref int x, ref int y);
-    internal delegate void ReactToDragMovement(int dx, int dy);
+    internal delegate void DraggableObjectClamp(Button owner, ref int x, ref int y);
+    internal delegate void ReactToDragMovement(Button owner, int dx, int dy);
 
     internal class DraggableComponent : IButtonComponent{
         private readonly DraggableObjectClamp _clampNewPosition;
@@ -11,6 +12,7 @@ namespace Drydock.UI{
         private bool _isEnabled;
         private bool _isMoving;
         private Button _owner;
+        private Vector2 _mouseOffset;
 
         #region properties
 
@@ -19,8 +21,10 @@ namespace Drydock.UI{
                 _owner = value;
                 _isEnabled = true;
                 _isMoving = false;
-                MouseHandler.ClickSubscriptions.Add(MouseClickHandler);
-                MouseHandler.MovementSubscriptions.Add(MouseMovementHandler);
+                //_owner.OnLeftDownDelegates.Add(MouseClickHandler);
+                _owner.OnLeftButtonDown.Add(OnLeftButtonDown);
+                _owner.OnLeftButtonUp.Add(OnLeftButtonUp);
+                _owner.OnMouseMovement.Add(OnMouseMovement);
             }
         }
 
@@ -29,6 +33,7 @@ namespace Drydock.UI{
         public DraggableComponent(DraggableObjectClamp clampFunction=null, ReactToDragMovement alertToDragMovement=null){
             _clampNewPosition = clampFunction;
             _alertToDragMovement = alertToDragMovement;
+            _mouseOffset = new Vector2();
         }
 
         #region IButtonComponent Members
@@ -44,35 +49,41 @@ namespace Drydock.UI{
         #endregion
 
         #region event handlers
-        private bool MouseClickHandler(MouseState state){
+        private bool OnLeftButtonDown(MouseState state){
             if (!_isMoving){
-                if (state.LeftButton == ButtonState.Pressed && _owner.BoundingBox.Contains(state.X, state.Y)){
+                if (_owner.BoundingBox.Contains(state.X, state.Y)){
                     _isMoving = true;
+                    _mouseOffset.X = _owner.X - state.X;
+                    _mouseOffset.Y = _owner.Y - state.Y;
                     return true;
                 }
             }
-            if (_isMoving){
-                if (state.LeftButton == ButtonState.Released){
+        return false;
+        }
+
+        private bool OnLeftButtonUp(MouseState state){
+            if (_isMoving) {
+                if (state.LeftButton == ButtonState.Released) {
                     _isMoving = false;
                 }
             }
             return false;
         }
 
-        private bool MouseMovementHandler(MouseState state){
+        private bool OnMouseMovement(MouseState state){
             if (_isMoving){
                 int oldX = _owner.X;
                 int oldY = _owner.Y;
-                int x = state.X - _owner.BoundingBox.Width/2;
-                int y = state.Y - _owner.BoundingBox.Height/2;
+                int x = (int)(state.X +  _mouseOffset.X);
+                int y = (int)(state.Y +  _mouseOffset.Y);
                 if (_clampNewPosition != null){
-                    _clampNewPosition(ref x, ref y);
+                    _clampNewPosition(_owner, ref x, ref y);
                 }
                 _owner.X = x;
                 _owner.Y = y;
 
                 if (_alertToDragMovement != null){
-                    _alertToDragMovement(x - oldX, y - oldY);
+                    _alertToDragMovement(_owner, x - oldX, y - oldY);
                 }
             }
             return false;
