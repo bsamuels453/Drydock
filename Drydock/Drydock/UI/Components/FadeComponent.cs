@@ -58,7 +58,7 @@ namespace Drydock.UI.Components{
         /// 
         /// </summary>
         /// <param name="defaultState">default state of the parent object, faded or visible </param>
-        /// <param name="setting">prebuilt settings for defining what triggers fading </param>
+        /// <param name="trigger"> </param>
         /// <param name="fadeoutOpacity">opacity level to fade out to. range 0-1f</param>
         /// <param name="fadeDuration">the time it takes for sprite to fade out in milliseconds</param>
         public FadeComponent(FadeState defaultState,FadeTriggers trigger = FadeTriggers.None,  float fadeoutOpacity = .2f, float fadeDuration = 250){
@@ -78,6 +78,17 @@ namespace Drydock.UI.Components{
             }
             switch (_fadeTrigger) {
                 case FadeTriggers.EntryExit:
+
+                    bool isParentInteractive = false;
+                    foreach (var type in _owner.GetType().Assembly.GetTypes()) {
+                        if( type == typeof(IUIInteractiveElement)){
+                            isParentInteractive = true;
+                        }
+                    }
+                    if(!isParentInteractive){
+                        throw new Exception("Invalid fade trigger: Unable to set an interactive trigger to a non-interactive element.");
+                    }
+
                     ((IUIInteractiveElement)_owner).OnMouseEntry.Add(ForceFadein);
                     ((IUIInteractiveElement)_owner).OnMouseExit.Add(ForceFadeout);
                     break;

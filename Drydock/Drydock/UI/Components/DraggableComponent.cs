@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI.Components{
@@ -35,6 +36,15 @@ namespace Drydock.UI.Components{
         }
 
         private void ComponentCtor(){
+            bool isParentInteractive = false;
+            foreach (var type in _owner.GetType().Assembly.GetTypes()){
+                if (type == typeof(IUIInteractiveElement)){
+                    isParentInteractive = true;
+                }
+            }
+            if (!isParentInteractive){
+                throw new Exception("Invalid element componenet: Unable to set a drag component for a non-interactive element.");
+            }
 
             _isEnabled = true;
             _isMoving = false;
