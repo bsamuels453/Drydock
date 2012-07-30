@@ -3,6 +3,7 @@ using Drydock.Render;
 using Drydock.UI;
 using Drydock.UI.Button;
 using Microsoft.Xna.Framework;
+using Project_Forge.utilities;
 
 namespace Drydock.Logic.InterfaceObj{
     internal class CurveController{
@@ -41,7 +42,7 @@ namespace Drydock.Logic.InterfaceObj{
 
             _handle1 = UIContext.Add<Button>(
                 new Button(
-                    identifier: 0,
+                    identifier: 1,
                     width: 9,
                     height: 9,
                     x: (int)component1.X + initX,
@@ -49,15 +50,15 @@ namespace Drydock.Logic.InterfaceObj{
                     layerDepth: 1.0f,
                     textureName: "box",
                     components: new IUIElementComponent[]{
-                        new DraggableComponent(),
-                        new FadeComponent(FadeComponent.FadeState.Faded)
+                        new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
+                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTriggers.EntryExit)
                     }
                     )
                     );
 
             _handle2 = UIContext.Add<Button>(
                 new Button(
-                    identifier: 1,
+                    identifier: 2,
                     width: 9,
                     height: 9,
                     x: (int)component2.X + initX,
@@ -65,15 +66,15 @@ namespace Drydock.Logic.InterfaceObj{
                     layerDepth: 1.0f,
                     textureName: "box",
                     components: new IUIElementComponent[]{
-                        new DraggableComponent(),
-                        new FadeComponent(FadeComponent.FadeState.Faded)
+                        new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
+                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTriggers.EntryExit)
                     }
                     )
                     );
 
             _centerHandle = UIContext.Add<Button>(
                 new Button(
-                    identifier: 2,
+                    identifier: 0,
                     width: 9,
                     height: 9,
                     x: initX,
@@ -81,15 +82,37 @@ namespace Drydock.Logic.InterfaceObj{
                     layerDepth: 1.0f,
                     textureName: "box",
                     components: new IUIElementComponent[]{
-                        new DraggableComponent(),
-                        new FadeComponent(FadeComponent.FadeState.Faded)
+                        new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
+                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTriggers.EntryExit)
                     }
                     )
                     );
+
+            InterlinkButtonEvents();
+
             _line1 = new Line2D(_centerHandle.CentPosition, _handle1.CentPosition, 0.5f);
             _line2 = new Line2D(_centerHandle.CentPosition, _handle2.CentPosition, 0.5f);
         }
 
+        private void InterlinkButtonEvents(){
+            _handle1.OnMouseEntry.Add(_handle2.GetComponent<FadeComponent>().ForceFadein);
+            _handle1.OnMouseEntry.Add(_centerHandle.GetComponent<FadeComponent>().ForceFadein);
+
+            _handle1.OnMouseExit.Add(_handle2.GetComponent<FadeComponent>().ForceFadeout);
+            _handle1.OnMouseExit.Add(_centerHandle.GetComponent<FadeComponent>().ForceFadeout);
+
+            _handle2.OnMouseEntry.Add(_handle1.GetComponent<FadeComponent>().ForceFadein);
+            _handle2.OnMouseEntry.Add(_centerHandle.GetComponent<FadeComponent>().ForceFadein);
+
+            _handle2.OnMouseExit.Add(_handle1.GetComponent<FadeComponent>().ForceFadeout);
+            _handle2.OnMouseExit.Add(_centerHandle.GetComponent<FadeComponent>().ForceFadeout);
+
+            _centerHandle.OnMouseEntry.Add(_handle2.GetComponent<FadeComponent>().ForceFadein);
+            _centerHandle.OnMouseEntry.Add(_handle1.GetComponent<FadeComponent>().ForceFadein);
+
+            _centerHandle.OnMouseExit.Add(_handle2.GetComponent<FadeComponent>().ForceFadeout);
+            _centerHandle.OnMouseExit.Add(_handle1.GetComponent<FadeComponent>().ForceFadeout);
+        }
 
         /// <summary>
         /// this function balances handle movement so that they stay in a straight line and their movements translate to other handles
@@ -101,6 +124,11 @@ namespace Drydock.Logic.InterfaceObj{
                     _line1.TranslateDestination(dx, dy);
                     _line2.TranslateOrigin(dx, dy);
                     _line2.TranslateDestination(dx, dy);
+                    _handle1.X += dx;
+                    _handle1.Y += dy;
+
+                    _handle2.X += dx;
+                    _handle2.Y += dy;
 
                     //_handle1.ManualTranslation(dx, dy);
                     //_handle2.ManualTranslation(dx, dy);
@@ -119,6 +147,10 @@ namespace Drydock.Logic.InterfaceObj{
                     _handle1.Y = (int) _line1.DestPoint.Y - _handle1.BoundingBox.Height/2;
                     break;
             }
+        }
+
+        private void ClampHandleMovement(Button owner, ref int x, ref int y){
+
         }
     }
 }

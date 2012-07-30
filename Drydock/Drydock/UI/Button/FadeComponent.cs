@@ -10,6 +10,11 @@ namespace Drydock.UI.Button{
             Faded
         }
 
+        public enum FadeTriggers{
+            EntryExit,
+            None
+        }
+
         #endregion
 
         private readonly FadeState _defaultState;
@@ -21,6 +26,7 @@ namespace Drydock.UI.Button{
         private bool _isInTransition;
         private Button _owner;
         private long _prevUpdateTimeIndex;
+        private FadeTriggers _fadeTrigger;
 
         #region properties
 
@@ -52,20 +58,32 @@ namespace Drydock.UI.Button{
         /// 
         /// </summary>
         /// <param name="defaultState">default state of the parent object, faded or visible </param>
+        /// <param name="setting">prebuilt settings for defining what triggers fading </param>
         /// <param name="fadeoutOpacity">opacity level to fade out to. range 0-1f</param>
         /// <param name="fadeDuration">the time it takes for sprite to fade out in milliseconds</param>
-        public FadeComponent(FadeState defaultState, float fadeoutOpacity = .2f, float fadeDuration = 250){
+        public FadeComponent(FadeState defaultState,FadeTriggers trigger = FadeTriggers.None,  float fadeoutOpacity = .2f, float fadeDuration = 250){
             _fadeoutOpacity = fadeoutOpacity;
             _fadeDuration = fadeDuration*10000; //10k ticks in a millisecond
             _isInTransition = false;
             _isFadingOut = false;
             _prevUpdateTimeIndex = DateTime.Now.Ticks;
             _defaultState = defaultState;
+            _fadeTrigger = trigger;
+
         }
 
         private void ComponentCtor(){
             if (_defaultState == FadeState.Faded){
                 _owner.Sprite.Opacity = _fadeoutOpacity;
+            }
+            switch (_fadeTrigger) {
+                case FadeTriggers.EntryExit:
+                    _owner.OnMouseEntry.Add(ForceFadein);
+                    _owner.OnMouseExit.Add(ForceFadeout);
+                    break;
+
+                case FadeTriggers.None:
+                    break;
             }
         }
 

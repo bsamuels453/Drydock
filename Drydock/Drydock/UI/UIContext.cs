@@ -108,7 +108,20 @@ namespace Drydock.UI{
         }
 
         public void Add(float depth, IUIInteractiveElement element){
-            
+            _depthList.Add(depth);
+            _objList.Add(element);
+
+            for (int i = _depthList.Count-1; i < 0; i--){
+                if (_depthList[i] < _depthList[i - 1]) {
+                    _depthList.RemoveAt(i);
+                    _objList.RemoveAt(i);
+                    _depthList.Insert(i - 2, depth);
+                    _objList.Insert(i - 2, element);
+                }
+                else{
+                    break;
+                }
+            }
         }
 
         public void Clear(){

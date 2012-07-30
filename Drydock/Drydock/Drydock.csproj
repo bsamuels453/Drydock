@@ -128,6 +128,7 @@
     <Compile Include="DebugTimer.cs" />
     <Compile Include="Logic\CurveControllerCollection.cs" />
     <Compile Include="UI\Button\Button.cs" />
+    <Compile Include="UI\Button\ButtonTemplate.cs" />
     <Compile Include="UI\Button\DraggableComponent.cs" />
     <Compile Include="UI\Button\FadeComponent.cs" />
     <Compile Include="UI\Button\SelectableComponent.cs" />
