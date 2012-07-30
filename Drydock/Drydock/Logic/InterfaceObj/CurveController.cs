@@ -1,14 +1,21 @@
 ﻿using System;
 using Drydock.Render;
+using Drydock.UI;
+using Drydock.UI.Button;
 using Microsoft.Xna.Framework;
 
 namespace Drydock.Logic.InterfaceObj{
     internal class CurveController{
-        private readonly CurveHandle _centerHandle;
-        private readonly CurveHandle _handle1;
-        private readonly CurveHandle _handle2;
+        //private readonly CurveHandle _centerHandle;
+       // private readonly CurveHandle _handle1;
+       // private readonly CurveHandle _handle2;
         private readonly Line2D _line1;
         private readonly Line2D _line2;
+
+        private readonly Button _centerHandle;
+        private readonly Button _handle1;
+        private readonly Button _handle2;
+
 
         #region properties
 
@@ -31,25 +38,54 @@ namespace Drydock.Logic.InterfaceObj{
         public CurveController(int initX, int initY, float length1, float length2, float angle1){
             Vector2 component1 = Common.GetComponentFromAngle(angle1, length1);
             Vector2 component2 = Common.GetComponentFromAngle((float) (angle1 - Math.PI), length2); // minus math.pi to reverse direction
-            _handle1 = new CurveHandle(
-                (int) component1.X + initX,
-                (int) component1.Y + initY,
-                1,
-                this
-                );
-            _handle2 = new CurveHandle(
-                (int) component2.X + initX,
-                (int) component2.Y + initY,
-                2,
-                this
-                );
-            _centerHandle = new CurveHandle(
-                initX,
-                initY,
-                0,
-                this
-                );
 
+            _handle1 = UIContext.Add<Button>(
+                new Button(
+                    identifier: 0,
+                    width: 9,
+                    height: 9,
+                    x: (int)component1.X + initX,
+                    y: (int)component1.Y + initY,
+                    layerDepth: 1.0f,
+                    textureName: "box",
+                    components: new IUIElementComponent[]{
+                        new DraggableComponent(),
+                        new FadeComponent(FadeComponent.FadeState.Faded)
+                    }
+                    )
+                    );
+
+            _handle2 = UIContext.Add<Button>(
+                new Button(
+                    identifier: 1,
+                    width: 9,
+                    height: 9,
+                    x: (int)component2.X + initX,
+                    y: (int)component2.Y + initY,
+                    layerDepth: 1.0f,
+                    textureName: "box",
+                    components: new IUIElementComponent[]{
+                        new DraggableComponent(),
+                        new FadeComponent(FadeComponent.FadeState.Faded)
+                    }
+                    )
+                    );
+
+            _centerHandle = UIContext.Add<Button>(
+                new Button(
+                    identifier: 2,
+                    width: 9,
+                    height: 9,
+                    x: initX,
+                    y: initY,
+                    layerDepth: 1.0f,
+                    textureName: "box",
+                    components: new IUIElementComponent[]{
+                        new DraggableComponent(),
+                        new FadeComponent(FadeComponent.FadeState.Faded)
+                    }
+                    )
+                    );
             _line1 = new Line2D(_centerHandle.CentPosition, _handle1.CentPosition, 0.5f);
             _line2 = new Line2D(_centerHandle.CentPosition, _handle2.CentPosition, 0.5f);
         }
@@ -58,21 +94,16 @@ namespace Drydock.Logic.InterfaceObj{
         /// <summary>
         /// this function balances handle movement so that they stay in a straight line and their movements translate to other handles
         /// </summary>
-        /// <param name="newX"></param>
-        /// <param name="newY"></param>
-        /// <param name="dx"></param>
-        /// <param name="dy"></param>
-        /// <param name="id"></param>
-        public void BalanceHandleMovement(int newX, int newY, int dx, int dy, int id){ //nice naming
-            switch (id){
+        public void ReactToDragMovement(Button owner, int dx, int dy){
+            switch (owner.Identifier){
                 case 0:
                     _line1.TranslateOrigin(dx, dy);
                     _line1.TranslateDestination(dx, dy);
                     _line2.TranslateOrigin(dx, dy);
                     _line2.TranslateDestination(dx, dy);
 
-                    _handle1.ManualTranslation(dx, dy);
-                    _handle2.ManualTranslation(dx, dy);
+                    //_handle1.ManualTranslation(dx, dy);
+                    //_handle2.ManualTranslation(dx, dy);
                     break;
                 case 1:
                     _line1.TranslateDestination(dx, dy);

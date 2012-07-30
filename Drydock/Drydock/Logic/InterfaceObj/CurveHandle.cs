@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework.Input;
 using IDrawable = Drydock.Render.IDrawable;
 
 namespace Drydock.Logic.InterfaceObj{
-    internal class CurveHandle : IDraggable, IDrawable{
+    internal class CurveHandle{
         private const string _handleTexture = "box";
-        private readonly CDraggable _dragComponent;
+        //private readonly CDraggable _dragComponent;
         private readonly Sprite2D _elementSprite;
         private readonly int _id;
         private readonly CurveController _parentController;
@@ -77,8 +77,8 @@ namespace Drydock.Logic.InterfaceObj{
             _boundingBox = new Rectangle(x, y, 9, 9);
             _centPosition.X = BoundingBox.X + BoundingBox.Width/2;
             _centPosition.Y = BoundingBox.Y + BoundingBox.Height/2;
-            _dragComponent = new CDraggable(this);
-            _elementSprite = new Sprite2D(_handleTexture, this, 1, 1);
+            //_dragComponent = new CDraggable(this);
+            //_elementSprite = new Sprite2D(_handleTexture, this, 1, 1);
             _id = id;
             _parentController = parent;
             _isSelected = false;
@@ -89,7 +89,7 @@ namespace Drydock.Logic.InterfaceObj{
         #region IDraggable Members
 
         public void HandleObjectMovement(int dx, int dy){
-            _parentController.BalanceHandleMovement(CentX, CentY, dx, dy, _id);
+            //_parentController.BalanceHandleMovement(CentX, CentY, dx, dy, _id);
             if (dx != 0 || dy != 0){
                 _didHandleMoveSinceTimerStart = true;
             }

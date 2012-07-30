@@ -1,20 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Drydock.Control;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI{
     internal delegate bool OnMouseAction(MouseState state);
 
-    internal class UIContext{
-        private readonly List<IUIElement> _elements;
-        private readonly SortedList<float, IUIInteractiveElement> _layerSortedElements;
-        private MouseState _prevMouseState;
+    internal static class UIContext{
+        private static List<IUIElement> _elements;
+        private static UISortedList _layerSortedElements;
+        private static MouseState _prevMouseState;
 
         #region ctor
 
-        public UIContext(){
+        public static void Init() {
             _elements = new List<IUIElement>();
-            _layerSortedElements = new SortedList<float, IUIInteractiveElement>();
+            _layerSortedElements = new UISortedList();
 
             _prevMouseState = Mouse.GetState();
 
@@ -26,13 +28,14 @@ namespace Drydock.UI{
 
         #region ui element addition methods
 
-        public TElement Add<TElement>(IUIElement elementToAdd){
+        static public TElement Add<TElement>(IUIElement elementToAdd) {
             _elements.Add(elementToAdd);
             return (TElement) elementToAdd;
         }
 
-        public TElement Add<TElement>(IUIInteractiveElement elementToAdd){
+        static public TElement Add<TElement>(IUIInteractiveElement elementToAdd) {
             _elements.Add(elementToAdd);
+
             _layerSortedElements.Add(elementToAdd.LayerDepth, elementToAdd);
 
             return (TElement) elementToAdd;
@@ -40,7 +43,7 @@ namespace Drydock.UI{
 
         #endregion
 
-        public void Update(){
+        static public void Update() {
             foreach (IUIElement element in _elements){
                 element.Update();
             }
@@ -48,12 +51,12 @@ namespace Drydock.UI{
 
         #region event handlers
 
-        private bool OnMouseButtonEvent(MouseState state){
+        static private bool OnMouseButtonEvent(MouseState state) {
             bool retval = false;
             bool forceListCleanup = false;
-            foreach (var element in _layerSortedElements){
-                if (element.Value != null){
-                    if (element.Value.MouseClickHandler(state)){
+            for (int i = 0; i < _layerSortedElements.Count; i++) {
+                if (_layerSortedElements[i] != null){
+                    if (_layerSortedElements[i].MouseClickHandler(state)) {
                         retval = true;
                         break;
                     }
@@ -73,19 +76,17 @@ namespace Drydock.UI{
             return retval;
         }
 
-        private bool OnMouseMovementEvent(MouseState state){
-            foreach (var element in _layerSortedElements){
-                //dispatch event for mouse movement
-                element.Value.MouseMovementHandler(state);
-
-                if (element.Value.BoundingBox.Contains(state.X, state.Y) && !element.Value.BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
+        static private bool OnMouseMovementEvent(MouseState state) {
+            for (int i = 0; i < _layerSortedElements.Count; i++){
+                _layerSortedElements[i].MouseMovementHandler(state);
+                if (_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && !_layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)) {
                     //dispatch event for mouse entering the bounding box of the element
-                    element.Value.MouseEntryHandler(state);
+                    _layerSortedElements[i].MouseEntryHandler(state);
                 }
-                else{
-                    if (!element.Value.BoundingBox.Contains(state.X, state.Y) && element.Value.BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
+                else {
+                    if (!_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && _layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)) {
                         //dispatch event for mouse exiting the bounding box of the element
-                        element.Value.MouseExitHandler(state);
+                        _layerSortedElements[i].MouseExitHandler(state);
                     }
                 }
             }
@@ -94,5 +95,39 @@ namespace Drydock.UI{
         }
 
         #endregion
+    }
+
+
+    internal class UISortedList{
+        private readonly List<float> _depthList;
+        private readonly List<IUIInteractiveElement> _objList;
+
+        public UISortedList(){
+            _depthList = new List<float>();
+            _objList = new List<IUIInteractiveElement>();
+        }
+
+        public void Add(float depth, IUIInteractiveElement element){
+            
+        }
+
+        public void Clear(){
+            _depthList.Clear();
+            _objList.Clear();
+        }
+
+        public int Count{
+            get { return _depthList.Count; }
+        }
+
+
+        public void RemoveAt(int index){
+            _depthList.RemoveAt(index);
+            _objList.RemoveAt(index);
+        }
+
+        public IUIInteractiveElement this[int index] {
+            get { return _objList[index]; }
+        }
     }
 }

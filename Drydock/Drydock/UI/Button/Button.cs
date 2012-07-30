@@ -15,6 +15,7 @@ namespace Drydock.UI.Button{
         private Rectangle _boundingBox; //bounding box that represents the bounds of the button
         private Vector2 _centPosition; //represents the approximate center of the button
         private readonly Stopwatch _hoverTimer; //nonimp, put in superclass
+        private readonly int _identifier;
 
         private const int _timeTillHoverProc = 1000;
 
@@ -27,8 +28,6 @@ namespace Drydock.UI.Button{
         public Sprite2D Sprite{
             get { return _sprite; }
         }
-
-        public UIContext UIContxt { get; set; }
 
         #region IDrawable Members
 
@@ -84,7 +83,8 @@ namespace Drydock.UI.Button{
 
         #region ctor
 
-        public Button(int x, int y, int width, int height, float layerDepth, string textureName, IUIElementComponent[] components){
+        public Button(int x, int y, int width, int height, float layerDepth, string textureName, IUIElementComponent[] components, int identifier=0){
+            _identifier = identifier;
             _centPosition = new Vector2();
             _boundingBox = new Rectangle(x, y, width, height);
             _sprite = new Sprite2D(textureName, this, 0, 1);
@@ -188,7 +188,7 @@ namespace Drydock.UI.Button{
                     return (TComponent) component;
                 }
             }
-            throw new Exception("Request made to a Button for a component that did not exist.");
+            throw new Exception("Request made to a Button object for a component that did not exist.");
         }
 
         public void Update(){
@@ -203,6 +203,10 @@ namespace Drydock.UI.Button{
                     }
                 }
             }
+        }
+
+        public int Identifier{
+            get { return _identifier; }
         }
 
         #endregion
