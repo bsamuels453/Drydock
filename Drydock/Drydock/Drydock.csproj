@@ -129,9 +129,11 @@
     <Compile Include="UI\Button\Button.cs" />
     <Compile Include="UI\Button\DraggableComponent.cs" />
     <Compile Include="UI\Button\FadeComponent.cs" />
+    <Compile Include="UI\IUIElement.cs" />
     <Compile Include="UI\IUIElementComponent.cs" />
     <Compile Include="UI\Button\TextDisplayComponent.cs" />
-    <Compile Include="UI\IUIElement.cs" />
+    <Compile Include="UI\IUIInteractiveElement.cs" />
+    <Compile Include="UI\UIContext.cs" />
     <Compile Include="Utilities\Bezier.cs" />
     <Compile Include="Logic\InterfaceObj\CDraggable.cs" />
     <Compile Include="Logic\InterfaceObj\CurveController.cs" />

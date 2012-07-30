@@ -75,6 +75,7 @@ namespace Drydock.UI.Button{
 
         #endregion
 
+        #region modification methods
         public bool ForceFadeout(MouseState state){
             _isInTransition = true;
             _isFadingOut = true;
@@ -85,5 +86,6 @@ namespace Drydock.UI.Button{
             _isInTransition = true;
             _isFadingOut = false;
         }
+        #endregion
     }
 }

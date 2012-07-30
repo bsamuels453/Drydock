@@ -1,35 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Drydock.Control;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using IDrawable = Drydock.Render.IDrawable;
 
 namespace Drydock.UI.Button{
-    internal delegate bool OnMouseAction(MouseState state);
-
-    internal class Button : IDrawable, IUIElement{
+    internal class Button : IDrawable, IUIInteractiveElement{
+        private readonly Stopwatch _clickTimer;
         private readonly float _layerDepth; //the depth at which the layer is rendered at. Also used for MouseHandler click resolution.
         private readonly Sprite2D _sprite; //the button's sprite
 
-        #region button events
-        public List<OnMouseAction> OnLeftButtonClick;//in future change this to a dictionary enum in UI class
-        public List<OnMouseAction> OnLeftButtonDown;
-        public List<OnMouseAction> OnLeftButtonUp;
-        public List<OnMouseAction> OnMouseHover;
-        public List<OnMouseAction> OnMouseMovement;
-        public List<OnMouseAction> OnMouseEnterExit;
-        #endregion
         private Rectangle _boundingBox; //bounding box that represents the bounds of the button
         private Vector2 _centPosition; //represents the approximate center of the button
-        private readonly Stopwatch _clickTimer;
-        private Stopwatch _hoverTimer;//nonimp
-
+        private Stopwatch _hoverTimer; //nonimp, put in superclass
 
         #region properties
-        public IUIElementComponent[] Components { get; set; }
 
         public Vector2 CentPosition{
             get { return _centPosition; }
@@ -39,9 +26,9 @@ namespace Drydock.UI.Button{
             get { return _sprite; }
         }
 
-        public float LayerDepth{
-            get { return _layerDepth; }
-        }
+        public UIContext UIContxt { get; set; }
+
+        #region IDrawable Members
 
         public int X{
             get { return _boundingBox.X; }
@@ -62,6 +49,34 @@ namespace Drydock.UI.Button{
         public Rectangle BoundingBox{
             get { return _boundingBox; }
         }
+
+        #endregion
+
+        #region IUIInteractiveElement Members
+
+        public IUIElementComponent[] Components { get; set; }
+
+        public float LayerDepth{
+            get { return _layerDepth; }
+        }
+
+        public OnMouseAction MouseMovementHandler {
+            get { return MouseMovementHandle; }
+        }
+
+        public OnMouseAction MouseClickHandler {
+            get { return MouseClickHandle; }
+        }
+
+        public OnMouseAction MouseEntryHandler {
+            get { return MouseEntryHandle; }
+        }
+
+        public OnMouseAction MouseExitHandler {
+            get { return MouseExitHandle; }
+        }
+
+        #endregion
 
         #endregion
 
@@ -89,22 +104,20 @@ namespace Drydock.UI.Button{
             foreach (IUIElementComponent component in Components){
                 component.Owner = this;
             }
-
-            MouseHandler.ClickSubscriptions.Add(MouseClickHandler);
-            MouseHandler.MovementSubscriptions.Add(MouseMovementHandler);
         }
 
         #endregion
 
         #region event handlers
-        private bool MouseMovementHandler(MouseState state){
+
+        private bool MouseMovementHandle(MouseState state){
             foreach (OnMouseAction t in OnMouseMovement){
                 t(state);
             }
             return false;
         }
 
-        private bool MouseClickHandler(MouseState state){
+        private bool MouseClickHandle(MouseState state){
             //for this event, we can assume the mouse is within the button's boundingbox
 
             if (state.LeftButton == ButtonState.Pressed){
@@ -113,15 +126,15 @@ namespace Drydock.UI.Button{
                     t(state);
                 }
             }
-            if (state.LeftButton == ButtonState.Released) {
-                foreach (OnMouseAction t in OnLeftButtonUp) {
+            if (state.LeftButton == ButtonState.Released){
+                foreach (OnMouseAction t in OnLeftButtonUp){
                     t(state);
                 }
 
                 _clickTimer.Stop();
-                if (_clickTimer.ElapsedMilliseconds < 200) {
+                if (_clickTimer.ElapsedMilliseconds < 200){
                     //okay, click registered. now dispatch events.
-                    foreach (OnMouseAction t in OnLeftButtonClick) {
+                    foreach (OnMouseAction t in OnLeftButtonClick){
                         t(state);
                     }
                 }
@@ -130,27 +143,44 @@ namespace Drydock.UI.Button{
             return false;
         }
 
-        private bool MouseEnterExitHandler(MouseState state){
+        private bool MouseEntryHandle(MouseState state){
+            return false;
+        }
 
+        private bool MouseExitHandle(MouseState state){
             return false;
         }
 
         #endregion
 
+        #region button events
+
+        public List<OnMouseAction> OnLeftButtonClick; //in future change this to a dictionary enum in UI class
+        public List<OnMouseAction> OnLeftButtonDown;
+        public List<OnMouseAction> OnLeftButtonUp;
+        public List<OnMouseAction> OnMouseEnterExit;
+        public List<OnMouseAction> OnMouseHover;
+        public List<OnMouseAction> OnMouseMovement;
+
+        #endregion
+
+        #region other stuff
+
         public TComponent GetComponent<TComponent>(){
-            foreach (var component in Components){
-                if (component.GetType() == typeof(TComponent)){
-                    return (TComponent)component;
+            foreach (IUIElementComponent component in Components){
+                if (component.GetType() == typeof (TComponent)){
+                    return (TComponent) component;
                 }
             }
             throw new Exception();
         }
 
-
         public void Update(){
-            foreach (var component in Components){
+            foreach (IUIElementComponent component in Components){
                 component.Update();
             }
         }
+
+        #endregion
     }
 }

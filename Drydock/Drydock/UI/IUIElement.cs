@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 
 namespace Drydock.UI {
     interface IUIElement {
-        Rectangle BoundingBox { get; }
         IUIElementComponent[] Components { get; set; }
         TComponent GetComponent<TComponent>();
         void Update();
