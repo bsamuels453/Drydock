@@ -1,8 +1,6 @@
 ﻿using Drydock.Control;
-using Drydock.Logic.InterfaceObj;
 using Drydock.Render;
 using Drydock.UI;
-using Project_Forge.utilities;
 
 namespace Drydock.Logic{
     internal class EditorLogic{
@@ -18,9 +16,9 @@ namespace Drydock.Logic{
 
             //initalize component classes
             _c = new CurveControllerCollection();
-            
 
-           /* _b = _uiContext.Add<Button>(
+
+            /* _b = _uiContext.Add<Button>(
                 new Button(
                     x: 50,
                     y: 50,
