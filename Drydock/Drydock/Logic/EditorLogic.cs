@@ -37,8 +37,8 @@ namespace Drydock.Logic{
                     }
                     )
                 );
-            _b.OnMouseEntry.Add(_b.GetComponent<FadeComponent>().ForceFadein);
-            _b.OnMouseExit.Add(_b.GetComponent<FadeComponent>().ForceFadeout);
+            _b.OnMouseExit.Add(_b.GetComponent<FadeComponent>().ForceFadein);
+            _b.OnMouseHover.Add(_b.GetComponent<FadeComponent>().ForceFadeout);
 
             //v.GetComponent<DraggableComponent>().Owner
         }
