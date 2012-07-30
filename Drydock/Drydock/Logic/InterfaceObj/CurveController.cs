@@ -1,7 +1,7 @@
 ﻿using System;
 using Drydock.Render;
 using Drydock.UI;
-using Drydock.UI.Button;
+using Drydock.UI.Components;
 using Microsoft.Xna.Framework;
 using Project_Forge.utilities;
 
@@ -117,7 +117,7 @@ namespace Drydock.Logic.InterfaceObj{
         /// <summary>
         /// this function balances handle movement so that they stay in a straight line and their movements translate to other handles
         /// </summary>
-        public void ReactToDragMovement(Button owner, int dx, int dy){
+        public void ReactToDragMovement(IUIInteractiveElement owner, int dx, int dy) {
             switch (owner.Identifier){
                 case 0:
                     _line1.TranslateOrigin(dx, dy);
@@ -149,7 +149,7 @@ namespace Drydock.Logic.InterfaceObj{
             }
         }
 
-        private void ClampHandleMovement(Button owner, ref int x, ref int y){
+        private void ClampHandleMovement(IUIInteractiveElement owner, ref int x, ref int y) {
 
         }
     }

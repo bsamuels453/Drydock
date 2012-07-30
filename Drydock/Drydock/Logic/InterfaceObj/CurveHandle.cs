@@ -3,7 +3,6 @@ using Drydock.Control;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using IDrawable = Drydock.Render.IDrawable;
 
 namespace Drydock.Logic.InterfaceObj{
     internal class CurveHandle{

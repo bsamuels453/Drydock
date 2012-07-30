@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.UI.Button{
-    internal delegate void DraggableObjectClamp(Button owner, ref int x, ref int y);
+namespace Drydock.UI.Components{
+    internal delegate void DraggableObjectClamp(IUIInteractiveElement owner, ref int x, ref int y);
 
-    internal delegate void ReactToDragMovement(Button owner, int dx, int dy);
+    internal delegate void ReactToDragMovement(IUIInteractiveElement owner, int dx, int dy);
 
     internal class DraggableComponent : IUIElementComponent{
         private readonly ReactToDragMovement _alertToDragMovement;
@@ -12,13 +12,13 @@ namespace Drydock.UI.Button{
         private bool _isEnabled;
         private bool _isMoving;
         private Vector2 _mouseOffset;
-        private Button _owner;
+        private IUIInteractiveElement _owner;
 
         #region properties
 
-        public Button Owner{ //this function acts as kind of a pseudo-constructor
+        public IUIElement Owner { //this function acts as kind of a pseudo-constructor
             set{
-                _owner = value;
+                _owner = (IUIInteractiveElement)value;
                 ComponentCtor();
             }
         }
@@ -28,12 +28,14 @@ namespace Drydock.UI.Button{
         #region ctor
 
         public DraggableComponent(DraggableObjectClamp clampFunction = null, ReactToDragMovement alertToDragMovement = null){
+
             _clampNewPosition = clampFunction;
             _alertToDragMovement = alertToDragMovement;
             _mouseOffset = new Vector2();
         }
 
         private void ComponentCtor(){
+
             _isEnabled = true;
             _isMoving = false;
             _owner.OnLeftButtonDown.Add(OnLeftButtonDown);

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.UI.Button{
+namespace Drydock.UI.Components{
     internal class FadeComponent : IUIElementComponent{
         #region FadeState enum
 
@@ -24,13 +24,13 @@ namespace Drydock.UI.Button{
         private bool _isEnabled;
         private bool _isFadingOut;
         private bool _isInTransition;
-        private Button _owner;
+        private IUIElement _owner;
         private long _prevUpdateTimeIndex;
-        private FadeTriggers _fadeTrigger;
+        private readonly FadeTriggers _fadeTrigger;
 
         #region properties
 
-        public Button Owner{
+        public IUIElement Owner {
             set{
                 _owner = value;
                 ComponentCtor();
@@ -78,8 +78,8 @@ namespace Drydock.UI.Button{
             }
             switch (_fadeTrigger) {
                 case FadeTriggers.EntryExit:
-                    _owner.OnMouseEntry.Add(ForceFadein);
-                    _owner.OnMouseExit.Add(ForceFadeout);
+                    ((IUIInteractiveElement)_owner).OnMouseEntry.Add(ForceFadein);
+                    ((IUIInteractiveElement)_owner).OnMouseExit.Add(ForceFadeout);
                     break;
 
                 case FadeTriggers.None:

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Drydock.UI.Button{
+namespace Drydock.UI.Components{
     internal class TextDisplayComponent{
         //not implemented
         public TextDisplayComponent(){

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Drydock.UI.Button {
-    class SelectableComponent {
+namespace Drydock.Render {
+    interface IAdvancedPrimitive {
+        float Opacity { get; set; }
     }
 }

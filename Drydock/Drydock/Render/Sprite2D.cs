@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
-    internal class Sprite2D{
+    internal class Sprite2D : IAdvancedPrimitive{
         #region class methods and fields
 
         private readonly int _id;
@@ -60,7 +60,7 @@ namespace Drydock.Render{
             _contentManager = content;
             _isFrameSlotAvail = new bool[_maxSprites];
             _frameTextures = new Texture2D[_maxSprites];
-            _frameParents = new IDrawable[_maxSprites];
+            _frameParents = new IDrawable [_maxSprites];
             _frameLayerLevels = new float[_maxSprites];
             _frameOpacity = new float[_maxSprites];
 

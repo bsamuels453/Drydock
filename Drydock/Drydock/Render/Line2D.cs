@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
-    internal class Line2D{
+    internal class Line2D : IAdvancedPrimitive{
         #region methods and fields
 
         private readonly int _id;
