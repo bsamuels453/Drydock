@@ -8,6 +8,7 @@ namespace Drydock.Logic{
     internal class EditorLogic{
         private readonly CurveControllerCollection _c;
         private readonly KeyboardHandler _keyboardHandler;
+        private readonly Button v;
 
         public EditorLogic(Renderer renderer){
             MouseHandler.Init(renderer.Device);
@@ -18,15 +19,16 @@ namespace Drydock.Logic{
             _c = new CurveControllerCollection();
             //c = new CurveController(200, 200, 100, 100, 0.3f);
             //line = new Line2D(100, 100, 200, 200);
-            var v = new Button(
+            v = new Button(
                 x: 50,
                 y: 50,
                 width: 50,
                 height: 50,
                 layerDepth: 0.5f,
                 textureName: "box",
-                components: new IButtonComponent[]{
-                    new DraggableComponent()
+                components: new IUIElementComponent[]{
+                    new DraggableComponent(),
+                    new FadeComponent()
                 }
                 );
 
@@ -37,6 +39,7 @@ namespace Drydock.Logic{
             MouseHandler.UpdateMouse();
             _keyboardHandler.UpdateKeyboard();
             _c.UpdateCurves();
+            v.Update();
         }
     }
 }

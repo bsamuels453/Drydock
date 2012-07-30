@@ -5,7 +5,7 @@ namespace Drydock.UI.Button{
     internal delegate void DraggableObjectClamp(Button owner, ref int x, ref int y);
     internal delegate void ReactToDragMovement(Button owner, int dx, int dy);
 
-    internal class DraggableComponent : IButtonComponent{
+    internal class DraggableComponent : IUIElementComponent{
         private readonly DraggableObjectClamp _clampNewPosition;
         private readonly ReactToDragMovement _alertToDragMovement;
         private bool _isEnabled;
@@ -20,13 +20,12 @@ namespace Drydock.UI.Button{
                 _owner = value;
                 _isEnabled = true;
                 _isMoving = false;
-                //_owner.OnLeftDownDelegates.Add(MouseClickHandler);
                 _owner.OnLeftButtonDown.Add(OnLeftButtonDown);
                 _owner.OnLeftButtonUp.Add(OnLeftButtonUp);
                 _owner.OnMouseMovement.Add(OnMouseMovement);
             }
         }
-
+        
 
         #endregion
 
@@ -36,7 +35,7 @@ namespace Drydock.UI.Button{
             _mouseOffset = new Vector2();
         }
 
-        #region IButtonComponent Members
+        #region IUIElementComponent Members
 
         public bool IsEnabled{
             get { return _isEnabled; }

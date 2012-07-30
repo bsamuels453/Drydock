@@ -13,7 +13,7 @@ namespace Drydock.Render{
 
         #region constructors
 
-        public Line2D(int x0, int y0, int x1, int y1, float depth){
+        public Line2D(int x0, int y0, int x1, int y1, float depth, float opacity = 1){
             int i = 0;
             while (!_isFrameSlotAvail[i]){ //i cant wait for this to crash
                 i++;
@@ -28,10 +28,11 @@ namespace Drydock.Render{
 
             _lineTextures[_id] = new Texture2D(_device, 1, 1, false, SurfaceFormat.Color);
             _lineTextures[_id].SetData(new[] {Color.Black});
+            _frameOpacity[_id] = opacity;
             _frameLayerLevels[_id] = depth;
         }
 
-        public Line2D(Vector2 v1, Vector2 v2, float depth){
+        public Line2D(Vector2 v1, Vector2 v2, float depth, float opacity = 1){
             int i = 0;
             while (!_isFrameSlotAvail[i]){ //i cant wait for this to crash
                 i++;
@@ -45,6 +46,7 @@ namespace Drydock.Render{
             _isDisposed = false;
             _lineTextures[_id] = new Texture2D(_device, 1, 1, false, SurfaceFormat.Color);
             _lineTextures[_id].SetData(new[] { Color.Black });
+            _frameOpacity[_id] = opacity;
             _frameLayerLevels[_id] = depth;
         }
 
@@ -87,6 +89,11 @@ namespace Drydock.Render{
             _point2.X += dx;
             _point2.Y += dy;
             CalculateInfoFromPoints();
+        }
+
+        public float Opacity{
+            get { return _frameOpacity[_id]; }
+            set { _frameOpacity[_id] = value; }
         }
 
         #endregion
@@ -140,6 +147,7 @@ namespace Drydock.Render{
         private static float[] _lineLengths;
         private static Vector2[] _lineUVectors;
         private static float[] _frameLayerLevels;
+        private static float[] _frameOpacity;
         private static SpriteBatch _spriteBatch;
         private static GraphicsDevice _device;
 
@@ -150,6 +158,7 @@ namespace Drydock.Render{
             _lineLengths = new float[_maxLines];
             _lineUVectors = new Vector2[_maxLines];
             _frameLayerLevels = new float[_maxLines];
+            _frameOpacity = new float[_maxLines];
 
             _spriteBatch = new SpriteBatch(device);
             _lineTextures = new Texture2D[_maxLines];
@@ -168,7 +177,7 @@ namespace Drydock.Render{
                         _lineTextures[i],
                         _lineBlitLocations[i],
                         null,
-                        Color.White,
+                        new Color(1,1,1,_frameOpacity[i]),
                         _lineAngles[i],
                         Vector2.Zero,
                         new Vector2(_lineLengths[i], 1),

@@ -78,7 +78,7 @@ namespace Drydock.Logic.InterfaceObj{
             _centPosition.X = BoundingBox.X + BoundingBox.Width/2;
             _centPosition.Y = BoundingBox.Y + BoundingBox.Height/2;
             _dragComponent = new CDraggable(this);
-            _elementSprite = new Sprite2D(_handleTexture, this, 1.0f);
+            _elementSprite = new Sprite2D(_handleTexture, this, 1, 1);
             _id = id;
             _parentController = parent;
             _isSelected = false;

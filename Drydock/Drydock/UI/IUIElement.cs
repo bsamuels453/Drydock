@@ -5,8 +5,10 @@ using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace Drydock.UI {
-    interface IUIPrimitive {
+    interface IUIElement {
         Rectangle BoundingBox { get; }
-
+        IUIElementComponent[] Components { get; set; }
+        TComponent GetComponent<TComponent>();
+        void Update();
     }
 }

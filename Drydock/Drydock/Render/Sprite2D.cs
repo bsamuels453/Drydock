@@ -8,7 +8,7 @@ namespace Drydock.Render{
         private readonly int _id;
         private bool _isDisposed;
 
-        public Sprite2D(string textureName, IDrawable parent, float depth){
+        public Sprite2D(string textureName, IDrawable parent, float depth, float initlOpacity){
             int i = 0;
             while (!_isFrameSlotAvail[i]){ //i cant wait for this to crash
                 i++;
@@ -18,11 +18,17 @@ namespace Drydock.Render{
             _frameTextures[i] = _contentManager.Load<Texture2D>(textureName);
             _frameParents[i] = parent;
             _frameLayerLevels[i] = depth;
+            _frameOpacity[i] = initlOpacity;
             _isDisposed = false;
         }
 
         ~Sprite2D(){
             Dispose();
+        }
+
+        public float Opacity{
+            get { return _frameOpacity[_id]; }
+            set { _frameOpacity[_id] = value; }
         }
 
         public void Dispose(){
@@ -46,6 +52,7 @@ namespace Drydock.Render{
         private static IDrawable[] _frameParents;
         private static float[] _frameLayerLevels;
         private static ContentManager _contentManager;
+        private static float[] _frameOpacity;
         private static SpriteBatch _spriteBatch;
 
         public static void Init(GraphicsDevice device, ContentManager content){
@@ -54,6 +61,7 @@ namespace Drydock.Render{
             _frameTextures = new Texture2D[_maxSprites];
             _frameParents = new IDrawable[_maxSprites];
             _frameLayerLevels = new float[_maxSprites];
+            _frameOpacity = new float[_maxSprites];
 
             for (int i = 0; i < _maxSprites; i++){
                 _isFrameSlotAvail[i] = true;
@@ -66,7 +74,7 @@ namespace Drydock.Render{
             _spriteBatch.Begin();
             for (int i = 0; i < _maxSprites; i++){
                 if (_isFrameSlotAvail[i] == false){
-                    _spriteBatch.Draw(_frameTextures[i], _frameParents[i].BoundingBox,null, Color.White, 0, Vector2.Zero, SpriteEffects.None, _frameLayerLevels[i]);
+                    _spriteBatch.Draw(_frameTextures[i], _frameParents[i].BoundingBox,null, new Color(1,1,1,_frameOpacity[i]), 0, Vector2.Zero, SpriteEffects.None, _frameLayerLevels[i]);
                 }
             }
             _spriteBatch.End();

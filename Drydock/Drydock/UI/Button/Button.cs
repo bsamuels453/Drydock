@@ -10,11 +10,10 @@ using IDrawable = Drydock.Render.IDrawable;
 namespace Drydock.UI.Button{
     internal delegate bool OnMouseAction(MouseState state);
 
-    internal class Button : IDrawable, IUIPrimitive{
+    internal class Button : IDrawable, IUIElement{
         private readonly float _layerDepth; //the depth at which the layer is rendered at. Also used for MouseHandler click resolution.
         private readonly Sprite2D _sprite; //the button's sprite
 
-        public IButtonComponent[] Components;
         #region button events
         public List<OnMouseAction> OnLeftButtonClick;//in future change this to a dictionary enum in UI class
         public List<OnMouseAction> OnLeftButtonDown;
@@ -30,6 +29,7 @@ namespace Drydock.UI.Button{
 
 
         #region properties
+        public IUIElementComponent[] Components { get; set; }
 
         public Vector2 CentPosition{
             get { return _centPosition; }
@@ -63,16 +63,14 @@ namespace Drydock.UI.Button{
             get { return _boundingBox; }
         }
 
-
-
         #endregion
 
         #region ctor
 
-        public Button(int x, int y, int width, int height, float layerDepth, string textureName, IButtonComponent[] components){
+        public Button(int x, int y, int width, int height, float layerDepth, string textureName, IUIElementComponent[] components){
             _centPosition = new Vector2();
             _boundingBox = new Rectangle(x, y, width, height);
-            _sprite = new Sprite2D(textureName, this, 0);
+            _sprite = new Sprite2D(textureName, this, 0, 1);
             _clickTimer = new Stopwatch();
             _hoverTimer = new Stopwatch();
             OnLeftButtonDown = new List<OnMouseAction>();
@@ -88,7 +86,7 @@ namespace Drydock.UI.Button{
             _layerDepth = layerDepth;
             Components = components;
 
-            foreach (IButtonComponent component in Components){
+            foreach (IUIElementComponent component in Components){
                 component.Owner = this;
             }
 
