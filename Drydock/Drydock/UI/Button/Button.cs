@@ -93,7 +93,8 @@ namespace Drydock.UI.Button{
             OnLeftButtonClick = new List<OnMouseAction>();
             OnMouseMovement = new List<OnMouseAction>();
             OnMouseHover = new List<OnMouseAction>();
-            OnMouseEnterExit = new List<OnMouseAction>();
+            OnMouseEntry = new List<OnMouseAction>();
+            OnMouseExit = new List<OnMouseAction>();
 
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
@@ -144,10 +145,16 @@ namespace Drydock.UI.Button{
         }
 
         private bool MouseEntryHandle(MouseState state){
+            foreach (var action in OnMouseEntry){
+                action(state);
+            }
             return false;
         }
 
         private bool MouseExitHandle(MouseState state){
+            foreach (var action in OnMouseExit){
+                action(state);
+            }
             return false;
         }
 
@@ -158,7 +165,8 @@ namespace Drydock.UI.Button{
         public List<OnMouseAction> OnLeftButtonClick; //in future change this to a dictionary enum in UI class
         public List<OnMouseAction> OnLeftButtonDown;
         public List<OnMouseAction> OnLeftButtonUp;
-        public List<OnMouseAction> OnMouseEnterExit;
+        public List<OnMouseAction> OnMouseEntry;
+        public List<OnMouseAction> OnMouseExit;
         public List<OnMouseAction> OnMouseHover;
         public List<OnMouseAction> OnMouseMovement;
 

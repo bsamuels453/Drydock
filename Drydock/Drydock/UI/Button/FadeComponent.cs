@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI.Button{
@@ -76,15 +77,17 @@ namespace Drydock.UI.Button{
         #endregion
 
         #region modification methods
+
         public bool ForceFadeout(MouseState state){
             _isInTransition = true;
             _isFadingOut = true;
             return false;
         }
 
-        public void ForceFadein(MouseState state){
+        public bool ForceFadein(MouseState state){
             _isInTransition = true;
             _isFadingOut = false;
+            return false;
         }
         #endregion
     }

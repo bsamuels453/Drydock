@@ -8,8 +8,8 @@ namespace Drydock.Logic{
     internal class EditorLogic{
         private readonly CurveControllerCollection _c;
         private readonly KeyboardHandler _keyboardHandler;
-        private readonly UIContext ctxt;
-        private readonly Button b;
+        private readonly Button _b;
+        private readonly UIContext _ctxt;
 
         public EditorLogic(Renderer renderer){
             MouseHandler.Init(renderer.Device);
@@ -22,8 +22,8 @@ namespace Drydock.Logic{
             //line = new Line2D(100, 100, 200, 200);
             var g = new UIContext();
             g.Update();
-            ctxt = new UIContext();
-            b = ctxt.Add<Button>(
+            _ctxt = new UIContext();
+            _b = _ctxt.Add<Button>(
                 new Button(
                     x: 50,
                     y: 50,
@@ -37,7 +37,9 @@ namespace Drydock.Logic{
                     }
                     )
                 );
-            
+            _b.OnMouseEntry.Add(_b.GetComponent<FadeComponent>().ForceFadein);
+            _b.OnMouseExit.Add(_b.GetComponent<FadeComponent>().ForceFadeout);
+
             //v.GetComponent<DraggableComponent>().Owner
         }
 
@@ -46,7 +48,7 @@ namespace Drydock.Logic{
             _keyboardHandler.UpdateKeyboard();
             _c.UpdateCurves();
             //v.Update();
-            ctxt.Update();
+            _ctxt.Update();
         }
     }
 }

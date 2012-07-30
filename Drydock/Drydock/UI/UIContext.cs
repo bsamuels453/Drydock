@@ -7,10 +7,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI {
     internal delegate bool OnMouseAction(MouseState state);
+
     class UIContext {
         private readonly List<IUIElement> _elements;
         private readonly SortedList<float, IUIInteractiveElement> _layerSortedElements;
-        private readonly MouseState _prevMouseState;
+        private MouseState _prevMouseState;
 
         #region ctor
         public UIContext(){
@@ -50,12 +51,10 @@ namespace Drydock.UI {
             bool forceListCleanup = false;
             foreach (var element in _layerSortedElements){
                 if (element.Value != null) {
-                    if (element.Value.BoundingBox.Contains(state.X, state.Y)) {
                         if (element.Value.MouseClickHandler(state)){
                             retval = true;
                             break;
                         }
-                    }
                 }
                 else{
                     forceListCleanup = true;
@@ -89,7 +88,7 @@ namespace Drydock.UI {
                     }
                 }
             }
-
+            _prevMouseState = state;
             return false;
         }
         #endregion
