@@ -1,4 +1,4 @@
-﻿namespace Drydock.UI.Components {
-    class SelectableComponent {
+﻿namespace Drydock.UI.Components{
+    internal class SelectableComponent{
     }
 }

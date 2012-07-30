@@ -85,8 +85,6 @@ namespace Drydock.Logic.InterfaceObj{
             MouseHandler.ClickSubscriptions.Add(HandleMouseClick);
         }
 
-        #region IDraggable Members
-
         public void HandleObjectMovement(int dx, int dy){
             //_parentController.BalanceHandleMovement(CentX, CentY, dx, dy, _id);
             if (dx != 0 || dy != 0){
@@ -96,8 +94,6 @@ namespace Drydock.Logic.InterfaceObj{
 
         public void ClampDraggedPosition(ref int x, ref int y){
         }
-
-        #endregion
 
         private bool HandleMouseClick(MouseState state){
             if (_boundingBox.Contains(state.X, state.Y)){

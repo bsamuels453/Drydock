@@ -17,9 +17,9 @@ namespace Drydock.UI.Components{
 
         #region properties
 
-        public IUIElement Owner { //this function acts as kind of a pseudo-constructor
+        public IUIElement Owner{ //this function acts as kind of a pseudo-constructor
             set{
-                _owner = (IUIInteractiveElement)value;
+                _owner = (IUIInteractiveElement) value;
                 ComponentCtor();
             }
         }
@@ -29,7 +29,6 @@ namespace Drydock.UI.Components{
         #region ctor
 
         public DraggableComponent(DraggableObjectClamp clampFunction = null, ReactToDragMovement alertToDragMovement = null){
-
             _clampNewPosition = clampFunction;
             _alertToDragMovement = alertToDragMovement;
             _mouseOffset = new Vector2();
@@ -37,8 +36,8 @@ namespace Drydock.UI.Components{
 
         private void ComponentCtor(){
             bool isParentInteractive = false;
-            foreach (var type in _owner.GetType().Assembly.GetTypes()){
-                if (type == typeof(IUIInteractiveElement)){
+            foreach (Type type in _owner.GetType().Assembly.GetTypes()){
+                if (type == typeof (IUIInteractiveElement)){
                     isParentInteractive = true;
                 }
             }

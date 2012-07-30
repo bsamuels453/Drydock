@@ -32,7 +32,7 @@ namespace Drydock.UI{
         }
 
         public void Update(){
-            foreach (var component in Components){
+            foreach (IUIElementComponent component in Components){
                 component.Update();
             }
         }

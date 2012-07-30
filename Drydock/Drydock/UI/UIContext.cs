@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Drydock.Control;
 using Microsoft.Xna.Framework.Input;
 
@@ -14,7 +12,7 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public static void Init() {
+        public static void Init(){
             _elements = new List<IUIElement>();
             _layerSortedElements = new UISortedList();
 
@@ -28,12 +26,12 @@ namespace Drydock.UI{
 
         #region ui element addition methods
 
-        static public TElement Add<TElement>(IUIElement elementToAdd) {
+        public static TElement Add<TElement>(IUIElement elementToAdd){
             _elements.Add(elementToAdd);
             return (TElement) elementToAdd;
         }
 
-        static public TElement Add<TElement>(IUIInteractiveElement elementToAdd) {
+        public static TElement Add<TElement>(IUIInteractiveElement elementToAdd){
             _elements.Add(elementToAdd);
 
             _layerSortedElements.Add(elementToAdd.LayerDepth, elementToAdd);
@@ -43,7 +41,7 @@ namespace Drydock.UI{
 
         #endregion
 
-        static public void Update() {
+        public static void Update(){
             foreach (IUIElement element in _elements){
                 element.Update();
             }
@@ -51,12 +49,12 @@ namespace Drydock.UI{
 
         #region event handlers
 
-        static private bool OnMouseButtonEvent(MouseState state) {
+        private static bool OnMouseButtonEvent(MouseState state){
             bool retval = false;
             bool forceListCleanup = false;
-            for (int i = 0; i < _layerSortedElements.Count; i++) {
+            for (int i = 0; i < _layerSortedElements.Count; i++){
                 if (_layerSortedElements[i] != null){
-                    if (_layerSortedElements[i].MouseClickHandler(state)) {
+                    if (_layerSortedElements[i].MouseClickHandler(state)){
                         retval = true;
                         break;
                     }
@@ -76,15 +74,15 @@ namespace Drydock.UI{
             return retval;
         }
 
-        static private bool OnMouseMovementEvent(MouseState state) {
+        private static bool OnMouseMovementEvent(MouseState state){
             for (int i = 0; i < _layerSortedElements.Count; i++){
                 _layerSortedElements[i].MouseMovementHandler(state);
-                if (_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && !_layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)) {
+                if (_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && !_layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                     //dispatch event for mouse entering the bounding box of the element
                     _layerSortedElements[i].MouseEntryHandler(state);
                 }
-                else {
-                    if (!_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && _layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)) {
+                else{
+                    if (!_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && _layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                         //dispatch event for mouse exiting the bounding box of the element
                         _layerSortedElements[i].MouseExitHandler(state);
                     }
@@ -107,12 +105,20 @@ namespace Drydock.UI{
             _objList = new List<IUIInteractiveElement>();
         }
 
+        public int Count{
+            get { return _depthList.Count; }
+        }
+
+        public IUIInteractiveElement this[int index]{
+            get { return _objList[index]; }
+        }
+
         public void Add(float depth, IUIInteractiveElement element){
             _depthList.Add(depth);
             _objList.Add(element);
 
-            for (int i = _depthList.Count-1; i < 0; i--){
-                if (_depthList[i] < _depthList[i - 1]) {
+            for (int i = _depthList.Count - 1; i < 0; i--){
+                if (_depthList[i] < _depthList[i - 1]){
                     _depthList.RemoveAt(i);
                     _objList.RemoveAt(i);
                     _depthList.Insert(i - 2, depth);
@@ -129,18 +135,10 @@ namespace Drydock.UI{
             _objList.Clear();
         }
 
-        public int Count{
-            get { return _depthList.Count; }
-        }
-
 
         public void RemoveAt(int index){
             _depthList.RemoveAt(index);
             _objList.RemoveAt(index);
-        }
-
-        public IUIInteractiveElement this[int index] {
-            get { return _objList[index]; }
         }
     }
 }

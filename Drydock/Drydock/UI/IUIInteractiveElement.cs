@@ -10,12 +10,12 @@ namespace Drydock.UI{
         OnMouseAction MouseEntryHandler { get; }
         OnMouseAction MouseExitHandler { get; }
 
-         List<OnMouseAction> OnLeftButtonClick{ get; }
-         List<OnMouseAction> OnLeftButtonDown{ get; }
-         List<OnMouseAction> OnLeftButtonUp{ get; }
-         List<OnMouseAction> OnMouseEntry{ get; }
-         List<OnMouseAction> OnMouseExit{ get; }
-         List<OnMouseAction> OnMouseHover{ get; }
-         List<OnMouseAction> OnMouseMovement { get; }
+        List<OnMouseAction> OnLeftButtonClick { get; }
+        List<OnMouseAction> OnLeftButtonDown { get; }
+        List<OnMouseAction> OnLeftButtonUp { get; }
+        List<OnMouseAction> OnMouseEntry { get; }
+        List<OnMouseAction> OnMouseExit { get; }
+        List<OnMouseAction> OnMouseHover { get; }
+        List<OnMouseAction> OnMouseMovement { get; }
     }
 }

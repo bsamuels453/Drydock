@@ -86,7 +86,6 @@ namespace Drydock.Logic.InterfaceObj{
                 );
 
 
-
             //_line1 = new Line2D(_centerHandle.CentPosition, _handle1.CentPosition, 0.5f);
             // _line2 = new Line2D(_centerHandle.CentPosition, _handle2.CentPosition, 0.5f);
 

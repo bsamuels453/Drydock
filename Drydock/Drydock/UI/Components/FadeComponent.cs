@@ -10,6 +10,10 @@ namespace Drydock.UI.Components{
             Faded
         }
 
+        #endregion
+
+        #region FadeTriggers enum
+
         public enum FadeTriggers{
             EntryExit,
             None
@@ -20,17 +24,17 @@ namespace Drydock.UI.Components{
         private readonly FadeState _defaultState;
 
         private readonly float _fadeDuration;
+        private readonly FadeTriggers _fadeTrigger;
         private readonly float _fadeoutOpacity;
         private bool _isEnabled;
         private bool _isFadingOut;
         private bool _isInTransition;
         private IUIElement _owner;
         private long _prevUpdateTimeIndex;
-        private readonly FadeTriggers _fadeTrigger;
 
         #region properties
 
-        public IUIElement Owner {
+        public IUIElement Owner{
             set{
                 _owner = value;
                 ComponentCtor();
@@ -61,7 +65,7 @@ namespace Drydock.UI.Components{
         /// <param name="trigger"> </param>
         /// <param name="fadeoutOpacity">opacity level to fade out to. range 0-1f</param>
         /// <param name="fadeDuration">the time it takes for sprite to fade out in milliseconds</param>
-        public FadeComponent(FadeState defaultState,FadeTriggers trigger = FadeTriggers.None,  float fadeoutOpacity = .2f, float fadeDuration = 250){
+        public FadeComponent(FadeState defaultState, FadeTriggers trigger = FadeTriggers.None, float fadeoutOpacity = .2f, float fadeDuration = 250){
             _fadeoutOpacity = fadeoutOpacity;
             _fadeDuration = fadeDuration*10000; //10k ticks in a millisecond
             _isInTransition = false;
@@ -69,28 +73,27 @@ namespace Drydock.UI.Components{
             _prevUpdateTimeIndex = DateTime.Now.Ticks;
             _defaultState = defaultState;
             _fadeTrigger = trigger;
-
         }
 
         private void ComponentCtor(){
             if (_defaultState == FadeState.Faded){
                 _owner.Sprite.Opacity = _fadeoutOpacity;
             }
-            switch (_fadeTrigger) {
+            switch (_fadeTrigger){
                 case FadeTriggers.EntryExit:
 
                     bool isParentInteractive = false;
-                    foreach (var type in _owner.GetType().Assembly.GetTypes()) {
-                        if( type == typeof(IUIInteractiveElement)){
+                    foreach (Type type in _owner.GetType().Assembly.GetTypes()){
+                        if (type == typeof (IUIInteractiveElement)){
                             isParentInteractive = true;
                         }
                     }
-                    if(!isParentInteractive){
+                    if (!isParentInteractive){
                         throw new Exception("Invalid fade trigger: Unable to set an interactive trigger to a non-interactive element.");
                     }
 
-                    ((IUIInteractiveElement)_owner).OnMouseEntry.Add(ForceFadein);
-                    ((IUIInteractiveElement)_owner).OnMouseExit.Add(ForceFadeout);
+                    ((IUIInteractiveElement) _owner).OnMouseEntry.Add(ForceFadein);
+                    ((IUIInteractiveElement) _owner).OnMouseExit.Add(ForceFadeout);
                     break;
 
                 case FadeTriggers.None:

@@ -60,7 +60,7 @@ namespace Drydock.Render{
             _contentManager = content;
             _isFrameSlotAvail = new bool[_maxSprites];
             _frameTextures = new Texture2D[_maxSprites];
-            _frameParents = new IDrawable [_maxSprites];
+            _frameParents = new IDrawable[_maxSprites];
             _frameLayerLevels = new float[_maxSprites];
             _frameOpacity = new float[_maxSprites];
 
