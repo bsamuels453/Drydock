@@ -12,12 +12,11 @@ namespace Drydock{
 
         public Drydock(){
             Content.RootDirectory = "Content";
-            _graphics = new GraphicsDeviceManager(this)
-                        {
-                            PreferredBackBufferWidth = 1200,
-                            PreferredBackBufferHeight = 800,
-                            SynchronizeWithVerticalRetrace = false,
-                        };
+            _graphics = new GraphicsDeviceManager(this){
+                PreferredBackBufferWidth = 1200,
+                PreferredBackBufferHeight = 800,
+                SynchronizeWithVerticalRetrace = false,
+            };
         }
 
         protected override void Initialize(){

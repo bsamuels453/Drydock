@@ -6,10 +6,10 @@ using Drydock.UI.Button;
 
 namespace Drydock.Logic{
     internal class EditorLogic{
-        private readonly CurveControllerCollection _c;
-        private readonly KeyboardHandler _keyboardHandler;
         private readonly Button _b;
+        private readonly CurveControllerCollection _c;
         private readonly UIContext _ctxt;
+        private readonly KeyboardHandler _keyboardHandler;
 
         public EditorLogic(Renderer renderer){
             MouseHandler.Init(renderer.Device);

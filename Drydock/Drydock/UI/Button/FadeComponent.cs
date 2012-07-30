@@ -1,9 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI.Button{
     internal class FadeComponent : IUIElementComponent{
+        #region FadeState enum
+
+        public enum FadeState{
+            Visible,
+            Faded
+        }
+
+        #endregion
+
+        private readonly FadeState _defaultState;
+
         private readonly float _fadeDuration;
         private readonly float _fadeoutOpacity;
         private bool _isEnabled;
@@ -15,7 +25,10 @@ namespace Drydock.UI.Button{
         #region properties
 
         public Button Owner{
-            set { _owner = value; }
+            set{
+                _owner = value;
+                ComponentCtor();
+            }
         }
 
         public bool IsEnabled{
@@ -38,14 +51,22 @@ namespace Drydock.UI.Button{
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="defaultState">default state of the parent object, faded or visible </param>
         /// <param name="fadeoutOpacity">opacity level to fade out to. range 0-1f</param>
         /// <param name="fadeDuration">the time it takes for sprite to fade out in milliseconds</param>
-        public FadeComponent(float fadeoutOpacity = .2f, float fadeDuration = 250){
+        public FadeComponent(FadeState defaultState, float fadeoutOpacity = .2f, float fadeDuration = 250){
             _fadeoutOpacity = fadeoutOpacity;
             _fadeDuration = fadeDuration*10000; //10k ticks in a millisecond
             _isInTransition = false;
             _isFadingOut = false;
             _prevUpdateTimeIndex = DateTime.Now.Ticks;
+            _defaultState = defaultState;
+        }
+
+        private void ComponentCtor(){
+            if (_defaultState == FadeState.Faded){
+                _owner.Sprite.Opacity = _fadeoutOpacity;
+            }
         }
 
         #endregion
@@ -89,6 +110,7 @@ namespace Drydock.UI.Button{
             _isFadingOut = false;
             return false;
         }
+
         #endregion
     }
 }

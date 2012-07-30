@@ -15,6 +15,9 @@ namespace Drydock.Control{
         private static Vector2 _viewportSize;
         private static MouseState _previousMouseState;
 
+        public static List<MouseClickHandler> ClickSubscriptions { get; set; }
+        public static List<MouseMovementHandler> MovementSubscriptions { get; set; }
+
         public static void Init(GraphicsDevice device){
             _viewportSize = new Vector2(device.Viewport.Bounds.Width, device.Viewport.Bounds.Height);
             Mouse.SetPosition((int) _viewportSize.X/2, (int) _viewportSize.Y/2);
@@ -25,9 +28,6 @@ namespace Drydock.Control{
             MovementSubscriptions = new List<MouseMovementHandler>();
             _previousMouseState = Mouse.GetState();
         }
-
-        public static List<MouseClickHandler> ClickSubscriptions { get; set; }
-        public static List<MouseMovementHandler> MovementSubscriptions { get; set; }
 
         public static void UpdateMouse(){
             MouseState newState = Mouse.GetState();

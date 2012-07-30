@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Drydock.Control;
 using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.UI {
+namespace Drydock.UI{
     internal delegate bool OnMouseAction(MouseState state);
 
-    class UIContext {
+    internal class UIContext{
         private readonly List<IUIElement> _elements;
         private readonly SortedList<float, IUIInteractiveElement> _layerSortedElements;
         private MouseState _prevMouseState;
 
         #region ctor
+
         public UIContext(){
             _elements = new List<IUIElement>();
             _layerSortedElements = new SortedList<float, IUIInteractiveElement>();
@@ -23,38 +21,42 @@ namespace Drydock.UI {
             MouseHandler.ClickSubscriptions.Add(OnMouseButtonEvent);
             MouseHandler.MovementSubscriptions.Add(OnMouseMovementEvent);
         }
+
         #endregion
 
         #region ui element addition methods
+
         public TElement Add<TElement>(IUIElement elementToAdd){
             _elements.Add(elementToAdd);
-            return (TElement)elementToAdd;
+            return (TElement) elementToAdd;
         }
 
-        public TElement Add<TElement>(IUIInteractiveElement elementToAdd) {
+        public TElement Add<TElement>(IUIInteractiveElement elementToAdd){
             _elements.Add(elementToAdd);
             _layerSortedElements.Add(elementToAdd.LayerDepth, elementToAdd);
 
-            return (TElement)elementToAdd;
+            return (TElement) elementToAdd;
         }
+
         #endregion
 
         public void Update(){
-            foreach (var element in _elements){
+            foreach (IUIElement element in _elements){
                 element.Update();
             }
         }
 
         #region event handlers
+
         private bool OnMouseButtonEvent(MouseState state){
             bool retval = false;
             bool forceListCleanup = false;
             foreach (var element in _layerSortedElements){
-                if (element.Value != null) {
-                        if (element.Value.MouseClickHandler(state)){
-                            retval = true;
-                            break;
-                        }
+                if (element.Value != null){
+                    if (element.Value.MouseClickHandler(state)){
+                        retval = true;
+                        break;
+                    }
                 }
                 else{
                     forceListCleanup = true;
@@ -73,11 +75,10 @@ namespace Drydock.UI {
 
         private bool OnMouseMovementEvent(MouseState state){
             foreach (var element in _layerSortedElements){
-
                 //dispatch event for mouse movement
                 element.Value.MouseMovementHandler(state);
 
-                if (element.Value.BoundingBox.Contains(state.X, state.Y) && !element.Value.BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)) {
+                if (element.Value.BoundingBox.Contains(state.X, state.Y) && !element.Value.BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                     //dispatch event for mouse entering the bounding box of the element
                     element.Value.MouseEntryHandler(state);
                 }
@@ -91,7 +92,7 @@ namespace Drydock.UI {
             _prevMouseState = state;
             return false;
         }
-        #endregion
 
+        #endregion
     }
 }

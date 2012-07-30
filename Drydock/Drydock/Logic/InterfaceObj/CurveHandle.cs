@@ -12,11 +12,11 @@ namespace Drydock.Logic.InterfaceObj{
         private readonly Sprite2D _elementSprite;
         private readonly int _id;
         private readonly CurveController _parentController;
+        private readonly Stopwatch _selectionTimer;
         private Rectangle _boundingBox;
         private Vector2 _centPosition;
-        private bool _isSelected;
-        private readonly Stopwatch _selectionTimer;
         private bool _didHandleMoveSinceTimerStart;
+        private bool _isSelected;
 
         #region properties
 
@@ -30,6 +30,24 @@ namespace Drydock.Logic.InterfaceObj{
 
         public int CentY{
             get { return BoundingBox.Y + BoundingBox.Height/2; }
+        }
+
+        public bool IsSelected{
+            get { return _isSelected; }
+            set{
+                if (value){
+                    _isSelected = true;
+                    _elementSprite.ChangeTexture("bigbox");
+                    _boundingBox.Width = 20;
+                    _boundingBox.Height = 20;
+                }
+                else{
+                    _isSelected = false;
+                    _elementSprite.ChangeTexture("box");
+                    _boundingBox.Width = 9;
+                    _boundingBox.Height = 9;
+                }
+            }
         }
 
         public int X{
@@ -52,24 +70,6 @@ namespace Drydock.Logic.InterfaceObj{
             get { return _boundingBox; }
         }
 
-        public bool IsSelected{
-            get { return _isSelected;  }
-            set {
-                if (value) {
-                    _isSelected = true;
-                    _elementSprite.ChangeTexture("bigbox");
-                    _boundingBox.Width = 20;
-                    _boundingBox.Height = 20;
-                }
-                else{
-                    _isSelected = false;
-                    _elementSprite.ChangeTexture("box");
-                    _boundingBox.Width = 9;
-                    _boundingBox.Height = 9;
-                }
-            }
-        }
-
         #endregion
 
         public CurveHandle(int x, int y, int id, CurveController parent){
@@ -86,29 +86,6 @@ namespace Drydock.Logic.InterfaceObj{
             MouseHandler.ClickSubscriptions.Add(HandleMouseClick);
         }
 
-        private bool HandleMouseClick(MouseState state){
-            if (_boundingBox.Contains(state.X, state.Y)){
-                if (!_selectionTimer.IsRunning && state.LeftButton == ButtonState.Pressed) {
-                    _selectionTimer.Start();
-                    _didHandleMoveSinceTimerStart = false;
-                }
-                else{
-                    if (state.LeftButton == ButtonState.Released){
-                        if (_selectionTimer.ElapsedMilliseconds < 100 && !_didHandleMoveSinceTimerStart) {
-                            _selectionTimer.Stop();
-                            IsSelected = true;
-                            return true;
-                        }
-                        else{
-                            _selectionTimer.Stop();
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
-
         #region IDraggable Members
 
         public void HandleObjectMovement(int dx, int dy){
@@ -122,6 +99,29 @@ namespace Drydock.Logic.InterfaceObj{
         }
 
         #endregion
+
+        private bool HandleMouseClick(MouseState state){
+            if (_boundingBox.Contains(state.X, state.Y)){
+                if (!_selectionTimer.IsRunning && state.LeftButton == ButtonState.Pressed){
+                    _selectionTimer.Start();
+                    _didHandleMoveSinceTimerStart = false;
+                }
+                else{
+                    if (state.LeftButton == ButtonState.Released){
+                        if (_selectionTimer.ElapsedMilliseconds < 100 && !_didHandleMoveSinceTimerStart){
+                            _selectionTimer.Stop();
+                            IsSelected = true;
+                            return true;
+                        }
+                        else{
+                            _selectionTimer.Stop();
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
 
         public void ManualTranslation(int dx, int dy){
             X += dx;

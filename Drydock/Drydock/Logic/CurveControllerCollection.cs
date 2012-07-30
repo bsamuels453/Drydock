@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Drydock.Control;
 using Drydock.Logic.InterfaceObj;
 using Drydock.Render;
 using Drydock.Utilities;
@@ -56,13 +55,9 @@ namespace Drydock.Logic{
             }
         }
 
-        #region IClickSubbable Members
-
         public bool HandleMouseClickEvent(MouseState state){
             throw new NotImplementedException();
         }
-
-        #endregion
 
         public void UpdateCurves(){
             for (int i = 0; i < _numControllers - 1; i++){

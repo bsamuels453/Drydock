@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Drydock.Render{
     internal class Sprite2D{
         #region class methods and fields
+
         private readonly int _id;
         private bool _isDisposed;
 
@@ -22,13 +23,13 @@ namespace Drydock.Render{
             _isDisposed = false;
         }
 
-        ~Sprite2D(){
-            Dispose();
-        }
-
         public float Opacity{
             get { return _frameOpacity[_id]; }
             set { _frameOpacity[_id] = value; }
+        }
+
+        ~Sprite2D(){
+            Dispose();
         }
 
         public void Dispose(){
@@ -74,7 +75,7 @@ namespace Drydock.Render{
             _spriteBatch.Begin();
             for (int i = 0; i < _maxSprites; i++){
                 if (_isFrameSlotAvail[i] == false){
-                    _spriteBatch.Draw(_frameTextures[i], _frameParents[i].BoundingBox,null, new Color(1,1,1,_frameOpacity[i]), 0, Vector2.Zero, SpriteEffects.None, _frameLayerLevels[i]);
+                    _spriteBatch.Draw(_frameTextures[i], _frameParents[i].BoundingBox, null, new Color(1, 1, 1, _frameOpacity[i]), 0, Vector2.Zero, SpriteEffects.None, _frameLayerLevels[i]);
                 }
             }
             _spriteBatch.End();

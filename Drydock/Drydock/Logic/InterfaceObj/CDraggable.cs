@@ -28,6 +28,7 @@ namespace Drydock.Logic.InterfaceObj{
             }
             return false;
         }
+
         #region properties
 
         #endregion
@@ -53,7 +54,6 @@ namespace Drydock.Logic.InterfaceObj{
         #region static initalizer
 
         public static void Init(){
-
         }
 
         #endregion

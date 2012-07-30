@@ -60,19 +60,19 @@ namespace Drydock.UI.Button{
             get { return _layerDepth; }
         }
 
-        public OnMouseAction MouseMovementHandler {
+        public OnMouseAction MouseMovementHandler{
             get { return MouseMovementHandle; }
         }
 
-        public OnMouseAction MouseClickHandler {
+        public OnMouseAction MouseClickHandler{
             get { return MouseClickHandle; }
         }
 
-        public OnMouseAction MouseEntryHandler {
+        public OnMouseAction MouseEntryHandler{
             get { return MouseEntryHandle; }
         }
 
-        public OnMouseAction MouseExitHandler {
+        public OnMouseAction MouseExitHandler{
             get { return MouseExitHandle; }
         }
 
@@ -145,14 +145,14 @@ namespace Drydock.UI.Button{
         }
 
         private bool MouseEntryHandle(MouseState state){
-            foreach (var action in OnMouseEntry){
+            foreach (OnMouseAction action in OnMouseEntry){
                 action(state);
             }
             return false;
         }
 
         private bool MouseExitHandle(MouseState state){
-            foreach (var action in OnMouseExit){
+            foreach (OnMouseAction action in OnMouseExit){
                 action(state);
             }
             return false;

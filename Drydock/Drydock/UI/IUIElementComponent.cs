@@ -1,4 +1,4 @@
-﻿namespace Drydock.UI {
+﻿namespace Drydock.UI{
     internal interface IUIElementComponent{
         Button.Button Owner { set; }
         bool IsEnabled { get; set; }

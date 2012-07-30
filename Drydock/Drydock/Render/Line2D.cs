@@ -27,7 +27,7 @@ namespace Drydock.Render{
             _isDisposed = false;
 
             _lineTextures[_id] = new Texture2D(_device, 1, 1, false, SurfaceFormat.Color);
-            _lineTextures[_id].SetData(new[] {Color.Black});
+            _lineTextures[_id].SetData(new[]{Color.Black});
             _frameOpacity[_id] = opacity;
             _frameLayerLevels[_id] = depth;
         }
@@ -45,7 +45,7 @@ namespace Drydock.Render{
             CalculateInfoFromPoints();
             _isDisposed = false;
             _lineTextures[_id] = new Texture2D(_device, 1, 1, false, SurfaceFormat.Color);
-            _lineTextures[_id].SetData(new[] { Color.Black });
+            _lineTextures[_id].SetData(new[]{Color.Black});
             _frameOpacity[_id] = opacity;
             _frameLayerLevels[_id] = depth;
         }
@@ -79,6 +79,11 @@ namespace Drydock.Render{
             }
         }
 
+        public float Opacity{
+            get { return _frameOpacity[_id]; }
+            set { _frameOpacity[_id] = value; }
+        }
+
         public void TranslateOrigin(int dx, int dy){
             _point1.X += dx;
             _point1.Y += dy;
@@ -89,11 +94,6 @@ namespace Drydock.Render{
             _point2.X += dx;
             _point2.Y += dy;
             CalculateInfoFromPoints();
-        }
-
-        public float Opacity{
-            get { return _frameOpacity[_id]; }
-            set { _frameOpacity[_id] = value; }
         }
 
         #endregion
@@ -177,7 +177,7 @@ namespace Drydock.Render{
                         _lineTextures[i],
                         _lineBlitLocations[i],
                         null,
-                        new Color(1,1,1,_frameOpacity[i]),
+                        new Color(1, 1, 1, _frameOpacity[i]),
                         _lineAngles[i],
                         Vector2.Zero,
                         new Vector2(_lineLengths[i], 1),

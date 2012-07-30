@@ -9,7 +9,6 @@ namespace Drydock.Logic.InterfaceObj{
         private readonly CurveHandle _handle2;
         private readonly Line2D _line1;
         private readonly Line2D _line2;
-       // private bool _isSelected;
 
         #region properties
 
@@ -26,6 +25,8 @@ namespace Drydock.Logic.InterfaceObj{
         }
 
         #endregion
+
+        // private bool _isSelected;
 
         public CurveController(int initX, int initY, float length1, float length2, float angle1){
             Vector2 component1 = Common.GetComponentFromAngle(angle1, length1);
