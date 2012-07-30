@@ -14,7 +14,9 @@ namespace Drydock.UI.Button{
 
         private Rectangle _boundingBox; //bounding box that represents the bounds of the button
         private Vector2 _centPosition; //represents the approximate center of the button
-        private Stopwatch _hoverTimer; //nonimp, put in superclass
+        private readonly Stopwatch _hoverTimer; //nonimp, put in superclass
+
+        private const int _timeTillHoverProc = 1000;
 
         #region properties
 
@@ -115,6 +117,9 @@ namespace Drydock.UI.Button{
             foreach (OnMouseAction t in OnMouseMovement){
                 t(state);
             }
+            if (_hoverTimer.IsRunning){
+                _hoverTimer.Restart();
+            }
             return false;
         }
 
@@ -148,6 +153,8 @@ namespace Drydock.UI.Button{
             foreach (OnMouseAction action in OnMouseEntry){
                 action(state);
             }
+            _hoverTimer.Start();
+
             return false;
         }
 
@@ -155,6 +162,7 @@ namespace Drydock.UI.Button{
             foreach (OnMouseAction action in OnMouseExit){
                 action(state);
             }
+            _hoverTimer.Reset();
             return false;
         }
 
@@ -180,12 +188,20 @@ namespace Drydock.UI.Button{
                     return (TComponent) component;
                 }
             }
-            throw new Exception();
+            throw new Exception("Request made to a Button for a component that did not exist.");
         }
 
         public void Update(){
             foreach (IUIElementComponent component in Components){
                 component.Update();
+            }
+            if (_hoverTimer.IsRunning){
+                if (_hoverTimer.ElapsedMilliseconds > _timeTillHoverProc){
+                    _hoverTimer.Reset();
+                    foreach (var action in OnMouseHover){
+                        action(Mouse.GetState());
+                    }
+                }
             }
         }
 

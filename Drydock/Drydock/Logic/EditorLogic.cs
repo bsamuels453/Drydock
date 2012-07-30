@@ -3,6 +3,7 @@ using Drydock.Logic.InterfaceObj;
 using Drydock.Render;
 using Drydock.UI;
 using Drydock.UI.Button;
+using Project_Forge.utilities;
 
 namespace Drydock.Logic{
     internal class EditorLogic{
@@ -23,11 +24,12 @@ namespace Drydock.Logic{
             var g = new UIContext();
             g.Update();
             _ctxt = new UIContext();
+            DebugTimer.Start();
             _b = _ctxt.Add<Button>(
                 new Button(
                     x: 50,
                     y: 50,
-                    width: 50,
+                    width: 50, 
                     height: 50,
                     layerDepth: 0.5f,
                     textureName: "box",
@@ -37,8 +39,10 @@ namespace Drydock.Logic{
                     }
                     )
                 );
-            _b.OnMouseExit.Add(_b.GetComponent<FadeComponent>().ForceFadein);
-            _b.OnMouseHover.Add(_b.GetComponent<FadeComponent>().ForceFadeout);
+            DebugTimer.Stop();
+            DebugTimer.Report(":");
+            _b.OnMouseEntry.Add(_b.GetComponent<FadeComponent>().ForceFadein);
+            _b.OnMouseExit.Add(_b.GetComponent<FadeComponent>().ForceFadeout);
 
             //v.GetComponent<DraggableComponent>().Owner
         }

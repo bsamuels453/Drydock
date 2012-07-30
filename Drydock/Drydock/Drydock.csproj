@@ -125,6 +125,7 @@
     <Compile Include="Common.cs" />
     <Compile Include="Control\KeyboardHandler.cs" />
     <Compile Include="Control\MouseHandler.cs" />
+    <Compile Include="DebugTimer.cs" />
     <Compile Include="Logic\CurveControllerCollection.cs" />
     <Compile Include="UI\Button\Button.cs" />
     <Compile Include="UI\Button\DraggableComponent.cs" />
