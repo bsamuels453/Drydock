@@ -33,7 +33,7 @@ namespace Drydock.Logic{
                     textureName: "box",
                     components: new IUIElementComponent[]{
                         new DraggableComponent(),
-                        new FadeComponent()
+                        new FadeComponent(FadeComponent.FadeState.Faded)
                     }
                     )
                 );
