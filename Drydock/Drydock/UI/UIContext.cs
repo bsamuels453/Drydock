@@ -36,7 +36,7 @@ namespace Drydock.UI{
         public static TElement Add<TElement>(IUIInteractiveElement elementToAdd){
             _elements.Add(elementToAdd);
 
-            _layerSortedElements.Add(elementToAdd.LayerDepth, elementToAdd);
+            _layerSortedElements.Add(elementToAdd.Depth, elementToAdd);
 
             return (TElement) elementToAdd;
         }
@@ -51,7 +51,7 @@ namespace Drydock.UI{
 
         #region event handlers
 
-        private static bool OnMouseButtonEvent(MouseState state) {
+        private static bool OnMouseButtonEvent(MouseState state){
             bool retval = false;
             bool forceListCleanup = false;
             for (int i = 0; i < _layerSortedElements.Count; i++){
@@ -106,6 +106,7 @@ namespace Drydock.UI{
     }
 
     #region uisortedlist
+
     internal class UISortedList{
         private readonly List<float> _depthList;
         private readonly List<IUIInteractiveElement> _objList;
@@ -151,5 +152,6 @@ namespace Drydock.UI{
             _objList.RemoveAt(index);
         }
     }
-#endregion
+
+    #endregion
 }

@@ -7,18 +7,27 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI{
     internal class Button : IUIInteractiveElement{
-        private const int _timeTillHoverProc = 1000;
+        #region properties and fields
 
-        #region properties
+        private const int _timeTillHoverProc = 1000;
+        private readonly Stopwatch _clickTimer;
+        private readonly Stopwatch _hoverTimer; //nonimp, put in superclass
+        private readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
+        private readonly Sprite2D _sprite; //the button's sprite
+        private Rectangle _boundingBox; //bounding box that represents the bounds of the button
+        private Vector2 _centPosition; //represents the approximate center of the button
 
         public Vector2 CentPosition{
             get { return _centPosition; }
         }
-
+        public float Opacity { get; set; }
+        public float Depth { get; set; }
+        public int Identifier{
+            get { return _identifier; }
+        }
         public IAdvancedPrimitive Sprite{
             get { return _sprite; }
         }
-
         public int X{
             get { return _boundingBox.X; }
             set{
@@ -26,7 +35,6 @@ namespace Drydock.UI{
                 _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             }
         }
-
         public int Y{
             get { return _boundingBox.Y; }
             set{
@@ -34,51 +42,16 @@ namespace Drydock.UI{
                 _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
             }
         }
-
         public Rectangle BoundingBox{
             get { return _boundingBox; }
         }
-
         public IUIElementComponent[] Components { get; set; }
-
-        public float LayerDepth{
-            get { return _layerDepth; }
-        }
-
-        public OnMouseAction MouseMovementHandler{
-            get { return MouseMovementHandle; }
-        }
-
-        public OnMouseAction MouseClickHandler{
-            get { return MouseClickHandle; }
-        }
-
-        public OnMouseAction MouseEntryHandler{
-            get { return MouseEntryHandle; }
-        }
-
-        public OnMouseAction MouseExitHandler{
-            get { return MouseExitHandle; }
-        }
-
         public List<OnMouseAction> OnLeftButtonClick { get; set; }
-
-
         public List<OnMouseAction> OnLeftButtonDown { get; set; }
-
-
         public List<OnMouseAction> OnLeftButtonUp { get; set; }
-
-
         public List<OnMouseAction> OnMouseEntry { get; set; }
-
-
         public List<OnMouseAction> OnMouseExit { get; set; }
-
-
         public List<OnMouseAction> OnMouseHover { get; set; }
-
-
         public List<OnMouseAction> OnMouseMovement { get; set; }
 
         #endregion
@@ -89,7 +62,7 @@ namespace Drydock.UI{
             _identifier = identifier;
             _centPosition = new Vector2();
             _boundingBox = new Rectangle(x, y, width, height);
-            _sprite = new Sprite2D(textureName, this, 0, 1);
+            _sprite = new Sprite2D(textureName, this);
             _clickTimer = new Stopwatch();
             _hoverTimer = new Stopwatch();
             OnLeftButtonDown = new List<OnMouseAction>();
@@ -103,7 +76,7 @@ namespace Drydock.UI{
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
 
-            _layerDepth = layerDepth;
+            Depth = layerDepth;
             Components = components;
 
             foreach (IUIElementComponent component in Components){
@@ -115,7 +88,7 @@ namespace Drydock.UI{
 
         #region event handlers
 
-        private bool MouseMovementHandle(MouseState state){
+        public bool MouseMovementHandler(MouseState state){
             foreach (OnMouseAction t in OnMouseMovement){
                 t(state);
             }
@@ -125,7 +98,7 @@ namespace Drydock.UI{
             return false;
         }
 
-        private bool MouseClickHandle(MouseState state){
+        public bool MouseClickHandler(MouseState state){
             //for this event, we can assume the mouse is within the button's boundingbox
             bool denyOtherElementsFromClick = false;
 
@@ -158,7 +131,7 @@ namespace Drydock.UI{
             return denyOtherElementsFromClick;
         }
 
-        private bool MouseEntryHandle(MouseState state){
+        public bool MouseEntryHandler(MouseState state){
             foreach (OnMouseAction action in OnMouseEntry){
                 action(state);
             }
@@ -167,7 +140,7 @@ namespace Drydock.UI{
             return false;
         }
 
-        private bool MouseExitHandle(MouseState state){
+        public bool MouseExitHandler(MouseState state){
             foreach (OnMouseAction action in OnMouseExit){
                 action(state);
             }
@@ -177,19 +150,7 @@ namespace Drydock.UI{
 
         #endregion
 
-        #region button events
-
-        //private List<OnMouseAction> OnLeftButtonClick; //in future change this to a dictionary enum in UI class
-        //private List<OnMouseAction> OnLeftButtonDown;
-        //private List<OnMouseAction> OnLeftButtonUp;
-        //private List<OnMouseAction> OnMouseEntry;
-        //private List<OnMouseAction> OnMouseExit;
-        //private List<OnMouseAction> OnMouseHover;
-        //private List<OnMouseAction> OnMouseMovement;
-
-        #endregion
-
-        #region other stuff
+        #region other IUIElement derived methods
 
         public TComponent GetComponent<TComponent>(){
             foreach (IUIElementComponent component in Components){
@@ -214,19 +175,6 @@ namespace Drydock.UI{
             }
         }
 
-        public int Identifier{
-            get { return _identifier; }
-        }
-
         #endregion
-
-        private readonly Stopwatch _clickTimer;
-        private readonly Stopwatch _hoverTimer; //nonimp, put in superclass
-        private readonly int _identifier;
-        private readonly float _layerDepth; //the depth at which the layer is rendered at. Also used for MouseHandler click resolution.
-        private readonly Sprite2D _sprite; //the button's sprite
-
-        private Rectangle _boundingBox; //bounding box that represents the bounds of the button
-        private Vector2 _centPosition; //represents the approximate center of the button
     }
 }

@@ -3,7 +3,7 @@ using Drydock.UI;
 using Drydock.UI.Components;
 using Microsoft.Xna.Framework;
 
-namespace Drydock.Logic.InterfaceObj{
+namespace Drydock.Logic{
     internal class CurveController{
         //private readonly CurveHandle _centerHandle;
         // private readonly CurveHandle _handle1;

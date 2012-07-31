@@ -1,14 +1,10 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI{
     internal interface IUIInteractiveElement : IUIElement{
-        float LayerDepth { get; }
         new Rectangle BoundingBox { get; }
-        OnMouseAction MouseMovementHandler { get; }
-        OnMouseAction MouseClickHandler { get; }
-        OnMouseAction MouseEntryHandler { get; }
-        OnMouseAction MouseExitHandler { get; }
 
         List<OnMouseAction> OnLeftButtonClick { get; }
         List<OnMouseAction> OnLeftButtonDown { get; }
@@ -17,5 +13,9 @@ namespace Drydock.UI{
         List<OnMouseAction> OnMouseExit { get; }
         List<OnMouseAction> OnMouseHover { get; }
         List<OnMouseAction> OnMouseMovement { get; }
+        bool MouseMovementHandler(MouseState state);
+        bool MouseClickHandler(MouseState state);
+        bool MouseEntryHandler(MouseState state);
+        bool MouseExitHandler(MouseState state);
     }
 }

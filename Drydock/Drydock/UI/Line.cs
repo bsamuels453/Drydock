@@ -1,13 +1,16 @@
-﻿using System;
+﻿#region
+
+using System;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
 
+#endregion
+
 namespace Drydock.UI{
     internal class Line : IUIElement{
-        #region fields and properties
+        #region fields and properties, and element modification methods
 
         private readonly Line2D _lineSprite;
-        public float Depth;
         public float Length;
         private float _angle;
         private Vector2 _point1;
@@ -22,7 +25,6 @@ namespace Drydock.UI{
                 CalculateDestFromUnitVector();
             }
         }
-
         public Vector2 OriginPoint{
             get { return _point1; }
             set{
@@ -30,7 +32,6 @@ namespace Drydock.UI{
                 CalculateInfoFromPoints();
             }
         }
-
         public Vector2 DestPoint{
             get { return _point2; }
             set{
@@ -38,35 +39,31 @@ namespace Drydock.UI{
                 CalculateInfoFromPoints();
             }
         }
-
+        public IUIElementComponent[] Components { get; set; }
+        public float Opacity { get; set; }
+        public float Depth { get; set; }
         public int Identifier{
             get { throw new NotImplementedException(); }
         }
-
         public int X{
             get { return (int) _point1.X; }
             set { throw new NotImplementedException(); }
         }
-
         public int Y{
             get { return (int) _point1.Y; }
             set { throw new NotImplementedException(); }
         }
-
         public Rectangle BoundingBox{
             get { throw new NotImplementedException(); }
         }
-
         public IAdvancedPrimitive Sprite{
             get { return _lineSprite; }
         }
-
         public void TranslateOrigin(int dx, int dy){
             _point1.X += dx;
             _point1.Y += dy;
             CalculateInfoFromPoints();
         }
-
         public void TranslateDestination(int dx, int dy){
             _point2.X += dx;
             _point2.Y += dy;
@@ -82,6 +79,7 @@ namespace Drydock.UI{
             _point1 = v1;
             _point2 = v2;
             Depth = layerDepth;
+            Opacity = 1;
             CalculateInfoFromPoints();
 
             Components = components;
@@ -114,8 +112,6 @@ namespace Drydock.UI{
         #endregion
 
         #region IUIElement Members
-
-        public IUIElementComponent[] Components { get; set; }
 
         public TComponent GetComponent<TComponent>(){
             foreach (IUIElementComponent component in Components){

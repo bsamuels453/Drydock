@@ -8,6 +8,7 @@ namespace Drydock.UI.Components{
     internal class FadeComponent : IUIElementComponent{
         //todo: some kind of synchronize function to get multiple ui elements' fade components to trigger
         //AddTriggerElement
+
         #region FadeState enum
 
         public enum FadeState{
@@ -82,7 +83,7 @@ namespace Drydock.UI.Components{
 
         private void ComponentCtor(){
             if (_defaultState == FadeState.Faded){
-                _owner.Sprite.Opacity = _fadeoutOpacity;
+                _owner.Opacity = _fadeoutOpacity;
             }
             switch (_fadeTrigger){
                 case FadeTriggers.EntryExit:
@@ -115,16 +116,16 @@ namespace Drydock.UI.Components{
                 long timeSinceLastUpdate = DateTime.Now.Ticks - _prevUpdateTimeIndex;
                 float step = timeSinceLastUpdate/_fadeDuration;
                 if (_isFadingOut){
-                    _owner.Sprite.Opacity -= step;
-                    if (_owner.Sprite.Opacity < _fadeoutOpacity){
-                        _owner.Sprite.Opacity = _fadeoutOpacity;
+                    _owner.Opacity -= step;
+                    if (_owner.Opacity < _fadeoutOpacity){
+                        _owner.Opacity = _fadeoutOpacity;
                         _isInTransition = false;
                     }
                 }
                 else{
-                    _owner.Sprite.Opacity += step;
-                    if (_owner.Sprite.Opacity > 1){
-                        _owner.Sprite.Opacity = 1;
+                    _owner.Opacity += step;
+                    if (_owner.Opacity > 1){
+                        _owner.Opacity = 1;
                         _isInTransition = false;
                     }
                 }

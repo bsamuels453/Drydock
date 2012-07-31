@@ -5,12 +5,10 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Drydock.Render{
     internal class Line2D : IAdvancedPrimitive{
         #region properties and fields
+
         private readonly int _id;
         private bool _isDisposed;
-        public float Opacity {
-            get { return _opacity[_id]; }
-            set { _opacity[_id] = value; }
-        }
+
         #endregion
 
         #region constructors
@@ -28,7 +26,6 @@ namespace Drydock.Render{
             _lineTextures[_id] = new Texture2D(_device, 1, 1, false, SurfaceFormat.Color);
             _lineTextures[_id].SetData(new[]{Color.Black});
             _lineOwners[_id] = owner;
-            _opacity[_id] = opacity;
         }
 
         #endregion
@@ -54,14 +51,12 @@ namespace Drydock.Render{
         private static bool[] _isFrameSlotAvail;
         private static Texture2D[] _lineTextures;
         private static Line[] _lineOwners;
-        private static float[] _opacity;
         private static SpriteBatch _spriteBatch;
         private static GraphicsDevice _device;
 
         public static void Init(GraphicsDevice device){
             _isFrameSlotAvail = new bool[_maxLines];
             _lineOwners = new Line[_maxLines];
-            _opacity = new float[_maxLines];
             _spriteBatch = new SpriteBatch(device);
             _lineTextures = new Texture2D[_maxLines];
 
@@ -79,7 +74,7 @@ namespace Drydock.Render{
                         _lineTextures[i],
                         _lineOwners[i].OriginPoint,
                         null,
-                        new Color(1, 1, 1, _opacity[i]),
+                        new Color(1, 1, 1, _lineOwners[i].Opacity),
                         _lineOwners[i].Angle,
                         Vector2.Zero,
                         new Vector2(_lineOwners[i].Length, 1),
