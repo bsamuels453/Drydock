@@ -4,7 +4,6 @@ using Drydock.UI;
 
 namespace Drydock.Logic{
     internal class EditorLogic{
-        private readonly Button _b;
         private readonly CurveControllerCollection _c;
         private readonly KeyboardHandler _keyboardHandler;
 

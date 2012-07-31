@@ -49,15 +49,6 @@ namespace Drydock.UI{
             }
         }
 
-        public static void ForceExitHandlers(IUIElement ignoredElement){
-            for (int i = 0; i < _layerSortedElements.Count; i++){
-                if (ignoredElement != _layerSortedElements[i]){
-                    _layerSortedElements[i].MouseExitHandler(Mouse.GetState());
-                }
-            }
-
-        }
-
         #region event handlers
 
         private static bool OnMouseButtonEvent(MouseState state) {
@@ -114,7 +105,7 @@ namespace Drydock.UI{
         #endregion
     }
 
-
+    #region uisortedlist
     internal class UISortedList{
         private readonly List<float> _depthList;
         private readonly List<IUIInteractiveElement> _objList;
@@ -160,4 +151,5 @@ namespace Drydock.UI{
             _objList.RemoveAt(index);
         }
     }
+#endregion
 }

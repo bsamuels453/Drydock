@@ -164,7 +164,7 @@ namespace Drydock.UI{
             }
             _hoverTimer.Start();
 
-            return true;
+            return false;
         }
 
         private bool MouseExitHandle(MouseState state){

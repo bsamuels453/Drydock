@@ -79,7 +79,7 @@ namespace Drydock.UI.Components{
                     UIContext.DisableEntryHandlers = true;
                     _mouseOffset.X = _owner.X - state.X;
                     _mouseOffset.Y = _owner.Y - state.Y;
-                    return true;
+                    return false;
                 }
             }
             return false;
