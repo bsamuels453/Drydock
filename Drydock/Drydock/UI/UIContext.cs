@@ -49,9 +49,18 @@ namespace Drydock.UI{
             }
         }
 
+        public static void ForceExitHandlers(IUIElement ignoredElement){
+            for (int i = 0; i < _layerSortedElements.Count; i++){
+                if (ignoredElement != _layerSortedElements[i]){
+                    _layerSortedElements[i].MouseExitHandler(Mouse.GetState());
+                }
+            }
+
+        }
+
         #region event handlers
 
-        private static bool OnMouseButtonEvent(MouseState state){
+        private static bool OnMouseButtonEvent(MouseState state) {
             bool retval = false;
             bool forceListCleanup = false;
             for (int i = 0; i < _layerSortedElements.Count; i++){
@@ -80,16 +89,21 @@ namespace Drydock.UI{
             for (int i = 0; i < _layerSortedElements.Count; i++){
                 _layerSortedElements[i].MouseMovementHandler(state);
 
-                if (!DisableEntryHandlers){
-                    if (_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && !_layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
-                        //dispatch event for mouse entering the bounding box of the element
-                        _layerSortedElements[i].MouseEntryHandler(state);
-                    }
-                    else{
-                        if (!_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && _layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
-                            //dispatch event for mouse exiting the bounding box of the element
-                            _layerSortedElements[i].MouseExitHandler(state);
+
+                if (_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && !_layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
+                    //dispatch event for mouse entering the bounding box of the element
+
+                    if (!DisableEntryHandlers){
+                        if (_layerSortedElements[i].MouseEntryHandler(state)){
+                            break;
                         }
+                    }
+                }
+
+                else{
+                    if (!_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && _layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
+                        //dispatch event for mouse exiting the bounding box of the element
+                        _layerSortedElements[i].MouseExitHandler(state);
                     }
                 }
             }

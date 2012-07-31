@@ -137,12 +137,15 @@ namespace Drydock.UI.Components{
         #region modification methods
 
         public bool ForceFadeout(MouseState state){
+            //UIContext.DisableEntryHandlers = false;
             _isInTransition = true;
             _isFadingOut = true;
             return false;
         }
 
         public bool ForceFadein(MouseState state){
+            //UIContext.DisableEntryHandlers = true;
+            //UIContext.ForceExitHandlers(_owner);
             _isInTransition = true;
             _isFadingOut = false;
             return false;
