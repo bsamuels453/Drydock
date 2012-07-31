@@ -127,28 +127,35 @@ namespace Drydock.UI{
 
         private bool MouseClickHandle(MouseState state){
             //for this event, we can assume the mouse is within the button's boundingbox
+            bool denyOtherElementsFromClick = false;
 
             if (state.LeftButton == ButtonState.Pressed){
                 _clickTimer.Start();
                 foreach (OnMouseAction t in OnLeftButtonDown){
-                    t(state);
+                    if (t(state)){
+                        denyOtherElementsFromClick = true;
+                    }
                 }
             }
             if (state.LeftButton == ButtonState.Released){
                 foreach (OnMouseAction t in OnLeftButtonUp){
-                    t(state);
+                    if (t(state)){
+                        denyOtherElementsFromClick = true;
+                    }
                 }
 
                 _clickTimer.Stop();
                 if (_clickTimer.ElapsedMilliseconds < 200){
                     //okay, click registered. now dispatch events.
                     foreach (OnMouseAction t in OnLeftButtonClick){
-                        t(state);
+                        if (t(state)){
+                            denyOtherElementsFromClick = true;
+                        }
                     }
                 }
                 _clickTimer.Reset();
             }
-            return false;
+            return denyOtherElementsFromClick;
         }
 
         private bool MouseEntryHandle(MouseState state){

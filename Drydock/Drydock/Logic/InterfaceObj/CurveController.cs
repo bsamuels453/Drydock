@@ -151,10 +151,10 @@ namespace Drydock.Logic.InterfaceObj{
         public void ReactToDragMovement(IUIInteractiveElement owner, int dx, int dy){
             switch (owner.Identifier){
                 case 0:
-                    _line1.LineSprite.TranslateOrigin(dx, dy);
-                    _line1.LineSprite.TranslateDestination(dx, dy);
-                    _line2.LineSprite.TranslateOrigin(dx, dy);
-                    _line2.LineSprite.TranslateDestination(dx, dy);
+                    _line1.TranslateOrigin(dx, dy);
+                    _line1.TranslateDestination(dx, dy);
+                    _line2.TranslateOrigin(dx, dy);
+                    _line2.TranslateDestination(dx, dy);
                     _handle1.X += dx;
                     _handle1.Y += dy;
 
@@ -165,17 +165,17 @@ namespace Drydock.Logic.InterfaceObj{
                     //_handle2.ManualTranslation(dx, dy);
                     break;
                 case 1:
-                    _line1.LineSprite.TranslateDestination(dx, dy);
-                    _line2.LineSprite.Angle = (float) (_line1.LineSprite.Angle + Math.PI);
-                    _handle2.X = (int) _line2.LineSprite.DestPoint.X - _handle2.BoundingBox.Width/2;
-                    _handle2.Y = (int) _line2.LineSprite.DestPoint.Y - _handle2.BoundingBox.Height/2;
+                    _line1.TranslateDestination(dx, dy);
+                    _line2.Angle = (float) (_line1.Angle + Math.PI);
+                    _handle2.X = (int) _line2.DestPoint.X - _handle2.BoundingBox.Width/2;
+                    _handle2.Y = (int) _line2.DestPoint.Y - _handle2.BoundingBox.Height/2;
 
                     break;
                 case 2:
-                    _line2.LineSprite.TranslateDestination(dx, dy);
-                    _line1.LineSprite.Angle = (float) (_line2.LineSprite.Angle + Math.PI);
-                    _handle1.X = (int) _line1.LineSprite.DestPoint.X - _handle1.BoundingBox.Width/2;
-                    _handle1.Y = (int) _line1.LineSprite.DestPoint.Y - _handle1.BoundingBox.Height/2;
+                    _line2.TranslateDestination(dx, dy);
+                    _line1.Angle = (float) (_line2.Angle + Math.PI);
+                    _handle1.X = (int) _line1.DestPoint.X - _handle1.BoundingBox.Width/2;
+                    _handle1.Y = (int) _line1.DestPoint.Y - _handle1.BoundingBox.Height/2;
                     break;
             }
         }

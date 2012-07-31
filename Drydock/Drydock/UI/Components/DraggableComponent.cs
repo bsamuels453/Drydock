@@ -7,6 +7,10 @@ namespace Drydock.UI.Components{
 
     internal delegate void ReactToDragMovement(IUIInteractiveElement owner, int dx, int dy);
 
+
+    /// <summary>
+    /// allows a UI element to be dragged. Required element to be IUIInteractiveComponent
+    /// </summary>
     internal class DraggableComponent : IUIElementComponent{
         private readonly ReactToDragMovement _alertToDragMovement;
         private readonly DraggableObjectClamp _clampNewPosition;
@@ -72,6 +76,7 @@ namespace Drydock.UI.Components{
             if (!_isMoving){
                 if (_owner.BoundingBox.Contains(state.X, state.Y)){
                     _isMoving = true;
+                    UIContext.DisableEntryHandlers = true;
                     _mouseOffset.X = _owner.X - state.X;
                     _mouseOffset.Y = _owner.Y - state.Y;
                     return true;
@@ -84,6 +89,7 @@ namespace Drydock.UI.Components{
             if (_isMoving){
                 if (state.LeftButton == ButtonState.Released){
                     _isMoving = false;
+                    UIContext.DisableEntryHandlers = false;
                 }
             }
             return false;

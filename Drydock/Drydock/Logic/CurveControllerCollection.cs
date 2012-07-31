@@ -50,7 +50,7 @@ namespace Drydock.Logic{
                         t
                         );
 
-                    _segments.Add(new Line2D(firstPos, secondPos, 0.5f));
+                    //_segments.Add(new Line2D(firstPos, secondPos, 0.5f));
                 }
             }
         }
@@ -85,8 +85,8 @@ namespace Drydock.Logic{
                         );
 
                     //_segments.Add(new Line2D((int)firstPos.X, (int)firstPos.Y, (int)secondPos.X, (int)secondPos.Y));
-                    _segments[i*_segmentsBetweenControllers + si].OriginPoint = new Vector2((int) firstPos.X, (int) firstPos.Y);
-                    _segments[i*_segmentsBetweenControllers + si].DestPoint = new Vector2((int) secondPos.X, (int) secondPos.Y);
+                    //_segments[i*_segmentsBetweenControllers + si].OriginPoint = new Vector2((int) firstPos.X, (int) firstPos.Y);
+                    //_segments[i*_segmentsBetweenControllers + si].DestPoint = new Vector2((int) secondPos.X, (int) secondPos.Y);
                 }
             }
         }

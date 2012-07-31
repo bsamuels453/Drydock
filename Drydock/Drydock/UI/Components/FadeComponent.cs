@@ -2,7 +2,12 @@
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI.Components{
+    /// <summary>
+    /// allows a UI element to be faded in and out. Required element to be IUIInteractiveComponent for certain settings.
+    /// </summary>
     internal class FadeComponent : IUIElementComponent{
+        //todo: some kind of synchronize function to get multiple ui elements' fade components to trigger
+        //AddTriggerElement
         #region FadeState enum
 
         public enum FadeState{

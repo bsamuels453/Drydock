@@ -135,7 +135,6 @@
     <Compile Include="UI\Components\SelectableComponent.cs" />
     <Compile Include="UI\IUIElement.cs" />
     <Compile Include="UI\IUIElementComponent.cs" />
-    <Compile Include="UI\Components\TextDisplayComponent.cs" />
     <Compile Include="UI\IUIInteractiveElement.cs" />
     <Compile Include="UI\Line.cs" />
     <Compile Include="UI\UIContext.cs" />
