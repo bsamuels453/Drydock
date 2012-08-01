@@ -211,6 +211,32 @@ namespace Drydock.UI.Components{
             }
         }
 
+        /// <summary>
+        /// This method allows an element's fade to trigger when another element undergoes a certain event as defined by the FadeTrigger.
+        /// </summary>
+        /// <param name="eventProcElements">The list of elements whose events will proc the recieving element's fade.</param>
+        /// <param name="eventRecieveElements">The recieving elements.</param>
+        /// <param name="state"></param>
+        public static void LinkOnewayFadeComponentTriggers(IUIElement[] eventProcElements, IUIElement[] eventRecieveElements, FadeTrigger state) {
+            switch (state) {
+                case FadeTrigger.EntryExit:
+                    foreach (var pElement in eventProcElements){
+                        if (!UIContext.IsElementInteractive(pElement)) {
+                            throw new Exception("Unable to link interactive element fade triggers; the event proc element is not interactive.");
+                        }
+                        foreach (var eElement in eventRecieveElements){
+                            ((IUIInteractiveElement)pElement).OnMouseEntry.Add(eElement.GetComponent<FadeComponent>().ForceFadein);
+                            ((IUIInteractiveElement)pElement).OnMouseExit.Add(eElement.GetComponent<FadeComponent>().ForceFadeout);
+                        }
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
         #endregion
     }
 }

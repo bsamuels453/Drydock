@@ -10,7 +10,7 @@ namespace Drydock.Logic{
         private const int _segmentsBetweenControllers = 40;
         private readonly List<CurveController> _curveControllers;
         private readonly List<Line2D> _segments;
-        private int _numControllers = 4;
+        private int _numControllers = 1;
 
         public CurveControllerCollection(){
             _curveControllers = new List<CurveController>();
@@ -22,7 +22,7 @@ namespace Drydock.Logic{
             int y = 100;
             int dx = 100;
             for (int i = 0; i < _numControllers; i++){
-                _curveControllers.Add(new CurveController(x, y, 100, 100, 1.5f));
+                _curveControllers.Add(new CurveController(x, y, 100, 100,100, 1.5f));
                 x += dx;
             }
             for (int i = 0; i < _numControllers - 1; i++){
