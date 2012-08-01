@@ -18,9 +18,9 @@ namespace Drydock.UI.Components{
 
         #endregion
 
-        #region FadeTriggers enum
+        #region FadeTrigger enum
 
-        public enum FadeTriggers{
+        public enum FadeTrigger{
             EntryExit,
             None
         }
@@ -30,7 +30,7 @@ namespace Drydock.UI.Components{
         private readonly FadeState _defaultState;
 
         private readonly float _fadeDuration;
-        private readonly FadeTriggers _fadeTrigger;
+        private readonly FadeTrigger _fadeTrigger;
         private readonly float _fadeoutOpacity;
         private bool _isEnabled;
         private bool _isFadingOut;
@@ -71,7 +71,7 @@ namespace Drydock.UI.Components{
         /// <param name="trigger"> </param>
         /// <param name="fadeoutOpacity">opacity level to fade out to. range 0-1f</param>
         /// <param name="fadeDuration">the time it takes for sprite to fade out in milliseconds</param>
-        public FadeComponent(FadeState defaultState, FadeTriggers trigger = FadeTriggers.None, float fadeoutOpacity = .2f, float fadeDuration = 250){
+        public FadeComponent(FadeState defaultState, FadeTrigger trigger = FadeTrigger.None, float fadeoutOpacity = .2f, float fadeDuration = 250){
             _fadeoutOpacity = fadeoutOpacity;
             _fadeDuration = fadeDuration*10000; //10k ticks in a millisecond
             _isInTransition = false;
@@ -86,7 +86,7 @@ namespace Drydock.UI.Components{
                 _owner.Opacity = _fadeoutOpacity;
             }
             switch (_fadeTrigger){
-                case FadeTriggers.EntryExit:
+                case FadeTrigger.EntryExit:
 
                     bool isParentInteractive = false;
                     foreach (Type type in _owner.GetType().Assembly.GetTypes()){
@@ -102,7 +102,7 @@ namespace Drydock.UI.Components{
                     ((IUIInteractiveElement) _owner).OnMouseExit.Add(ForceFadeout);
                     break;
 
-                case FadeTriggers.None:
+                case FadeTrigger.None:
                     break;
             }
         }
@@ -150,6 +150,65 @@ namespace Drydock.UI.Components{
             _isInTransition = true;
             _isFadingOut = false;
             return false;
+        }
+
+        #endregion
+
+        #region static methods
+
+        /// <summary>
+        /// This method links two elements together so that each element can proc the other's fade as defined by the FadeTrigger. 
+        /// </summary>
+        /// <param name="element1"></param>
+        /// <param name="element2"></param>
+        /// <param name="state"></param>
+        public static void LinkFadeComponentTriggers(IUIElement element1, IUIElement element2, FadeTrigger state){
+            switch (state){
+                case FadeTrigger.EntryExit:
+                    //first we check both elements to make sure they are both interactive. This check is specific for triggers that are interactive
+                    if (!UIContext.IsElementInteractive(element1) || !UIContext.IsElementInteractive(element2)) {
+                        throw new Exception("Unable to link interactive element fade triggers; one of the elements is not interactive");
+                    }
+                    //cast to interactive
+                    var e1 = (IUIInteractiveElement)element1;
+                    var e2 = (IUIInteractiveElement)element2;
+
+                    e1.OnMouseEntry.Add(e2.GetComponent<FadeComponent>().ForceFadein);
+                    e2.OnMouseEntry.Add(e1.GetComponent<FadeComponent>().ForceFadein);
+
+                    e1.OnMouseExit.Add(e2.GetComponent<FadeComponent>().ForceFadeout);
+                    e2.OnMouseExit.Add(e1.GetComponent<FadeComponent>().ForceFadeout);
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// This method allows an element's fade to trigger when another element undergoes a certain event as defined by the FadeTrigger.
+        /// </summary>
+        /// <param name="eventProcElement">The element whose events will proc the recieving element's fade.</param>
+        /// <param name="eventRecieveElement">The recieving element.</param>
+        /// <param name="state"></param>
+        public static void LinkOnewayFadeComponentTriggers(IUIElement eventProcElement, IUIElement eventRecieveElement, FadeTrigger state){
+            switch (state) {
+                case FadeTrigger.EntryExit:
+                    if (!UIContext.IsElementInteractive(eventProcElement)) {
+                        throw new Exception("Unable to link interactive element fade triggers; the event proc element is not interactive.");
+                    }
+                    //cast to interactive
+                    var e1 = (IUIInteractiveElement)eventProcElement;
+
+                    e1.OnMouseEntry.Add(eventRecieveElement.GetComponent<FadeComponent>().ForceFadein);
+                    e1.OnMouseExit.Add(eventRecieveElement.GetComponent<FadeComponent>().ForceFadeout);
+
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         #endregion

@@ -103,6 +103,16 @@ namespace Drydock.UI{
         }
 
         #endregion
+
+        public static bool IsElementInteractive(IUIElement element){
+            bool isElementInteractive = false;
+            foreach (var type in element.GetType().Assembly.GetTypes()){
+                if (type == typeof(IUIInteractiveElement)){
+                    isElementInteractive = true;
+                }
+            }
+            return isElementInteractive;
+        }
     }
 
     #region uisortedlist

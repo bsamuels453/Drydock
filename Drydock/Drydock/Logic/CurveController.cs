@@ -5,15 +5,15 @@ using Microsoft.Xna.Framework;
 
 namespace Drydock.Logic{
     internal class CurveController{
-        //private readonly CurveHandle _centerHandle;
-        // private readonly CurveHandle _handle1;
-        // private readonly CurveHandle _handle2;
 
         private readonly Button _centerHandle;
         private readonly Button _handle1;
         private readonly Button _handle2;
+        private readonly Button _rotateHandle;
+
         private readonly Line _line1;
         private readonly Line _line2;
+        private readonly Line _rotationHandleLine;
 
         #region properties
 
@@ -48,7 +48,7 @@ namespace Drydock.Logic{
                     textureName: "box",
                     components: new IUIElementComponent[]{
                         new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
-                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTriggers.EntryExit)
+                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit)
                     }
                     )
                 );
@@ -64,7 +64,7 @@ namespace Drydock.Logic{
                     textureName: "box",
                     components: new IUIElementComponent[]{
                         new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
-                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTriggers.EntryExit)
+                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit)
                     }
                     )
                 );
@@ -80,7 +80,7 @@ namespace Drydock.Logic{
                     textureName: "box",
                     components: new IUIElementComponent[]{
                         new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
-                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTriggers.EntryExit)
+                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit)
                     }
                     )
                 );

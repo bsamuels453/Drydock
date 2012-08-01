@@ -20,8 +20,6 @@ namespace Drydock.UI{
         public Vector2 CentPosition{
             get { return _centPosition; }
         }
-        public float Opacity { get; set; }
-        public float Depth { get; set; }
         public int Identifier{
             get { return _identifier; }
         }
@@ -45,6 +43,8 @@ namespace Drydock.UI{
         public Rectangle BoundingBox{
             get { return _boundingBox; }
         }
+        public float Opacity { get; set; }
+        public float Depth { get; set; }
         public IUIElementComponent[] Components { get; set; }
         public List<OnMouseAction> OnLeftButtonClick { get; set; }
         public List<OnMouseAction> OnLeftButtonDown { get; set; }
