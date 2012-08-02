@@ -19,10 +19,10 @@ namespace Drydock.Logic{
 
             //_segments.Add(new Line2D());
             int x = 200;
-            int y = 100;
+            int y = 200;
             int dx = 100;
             for (int i = 0; i < _numControllers; i++){
-                _curveControllers.Add(new CurveController(x, y, 100, 100,100, 1.5f));
+                _curveControllers.Add(new CurveController(x, y, 100, 100,100, 0));
                 x += dx;
             }
             for (int i = 0; i < _numControllers - 1; i++){

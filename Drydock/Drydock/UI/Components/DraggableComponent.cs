@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI.Components{
-    internal delegate void DraggableObjectClamp(IUIInteractiveElement owner, ref int x, ref int y);
+    internal delegate void DraggableObjectClamp(IUIInteractiveElement owner, ref int x, ref int y, int oldX, int oldY);
 
     internal delegate void ReactToDragMovement(IUIInteractiveElement owner, int dx, int dy);
 
@@ -102,7 +102,7 @@ namespace Drydock.UI.Components{
                 var x = (int) (state.X + _mouseOffset.X);
                 var y = (int) (state.Y + _mouseOffset.Y);
                 if (_clampNewPosition != null){
-                    _clampNewPosition(_owner, ref x, ref y);
+                    _clampNewPosition(_owner, ref x, ref y, oldX, oldY);
                 }
                 _owner.X = x;
                 _owner.Y = y;

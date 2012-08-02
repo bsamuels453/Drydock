@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Collections.Generic;
 using Drydock.UI;
 using Drydock.UI.Components;
 using Microsoft.Xna.Framework;
@@ -13,11 +14,9 @@ namespace Drydock.Logic{
         private readonly Button _centerHandle;
         private readonly Button _handle1;
         private readonly Button _handle2;
-        private readonly Button _rHandle;
 
         private readonly Line _line1;
         private readonly Line _line2;
-        private readonly Line _rLine;
 
         #region properties
 
@@ -90,27 +89,6 @@ namespace Drydock.Logic{
                     )
                 );
 
-            _rHandle = UIContext.Add<Button>(
-                new Button(
-                    identifier: 3,
-                    width: 9,
-                    height: 9,
-                    x: (int)component3.X + initX,
-                    y: (int)component3.Y + initY,
-                    layerDepth: 1.0f,
-                    textureName: "box",
-                    components: new IUIElementComponent[]{
-                        new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
-                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit)
-                    }
-                    )
-                );
-
-
-
-            //_line1 = new Line2D(_centerHandle.CentPosition, _handle1.CentPosition, 0.5f);
-            // _line2 = new Line2D(_centerHandle.CentPosition, _handle2.CentPosition, 0.5f);
-
             _line1 = UIContext.Add<Line>(
                 new Line(
                     v1: _centerHandle.CentPosition,
@@ -132,27 +110,14 @@ namespace Drydock.Logic{
                     }
                     )
                 );
-            _rLine = UIContext.Add<Line>(
-                new Line(
-                    v1: _centerHandle.CentPosition,
-                    v2: _rHandle.CentPosition,
-                    layerDepth: 1.0f,
-                    components: new IUIElementComponent[]{
-                        new FadeComponent(FadeComponent.FadeState.Faded)
-                    }
-                    )
-                );
 
             InterlinkButtonEvents();
         }
 
         private void InterlinkButtonEvents(){
             FadeComponent.LinkFadeComponentTriggers(_handle1, _handle2, FadeComponent.FadeTrigger.EntryExit);
-            FadeComponent.LinkFadeComponentTriggers(_handle1, _rHandle, FadeComponent.FadeTrigger.EntryExit);
             FadeComponent.LinkFadeComponentTriggers(_handle1, _centerHandle, FadeComponent.FadeTrigger.EntryExit);
             FadeComponent.LinkFadeComponentTriggers(_handle2, _centerHandle, FadeComponent.FadeTrigger.EntryExit);
-            FadeComponent.LinkFadeComponentTriggers(_rHandle, _centerHandle, FadeComponent.FadeTrigger.EntryExit);
-            FadeComponent.LinkFadeComponentTriggers(_handle2, _rHandle, FadeComponent.FadeTrigger.EntryExit);
 
 
             FadeComponent.LinkOnewayFadeComponentTriggers(
@@ -160,12 +125,10 @@ namespace Drydock.Logic{
                     _handle1,
                     _handle2,
                     _centerHandle,
-                    _rHandle
                 },
                 eventRecieveElements: new IUIElement[]{
                     _line1,
                     _line2,
-                    _rLine
                 },
                 state: FadeComponent.FadeTrigger.EntryExit
             );
@@ -182,52 +145,56 @@ namespace Drydock.Logic{
                     _line1.TranslateDestination(dx, dy);
                     _line2.TranslateOrigin(dx, dy);
                     _line2.TranslateDestination(dx, dy);
-                    _rLine.TranslateOrigin(dx, dy);
-                    _rLine.TranslateDestination(dx, dy);
                     _handle1.X += dx;
                     _handle1.Y += dy;
 
                     _handle2.X += dx;
                     _handle2.Y += dy;
 
-                    _rHandle.X += dx;
-                    _rHandle.Y += dy;
 
                     break;
                 case 1:
-                    _line1.TranslateDestination(dx, dy);
+                    //_line1.TranslateDestination(dx, dy);
                     _line2.Angle = (float) (_line1.Angle + Math.PI);
-                    _rLine.Angle = (float)(_line1.Angle - Math.PI / 2f);
 
                     _handle2.X = (int) _line2.DestPoint.X - _handle2.BoundingBox.Width/2;
                     _handle2.Y = (int) _line2.DestPoint.Y - _handle2.BoundingBox.Height/2;
-                    _rHandle.X = (int)_rLine.DestPoint.X - _rHandle.BoundingBox.Width / 2;
-                    _rHandle.Y = (int)_rLine.DestPoint.Y - _rHandle.BoundingBox.Height / 2;
 
                     break;
                 case 2:
                     _line2.TranslateDestination(dx, dy);
                     _line1.Angle = (float) (_line2.Angle + Math.PI);
-                    _rLine.Angle = (float)(_line2.Angle + Math.PI / 2f);
 
                     _handle1.X = (int) _line1.DestPoint.X - _handle1.BoundingBox.Width/2;
                     _handle1.Y = (int) _line1.DestPoint.Y - _handle1.BoundingBox.Height/2;
-                    _rHandle.X = (int)_rLine.DestPoint.X - _rHandle.BoundingBox.Width / 2;
-                    _rHandle.Y = (int)_rLine.DestPoint.Y - _rHandle.BoundingBox.Height / 2;
-                    break;
-                case 3:
-                    _rLine.TranslateDestination(dx, dy);
-                    _line1.Angle = (float)(_rLine.Angle + Math.PI / 2f);
-                    _line2.Angle = (float)(_rLine.Angle - Math.PI / 2f);
-                    _handle1.X = (int) _line1.DestPoint.X - _handle1.BoundingBox.Width/2;
-                    _handle1.Y = (int) _line1.DestPoint.Y - _handle1.BoundingBox.Height/2;
-                    _handle2.X = (int) _line2.DestPoint.X - _handle2.BoundingBox.Width/2;
-                    _handle2.Y = (int) _line2.DestPoint.Y - _handle2.BoundingBox.Height/2;
                     break;
             }
         }
 
-        private void ClampHandleMovement(IUIInteractiveElement owner, ref int x, ref int y){
+        private void ClampHandleMovement(IUIInteractiveElement owner, ref int x, ref int y, int oldX, int oldY){
+        }
+
+        private Vector2 GetPerpendicularBisector(Vector2 originPoint, Vector2 destPoint, Vector2 perpendicularPoint){
+
+            destPoint *= 10;
+
+            var list = Common.Bresenham(originPoint, destPoint);
+            var distances = new List<float>(list.Count);
+
+            for (int i = 0; i < list.Count; i++){
+                distances.Add(Vector2.Distance(list[i], perpendicularPoint));
+            }
+            float lowestValue = 9999999999; //my condolences to players with screens larger than 9999999999x9999999999
+            int lowestIndex = -1;
+
+            for(int i=0; i<distances.Count; i++){
+                if (distances[i] < lowestValue){
+                    lowestIndex = i;
+                    lowestValue = distances[i];
+                }
+            }
+
+            return list[lowestIndex];
         }
     }
 }
