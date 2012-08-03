@@ -19,9 +19,12 @@ Thumbs.db
 *.dds
 *.exe
 *.fbx
+*.testsettings
 *.png
 *.psess
+*.vsmdi
 *.sbr
+TestProject3*/
 bin*/
 obj*/
 [Rr]elease*/
