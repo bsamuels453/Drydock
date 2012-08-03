@@ -3,11 +3,10 @@ using Drydock.Control;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI{
-    internal delegate bool OnMouseAction(MouseState state);
 
     internal static class UIContext{
         private static List<IUIElement> _elements;
-        private static UISortedList _layerSortedElements;
+        private static UISortedList _layerSortedIElements;
         private static MouseState _prevMouseState;
         public static bool DisableEntryHandlers;
 
@@ -15,13 +14,14 @@ namespace Drydock.UI{
 
         public static void Init(){
             _elements = new List<IUIElement>();
-            _layerSortedElements = new UISortedList();
+            _layerSortedIElements = new UISortedList();
 
             _prevMouseState = Mouse.GetState();
             DisableEntryHandlers = false;
 
             MouseHandler.ClickSubscriptions.Add(OnMouseButtonEvent);
             MouseHandler.MovementSubscriptions.Add(OnMouseMovementEvent);
+            KeyboardHandler.KeyboardSubscriptions.Add(OnKeyboardAction);
         }
 
         #endregion
@@ -36,7 +36,7 @@ namespace Drydock.UI{
         public static TElement Add<TElement>(IUIInteractiveElement elementToAdd){
             _elements.Add(elementToAdd);
 
-            _layerSortedElements.Add(elementToAdd.Depth, elementToAdd);
+            _layerSortedIElements.Add(elementToAdd.Depth, elementToAdd);
 
             return (TElement) elementToAdd;
         }
@@ -54,9 +54,9 @@ namespace Drydock.UI{
         private static bool OnMouseButtonEvent(MouseState state){
             bool retval = false;
             bool forceListCleanup = false;
-            for (int i = 0; i < _layerSortedElements.Count; i++){
-                if (_layerSortedElements[i] != null){
-                    if (_layerSortedElements[i].MouseClickHandler(state)){
+            for (int i = 0; i < _layerSortedIElements.Count; i++){
+                if (_layerSortedIElements[i] != null){
+                    if (_layerSortedIElements[i].MouseClickHandler(state)){
                         retval = true;
                         break;
                     }
@@ -66,9 +66,9 @@ namespace Drydock.UI{
                 }
             }
             if (forceListCleanup){
-                for (int i = 0; i < _layerSortedElements.Count; i++){
-                    if (_layerSortedElements[i] == null){
-                        _layerSortedElements.RemoveAt(i);
+                for (int i = 0; i < _layerSortedIElements.Count; i++){
+                    if (_layerSortedIElements[i] == null){
+                        _layerSortedIElements.RemoveAt(i);
                     }
                 }
             }
@@ -77,28 +77,37 @@ namespace Drydock.UI{
         }
 
         private static bool OnMouseMovementEvent(MouseState state){
-            for (int i = 0; i < _layerSortedElements.Count; i++){
-                _layerSortedElements[i].MouseMovementHandler(state);
+            for (int i = 0; i < _layerSortedIElements.Count; i++){
+                _layerSortedIElements[i].MouseMovementHandler(state);
 
 
-                if (_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && !_layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
+                if (_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) && !_layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                     //dispatch event for mouse entering the bounding box of the element
 
                     if (!DisableEntryHandlers){
-                        if (_layerSortedElements[i].MouseEntryHandler(state)){
+                        if (_layerSortedIElements[i].MouseEntryHandler(state)){
                             break;
                         }
                     }
                 }
 
                 else{
-                    if (!_layerSortedElements[i].BoundingBox.Contains(state.X, state.Y) && _layerSortedElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
+                    if (!_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) && _layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                         //dispatch event for mouse exiting the bounding box of the element
-                        _layerSortedElements[i].MouseExitHandler(state);
+                        _layerSortedIElements[i].MouseExitHandler(state);
                     }
                 }
             }
             _prevMouseState = state;
+            return false;
+        }
+
+        private static bool OnKeyboardAction(KeyboardState state){
+            for (int i = 0; i < _layerSortedIElements.Count; i++){
+                if (_layerSortedIElements[i].KeyboardActionHandler(state)){
+                    break;
+                }
+            }
             return false;
         }
 

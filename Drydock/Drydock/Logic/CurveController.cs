@@ -52,7 +52,7 @@ namespace Drydock.Logic{
                     components: new IUIElementComponent[]{
                         new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
-                        new SelectableComponent("bigbox", 9, 9)
+                        new SelectableComponent("bigbox", 15, 15)
                     }
                     )
                 );
@@ -69,7 +69,7 @@ namespace Drydock.Logic{
                     components: new IUIElementComponent[]{
                         new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
-                        new SelectableComponent("bigbox", 9, 9)
+                        new SelectableComponent("bigbox", 15, 15)
                     }
                     )
                 );
@@ -86,7 +86,7 @@ namespace Drydock.Logic{
                     components: new IUIElementComponent[]{
                         new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
-                        new SelectableComponent("bigbox", 9, 9)
+                        new SelectableComponent("bigbox", 15, 15)
                     }
                     )
                 );

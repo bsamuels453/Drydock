@@ -4,9 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Control{
-    internal delegate bool MouseMovementHandler(MouseState state);
-
-    internal delegate bool MouseClickHandler(MouseState state);
+    internal delegate bool OnMouseAction(MouseState state);
 
     internal static class MouseHandler{
         //private  int _curMousePosX;
@@ -15,8 +13,8 @@ namespace Drydock.Control{
         private static Vector2 _viewportSize;
         private static MouseState _previousMouseState;
 
-        public static List<MouseClickHandler> ClickSubscriptions { get; set; }
-        public static List<MouseMovementHandler> MovementSubscriptions { get; set; }
+        public static List<OnMouseAction> ClickSubscriptions { get; set; }
+        public static List<OnMouseAction> MovementSubscriptions { get; set; }
 
         public static void Init(GraphicsDevice device){
             _viewportSize = new Vector2(device.Viewport.Bounds.Width, device.Viewport.Bounds.Height);
@@ -24,8 +22,8 @@ namespace Drydock.Control{
             //_curMousePosX = (int)_viewportSize.X / 2;
             //_curMousePosY = (int) _viewportSize.Y/ 2;
             //_isMouseClamped = false;
-            ClickSubscriptions = new List<MouseClickHandler>();
-            MovementSubscriptions = new List<MouseMovementHandler>();
+            ClickSubscriptions = new List<OnMouseAction>();
+            MovementSubscriptions = new List<OnMouseAction>();
             _previousMouseState = Mouse.GetState();
         }
 
@@ -34,7 +32,7 @@ namespace Drydock.Control{
             if (newState.LeftButton != _previousMouseState.LeftButton ||
                 newState.RightButton != _previousMouseState.RightButton ||
                 newState.MiddleButton != _previousMouseState.MiddleButton){
-                foreach (MouseClickHandler t in ClickSubscriptions){
+                    foreach (OnMouseAction t in ClickSubscriptions) {
                     if (t(newState)){
                         //break;
                     }
@@ -43,7 +41,7 @@ namespace Drydock.Control{
 
             if (newState.X != _previousMouseState.X ||
                 newState.Y != _previousMouseState.Y){
-                foreach (MouseMovementHandler t in MovementSubscriptions){
+                foreach (OnMouseAction t in MovementSubscriptions){
                     if (t(newState)){
                         break;
                     }

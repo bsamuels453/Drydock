@@ -65,15 +65,14 @@ namespace Drydock.UI.Components{
 
         private bool OnMouseClick(MouseState state){
             if (IsEnabled){
-
-                    if (_owner.BoundingBox.Contains(state.X, state.Y)){
+                if (_isSelected) {
+                    DeselectThis();
+                }
+                else{
+                    if (_owner.BoundingBox.Contains(state.X, state.Y)) {
                         SelectThis();
                     }
-                    else{
-                        DeselectThis();
-                    }
-
-                
+                }
             }
             return false;
         }
@@ -86,14 +85,12 @@ namespace Drydock.UI.Components{
                 _owner.X -= _positionDx;
                 _owner.Y -= _positionDy;
                 _isSelected = true;
-                // ReSharper disable EmptyGeneralCatchClause
+                
                 try {
                     _owner.GetComponent<FadeComponent>().IsEnabled = false;
                 }
-                catch (Exception){
-
-                    //there is no fade component
-                }
+                // ReSharper disable EmptyGeneralCatchClause
+                catch (Exception){/*there is no fade component*/}
                 // ReSharper restore EmptyGeneralCatchClause
             }
         }
@@ -110,9 +107,7 @@ namespace Drydock.UI.Components{
                     _owner.GetComponent<FadeComponent>().IsEnabled = true;
                 }
                 // ReSharper disable EmptyGeneralCatchClause
-                catch (Exception) {
-                    //there is no fade component
-                }
+                catch (Exception) {/*there is no fade component*/}
                 // ReSharper restore EmptyGeneralCatchClause
             }
         }

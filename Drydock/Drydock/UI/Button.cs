@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Drydock.Control;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -63,6 +64,7 @@ namespace Drydock.UI{
         public List<OnMouseAction> OnMouseExit { get; set; }
         public List<OnMouseAction> OnMouseHover { get; set; }
         public List<OnMouseAction> OnMouseMovement { get; set; }
+        public List<OnKeyboardAction> OnKeyboardAction { get; set; }
 
         #endregion
 
@@ -82,6 +84,7 @@ namespace Drydock.UI{
             OnMouseHover = new List<OnMouseAction>();
             OnMouseEntry = new List<OnMouseAction>();
             OnMouseExit = new List<OnMouseAction>();
+            OnKeyboardAction = new List<OnKeyboardAction>();
 
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
@@ -158,6 +161,11 @@ namespace Drydock.UI{
                 action(state);
             }
             _hoverTimer.Reset();
+            return false;
+        }
+
+        public bool KeyboardActionHandler(KeyboardState state){
+
             return false;
         }
 

@@ -59,9 +59,6 @@ namespace Drydock.UI.Components{
                         ForceFadeout(state);
                     }
                 }
-                else{ //cancel currently running fade operation, if any
-                    ForceFadeout(state);
-                }
             }
         }
 

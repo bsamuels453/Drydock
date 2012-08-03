@@ -5,11 +5,10 @@ using Drydock.UI;
 namespace Drydock.Logic{
     internal class EditorLogic{
         private readonly CurveControllerCollection _c;
-        private readonly KeyboardHandler _keyboardHandler;
 
         public EditorLogic(Renderer renderer){
             MouseHandler.Init(renderer.Device);
-            _keyboardHandler = new KeyboardHandler(renderer);
+            KeyboardHandler.Init(renderer);
 
             UIContext.Init();
 
@@ -40,7 +39,7 @@ namespace Drydock.Logic{
 
         public void Update(){
             MouseHandler.UpdateMouse();
-            _keyboardHandler.UpdateKeyboard();
+            KeyboardHandler.UpdateKeyboard();
             _c.UpdateCurves();
             UIContext.Update();
         }

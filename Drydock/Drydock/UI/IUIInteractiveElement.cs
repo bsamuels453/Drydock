@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Drydock.Control;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -15,6 +16,8 @@ namespace Drydock.UI{
         List<OnMouseAction> OnMouseExit { get; }//procs when the mouse exits the bounding box of the element
         List<OnMouseAction> OnMouseHover { get; }//procs when mouse has been within the bounding box of the element for a certain period of time
         List<OnMouseAction> OnMouseMovement { get; }//procs on global mouse movement
+        List<OnKeyboardAction> OnKeyboardAction { get; }
+
         #endregion
 
         //These methods are called by the UIContext, they will dispatch events as reflected in the above lists
@@ -23,6 +26,7 @@ namespace Drydock.UI{
         bool MouseClickHandler(MouseState state);
         bool MouseEntryHandler(MouseState state);
         bool MouseExitHandler(MouseState state);
+        bool KeyboardActionHandler(KeyboardState state);
         #endregion
     }
 }
