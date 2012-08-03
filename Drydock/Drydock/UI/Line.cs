@@ -2,6 +2,7 @@
 
 using System;
 using Drydock.Render;
+using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 
 #endregion
@@ -47,23 +48,23 @@ namespace Drydock.UI{
         public int Identifier{
             get { throw new NotImplementedException(); }
         }
-        public int X{
+        public float X{
             get { return (int) _point1.X; }
             set { throw new NotImplementedException(); }
         }
-        public int Y{
+        public float Y{
             get { return (int) _point1.Y; }
             set { throw new NotImplementedException(); }
         }
-        public int Width {
+        public float Width {
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
         }
-        public int Height {
+        public float Height {
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
         }
-        public Rectangle BoundingBox{
+        public FloatingRectangle BoundingBox{
             get { throw new NotImplementedException(); }
         }
         public IAdvancedPrimitive Sprite{

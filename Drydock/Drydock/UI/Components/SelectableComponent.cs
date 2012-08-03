@@ -57,8 +57,8 @@ namespace Drydock.UI.Components{
             _owner.OnLeftButtonClick.Add(OnMouseClick);
 
             _originalTexture = _owner.Sprite.Texture;
-            _widthDx = _selectedWidth - _owner.BoundingBox.Width;
-            _heightDx = _selectedHeight - _owner.BoundingBox.Height;
+            _widthDx = (int)(_selectedWidth - _owner.BoundingBox.Width);
+            _heightDx = (int)(_selectedHeight - _owner.BoundingBox.Height);
             _positionDx = _widthDx / 2;
             _positionDy = _heightDx / 2;
         }

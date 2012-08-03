@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Drydock.Utilities;
+using Microsoft.Xna.Framework;
 
 namespace Drydock.Render{
     internal interface IDrawable{
-        int X { get; set; }
-        int Y { get; set; }
-        int Width { get; set; }
-        int Height { get; set; }
-        Rectangle BoundingBox { get; } //move somewhere else?
+        float X { get; set; }
+        float Y { get; set; }
+        float Width { get; set; }
+        float  Height { get; set; }
+        FloatingRectangle BoundingBox { get; } //move somewhere else?
 
     }
 }

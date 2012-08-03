@@ -97,8 +97,8 @@ namespace Drydock.UI.Components{
 
         private bool OnMouseMovement(MouseState state){
             if (_isMoving){
-                int oldX = _owner.X;
-                int oldY = _owner.Y;
+                var oldX = (int)_owner.X;
+                var oldY = (int)_owner.Y;
                 var x = (int) (state.X + _mouseOffset.X);
                 var y = (int) (state.Y + _mouseOffset.Y);
                 if (_clampNewPosition != null){

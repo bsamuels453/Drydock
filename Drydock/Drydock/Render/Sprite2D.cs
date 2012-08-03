@@ -72,7 +72,7 @@ namespace Drydock.Render{
                 if (_isFrameSlotAvail[i] == false){
                     _spriteBatch.Draw(
                         _frameTextures[i],
-                        _frameParents[i].BoundingBox,
+                        _frameParents[i].BoundingBox.ToRectangle,
                         null,
                         new Color(1, 1, 1, _frameParents[i].Opacity),
                         0,

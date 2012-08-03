@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Drydock.Control;
 using Drydock.Render;
+using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -15,7 +16,7 @@ namespace Drydock.UI{
         private readonly Stopwatch _hoverTimer; //nonimp, put in superclass
         private readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
         private readonly Sprite2D _sprite; //the button's sprite
-        private Rectangle _boundingBox; //bounding box that represents the bounds of the button
+        private FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
         private Vector2 _centPosition; //represents the approximate center of the button
 
         public Vector2 CentPosition{
@@ -27,30 +28,30 @@ namespace Drydock.UI{
         public IAdvancedPrimitive Sprite{
             get { return _sprite; }
         }
-        public int X{
+        public float X{
             get { return _boundingBox.X; }
             set{
                 _boundingBox.X = value;
                 _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             }
         }
-        public int Y{
+        public float Y{
             get { return _boundingBox.Y; }
             set{
                 _boundingBox.Y = value;
                 _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
             }
         }
-        public int Width{
+        public float Width{
             get { return _boundingBox.Width; }
             set { _boundingBox.Width = value; }
         }
-        public int Height{
+        public float Height{
             get { return _boundingBox.Height; }
             set { _boundingBox.Height = value;  }
         }
 
-        public Rectangle BoundingBox{
+        public FloatingRectangle BoundingBox{
             get { return _boundingBox; }
         }
 
@@ -73,7 +74,7 @@ namespace Drydock.UI{
         public Button(int x, int y, int width, int height, float layerDepth, string textureName, IUIElementComponent[] components, int identifier = 0){
             _identifier = identifier;
             _centPosition = new Vector2();
-            _boundingBox = new Rectangle(x, y, width, height);
+            _boundingBox = new FloatingRectangle(x, y, width, height);
             _sprite = new Sprite2D(textureName, this);
             _clickTimer = new Stopwatch();
             _hoverTimer = new Stopwatch();
