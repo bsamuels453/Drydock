@@ -40,11 +40,19 @@ namespace Drydock.UI{
                 _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
             }
         }
+        public int Width{
+            get { return _boundingBox.Width; }
+            set { _boundingBox.Width = value; }
+        }
+        public int Height{
+            get { return _boundingBox.Height; }
+            set { _boundingBox.Height = value;  }
+        }
+
         public Rectangle BoundingBox{
             get { return _boundingBox; }
         }
 
-        public string TextureName { get; set; } 
         public float Opacity { get; set; }
         public float Depth { get; set; }
         public IUIElementComponent[] Components { get; set; }
@@ -78,7 +86,6 @@ namespace Drydock.UI{
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
 
-            TextureName = textureName;
             Depth = layerDepth;
             Components = components;
 
@@ -109,23 +116,26 @@ namespace Drydock.UI{
                 _clickTimer.Start();
                 foreach (OnMouseAction t in OnLeftButtonDown){
                     if (t(state)){
-                        denyOtherElementsFromClick = true;
+                       denyOtherElementsFromClick = true;
                     }
                 }
             }
             if (state.LeftButton == ButtonState.Released){
                 foreach (OnMouseAction t in OnLeftButtonUp){
                     if (t(state)){
-                        denyOtherElementsFromClick = true;
+                       denyOtherElementsFromClick = true;
                     }
                 }
 
                 _clickTimer.Stop();
+                //this is something that should be handled by the uicontext ffs
                 if (_clickTimer.ElapsedMilliseconds < 200){
                     //okay, click registered. now dispatch events.
                     foreach (OnMouseAction t in OnLeftButtonClick){
+                        System.Console.WriteLine("dispatching click");
                         if (t(state)){
-                            denyOtherElementsFromClick = true;
+                           denyOtherElementsFromClick = true;
+                            
                         }
                     }
                 }

@@ -1,5 +1,8 @@
-﻿namespace Drydock.Render{
+﻿using Microsoft.Xna.Framework.Graphics;
+
+namespace Drydock.Render{
     internal interface IAdvancedPrimitive{
-        void SetTexture(string textureName);
+        Texture2D Texture { get; set; }
+        void SetTextureFromString(string textureName);
     }
 }

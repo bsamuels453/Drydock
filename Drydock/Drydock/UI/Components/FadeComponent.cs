@@ -51,11 +51,16 @@ namespace Drydock.UI.Components{
             get { return _isEnabled; }
             set{
                 _isEnabled = value;
+                var state = Mouse.GetState();
                 if (_isEnabled){ //reset the timer
                     _prevUpdateTimeIndex = DateTime.Now.Ticks;
+                    //because the mouse may have left the bounding box while this component was disabled
+                    if(!_owner.BoundingBox.Contains(state.X, state.Y)){
+                        ForceFadeout(state);
+                    }
                 }
                 else{ //cancel currently running fade operation, if any
-                    _isFadingOut = false;
+                    ForceFadeout(state);
                 }
             }
         }
@@ -79,6 +84,7 @@ namespace Drydock.UI.Components{
             _prevUpdateTimeIndex = DateTime.Now.Ticks;
             _defaultState = defaultState;
             _fadeTrigger = trigger;
+            _isEnabled = true;
         }
 
         private void ComponentCtor(){
@@ -112,25 +118,27 @@ namespace Drydock.UI.Components{
         #region IUIElementComponent Members
 
         public void Update(){
-            if (_isInTransition){
-                long timeSinceLastUpdate = DateTime.Now.Ticks - _prevUpdateTimeIndex;
-                float step = timeSinceLastUpdate/_fadeDuration;
-                if (_isFadingOut){
-                    _owner.Opacity -= step;
-                    if (_owner.Opacity < _fadeoutOpacity){
-                        _owner.Opacity = _fadeoutOpacity;
-                        _isInTransition = false;
+            if (IsEnabled){
+                if (_isInTransition){
+                    long timeSinceLastUpdate = DateTime.Now.Ticks - _prevUpdateTimeIndex;
+                    float step = timeSinceLastUpdate/_fadeDuration;
+                    if (_isFadingOut){
+                        _owner.Opacity -= step;
+                        if (_owner.Opacity < _fadeoutOpacity){
+                            _owner.Opacity = _fadeoutOpacity;
+                            _isInTransition = false;
+                        }
+                    }
+                    else{
+                        _owner.Opacity += step;
+                        if (_owner.Opacity > 1){
+                            _owner.Opacity = 1;
+                            _isInTransition = false;
+                        }
                     }
                 }
-                else{
-                    _owner.Opacity += step;
-                    if (_owner.Opacity > 1){
-                        _owner.Opacity = 1;
-                        _isInTransition = false;
-                    }
-                }
+                _prevUpdateTimeIndex = DateTime.Now.Ticks;
             }
-            _prevUpdateTimeIndex = DateTime.Now.Ticks;
         }
 
         #endregion
@@ -139,16 +147,20 @@ namespace Drydock.UI.Components{
 
         public bool ForceFadeout(MouseState state){
             //UIContext.DisableEntryHandlers = false;
-            _isInTransition = true;
-            _isFadingOut = true;
+            if (IsEnabled){
+                _isInTransition = true;
+                _isFadingOut = true;
+            }
             return false;
         }
 
         public bool ForceFadein(MouseState state){
             //UIContext.DisableEntryHandlers = true;
             //UIContext.ForceExitHandlers(_owner);
-            _isInTransition = true;
-            _isFadingOut = false;
+            if (IsEnabled){
+                _isInTransition = true;
+                _isFadingOut = false;
+            }
             return false;
         }
 

@@ -42,7 +42,6 @@ namespace Drydock.UI{
         public int LineWidth { get; set; }
 
         public IUIElementComponent[] Components { get; set; }
-        public string TextureName { get; set; }
         public float Opacity { get; set; }
         public float Depth { get; set; }
         public int Identifier{
@@ -54,6 +53,14 @@ namespace Drydock.UI{
         }
         public int Y{
             get { return (int) _point1.Y; }
+            set { throw new NotImplementedException(); }
+        }
+        public int Width {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+        public int Height {
+            get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
         }
         public Rectangle BoundingBox{
@@ -84,7 +91,6 @@ namespace Drydock.UI{
             Depth = layerDepth;
             Opacity = 1;
             LineWidth = 1;
-            TextureName = null;
             CalculateInfoFromPoints();
 
             Components = components;

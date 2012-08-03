@@ -51,7 +51,8 @@ namespace Drydock.Logic{
                     textureName: "box",
                     components: new IUIElementComponent[]{
                         new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
-                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit)
+                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
+                        new SelectableComponent("bigbox", 9, 9)
                     }
                     )
                 );
@@ -67,7 +68,8 @@ namespace Drydock.Logic{
                     textureName: "box",
                     components: new IUIElementComponent[]{
                         new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
-                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit)
+                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
+                        new SelectableComponent("bigbox", 9, 9)
                     }
                     )
                 );
@@ -83,7 +85,8 @@ namespace Drydock.Logic{
                     textureName: "box",
                     components: new IUIElementComponent[]{
                         new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
-                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit)
+                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
+                        new SelectableComponent("bigbox", 9, 9)
                     }
                     )
                 );

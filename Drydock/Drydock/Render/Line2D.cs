@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
+    //todo: fix the fucking unimplemented functions you pleb
     internal class Line2D : IAdvancedPrimitive{
         #region properties and fields
 
@@ -36,7 +37,12 @@ namespace Drydock.Render{
             Dispose();
         }
 
-        public void SetTexture(string textureName){
+        public Texture2D Texture{
+            get { throw new System.NotImplementedException(); }
+            set { throw new System.NotImplementedException(); }
+        }
+
+        public void SetTextureFromString(string textureName){
             throw new System.NotImplementedException();
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI.Components{
@@ -14,10 +15,17 @@ namespace Drydock.UI.Components{
     /// </summary>
     internal class SelectableComponent : IUIElementComponent{
         private IUIInteractiveElement _owner;
+        private bool _isSelected;
 
+        //these fields contain the "differences" in bounding boxes between the owner's selected texture/bbox and normal texture/bbox
+        private Texture2D _originalTexture;
         private readonly String _selectedTexture;
-        private int _selectedWidth;
-        private int _selectedHeight;
+        private int _positionDx;
+        private int _positionDy;
+        private int _widthDx;
+        private int _heightDx;
+        private readonly int _selectedWidth;
+        private readonly int _selectedHeight;
 
         public IUIElement Owner{
             set {
@@ -40,28 +48,73 @@ namespace Drydock.UI.Components{
             _selectedTexture = selectedTexture;
             _selectedWidth = width;
             _selectedHeight = height;
+            IsEnabled = true;
+            _isSelected = false;
         }
 
         private void ComponentCtor(){
             IsEnabled = true;
-
             _owner.OnLeftButtonClick.Add(OnMouseClick);
 
+            _originalTexture = _owner.Sprite.Texture;
+            _widthDx = _selectedWidth - _owner.BoundingBox.Width;
+            _heightDx = _selectedHeight - _owner.BoundingBox.Height;
+            _positionDx = _widthDx / 2;
+            _positionDy = _heightDx / 2;
         }
 
         private bool OnMouseClick(MouseState state){
+            if (IsEnabled){
 
+                    if (_owner.BoundingBox.Contains(state.X, state.Y)){
+                        SelectThis();
+                    }
+                    else{
+                        DeselectThis();
+                    }
+
+                
+            }
             return false;
         }
 
         private void SelectThis(){
-            _owner.Sprite.SetTexture(_selectedTexture);
+            if (IsEnabled && !_isSelected){
+                _owner.Sprite.SetTextureFromString(_selectedTexture);
+                _owner.Width += _widthDx;
+                _owner.Height += _heightDx;
+                _owner.X -= _positionDx;
+                _owner.Y -= _positionDy;
+                _isSelected = true;
+                // ReSharper disable EmptyGeneralCatchClause
+                try {
+                    _owner.GetComponent<FadeComponent>().IsEnabled = false;
+                }
+                catch (Exception){
 
+                    //there is no fade component
+                }
+                // ReSharper restore EmptyGeneralCatchClause
+            }
         }
 
         private void DeselectThis(){
-            _owner.Sprite.SetTexture(_owner.TextureName);
-
+            if (IsEnabled && _isSelected){
+                _owner.Sprite.Texture = _originalTexture;
+                _owner.Width -= _widthDx;
+                _owner.Height -= _heightDx;
+                _owner.X += _positionDx;
+                _owner.Y += _positionDy;
+                _isSelected = false;
+                try {
+                    _owner.GetComponent<FadeComponent>().IsEnabled = true;
+                }
+                // ReSharper disable EmptyGeneralCatchClause
+                catch (Exception) {
+                    //there is no fade component
+                }
+                // ReSharper restore EmptyGeneralCatchClause
+            }
         }
     }
 }

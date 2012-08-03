@@ -6,11 +6,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrydockContent", "Drydock\DrydockContent\DrydockContent.contentproj", "{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6D600C13-C377-4AC3-941D-3DD3CA3BF8A7}"
-	ProjectSection(SolutionItems) = preProject
-		Drydock.vsmdi = Drydock.vsmdi
-		Local.testsettings = Local.testsettings
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
