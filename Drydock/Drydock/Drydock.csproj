@@ -126,6 +126,7 @@
     <Compile Include="Control\KeyboardHandler.cs" />
     <Compile Include="Control\MouseHandler.cs" />
     <Compile Include="DebugTimer.cs" />
+    <Compile Include="Logic\BezierCurve.cs" />
     <Compile Include="Logic\CurveControllerCollection.cs" />
     <Compile Include="Render\IAdvancedPrimitive.cs" />
     <Compile Include="Render\IDrawable.cs" />

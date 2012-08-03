@@ -32,14 +32,16 @@ namespace Drydock.Logic{
             get { return _handle2.CentPosition; }
         }
 
+        public float Angle { get; set; }//implement this you fucking bum
+
         #endregion
 
         // private bool _isSelected;
 
-        public CurveController(int initX, int initY, float length1, float length2,float length3, float angle){
+        public CurveController(int initX, int initY, float length1, float length2, float angle){
             Vector2 component1 = Common.GetComponentFromAngle(angle, length1);
             Vector2 component2 = Common.GetComponentFromAngle((float) (angle - Math.PI), length2); // minus math.pi to reverse direction
-
+            #region crap
             _handle1 = UIContext.Add<Button>(
                 new Button(
                     identifier: 1,
@@ -112,7 +114,7 @@ namespace Drydock.Logic{
                     }
                     )
                 );
-
+            #endregion
             InterlinkButtonEvents();
         }
 

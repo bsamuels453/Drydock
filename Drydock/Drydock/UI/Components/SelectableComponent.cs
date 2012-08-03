@@ -9,7 +9,7 @@ namespace Drydock.UI.Components{
         Selected,
         UnSelected
     };
-
+    
     /// <summary>
     /// allows a UI element to be selected. Required element to be IUIInteractiveComponent
     /// </summary>
