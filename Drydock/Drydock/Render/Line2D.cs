@@ -36,6 +36,10 @@ namespace Drydock.Render{
             Dispose();
         }
 
+        public void SetTexture(string textureName){
+            throw new System.NotImplementedException();
+        }
+
         public void Dispose(){
             if (!_isDisposed){
                 _isFrameSlotAvail[_id] = true;
@@ -77,7 +81,7 @@ namespace Drydock.Render{
                         new Color(1, 1, 1, _lineOwners[i].Opacity),
                         _lineOwners[i].Angle,
                         Vector2.Zero,
-                        new Vector2(_lineOwners[i].Length, 1),
+                        new Vector2(_lineOwners[i].Length, _lineOwners[i].LineWidth),
                         SpriteEffects.None,
                         _lineOwners[i].Depth
                         );

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Drydock.Render;
+using Drydock.UI;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -9,20 +10,18 @@ namespace Drydock.Logic{
     internal class CurveControllerCollection{
         private const int _segmentsBetweenControllers = 40;
         private readonly List<CurveController> _curveControllers;
-        private readonly List<Line2D> _segments;
-        private int _numControllers = 1;
+        private readonly List<Line> _segments;
+        private int _numControllers = 3;
 
         public CurveControllerCollection(){
             _curveControllers = new List<CurveController>();
-            _segments = new List<Line2D>(_curveControllers.Count*_segmentsBetweenControllers);
-            //mouseHandler.ClickSubscriptions.Add(this);
+            _segments = new List<Line>(_curveControllers.Count*_segmentsBetweenControllers);
 
-            //_segments.Add(new Line2D());
             int x = 200;
             int y = 200;
             int dx = 100;
             for (int i = 0; i < _numControllers; i++){
-                _curveControllers.Add(new CurveController(x, y, 100, 100,100, 0));
+                _curveControllers.Add(new CurveController(x, y, 100, 100,100, 1.5f));
                 x += dx;
             }
             for (int i = 0; i < _numControllers - 1; i++){
@@ -49,13 +48,9 @@ namespace Drydock.Logic{
                         t
                         );
 
-                    //_segments.Add(new Line2D(firstPos, secondPos, 0.5f));
+                    _segments.Add(new Line(firstPos, secondPos, 1.0f));
                 }
             }
-        }
-
-        public bool HandleMouseClickEvent(MouseState state){
-            throw new NotImplementedException();
         }
 
         public void UpdateCurves(){
@@ -83,9 +78,8 @@ namespace Drydock.Logic{
                         t
                         );
 
-                    //_segments.Add(new Line2D((int)firstPos.X, (int)firstPos.Y, (int)secondPos.X, (int)secondPos.Y));
-                    //_segments[i*_segmentsBetweenControllers + si].OriginPoint = new Vector2((int) firstPos.X, (int) firstPos.Y);
-                    //_segments[i*_segmentsBetweenControllers + si].DestPoint = new Vector2((int) secondPos.X, (int) secondPos.Y);
+                    _segments[i*_segmentsBetweenControllers + si].OriginPoint = new Vector2((int) firstPos.X, (int) firstPos.Y);
+                    _segments[i*_segmentsBetweenControllers + si].DestPoint = new Vector2((int) secondPos.X, (int) secondPos.Y);
                 }
             }
         }

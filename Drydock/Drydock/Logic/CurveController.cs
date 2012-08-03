@@ -39,7 +39,6 @@ namespace Drydock.Logic{
         public CurveController(int initX, int initY, float length1, float length2,float length3, float angle){
             Vector2 component1 = Common.GetComponentFromAngle(angle, length1);
             Vector2 component2 = Common.GetComponentFromAngle((float) (angle - Math.PI), length2); // minus math.pi to reverse direction
-            Vector2 component3 = Common.GetComponentFromAngle((float) (angle - Math.PI/2f), length3); // minus math.pi to reverse direction
 
             _handle1 = UIContext.Add<Button>(
                 new Button(
@@ -154,7 +153,7 @@ namespace Drydock.Logic{
 
                     break;
                 case 1:
-                    //_line1.TranslateDestination(dx, dy);
+                    _line1.TranslateDestination(dx, dy);
                     _line2.Angle = (float) (_line1.Angle + Math.PI);
 
                     _handle2.X = (int) _line2.DestPoint.X - _handle2.BoundingBox.Width/2;

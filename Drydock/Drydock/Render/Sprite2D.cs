@@ -33,7 +33,7 @@ namespace Drydock.Render{
             }
         }
 
-        public void ChangeTexture(string textureName){
+        public void SetTexture(string textureName){
             _frameTextures[_id] = _contentManager.Load<Texture2D>(textureName);
         }
 

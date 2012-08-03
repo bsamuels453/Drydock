@@ -43,6 +43,8 @@ namespace Drydock.UI{
         public Rectangle BoundingBox{
             get { return _boundingBox; }
         }
+
+        public string TextureName { get; set; } 
         public float Opacity { get; set; }
         public float Depth { get; set; }
         public IUIElementComponent[] Components { get; set; }
@@ -76,6 +78,7 @@ namespace Drydock.UI{
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
 
+            TextureName = textureName;
             Depth = layerDepth;
             Components = components;
 

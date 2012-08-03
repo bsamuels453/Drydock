@@ -39,7 +39,10 @@ namespace Drydock.UI{
                 CalculateInfoFromPoints();
             }
         }
+        public int LineWidth { get; set; }
+
         public IUIElementComponent[] Components { get; set; }
+        public string TextureName { get; set; }
         public float Opacity { get; set; }
         public float Depth { get; set; }
         public int Identifier{
@@ -74,17 +77,21 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Line(Vector2 v1, Vector2 v2, float layerDepth, IUIElementComponent[] components){
+        public Line(Vector2 v1, Vector2 v2, float layerDepth, IUIElementComponent[] components=null){
             _lineSprite = new Line2D(this, 1);
             _point1 = v1;
             _point2 = v2;
             Depth = layerDepth;
             Opacity = 1;
+            LineWidth = 1;
+            TextureName = null;
             CalculateInfoFromPoints();
 
             Components = components;
-            foreach (IUIElementComponent component in Components){
-                component.Owner = this;
+            if (Components != null){
+                foreach (IUIElementComponent component in Components){
+                    component.Owner = this;
+                }
             }
         }
 
