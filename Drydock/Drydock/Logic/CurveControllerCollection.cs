@@ -24,11 +24,8 @@ namespace Drydock.Logic{
                 x += 200;
             }
             for (int i = 1; i < _initlNumCurves - 1; i++){
-                _curveList[i].PrevCurve = _curveList[i - 1];
-                _curveList[i].NextCurve = _curveList[i + 1];
-
-                _curveList[i + 1].PrevCurve = _curveList[i];
-                _curveList[i - 1].NextCurve = _curveList[i];
+                _curveList[i].SetPrevCurve(_curveList[i - 1], 1.5f, 100);
+                _curveList[i].SetNextCurve(_curveList[i + 1], 1.5f, 100);
             }
         }
 
@@ -42,10 +39,6 @@ namespace Drydock.Logic{
                             _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
                             _curveList[i].NextCurve = _curveList[i + 1];
                             _curveList[i].PrevCurve = _curveList[i - 1];
-
-                            _curveList[i + 1].PrevCurve = _curveList[i];
-                            _curveList[i - 1].NextCurve = _curveList[i];
-                            
                             return true;
                         }
                     }
@@ -58,9 +51,6 @@ namespace Drydock.Logic{
                             _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
                             _curveList[i].NextCurve = _curveList[i + 1];
                             _curveList[i].PrevCurve = _curveList[i - 1];
-
-                            _curveList[i + 1].PrevCurve = _curveList[i];
-                            _curveList[i - 1].NextCurve = _curveList[i];
                             return true;
                         }
                     }

@@ -176,7 +176,7 @@ namespace Drydock.UI{
 
         public TComponent GetComponent<TComponent>(){
             foreach (IUIElementComponent component in Components){
-                if (component.GetType() == typeof (TComponent)){
+                if (component is TComponent){
                     return (TComponent) component;
                 }
             }

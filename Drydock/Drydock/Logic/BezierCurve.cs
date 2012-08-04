@@ -32,27 +32,19 @@ namespace Drydock.Logic {
         public float PrevHandleLength { get; set; }//the empire strikes back
         public float NextHandleLength { get; set; }
 
-        public BezierCurve PrevCurve{
-            set{
+        public BezierCurve PrevCurveReference{
+            set { 
                 _prevCurve = value;
                 if (_prevLines == null) {
                     _prevLines = new List<Line>(_linesPerSide);
-
                     for (int i = 0; i < _linesPerSide; i++) {
                         _prevLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
                     }
                 }
-                else{
-                    for (int i = 0; i < _linesPerSide; i++) {
-                        _prevLines[i].Dispose();
-                        _prevLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
-                    }
-                }
-                Update();
             }
         }
-        public BezierCurve NextCurve {
-            set{
+        public BezierCurve NextCurveReference {
+            set { 
                 _nextCurve = value;
                 if (_nextLines == null) {
                     _nextLines = new List<Line>(_linesPerSide);
@@ -60,22 +52,71 @@ namespace Drydock.Logic {
                         _nextLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
                     }
                 }
-                else{
-                    for (int i = 0; i < _linesPerSide; i++) {
-                        _nextLines[i].Dispose();
-                        _nextLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
-                    }
                 }
-                Update();
-            }
         }
+
+        public void InsertBetweenCurves(BezierCurve prevCurve, BezierCurve nextCurve, float t){
+
+        }
+
+        public void SetPrevCurve(BezierCurve val, float angle, float handleLength){
+            _prevCurve = val;
+            _prevCurve.NextCurveReference = this;
+            if (_prevLines == null) {
+                _prevLines = new List<Line>(_linesPerSide);
+
+                for (int i = 0; i < _linesPerSide; i++) {
+                    _prevLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                }
+            }
+            else {
+                for (int i = 0; i < _linesPerSide; i++) {
+                    _prevLines[i].Dispose();
+                    _prevLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
+                }
+            }
+            _controller.Angle = angle;
+            _controller.PrevHandleLength = handleLength;
+            Update();
+        }
+
+        public void SetNextCurve(BezierCurve val, float angle, float handleLength) {
+            _nextCurve = val;
+            _nextCurve.PrevCurveReference = this;
+            if (_nextLines == null) {
+                _nextLines = new List<Line>(_linesPerSide);
+                for (int i = 0; i < _linesPerSide; i++) {
+                    _nextLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                }
+            }
+            else {
+                for (int i = 0; i < _linesPerSide; i++) {
+                    _nextLines[i].Dispose();
+                    _nextLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
+                }
+            }
+            _controller.Angle = angle;
+            _controller.NextHandleLength = handleLength;
+            Update();
+        }
+
 
         #endregion
 
-        public BezierCurve(int x, int y, int linesPerSide, BezierCurve prevController=null, BezierCurve nextController=null){
-            _controller = new CurveController(x, y, 100, 100, 1.5f);
+        /// <summary>
+        /// usually used to add new curves between two points
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="linesPerSide"> </param>
+        public BezierCurve(int x, int y, int linesPerSide=20){
+            _controller = new CurveController(x, y, 100, 100,1.5f);
             _linesPerSide = linesPerSide;
-            if (prevController == null) {
+            _nextLines = null;
+            _nextCurve = null;
+            _prevCurve = null;
+            _prevLines = null;
+            /*if (prevController == null) {
                 _prevCurve = null;
                 _prevLines = null;
             }
@@ -109,7 +150,21 @@ namespace Drydock.Logic {
                 //we have nothing to work on, so just return
                 return;
             }
-            Update();
+
+            //now set the controller angle
+            //it doesnt matter which set of control points we use to determine the tangent angle because of ~=LIMITS=~
+            if (prevController != null) {
+                Vector2 pt1;
+                Vector2 pt2;
+                //Bezier.GetBezierValue(out pt1, _prevCurve.NextHandlePos, _prevCurve.NextHandlePos, 
+
+            }
+            else{
+
+            }
+
+
+            Update();*/
         }
 
         public void Dispose(){

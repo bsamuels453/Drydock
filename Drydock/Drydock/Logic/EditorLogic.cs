@@ -1,4 +1,5 @@
-﻿using Drydock.Control;
+﻿using System.Diagnostics;
+using Drydock.Control;
 using Drydock.Render;
 using Drydock.UI;
 
@@ -15,33 +16,17 @@ namespace Drydock.Logic{
             //initalize component classes
             _c = new CurveControllerCollection();
 
-
-            /* _b = _uiContext.Add<Button>(
-                new Button(
-                    x: 50,
-                    y: 50,
-                    width: 50, 
-                    height: 50,
-                    layerDepth: 0.5f,
-                    textureName: "box",
-                    components: new IUIElementComponent[]{
-                        new DraggableComponent(),
-                        //new FadeComponent(FadeComponent.FadeState.Faded)
-                    }
-                    )
-                );
-            DebugTimer.Stop();
-            DebugTimer.Report(":");
-            _b.OnMouseEntry.Add(_b.GetComponent<FadeComponent>().ForceFadein);
-            _b.OnMouseExit.Add(_b.GetComponent<FadeComponent>().ForceFadeout);
-            */
         }
 
         public void Update(){
+            //160,000 microsecond budget
+
+            //4,000 microseconds
             MouseHandler.UpdateMouse();
             KeyboardHandler.UpdateKeyboard();
             _c.Update();
             UIContext.Update();
+
         }
     }
 }

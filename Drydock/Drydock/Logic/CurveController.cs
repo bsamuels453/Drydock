@@ -32,6 +32,9 @@ namespace Drydock.Logic{
             get { return _handle2.CentPosition; }
         }
 
+        public float PrevHandleLength { get; set; }
+        public float NextHandleLength { get; set; }
+
         public float Angle { get; set; }//implement this you fucking bum
 
         #endregion
