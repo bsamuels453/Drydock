@@ -23,6 +23,9 @@ namespace Drydock.UI.Components{
 
         public IUIElement Owner{ //this function acts as kind of a pseudo-constructor
             set{
+                if (!(value is IUIInteractiveElement)){
+                    throw new Exception("Invalid element componenet: Unable to set a drag component for a non-interactive element.");
+                }
                 _owner = (IUIInteractiveElement) value;
                 ComponentCtor();
             }
@@ -39,15 +42,6 @@ namespace Drydock.UI.Components{
         }
 
         private void ComponentCtor(){
-            bool isParentInteractive = false;
-            foreach (Type type in _owner.GetType().Assembly.GetTypes()){
-                if (type == typeof (IUIInteractiveElement)){
-                    isParentInteractive = true;
-                }
-            }
-            if (!isParentInteractive){
-                throw new Exception("Invalid element componenet: Unable to set a drag component for a non-interactive element.");
-            }
 
             _isEnabled = true;
             _isMoving = false;
