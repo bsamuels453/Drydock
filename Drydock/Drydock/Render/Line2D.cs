@@ -57,7 +57,7 @@ namespace Drydock.Render{
 
         #region static methods and fields
 
-        private const int _maxLines = 1000;
+        private const int _maxLines = 10000;
         private static bool[] _isFrameSlotAvail;
         private static Texture2D[] _lineTextures;
         private static Line[] _lineOwners;

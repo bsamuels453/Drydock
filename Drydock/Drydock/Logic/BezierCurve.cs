@@ -116,8 +116,33 @@ namespace Drydock.Logic {
             throw new NotImplementedException();
         }
 
-        public Point Contains(MouseState state){
+        public Point PrevContains(MouseState state){
+            var mousePoint = new Vector2(state.X,state.Y);
+            const int width = 5;
+
+            if (_prevLines != null){
+                foreach (var line in _prevLines){
+                    if (Vector2.Distance(line.DestPoint, mousePoint) < width){
+                        return new Point((int) line.DestPoint.X, (int) line.DestPoint.Y);
+                    }
+                }
+            }
+
             return Point.Zero;
+        }
+
+        public Point NextContains(MouseState state){
+            var mousePoint = new Vector2(state.X, state.Y);
+            const int width = 5;
+            if (_nextLines != null) {
+                foreach (var line in _nextLines) {
+                    if (Vector2.Distance(line.DestPoint, mousePoint) < width) {
+                        return new Point((int)line.DestPoint.X, (int)line.DestPoint.Y);
+                    }
+                }
+            }
+            return Point.Zero;
+
         }
 
         public void Update(){

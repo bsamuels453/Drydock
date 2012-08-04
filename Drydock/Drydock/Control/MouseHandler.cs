@@ -34,7 +34,7 @@ namespace Drydock.Control{
                 newState.MiddleButton != _previousMouseState.MiddleButton){
                     foreach (OnMouseAction t in ClickSubscriptions) {
                     if (t(newState)){
-                        //break;
+                        break;
                     }
                 }
             }

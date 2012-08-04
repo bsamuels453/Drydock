@@ -32,23 +32,37 @@ namespace Drydock.Logic{
             }
         }
 
-        /// <summary>
-        /// insert a new curve controller handle at the specified line segment 
-        /// </summary>
-        /// <param name="x"> </param>
-        /// <param name="y"> </param>
-        /// <param name="insertPos"> </param>
-        private void AddController(int x, int y, int insertPos) {
-            _curveList.Insert(insertPos, new BezierCurve(x, y, _segmentsBetweenControllers, _curveList[insertPos], _curveList[insertPos + 1]));
-        }
-
         private bool HandleMouseClick(MouseState state){
             Point pos;
-            if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
-                for (int i = 0; i < _curveList.Count; i++){
-                    if ((pos = _curveList[i].Contains(state)) == Point.Zero){
-                        AddController(pos.X, pos.Y, i);
-                        return true;
+            if(state.LeftButton == ButtonState.Pressed){
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
+                    for (int i = 1; i < _curveList.Count; i++){
+                        if ((pos = _curveList[i].PrevContains(state)) != Point.Zero){
+                            //i -= 1;
+                            _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
+                            _curveList[i].NextCurve = _curveList[i + 1];
+                            _curveList[i].PrevCurve = _curveList[i - 1];
+
+                            _curveList[i + 1].PrevCurve = _curveList[i];
+                            _curveList[i - 1].NextCurve = _curveList[i];
+                            
+                            return true;
+                        }
+                    }
+                    for (int i = 0; i < _curveList.Count-1; i++) {
+
+
+                        if ((pos = _curveList[i].NextContains(state)) != Point.Zero) {
+                            i += 1;
+                           
+                            _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
+                            _curveList[i].NextCurve = _curveList[i + 1];
+                            _curveList[i].PrevCurve = _curveList[i - 1];
+
+                            _curveList[i + 1].PrevCurve = _curveList[i];
+                            _curveList[i - 1].NextCurve = _curveList[i];
+                            return true;
+                        }
                     }
                 }
             }
