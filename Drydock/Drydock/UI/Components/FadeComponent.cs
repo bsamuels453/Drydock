@@ -91,13 +91,8 @@ namespace Drydock.UI.Components{
             switch (_fadeTrigger){
                 case FadeTrigger.EntryExit:
 
-                    bool isParentInteractive = false;
-                    foreach (Type type in _owner.GetType().Assembly.GetTypes()){
-                        if (type == typeof (IUIInteractiveElement)){
-                            isParentInteractive = true;
-                        }
-                    }
-                    if (!isParentInteractive){
+                    
+                    if (! (_owner is IUIInteractiveElement)){
                         throw new Exception("Invalid fade trigger: Unable to set an interactive trigger to a non-interactive element.");
                     }
 

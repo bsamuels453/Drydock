@@ -1,117 +1,64 @@
-﻿using System;
+﻿#region
+
 using System.Collections.Generic;
-using Drydock.Render;
-using Drydock.UI;
-using Drydock.Utilities;
+using Drydock.Control;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+
+#endregion
 
 namespace Drydock.Logic{
     internal class CurveControllerCollection{
         private const int _segmentsBetweenControllers = 40;
-        private readonly List<CurveController> _curveControllers;
-        private readonly List<Line> _segments;
-        private int _numControllers = 4;
+        private const int _initlNumCurves = 4;
 
-        private BezierCurve curve1;
-        private BezierCurve curve2;
+        private readonly List<BezierCurve> _curveList;
 
         public CurveControllerCollection(){
-            curve1 = new BezierCurve(200, 200, 20);
-            curve2 = new BezierCurve(300, 200, 20);
-            curve1.NextCurve = curve2;
-            curve2.PrevCurve = curve1;
-            /*_curveControllers = new List<CurveController>();
-            _segments = new List<Line>(_curveControllers.Count*_segmentsBetweenControllers);
+            _curveList = new List<BezierCurve>(_initlNumCurves);
+            MouseHandler.ClickSubscriptions.Add(HandleMouseClick);
+            int x=200;
+            int y=200;
+            for (int i = 0; i < _initlNumCurves; i++){
+                _curveList.Add(new BezierCurve(x, y, _segmentsBetweenControllers));
+                x += 200;
+            }
+            for (int i = 1; i < _initlNumCurves - 1; i++){
+                _curveList[i].PrevCurve = _curveList[i - 1];
+                _curveList[i].NextCurve = _curveList[i + 1];
 
-            int x = 200;
-            int y = 200;
-            int dx = 100;
-            //for (int i = 0; i < _numControllers; i++){
-                _curveControllers.Add(new CurveController(x, y, 100, 100, 1.5f));
-                x += dx;
-                _curveControllers.Add(new CurveController(x, y, 100, 50,  1.5f));
-                x += dx/2;
-                _curveControllers.Add(new CurveController(x, y, 50, 50,-1.0f));
-                x +=(int)( dx-dx*0.5f);
-                _curveControllers.Add(new CurveController(x, y, 50, 100, 1.5f));
-                x += dx;
-
-           // }
-            for (int i = 0; i < _numControllers - 1; i++){
-                for (int si = 0; si < _segmentsBetweenControllers; si++){
-                    float t = (float) si/_segmentsBetweenControllers;
-                    Vector2 firstPos, secondPos;
-
-                    Bezier.GetBezierValue(
-                        out firstPos,
-                        _curveControllers[i].CenterHandlePos,
-                        _curveControllers[i].NextHandlePos,
-                        _curveControllers[i + 1].PrevHandlePos,
-                        _curveControllers[i + 1].CenterHandlePos,
-                        t
-                        );
-
-                    t += 1f/_segmentsBetweenControllers;
-                    Bezier.GetBezierValue(
-                        out secondPos,
-                        _curveControllers[i].CenterHandlePos,
-                        _curveControllers[i].NextHandlePos,
-                        _curveControllers[i + 1].PrevHandlePos,
-                        _curveControllers[i + 1].CenterHandlePos,
-                        t
-                        );
-
-                    _segments.Add(new Line(firstPos, secondPos, 1.0f));
-                }
-            }*/
+                _curveList[i + 1].PrevCurve = _curveList[i];
+                _curveList[i - 1].NextCurve = _curveList[i];
+            }
         }
 
         /// <summary>
         /// insert a new curve controller handle at the specified line segment 
         /// </summary>
-        /// <param name="lineSegIndex"></param>
-        private void AddController(int lineSegIndex){
-            int controllerInsertIndex = 0;
-            while (lineSegIndex - _segmentsBetweenControllers > 0){
-                controllerInsertIndex++;
-                lineSegIndex -= _segmentsBetweenControllers;
-            }
-
+        /// <param name="x"> </param>
+        /// <param name="y"> </param>
+        /// <param name="insertPos"> </param>
+        private void AddController(int x, int y, int insertPos) {
+            _curveList.Insert(insertPos, new BezierCurve(x, y, _segmentsBetweenControllers, _curveList[insertPos], _curveList[insertPos + 1]));
         }
 
-        public void UpdateCurves(){
-            curve1.Update();
-            curve2.Update();
-            /*
-            for (int i = 0; i < _numControllers - 1; i++){
-                for (int si = 0; si < _segmentsBetweenControllers; si++){
-                    float t = (float) si/_segmentsBetweenControllers;
-                    Vector2 firstPos, secondPos;
-
-                    Bezier.GetBezierValue(
-                        out firstPos,
-                        _curveControllers[i].CenterHandlePos,
-                        _curveControllers[i].NextHandlePos,
-                        _curveControllers[i + 1].PrevHandlePos,
-                        _curveControllers[i + 1].CenterHandlePos,
-                        t
-                        );
-
-                    t += 1f/_segmentsBetweenControllers;
-                    Bezier.GetBezierValue(
-                        out secondPos,
-                        _curveControllers[i].CenterHandlePos,
-                        _curveControllers[i].NextHandlePos,
-                        _curveControllers[i + 1].PrevHandlePos,
-                        _curveControllers[i + 1].CenterHandlePos,
-                        t
-                        );
-
-                    _segments[i*_segmentsBetweenControllers + si].OriginPoint = new Vector2((int) firstPos.X, (int) firstPos.Y);
-                    _segments[i*_segmentsBetweenControllers + si].DestPoint = new Vector2((int) secondPos.X, (int) secondPos.Y);
+        private bool HandleMouseClick(MouseState state){
+            Point pos;
+            if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
+                for (int i = 0; i < _curveList.Count; i++){
+                    if ((pos = _curveList[i].Contains(state)) == Point.Zero){
+                        AddController(pos.X, pos.Y, i);
+                        return true;
+                    }
                 }
-            }*/
+            }
+            return false;
+        }
+
+        public void Update(){
+            foreach (var curve in _curveList){
+                curve.Update();
+            }
         }
     }
 }

@@ -142,6 +142,11 @@ namespace Drydock.UI{
             }
         }
 
+        public void Dispose(){
+            Sprite.Dispose();
+            UIContext.DisposeElement(this);
+        }
+
         #endregion
     }
 }

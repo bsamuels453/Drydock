@@ -49,6 +49,12 @@ namespace Drydock.UI{
             }
         }
 
+        public static void DisposeElement(IUIElement element){
+            if (IsElementInteractive(element)){
+                _layerSortedIElements.Remove(element);
+            }
+        }
+
         #region event handlers
 
         private static bool OnMouseButtonEvent(MouseState state){
@@ -114,13 +120,7 @@ namespace Drydock.UI{
         #endregion
 
         public static bool IsElementInteractive(IUIElement element){
-            bool isElementInteractive = false;
-            foreach (var type in element.GetType().Assembly.GetTypes()){
-                if (type == typeof(IUIInteractiveElement)){
-                    isElementInteractive = true;
-                }
-            }
-            return isElementInteractive;
+            return element is IUIInteractiveElement;
         }
     }
 
@@ -169,6 +169,17 @@ namespace Drydock.UI{
         public void RemoveAt(int index){
             _depthList.RemoveAt(index);
             _objList.RemoveAt(index);
+        }
+
+        public void Remove(IUIElement element){
+            int i = 0;
+            while (_objList[i] != element){
+                i++;
+                if (i == _objList.Count){
+                    //return;
+                }
+            }
+            RemoveAt(i);
         }
     }
 

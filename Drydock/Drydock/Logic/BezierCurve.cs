@@ -1,9 +1,11 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using Drydock.UI;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 #endregion
 
@@ -33,9 +35,18 @@ namespace Drydock.Logic {
         public BezierCurve PrevCurve{
             set{
                 _prevCurve = value;
-                _prevLines = new List<Line>(_linesPerSide);
-                for (int i = 0; i < _linesPerSide; i++){
-                    _prevLines.Add( new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                if (_prevLines == null) {
+                    _prevLines = new List<Line>(_linesPerSide);
+
+                    for (int i = 0; i < _linesPerSide; i++) {
+                        _prevLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                    }
+                }
+                else{
+                    for (int i = 0; i < _linesPerSide; i++) {
+                        _prevLines[i].Dispose();
+                        _prevLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
+                    }
                 }
                 Update();
             }
@@ -43,9 +54,17 @@ namespace Drydock.Logic {
         public BezierCurve NextCurve {
             set{
                 _nextCurve = value;
-                _nextLines = new List<Line>(_linesPerSide);
-                for (int i = 0; i < _linesPerSide; i++){
-                    _nextLines.Add( new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                if (_nextLines == null) {
+                    _nextLines = new List<Line>(_linesPerSide);
+                    for (int i = 0; i < _linesPerSide; i++) {
+                        _nextLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                    }
+                }
+                else{
+                    for (int i = 0; i < _linesPerSide; i++) {
+                        _nextLines[i].Dispose();
+                        _nextLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
+                    }
                 }
                 Update();
             }
@@ -62,6 +81,7 @@ namespace Drydock.Logic {
             }
             else{
                 _prevCurve = prevController;
+                _prevCurve._nextCurve = this;
                 if (_prevLines == null){
                     _prevLines = new List<Line>(linesPerSide);
                     for (int i = 0; i < linesPerSide; i++){
@@ -76,6 +96,7 @@ namespace Drydock.Logic {
             }
             else{
                 _nextCurve = nextController;
+                _nextCurve.PrevCurve = this;
                 if (_nextLines == null){
                     _nextLines = new List<Line>(linesPerSide);
                     for (int i = 0; i < linesPerSide; i++){
@@ -89,6 +110,14 @@ namespace Drydock.Logic {
                 return;
             }
             Update();
+        }
+
+        public void Dispose(){
+            throw new NotImplementedException();
+        }
+
+        public Point Contains(MouseState state){
+            return Point.Zero;
         }
 
         public void Update(){

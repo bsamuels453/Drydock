@@ -117,7 +117,7 @@ namespace Drydock.Logic{
             #endregion
             InterlinkButtonEvents();
         }
-
+         
         private void InterlinkButtonEvents(){
             FadeComponent.LinkFadeComponentTriggers(_handle1, _handle2, FadeComponent.FadeTrigger.EntryExit);
             FadeComponent.LinkFadeComponentTriggers(_handle1, _centerHandle, FadeComponent.FadeTrigger.EntryExit);

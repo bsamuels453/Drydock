@@ -9,5 +9,6 @@ namespace Drydock.UI{
         IAdvancedPrimitive Sprite { get; }
         TComponent GetComponent<TComponent>();
         void Update();
+        void Dispose();
     }
 }

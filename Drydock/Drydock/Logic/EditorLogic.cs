@@ -40,7 +40,7 @@ namespace Drydock.Logic{
         public void Update(){
             MouseHandler.UpdateMouse();
             KeyboardHandler.UpdateKeyboard();
-            _c.UpdateCurves();
+            _c.Update();
             UIContext.Update();
         }
     }
