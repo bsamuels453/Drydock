@@ -24,31 +24,32 @@ namespace Drydock.Logic{
                 x += 200;
             }
             for (int i = 1; i < _initlNumCurves - 1; i++){
-                _curveList[i].SetPrevCurve(_curveList[i - 1], 1.5f, 100);
-                _curveList[i].SetNextCurve(_curveList[i + 1], 1.5f, 100);
+                _curveList[i].SetPrevCurve(_curveList[i - 1],1.5f, 20);
+                _curveList[i].SetNextCurve(_curveList[i + 1],1.5f, 20);
             }
         }
 
         private bool HandleMouseClick(MouseState state){
             Point pos;
+            float t;
             if(state.LeftButton == ButtonState.Pressed){
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
                     for (int i = 1; i < _curveList.Count; i++){
-                        if ((pos = _curveList[i].PrevContains(state)) != Point.Zero){
+                        if ((pos = _curveList[i].PrevContains(state, out t)) != Point.Zero){
                             //i -= 1;
                             _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
-                            _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], 0.5f);
+                            _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], t);
                             return true;
                         }
                     }
                     for (int i = 0; i < _curveList.Count-1; i++) {
 
 
-                        if ((pos = _curveList[i].NextContains(state)) != Point.Zero) {
+                        if ((pos = _curveList[i].NextContains(state, out t)) != Point.Zero) {
                             i += 1;
                            
                             _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
-                            _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], 0.5f);
+                            _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], t);
                             return true;
                         }
                     }

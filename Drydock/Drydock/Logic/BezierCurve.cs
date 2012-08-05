@@ -70,12 +70,20 @@ namespace Drydock.Logic {
             Vector2 pt2;
             Bezier.GetBezierValue(out pt1, _prevCurve.NextHandlePos, _prevCurve.NextHandlePos, PrevHandlePos, HandlePos, t);
             Bezier.GetBezierValue(out pt2, _prevCurve.NextHandlePos, _prevCurve.NextHandlePos, PrevHandlePos, HandlePos, t+0.001f);//limits are for fags
+            /*
+            pt1.X = (int)pt1.X;
+            pt1.Y = (int)pt1.Y;
+            pt2.X = (int)pt2.X;
+            pt2.Y = (int)pt2.Y;
+            */
 
             //get tangent and set to angle
-            Vector2 pt3 = pt2 - pt1;
-            float angle = Common.GetAngleOfRotation(1, 0, pt3.X, pt3.Y);
+            Vector2 pt3 = pt1 - pt2;
+            float angle, magnitude;
+                
+            Common.GetAngleFromComponents(out angle, out magnitude, pt3.X, pt3.Y);
 
-            _controller.Angle = angle;
+            _controller.Angle1 = angle;
             if (_prevLines == null) {
                 _prevLines = new List<Line>(_linesPerSide);
 
@@ -122,7 +130,7 @@ namespace Drydock.Logic {
                     _prevLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
                 }
             }
-            _controller.Angle = angle;
+            _controller.Angle1 = angle;
             _controller.PrevHandleLength = handleLength;
             Update();
         }
@@ -142,7 +150,7 @@ namespace Drydock.Logic {
                     _nextLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
                 }
             }
-            _controller.Angle = angle;
+            _controller.Angle1 = angle;
             _controller.NextHandleLength = handleLength;
             Update();
         }
@@ -157,7 +165,7 @@ namespace Drydock.Logic {
         /// <param name="y"></param>
         /// <param name="linesPerSide"> </param>
         public BezierCurve(int x, int y, int linesPerSide=20){
-            _controller = new CurveController(x, y, 100, 100,1.5f);
+            _controller = new CurveController(x, y, 20, 20,0f);
             _linesPerSide = linesPerSide;
             _nextLines = null;
             _nextCurve = null;
@@ -218,31 +226,41 @@ namespace Drydock.Logic {
             throw new NotImplementedException();
         }
 
-        public Point PrevContains(MouseState state){
+        public Point PrevContains(MouseState state, out float t){
             var mousePoint = new Vector2(state.X,state.Y);
             const int width = 5;
 
             if (_prevLines != null){
-                foreach (var line in _prevLines){
-                    if (Vector2.Distance(line.DestPoint, mousePoint) < width){
-                        return new Point((int) line.DestPoint.X, (int) line.DestPoint.Y);
+                for (int i = 0; i < _prevLines.Count; i++){
+                    if (Vector2.Distance(_prevLines[i].DestPoint, mousePoint) < width) {
+                        t = ((float)i) / (_linesPerSide * 2) + 0.5f;
+                        return new Point((int)_prevLines[i].DestPoint.X, (int)_prevLines[i].DestPoint.Y);
                     }
+
+                }
+                foreach (var line in _prevLines){
+
                 }
             }
-
+            //todo: fix these returns to not break on zero
+            t = -1;
             return Point.Zero;
         }
 
-        public Point NextContains(MouseState state){
+        public Point NextContains(MouseState state, out float t){
             var mousePoint = new Vector2(state.X, state.Y);
             const int width = 5;
-            if (_nextLines != null) {
-                foreach (var line in _nextLines) {
-                    if (Vector2.Distance(line.DestPoint, mousePoint) < width) {
-                        return new Point((int)line.DestPoint.X, (int)line.DestPoint.Y);
+            if (_nextLines != null){
+                for (int i = 0; i < _nextLines.Count; i++) {
+                    if (Vector2.Distance(_nextLines[i].DestPoint, mousePoint) < width) {
+
+                        t = ((float)i) / (_linesPerSide*2);
+                        return new Point((int)_nextLines[i].DestPoint.X, (int)_nextLines[i].DestPoint.Y);
                     }
+
                 }
             }
+            t = -1;
             return Point.Zero;
 
         }

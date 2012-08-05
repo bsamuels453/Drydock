@@ -16,11 +16,16 @@ namespace Drydock.UI{
         private readonly Stopwatch _hoverTimer; //nonimp, put in superclass
         private readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
         private readonly Sprite2D _sprite; //the button's sprite
-        private FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
+        private readonly FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
         private Vector2 _centPosition; //represents the approximate center of the button
 
         public Vector2 CentPosition{
             get { return _centPosition; }
+            set {  
+                _centPosition = value;
+                _boundingBox.X = _centPosition.X - _boundingBox.Width / 2;
+                _boundingBox.Y = _centPosition.Y - _boundingBox.Height / 2;
+            }
         }
         public int Identifier{
             get { return _identifier; }

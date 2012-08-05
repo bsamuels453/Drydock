@@ -9,8 +9,8 @@ using Microsoft.Xna.Framework;
 #endregion
 
 namespace Drydock.Logic{
-    internal class CurveController{
-
+    internal class CurveController {
+        #region fields and properties
         private readonly Button _centerHandle;
         private readonly Button _handle1;
         private readonly Button _handle2;
@@ -18,16 +18,12 @@ namespace Drydock.Logic{
         private readonly Line _line1;
         private readonly Line _line2;
 
-        #region properties
-
         public Vector2 CenterHandlePos{
             get { return _centerHandle.CentPosition; }
         }
-
         public Vector2 PrevHandlePos{
             get { return _handle1.CentPosition; }
         }
-
         public Vector2 NextHandlePos{
             get { return _handle2.CentPosition; }
         }
@@ -35,7 +31,22 @@ namespace Drydock.Logic{
         public float PrevHandleLength { get; set; }
         public float NextHandleLength { get; set; }
 
-        public float Angle { get; set; }//implement this you fucking bum
+        public float Angle1 {
+            set { 
+                _line1.Angle = value;
+                _line2.Angle = (float)(value + Math.PI);
+                _handle1.CentPosition = _line1.DestPoint;
+                _handle2.CentPosition = _line2.DestPoint;
+            }
+        }
+        public float Angle2 {
+            set {
+                _line2.Angle = value;
+                _line1.Angle = (float)(value + Math.PI);
+                _handle1.CentPosition = _line1.DestPoint;
+                _handle2.CentPosition = _line2.DestPoint;
+            }
+        }
 
         #endregion
 
