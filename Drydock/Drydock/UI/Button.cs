@@ -124,14 +124,14 @@ namespace Drydock.UI{
             if (state.LeftButton == ButtonState.Pressed){
                 _clickTimer.Start();
                 foreach (OnMouseAction t in OnLeftButtonDown){
-                    if (t(state)){
+                    if (t(state) == InterruptState.InterruptEventDispatch){
                        denyOtherElementsFromClick = true;
                     }
                 }
             }
             if (state.LeftButton == ButtonState.Released){
                 foreach (OnMouseAction t in OnLeftButtonUp){
-                    if (t(state)){
+                    if (t(state) == InterruptState.InterruptEventDispatch){
                        denyOtherElementsFromClick = true;
                     }
                 }
@@ -142,7 +142,7 @@ namespace Drydock.UI{
                     //okay, click registered. now dispatch events.
                     foreach (OnMouseAction t in OnLeftButtonClick){
                         System.Console.WriteLine("dispatching click");
-                        if (t(state)){
+                        if (t(state) == InterruptState.InterruptEventDispatch){
                            denyOtherElementsFromClick = true;
                             
                         }

@@ -16,7 +16,7 @@ namespace Drydock.Logic{
 
         public CurveControllerCollection(){
             _curveList = new List<BezierCurve>(_initlNumCurves);
-            MouseHandler.ClickSubscriptions.Add(HandleMouseClick);
+            InputEventDispatcher.OnMButtonDispatcher.Add(HandleMouseClick);
             int x=200;
             int y=200;
             for (int i = 0; i < _initlNumCurves; i++){
@@ -29,7 +29,7 @@ namespace Drydock.Logic{
             }
         }
 
-        private bool HandleMouseClick(MouseState state){
+        private InterruptState HandleMouseClick(MouseState state) {
             Point pos;
             float t;
             if(state.LeftButton == ButtonState.Pressed){
@@ -39,7 +39,7 @@ namespace Drydock.Logic{
                             //i -= 1;
                             _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
                             _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], t);
-                            return true;
+                            return InterruptState.InterruptEventDispatch;
                         }
                     }
                     for (int i = 0; i < _curveList.Count-1; i++) {
@@ -50,12 +50,12 @@ namespace Drydock.Logic{
                            
                             _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
                             _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], t);
-                            return true;
+                            return InterruptState.InterruptEventDispatch;
                         }
                     }
                 }
             }
-            return false;
+            return InterruptState.AllowOtherEvents;
         }
 
         public void Update(){

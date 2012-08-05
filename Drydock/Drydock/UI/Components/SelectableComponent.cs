@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Drydock.Control;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -26,6 +28,7 @@ namespace Drydock.UI.Components{
         private int _heightDx;
         private readonly int _selectedWidth;
         private readonly int _selectedHeight;
+        private readonly ReactToSelection _selectionCallback;
 
         public IUIElement Owner{
             set {
@@ -44,12 +47,13 @@ namespace Drydock.UI.Components{
 
         }
 
-        public SelectableComponent(string selectedTexture, int width, int height){
+        public SelectableComponent(string selectedTexture, int width, int height, ReactToSelection callback=null){
             _selectedTexture = selectedTexture;
             _selectedWidth = width;
             _selectedHeight = height;
             IsEnabled = true;
             _isSelected = false;
+            _selectionCallback = callback;
         }
 
         private void ComponentCtor(){
@@ -63,7 +67,7 @@ namespace Drydock.UI.Components{
             _positionDy = _heightDx / 2;
         }
 
-        private bool OnMouseClick(MouseState state){
+        private InterruptState OnMouseClick(MouseState state) {
             if (IsEnabled){
                 if (_isSelected) {
                     DeselectThis();
@@ -74,7 +78,7 @@ namespace Drydock.UI.Components{
                     }
                 }
             }
-            return false;
+            return InterruptState.AllowOtherEvents;
         }
 
         private void SelectThis(){
@@ -92,6 +96,10 @@ namespace Drydock.UI.Components{
                 // ReSharper disable EmptyGeneralCatchClause
                 catch (Exception){/*there is no fade component*/}
                 // ReSharper restore EmptyGeneralCatchClause
+                if (_selectionCallback != null){
+                    _selectionCallback(SelectState.Selected);
+                }
+                SelectedElements.Add(_owner);
             }
         }
 
@@ -109,7 +117,19 @@ namespace Drydock.UI.Components{
                 // ReSharper disable EmptyGeneralCatchClause
                 catch (Exception) {/*there is no fade component*/}
                 // ReSharper restore EmptyGeneralCatchClause
+                if (_selectionCallback != null){
+                    _selectionCallback(SelectState.UnSelected);
+                }
+                SelectedElements.Remove(_owner);
+                
             }
         }
+        static SelectableComponent(){
+            SelectedElements = new List<IUIInteractiveElement>();
+        }
+
+        public static List<IUIInteractiveElement> SelectedElements; 
+
+        
     }
 }

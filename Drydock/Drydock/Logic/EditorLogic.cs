@@ -8,8 +8,7 @@ namespace Drydock.Logic{
         private readonly CurveControllerCollection _c;
 
         public EditorLogic(Renderer renderer){
-            MouseHandler.Init(renderer.Device);
-            KeyboardHandler.Init(renderer);
+
 
             UIContext.Init();
 
@@ -22,8 +21,7 @@ namespace Drydock.Logic{
             //160,000 microsecond budget
 
             //4,000 microseconds
-            MouseHandler.UpdateMouse();
-            KeyboardHandler.UpdateKeyboard();
+            InputEventDispatcher.Update();
             _c.Update();
             UIContext.Update();
 

@@ -19,9 +19,9 @@ namespace Drydock.UI{
             _prevMouseState = Mouse.GetState();
             DisableEntryHandlers = false;
 
-            MouseHandler.ClickSubscriptions.Add(OnMouseButtonEvent);
-            MouseHandler.MovementSubscriptions.Add(OnMouseMovementEvent);
-            KeyboardHandler.KeyboardSubscriptions.Add(OnKeyboardAction);
+            InputEventDispatcher.OnKeyboardDispatcher.Add(OnKeyboardAction);
+            InputEventDispatcher.OnMMovementDispatcher.Add(OnMouseMovementEvent);
+            InputEventDispatcher.OnMButtonDispatcher.Add(OnMouseButtonEvent);
         }
 
         #endregion
@@ -57,13 +57,13 @@ namespace Drydock.UI{
 
         #region event handlers
 
-        private static bool OnMouseButtonEvent(MouseState state){
-            bool retval = false;
+        private static InterruptState OnMouseButtonEvent(MouseState state) {
+            InterruptState retval = InterruptState.AllowOtherEvents;
             bool forceListCleanup = false;
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 if (_layerSortedIElements[i] != null){
                     if (_layerSortedIElements[i].MouseClickHandler(state)){
-                        retval = true;
+                        retval = InterruptState.AllowOtherEvents; ;
                         break;
                     }
                 }
@@ -82,7 +82,7 @@ namespace Drydock.UI{
             return retval;
         }
 
-        private static bool OnMouseMovementEvent(MouseState state){
+        private static InterruptState OnMouseMovementEvent(MouseState state) {
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 _layerSortedIElements[i].MouseMovementHandler(state);
 
@@ -105,16 +105,16 @@ namespace Drydock.UI{
                 }
             }
             _prevMouseState = state;
-            return false;
+            return InterruptState.AllowOtherEvents;
         }
 
-        private static bool OnKeyboardAction(KeyboardState state){
+        private static InterruptState OnKeyboardAction(KeyboardState state) {
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 if (_layerSortedIElements[i].KeyboardActionHandler(state)){
                     break;
                 }
             }
-            return false;
+            return InterruptState.AllowOtherEvents;
         }
 
         #endregion
