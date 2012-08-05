@@ -15,7 +15,7 @@ namespace Drydock.Control {
     internal delegate InterruptState OnMouseAction(MouseState state);
     internal delegate InterruptState OnKeyboardAction(KeyboardState state);
 
-    static class InputEventDispatcher {
+    internal static class InputEventDispatcher{
         public static List<OnMouseAction> OnMMovementDispatcher;
         public static List<OnMouseAction> OnMButtonDispatcher;
         public static List<OnMouseAction> OnMClickDispatcher;
@@ -23,7 +23,7 @@ namespace Drydock.Control {
 
         private static KeyboardState _prevKeyboardState;
         private static MouseState _prevMouseState;
-        private static Stopwatch _clickTimer;
+        private static readonly Stopwatch _clickTimer;
 
         static InputEventDispatcher(){
             OnMMovementDispatcher = new List<OnMouseAction>();
@@ -32,6 +32,7 @@ namespace Drydock.Control {
             OnKeyboardDispatcher = new List<OnKeyboardAction>();
             _prevKeyboardState = Keyboard.GetState();
             _prevMouseState = Mouse.GetState();
+            _clickTimer = new Stopwatch();
         }
 
         public static void Update(){
@@ -45,31 +46,33 @@ namespace Drydock.Control {
                 newState.RightButton != _prevMouseState.RightButton ||
                 newState.MiddleButton != _prevMouseState.MiddleButton){
 
-                    if (newState.LeftButton == ButtonState.Pressed) {
-                        _clickTimer.Start();
+
+
+                foreach (var action in OnMButtonDispatcher){
+                    if (action(newState) == InterruptState.InterruptEventDispatch){
+                        break;
                     }
-                    else{
-                        _clickTimer.Reset();
-                        if (_clickTimer.ElapsedMilliseconds < 200){
-                            foreach (var action in OnMClickDispatcher){
-                                if (action(newState) == InterruptState.InterruptEventDispatch){
-                                    break;
-                                }
+                }
+                if (newState.LeftButton == ButtonState.Pressed){
+                    _clickTimer.Start();
+                }
+                if (newState.LeftButton == ButtonState.Released){
+                    _clickTimer.Reset();
+                    if (_clickTimer.ElapsedMilliseconds < 200){
+                        foreach (var action in OnMClickDispatcher){
+                            if (action(newState) == InterruptState.InterruptEventDispatch){
+                                break;
                             }
                         }
                     }
+                }
 
-                foreach (var action in OnMButtonDispatcher) {
-                        if (action(newState) == InterruptState.InterruptEventDispatch){
-                            break;
-                        }
-                    }
                 //}
             }
 
             if (newState.X != _prevMouseState.X ||
                 newState.Y != _prevMouseState.Y){
-                    foreach (OnMouseAction action in OnMMovementDispatcher) {
+                foreach (OnMouseAction action in OnMMovementDispatcher){
                     if (action(newState) == InterruptState.InterruptEventDispatch){
                         break;
                     }
@@ -80,9 +83,9 @@ namespace Drydock.Control {
 
         private static void UpdateKeyboard(){
             var state = Keyboard.GetState();
-            if (state != _prevKeyboardState) {
-                foreach (var actionHandler in OnKeyboardDispatcher) {
-                    if (actionHandler(state) == InterruptState.InterruptEventDispatch) {
+            if (state != _prevKeyboardState){
+                foreach (var actionHandler in OnKeyboardDispatcher){
+                    if (actionHandler(state) == InterruptState.InterruptEventDispatch){
                         break;
                     }
                 }
