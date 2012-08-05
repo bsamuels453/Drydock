@@ -38,6 +38,21 @@ namespace Drydock{
         }
 
         /// <summary>
+        /// gets angle of rotation around the origin, in radians
+        /// </summary>
+        /// <param name="x0"> </param>
+        /// <param name="y0"> </param>
+        /// <param name="dx">the change in the X coordinate from the translation</param>
+        /// <param name="dy">the change in the Y coordinate from the translation</param>
+        /// <returns></returns>
+        public static float GetAngleOfRotation(float x0, float y0, float dx, float dy) {
+            var v0 = new Vector2(x0, y0);
+            var v1 = new Vector2(v0.X + dx, v0.Y + dy);
+            var angle = (float)Math.Acos(Vector2.Dot(v0, v1) / (v0.Length() * v1.Length()));
+            return angle;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="x0"></param>

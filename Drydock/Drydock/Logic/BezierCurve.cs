@@ -10,6 +10,9 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic {
+    /// <summary>
+    /// this class is a fucking mess, here's to hoping it never has to be used again
+    /// </summary>
     class BezierCurve {
         #region fields and properties
         private BezierCurve _nextCurve;
@@ -56,7 +59,51 @@ namespace Drydock.Logic {
         }
 
         public void InsertBetweenCurves(BezierCurve prevCurve, BezierCurve nextCurve, float t){
+            _prevCurve = prevCurve;
+            _nextCurve = nextCurve;
 
+            _prevCurve.NextCurveReference = this;
+            _nextCurve.PrevCurveReference = this;
+
+
+            Vector2 pt1;
+            Vector2 pt2;
+            Bezier.GetBezierValue(out pt1, _prevCurve.NextHandlePos, _prevCurve.NextHandlePos, PrevHandlePos, HandlePos, t);
+            Bezier.GetBezierValue(out pt2, _prevCurve.NextHandlePos, _prevCurve.NextHandlePos, PrevHandlePos, HandlePos, t+0.001f);//limits are for fags
+
+            //get tangent and set to angle
+            Vector2 pt3 = pt2 - pt1;
+            float angle = Common.GetAngleOfRotation(1, 0, pt3.X, pt3.Y);
+
+            _controller.Angle = angle;
+            if (_prevLines == null) {
+                _prevLines = new List<Line>(_linesPerSide);
+
+                for (int i = 0; i < _linesPerSide; i++) {
+                    _prevLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                }
+            }
+            else {
+                for (int i = 0; i < _linesPerSide; i++) {
+                    _prevLines[i].Dispose();
+                    _prevLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
+                }
+            }
+
+            if (_nextLines == null) {
+                _nextLines = new List<Line>(_linesPerSide);
+                for (int i = 0; i < _linesPerSide; i++) {
+                    _nextLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                }
+            }
+            else {
+                for (int i = 0; i < _linesPerSide; i++) {
+                    _nextLines[i].Dispose();
+                    _nextLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
+                }
+            }
+
+            Update();
         }
 
         public void SetPrevCurve(BezierCurve val, float angle, float handleLength){

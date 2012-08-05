@@ -37,8 +37,7 @@ namespace Drydock.Logic{
                         if ((pos = _curveList[i].PrevContains(state)) != Point.Zero){
                             //i -= 1;
                             _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
-                            _curveList[i].NextCurve = _curveList[i + 1];
-                            _curveList[i].PrevCurve = _curveList[i - 1];
+                            _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], 0.5f);
                             return true;
                         }
                     }
@@ -49,8 +48,7 @@ namespace Drydock.Logic{
                             i += 1;
                            
                             _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
-                            _curveList[i].NextCurve = _curveList[i + 1];
-                            _curveList[i].PrevCurve = _curveList[i - 1];
+                            _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], 0.5f);
                             return true;
                         }
                     }
@@ -64,5 +62,6 @@ namespace Drydock.Logic{
                 curve.Update();
             }
         }
+
     }
 }
