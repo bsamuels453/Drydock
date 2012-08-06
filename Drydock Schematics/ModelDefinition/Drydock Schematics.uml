@@ -31,6 +31,11 @@ OnLeftButtonUp
 +OnMouseExit
 +OnMouseHover</body>
     </comment>
+    <comment
+      Id="add6ea5e-480a-440a-b517-40ee0438a1c7">
+      <body>Events dispatched by delegates
+No additional events added by UIInteractiveElement</body>
+    </comment>
   </ownedCommentsInternal>
   <profileInstances>
     <packageHasProfileInstances
@@ -385,6 +390,15 @@ OnLeftButtonUp
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="db368aac-0f71-479b-8ea6-d28cddb98758">
+            <classMoniker
+              Id="20a8e2b3-790b-4c23-a1f3-292cca986022"
+              LastKnownName="UIElementComponent"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </dependency>
+        </suppliersInternal>
         <targetEnds>
           <association
             Id="41695da7-3260-4e2c-9e2a-5d8aed57c4ce"
@@ -449,6 +463,14 @@ OnLeftButtonUp
           </association>
         </targetEnds>
       </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="20a8e2b3-790b-4c23-a1f3-292cca986022"
+        name="UIElementComponent"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType

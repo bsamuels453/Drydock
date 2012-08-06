@@ -28,6 +28,11 @@ OnLeftButtonUp
 +OnMouseExit
 +OnMouseHover</body>
     </comment>
+    <comment Id="167521e6-0b1b-4c02-b930-1b4790f10ca6">
+      <elementDefinition Id="add6ea5e-480a-440a-b517-40ee0438a1c7" />
+      <body>Events dispatched by delegates
+No additional events added by UIInteractiveElement</body>
+    </comment>
   </ownedCommentsInternal>
   <profileInstances>
     <packageHasProfileInstances Id="7bc554c9-860d-4687-85c9-100b2ee10ae9">
@@ -89,6 +94,12 @@ OnLeftButtonUp
     <logicalClassDesignerModelHasTypes>
       <class Id="374a595a-92e9-490a-bf8c-db8d50c30731" name="UIInteractiveElement" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="fb76f5ce-d4e0-4188-bdca-633f24b7e099" />
+        <suppliersInternal>
+          <dependency Id="238b57f5-dc43-44ab-a31f-f6e6ca5c5915">
+            <classMoniker Id="cfb46098-5b3c-4e7a-ba73-2bf115daabd1" LastKnownName="UIElementComponent" />
+            <elementDefinition Id="db368aac-0f71-479b-8ea6-d28cddb98758" />
+          </dependency>
+        </suppliersInternal>
         <targetEnds>
           <association Id="fdabedef-8ba3-44b7-81ad-984e15627606" isDerived="false" sourceEndRoleName=" " targetEndRoleName="BoundingBox" isLeaf="false" isAbstract="false">
             <classMoniker Id="bc435c2b-3955-48ee-9913-0263142b04de" LastKnownName="UIElementCollection" />
@@ -127,6 +138,11 @@ OnLeftButtonUp
             <elementDefinition Id="41695da7-3260-4e2c-9e2a-5d8aed57c4ce" />
           </association>
         </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="cfb46098-5b3c-4e7a-ba73-2bf115daabd1" name="UIElementComponent" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="20a8e2b3-790b-4c23-a1f3-292cca986022" />
       </class>
     </logicalClassDesignerModelHasTypes>
   </packagedElements>
