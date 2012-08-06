@@ -16,7 +16,7 @@ namespace Drydock.Logic{
 
         public CurveControllerCollection(){
             _curveList = new List<BezierCurve>(_initlNumCurves);
-            InputEventDispatcher.OnMClickDispatcher.Add(HandleMouseClick);
+            InputEventDispatcher.OnMClickEvent.Add(HandleMouseClick);
             int x = 200;
             int y = 200;
             for (int i = 0; i < _initlNumCurves; i++){

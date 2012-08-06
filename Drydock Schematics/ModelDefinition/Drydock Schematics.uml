@@ -1,0 +1,474 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ActivityDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+  dslVersion="1.0.0.0"
+  Id="225123ec-adb8-43c5-b9ef-2e66df5b57d9"
+  name="Drydock Schematics" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <ownedCommentsInternal>
+    <comment
+      Id="edaf681d-f616-4e43-b143-01f323ad6d0b">
+      <body>OnLeftButtonAction
+OnMouseMovement
+OnKeyboardAction
+</body>
+    </comment>
+    <comment
+      Id="14c81ff5-95ee-48ae-be60-63d8d0bad5a5">
+      <body>OnMouseMovement
+OnKeyboardAction
++OnLeftButtonClick
++OnLeftButtonDown
++OnLeftButtonUp
+</body>
+    </comment>
+    <comment
+      Id="85aa9e4f-63d2-4d3c-9e3a-f78e25f9fe1e">
+      <body>OnMouseMovement
+OnKeyboardAction
+OnLeftButtonClick
+OnLeftButtonDown
+OnLeftButtonUp
++OnMouseEntry
++OnMouseExit
++OnMouseHover</body>
+    </comment>
+  </ownedCommentsInternal>
+  <profileInstances>
+    <packageHasProfileInstances
+      Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b">
+      <profileInstance
+        Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791"
+        name="StandardProfileL2" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances
+      Id="29349502-908c-4fda-9054-c48619c59ed0">
+      <profileInstance
+        Id="532ea607-fb19-44b8-8502-3351b05452be"
+        name="StandardProfileL3" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <packageHasNamedElement>
+      <activity
+        Id="dfbba701-45ec-43c7-a533-59848ce1316e"
+        name="UI Event Dispatch"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false"
+        isReentrant="false"
+        isReadOnly="false"
+        isSingleExecution="false">
+        <nodes>
+          <initialNode
+            Id="65912496-9ed9-4b19-8109-e015d0a0b0ca"
+            name="Initial1"
+            isLeaf="false" />
+        </nodes>
+      </activity>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="938d06c2-3415-49c7-a537-a379ee235827"
+        name="IUIElement"
+        isAbstract="false"
+        isLeaf="false">
+        <suppliersInternal>
+          <dependency
+            Id="92271e1e-284a-4a8a-ad7b-df8d92e0a436">
+            <classMoniker
+              Id="f526142d-9404-4ece-bc7d-01d671c1a36c"
+              LastKnownName="Line"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </dependency>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization
+            Id="ad6ae44a-fb8f-424c-b555-c2b019cb44d3"
+            isSubstitutable="false">
+            <interfaceMoniker
+              Id="3678a6d2-4235-4c3c-8790-6b9266ce9c5a"
+              LastKnownName="IUIInteractiveElement"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </generalization>
+        </generalsInternal>
+      </Interface>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="3678a6d2-4235-4c3c-8790-6b9266ce9c5a"
+        name="IUIInteractiveElement"
+        isAbstract="false"
+        isLeaf="false">
+        <suppliersInternal>
+          <dependency
+            Id="dad647ea-cce4-40c6-8ec7-cadffced3840">
+            <classMoniker
+              Id="7b45556b-2d13-4f44-8713-09cefe3bb7aa"
+              LastKnownName="Button"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </dependency>
+        </suppliersInternal>
+      </Interface>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="4e2f0bdc-fa9d-4b88-a324-16045a893e42"
+        name="IDrawable"
+        isAbstract="false"
+        isLeaf="false">
+        <generalsInternal>
+          <generalization
+            Id="f45423c9-7d88-4296-bdb1-dc1a9a737735"
+            isSubstitutable="false">
+            <interfaceMoniker
+              Id="938d06c2-3415-49c7-a537-a379ee235827"
+              LastKnownName="IUIElement"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </generalization>
+        </generalsInternal>
+      </Interface>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="6bad7890-4a5c-46b7-897c-95a0c49fc865"
+        name="IAdvancedPrimitive"
+        isAbstract="false"
+        isLeaf="false">
+        <targetEnds>
+          <association
+            Id="89d0e077-8e5c-4d35-92b4-edb8b962fa55"
+            isDerived="false"
+            sourceEndRoleName="IAdvancedPrimitive"
+            targetEndRoleName="Sprite2D"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="94ef716a-d42a-43ed-8261-e5d9f53461d7"
+              LastKnownName="Sprite2D"
+              LastKnownLocation="Drydock Schematics.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ffd33511-a9a6-4469-b124-c7fc8397dc04"
+                  name="IAdvancedPrimitive"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="83f2938f-2aac-4c5b-a3fc-dc0896bee418"
+                  name="Sprite2D"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="df69fa61-0722-4434-9efd-6884dabd88c4"
+            isDerived="false"
+            sourceEndRoleName="IAdvancedPrimitive"
+            targetEndRoleName="Line2D"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="c8d4242a-d58b-4e8d-9285-a3be221e9925"
+              LastKnownName="Line2D"
+              LastKnownLocation="Drydock Schematics.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="fdc3cf11-1f52-471a-816d-b5e1c72b6a34"
+                  name="IAdvancedPrimitive"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="a80574fe-64b7-4edd-b682-1b702edbed42"
+                  name="Line2D"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </Interface>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="c8d4242a-d58b-4e8d-9285-a3be221e9925"
+        name="Line2D"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="94ef716a-d42a-43ed-8261-e5d9f53461d7"
+        name="Sprite2D"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="c5f8e415-1f3c-48a8-aae9-53356b02d4f4"
+        name="IUIComponent"
+        isAbstract="false"
+        isLeaf="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="8011c394-5679-48d2-b528-17ab971df3be"
+        name="IUIElementComponent"
+        isAbstract="false"
+        isLeaf="false">
+        <suppliersInternal>
+          <dependency
+            Id="ccdff8a8-2240-4bc4-a335-d4b6d7ba2f93">
+            <classMoniker
+              Id="820051a9-ae83-44cd-96fb-ae41ca084000"
+              LastKnownName="DraggableComponent"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </dependency>
+          <dependency
+            Id="2cd6f119-2e8e-43b8-bd4a-fb03256c1fd6">
+            <classMoniker
+              Id="1013772f-5219-475d-8964-ea3ee2790552"
+              LastKnownName="SelectableComponent"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </dependency>
+          <dependency
+            Id="e667e66f-210b-41c2-a8e8-a00a4a1608d9">
+            <classMoniker
+              Id="786b139c-36c7-4776-9bc6-b63556526e2d"
+              LastKnownName="FadeComponent"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </dependency>
+        </suppliersInternal>
+      </Interface>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="f526142d-9404-4ece-bc7d-01d671c1a36c"
+        name="Line"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7b45556b-2d13-4f44-8713-09cefe3bb7aa"
+        name="Button"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="786b139c-36c7-4776-9bc6-b63556526e2d"
+        name="FadeComponent"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="1013772f-5219-475d-8964-ea3ee2790552"
+        name="SelectableComponent"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="820051a9-ae83-44cd-96fb-ae41ca084000"
+        name="DraggableComponent"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="f52935f5-ff51-4b1c-b3c3-815dfea64167"
+        name="InputEventDispatcher (static)"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="2cdeecfe-c231-4a95-9647-05514e114736">
+            <classMoniker
+              Id="19bbdf9b-8371-4f4a-b78e-3d2f798c04e7"
+              LastKnownName="UIContext (static)"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </dependency>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="19bbdf9b-8371-4f4a-b78e-3d2f798c04e7"
+        name="UIContext (static)"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="e645427a-bc3c-43c9-bcc9-1fd0b3259c40">
+            <classMoniker
+              Id="5b1abb79-1dfe-4d09-bc04-1b875e8f4535"
+              LastKnownName="UIElementCollection"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </dependency>
+          <dependency
+            Id="ad02c6af-d3f6-46ee-b5f6-c94a75e7a0b1">
+            <classMoniker
+              Id="98320162-d6ce-478b-b708-e9d1df658b8d"
+              LastKnownName="UngroupedElementCollection"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </dependency>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="5b1abb79-1dfe-4d09-bc04-1b875e8f4535"
+        name="UIElementCollection"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="a0894256-953e-42a8-b712-23d6c6b57fd5">
+            <classMoniker
+              Id="fb76f5ce-d4e0-4188-bdca-633f24b7e099"
+              LastKnownName="UIInteractiveElement"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </dependency>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="98320162-d6ce-478b-b708-e9d1df658b8d"
+        name="UngroupedElementCollection"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="fb76f5ce-d4e0-4188-bdca-633f24b7e099"
+        name="UIInteractiveElement"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="41695da7-3260-4e2c-9e2a-5d8aed57c4ce"
+            isDerived="false"
+            sourceEndRoleName=" "
+            targetEndRoleName="BoundingBox"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="5b1abb79-1dfe-4d09-bc04-1b875e8f4535"
+              LastKnownName="UIElementCollection"
+              LastKnownLocation="Drydock Schematics.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="be362525-de7d-4caf-920f-ba332bd9a739"
+                  name=" "
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="0ec6c198-953e-4e02-bf56-e4f28384e748"
+                      name="Lower" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="993a9069-3259-4769-bd47-9933e2c430df"
+                      name="Upper" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="a4852582-e4d9-4eeb-88b4-5392790e97e5"
+                  name="BoundingBox"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="72951baa-ed18-4dc6-91ce-96383c98c97a"
+                      name="Lower" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="26920812-a221-4535-98e9-daa9853f872f"
+                      name="Upper" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+  </packagedElements>
+  <primitiveType
+    Id="220a3521-e091-4221-bae9-3ef9018e845c"
+    name="Integer"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="8943dc84-709e-4f62-b15a-a3273aa6f165"
+    name="Boolean"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+    name="String"
+    isAbstract="false"
+    isLeaf="false" />
+  <primitiveType
+    Id="3ab42e7d-4969-445a-b209-471f5cb8209c"
+    name="UnlimitedNatural"
+    isAbstract="false"
+    isLeaf="false" />
+</modelStoreModel>

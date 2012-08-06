@@ -19,9 +19,9 @@ namespace Drydock.UI{
             _prevMouseState = Mouse.GetState();
             DisableEntryHandlers = false;
 
-            InputEventDispatcher.OnKeyboardDispatcher.Add(OnKeyboardAction);
-            InputEventDispatcher.OnMMovementDispatcher.Add(OnMouseMovementEvent);
-            InputEventDispatcher.OnMButtonDispatcher.Add(OnMouseButtonEvent);
+            InputEventDispatcher.OnKeyboardEvent.Add(OnKeyboardAction);
+            InputEventDispatcher.OnMMovementEvent.Add(OnMouseMovementEvent);
+            InputEventDispatcher.OnMButtonEvent.Add(OnMouseButtonEvent);
         }
 
         #endregion
@@ -96,7 +96,7 @@ namespace Drydock.UI{
                         }
                     }
                 }
-
+                    
                 else{
                     if (!_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) && _layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                         //dispatch event for mouse exiting the bounding box of the element

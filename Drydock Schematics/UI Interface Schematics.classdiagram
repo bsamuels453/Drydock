@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ActivityDesigner" dslVersion="1.0.0.0" Id="bfe3ac0a-8699-4b3a-bc77-8e78675aae99" name="UMLClassDiagram1" linkedPackageId="61dcc6b6-6627-4263-8067-3102b2746646" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <packagedElements>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="2934726e-4102-4866-903a-3327290b65ca" name="IUIElement" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="938d06c2-3415-49c7-a537-a379ee235827" />
+        <suppliersInternal>
+          <dependency Id="fb78a21e-3e60-4259-b7d8-35777fb81d97">
+            <classMoniker Id="42a82cc5-a6e0-4b62-be93-a5af2b40decb" LastKnownName="Line" />
+            <elementDefinition Id="92271e1e-284a-4a8a-ad7b-df8d92e0a436" />
+          </dependency>
+        </suppliersInternal>
+        <generalsInternal>
+          <generalization Id="7351ac10-dc40-48e9-9937-0f4c1ba6c1e0" isSubstitutable="false">
+            <interfaceMoniker Id="5f80a3c7-74a7-4b3b-9421-bdf845204c3f" LastKnownName="IUIInteractiveElement" />
+            <elementDefinition Id="ad6ae44a-fb8f-424c-b555-c2b019cb44d3" />
+          </generalization>
+        </generalsInternal>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="5f80a3c7-74a7-4b3b-9421-bdf845204c3f" name="IUIInteractiveElement" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="3678a6d2-4235-4c3c-8790-6b9266ce9c5a" />
+        <suppliersInternal>
+          <dependency Id="e7c937ef-e6ce-4071-b14d-7e949a246942">
+            <classMoniker Id="5ab0ec9c-a958-467c-87a9-12fdc0f35cf1" LastKnownName="Button" />
+            <elementDefinition Id="dad647ea-cce4-40c6-8ec7-cadffced3840" />
+          </dependency>
+        </suppliersInternal>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="6a643b94-f29a-4688-b6b3-5293de798b91" name="IDrawable" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="4e2f0bdc-fa9d-4b88-a324-16045a893e42" />
+        <generalsInternal>
+          <generalization Id="3eb92841-de1b-418a-bd50-b2231e30899e" isSubstitutable="false">
+            <interfaceMoniker Id="2934726e-4102-4866-903a-3327290b65ca" LastKnownName="IUIElement" />
+            <elementDefinition Id="f45423c9-7d88-4296-bdb1-dc1a9a737735" />
+          </generalization>
+        </generalsInternal>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="6315e876-0d77-4c6f-ac2a-1ad29a9d2ac5" name="IUIElementComponent" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="8011c394-5679-48d2-b528-17ab971df3be" />
+        <suppliersInternal>
+          <dependency Id="cccdcd0c-34cb-4cef-8ce6-0c5abc533546">
+            <classMoniker Id="df2a2c1a-6a2d-483e-a8ef-45c11282782e" LastKnownName="DraggableComponent" />
+            <elementDefinition Id="ccdff8a8-2240-4bc4-a335-d4b6d7ba2f93" />
+          </dependency>
+          <dependency Id="5c4d4b3d-62b4-4226-a1a3-abf923bb64a8">
+            <classMoniker Id="c18d0ac1-da42-4be8-8e6d-243eec52e40a" LastKnownName="SelectableComponent" />
+            <elementDefinition Id="2cd6f119-2e8e-43b8-bd4a-fb03256c1fd6" />
+          </dependency>
+          <dependency Id="7a9ff334-48c2-4883-a2d7-f0c841df6c5d">
+            <classMoniker Id="ccb937b5-b253-4539-8921-96a0cad09464" LastKnownName="FadeComponent" />
+            <elementDefinition Id="e667e66f-210b-41c2-a8e8-a00a4a1608d9" />
+          </dependency>
+        </suppliersInternal>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="42a82cc5-a6e0-4b62-be93-a5af2b40decb" name="Line" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="f526142d-9404-4ece-bc7d-01d671c1a36c" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="5ab0ec9c-a958-467c-87a9-12fdc0f35cf1" name="Button" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="7b45556b-2d13-4f44-8713-09cefe3bb7aa" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="ccb937b5-b253-4539-8921-96a0cad09464" name="FadeComponent" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="786b139c-36c7-4776-9bc6-b63556526e2d" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="c18d0ac1-da42-4be8-8e6d-243eec52e40a" name="SelectableComponent" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="1013772f-5219-475d-8964-ea3ee2790552" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="df2a2c1a-6a2d-483e-a8ef-45c11282782e" name="DraggableComponent" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="820051a9-ae83-44cd-96fb-ae41ca084000" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+  </packagedElements>
+  <package Id="61dcc6b6-6627-4263-8067-3102b2746646" name="Drydock Schematics">
+    <elementDefinition Id="225123ec-adb8-43c5-b9ef-2e66df5b57d9" />
+    <profileInstances>
+      <packageHasProfileInstances Id="cd19c103-0b60-4203-8c69-d863f1384c89">
+        <profileInstance Id="0bf5699c-3902-4e5c-9881-d6e6a946f0ef" name="StandardProfileL2">
+          <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+        </profileInstance>
+        <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+      </packageHasProfileInstances>
+      <packageHasProfileInstances Id="dd9a897e-2be8-4d0b-af39-08a3714a3759">
+        <profileInstance Id="e8db8338-f296-4601-8629-ebf9d22f17eb" name="StandardProfileL3">
+          <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+        </profileInstance>
+        <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+      </packageHasProfileInstances>
+    </profileInstances>
+  </package>
+</logicalClassDesignerModel>
