@@ -74,19 +74,13 @@ namespace Drydock.UI{
 
         #region event dispatchers
         public InterruptState OnMouseMovement(MouseState state){
-            if (!DisableEntryHandlers) {
-                System.Console.WriteLine("entry handler firing");
-            }
-            else{
-                System.Console.WriteLine("noooooo");
-            }
-
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var mouseEvent in _layerSortedIElements[i].OnMouseMovement) {
                     mouseEvent(state);
                 }
 
-                if (_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) && !_layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
+                if (_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) 
+                    && !_layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                     //dispatch event for mouse entering the bounding box of the element
                     if (!DisableEntryHandlers){
                         foreach (var mouseEvent in _layerSortedIElements[i].OnMouseEntry) {
@@ -96,7 +90,8 @@ namespace Drydock.UI{
                 }
 
                 else{
-                    if (!_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) && _layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
+                    if (!_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) 
+                        && _layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                         //dispatch event for mouse exiting the bounding box of the element
                         foreach (var mouseEvent in _layerSortedIElements[i].OnMouseExit){
                             mouseEvent(state);
@@ -108,7 +103,7 @@ namespace Drydock.UI{
 
             if (!DisableEntryHandlers) {//disabling entry handlers disables movement dispatch for child collections
                 foreach (var collection in _childCollections) {
-                    //collection.OnMouseMovement(state);
+                    collection.OnMouseMovement(state);
                 }
             }
 

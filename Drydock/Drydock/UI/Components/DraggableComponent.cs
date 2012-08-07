@@ -6,14 +6,14 @@ using Microsoft.Xna.Framework.Input;
 namespace Drydock.UI.Components{
     internal delegate void DraggableObjectClamp(IUIInteractiveElement owner, ref int x, ref int y, int oldX, int oldY);
 
-    internal delegate void ReactToDragMovement(IUIInteractiveElement owner, int dx, int dy);
+    internal delegate void OnDragMovement(IUIInteractiveElement owner, int dx, int dy);
 
 
     /// <summary>
     /// allows a UI element to be dragged. Required element to be IUIInteractiveComponent
     /// </summary>
     internal class DraggableComponent : IUIElementComponent{
-        private readonly ReactToDragMovement _alertToDragMovement;
+        public event OnDragMovement DragMovementDispatcher;
         private readonly DraggableObjectClamp _clampNewPosition;
         private bool _isEnabled;
         private bool _isMoving;
@@ -36,9 +36,8 @@ namespace Drydock.UI.Components{
 
         #region ctor
 
-        public DraggableComponent(DraggableObjectClamp clampFunction = null, ReactToDragMovement alertToDragMovement = null){
+        public DraggableComponent(DraggableObjectClamp clampFunction = null){
             _clampNewPosition = clampFunction;
-            _alertToDragMovement = alertToDragMovement;
             _mouseOffset = new Vector2();
         }
 
@@ -99,8 +98,8 @@ namespace Drydock.UI.Components{
                 _owner.X = x;
                 _owner.Y = y;
 
-                if (_alertToDragMovement != null){
-                    _alertToDragMovement(_owner, x - oldX, y - oldY);
+                if (DragMovementDispatcher != null) {
+                    DragMovementDispatcher(_owner, x - oldX, y - oldY);
                 }
             }
         }

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 namespace Drydock.UI.Components{
     internal delegate void ReactToSelection(SelectState state);
 
+
     internal enum SelectState{
         Selected,
         UnSelected
@@ -16,6 +17,7 @@ namespace Drydock.UI.Components{
     /// allows a UI element to be selected. Required element to be IUIInteractiveComponent
     /// </summary>
     internal class SelectableComponent : IUIElementComponent{
+        public event ReactToSelection ReactToSelectionDispatcher;
         private IUIInteractiveElement _owner;
         private bool _isSelected;
 
@@ -28,7 +30,6 @@ namespace Drydock.UI.Components{
         private int _heightDx;
         private readonly int _selectedWidth;
         private readonly int _selectedHeight;
-        private readonly ReactToSelection _selectionCallback;
 
         public IUIElement Owner{
             set {
@@ -47,13 +48,12 @@ namespace Drydock.UI.Components{
 
         }
 
-        public SelectableComponent(string selectedTexture, int width, int height, ReactToSelection callback=null){
+        public SelectableComponent(string selectedTexture, int width, int height){
             _selectedTexture = selectedTexture;
             _selectedWidth = width;
             _selectedHeight = height;
             IsEnabled = true;
             _isSelected = false;
-            _selectionCallback = callback;
         }
 
         private void ComponentCtor(){
@@ -95,8 +95,8 @@ namespace Drydock.UI.Components{
                 // ReSharper disable EmptyGeneralCatchClause
                 catch (Exception){/*there is no fade component*/}
                 // ReSharper restore EmptyGeneralCatchClause
-                if (_selectionCallback != null){
-                    _selectionCallback(SelectState.Selected);
+                if (ReactToSelectionDispatcher != null) {
+                    ReactToSelectionDispatcher(SelectState.Selected);
                 }
 
             }
@@ -116,8 +116,8 @@ namespace Drydock.UI.Components{
                 // ReSharper disable EmptyGeneralCatchClause
                 catch (Exception) {/*there is no fade component*/}
                 // ReSharper restore EmptyGeneralCatchClause
-                if (_selectionCallback != null){
-                    _selectionCallback(SelectState.UnSelected);
+                if (ReactToSelectionDispatcher != null) {
+                    ReactToSelectionDispatcher(SelectState.UnSelected);
                 }
                 
             }

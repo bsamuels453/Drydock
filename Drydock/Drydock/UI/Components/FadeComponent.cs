@@ -3,12 +3,11 @@ using Drydock.Control;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI.Components{
+    delegate void FadeStateChange(FadeComponent.FadeState state);
     /// <summary>
     /// allows a UI element to be faded in and out. Required element to be IUIInteractiveComponent for certain settings.
     /// </summary>
     internal class FadeComponent : IUIElementComponent{
-        //todo: some kind of synchronize function to get multiple ui elements' fade components to trigger
-        //AddTriggerElement
 
         #region FadeState enum
 
@@ -28,8 +27,8 @@ namespace Drydock.UI.Components{
 
         #endregion
 
+        public event FadeStateChange FadeStateChangeDispatcher;
         private readonly FadeState _defaultState;
-
         private readonly float _fadeDuration;
         private readonly FadeTrigger _fadeTrigger;
         private readonly float _fadeoutOpacity;
@@ -143,6 +142,9 @@ namespace Drydock.UI.Components{
             if (IsEnabled){
                 _isInTransition = true;
                 _isFadingOut = true;
+                if (FadeStateChangeDispatcher != null){
+                    FadeStateChangeDispatcher(FadeState.Faded);
+                }
             }
         }
 
@@ -152,6 +154,9 @@ namespace Drydock.UI.Components{
             if (IsEnabled){
                 _isInTransition = true;
                 _isFadingOut = false;
+                if (FadeStateChangeDispatcher != null) {
+                    FadeStateChangeDispatcher(FadeState.Visible);
+                }
             }
         }
 
