@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic{
-    internal class CurveControllerCollection{
+    internal class CurveControllerCollection : ICanReceiveInputEvents{
         private const int _segmentsBetweenControllers = 40;
         private const int _initlNumCurves = 4;
 
@@ -16,7 +16,6 @@ namespace Drydock.Logic{
 
         public CurveControllerCollection(){
             _curveList = new List<BezierCurve>(_initlNumCurves);
-            InputEventDispatcher.OnMClickEvent.Add(HandleMouseClick);
             int x = 200;
             int y = 200;
             for (int i = 0; i < _initlNumCurves; i++){
@@ -29,23 +28,29 @@ namespace Drydock.Logic{
             }
         }
 
-        private InterruptState HandleMouseClick(MouseState state){
+        public void Update(){
+            foreach (var curve in _curveList){
+                curve.Update();
+            }
+        }
+
+        public InterruptState OnLeftButtonClick(MouseState state) {
             Point pos;
             float t;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
-                for (int i = 1; i < _curveList.Count; i++){
-                    if ((pos = _curveList[i].PrevContains(state, out t)) != Point.Zero){
+            if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)) {
+                for (int i = 1; i < _curveList.Count; i++) {
+                    if ((pos = _curveList[i].PrevContains(state, out t)) != Point.Zero) {
                         //i -= 1;
                         _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
                         _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], t);
                         return InterruptState.InterruptEventDispatch;
                     }
                 }
-                for (int i = 0; i < _curveList.Count - 1; i++){
+                for (int i = 0; i < _curveList.Count - 1; i++) {
 
 
-                    if ((pos = _curveList[i].NextContains(state, out t)) != Point.Zero){
+                    if ((pos = _curveList[i].NextContains(state, out t)) != Point.Zero) {
                         i += 1;
 
                         _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
@@ -58,11 +63,22 @@ namespace Drydock.Logic{
             return InterruptState.AllowOtherEvents;
         }
 
-        public void Update(){
-            foreach (var curve in _curveList){
-                curve.Update();
-            }
+        #region unused input events
+        public InterruptState OnMouseMovement(MouseState state){
+            return InterruptState.AllowOtherEvents;
         }
 
+        public InterruptState OnLeftButtonPress(MouseState state){
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnLeftButtonRelease(MouseState state){
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnKeyboardEvent(KeyboardState state){
+            return InterruptState.AllowOtherEvents;
+        }
+        #endregion
     }
 }

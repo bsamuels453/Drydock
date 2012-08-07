@@ -1,20 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ActivityDesigner" dslVersion="1.0.0.0" Id="9136ce68-039f-4aee-89db-f0a187ec3d6b" name="UI Event Dispatch" linkedPackageId="b359046c-d138-4083-b773-1d165889eb3f" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
   <ownedCommentsInternal>
-    <comment Id="e8b5887b-383b-4f21-aa36-aba7a5b591ba">
-      <elementDefinition Id="edaf681d-f616-4e43-b143-01f323ad6d0b" />
-      <body>OnLeftButtonAction
-OnMouseMovement
-OnKeyboardAction
-</body>
-    </comment>
     <comment Id="a7972377-96be-41dc-9547-d98f06e25838">
       <elementDefinition Id="14c81ff5-95ee-48ae-be60-63d8d0bad5a5" />
       <body>OnMouseMovement
 OnKeyboardAction
-+OnLeftButtonClick
-+OnLeftButtonDown
-+OnLeftButtonUp
+OnLeftButtonClick
+OnLeftButtonDown
+OnLeftButtonUp
 </body>
     </comment>
     <comment Id="ef5830d4-d5dd-4a74-9315-79aac7a04d86">
@@ -34,43 +27,14 @@ OnLeftButtonUp
 No additional events added by UIInteractiveElement</body>
     </comment>
   </ownedCommentsInternal>
-  <profileInstances>
-    <packageHasProfileInstances Id="7bc554c9-860d-4687-85c9-100b2ee10ae9">
-      <profileInstance Id="71174a9b-ebd0-4fe9-bf53-51226be45a3d" name="StandardProfileL2">
-        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
-      </profileInstance>
-      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
-    </packageHasProfileInstances>
-    <packageHasProfileInstances Id="7ff611fc-9fb5-4624-a2bb-960062a62784">
-      <profileInstance Id="525e9115-91d8-4b75-bf0b-f240ce8ac7bb" name="StandardProfileL3">
-        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
-      </profileInstance>
-      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
-    </packageHasProfileInstances>
-  </profileInstances>
   <packagedElements>
     <logicalClassDesignerModelHasTypes>
       <class Id="fafa8579-01c9-4d6b-875e-6effee4419b2" name="InputEventDispatcher (static)" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="f52935f5-ff51-4b1c-b3c3-815dfea64167" />
         <suppliersInternal>
-          <dependency Id="58206ddf-d501-46d1-90d0-8475433c438b">
-            <classMoniker Id="a58e702c-9dcd-4bc7-b68b-853b6bcf2c20" LastKnownName="UIContext (static)" />
-            <elementDefinition Id="2cdeecfe-c231-4a95-9647-05514e114736" />
-          </dependency>
-        </suppliersInternal>
-      </class>
-    </logicalClassDesignerModelHasTypes>
-    <logicalClassDesignerModelHasTypes>
-      <class Id="a58e702c-9dcd-4bc7-b68b-853b6bcf2c20" name="UIContext (static)" isAbstract="false" isLeaf="false" isActiveClass="false">
-        <elementDefinition Id="19bbdf9b-8371-4f4a-b78e-3d2f798c04e7" />
-        <suppliersInternal>
-          <dependency Id="595f741f-5576-4314-8eef-50cc49bd93df">
+          <dependency Id="8fd2ca65-598e-4a1f-8f6d-d8afeb9915e6">
             <classMoniker Id="bc435c2b-3955-48ee-9913-0263142b04de" LastKnownName="UIElementCollection" />
-            <elementDefinition Id="e645427a-bc3c-43c9-bcc9-1fd0b3259c40" />
-          </dependency>
-          <dependency Id="d716fb4b-aaf2-405a-900c-3856d1171df3">
-            <classMoniker Id="8f0115f1-c8e8-4c65-a62a-c06af6f52e65" LastKnownName="UngroupedElementCollection" />
-            <elementDefinition Id="ad02c6af-d3f6-46ee-b5f6-c94a75e7a0b1" />
+            <elementDefinition Id="00365312-a8a6-4812-9eb6-7e98a8b4a7c6" />
           </dependency>
         </suppliersInternal>
       </class>
@@ -84,11 +48,6 @@ No additional events added by UIInteractiveElement</body>
             <elementDefinition Id="a0894256-953e-42a8-b712-23d6c6b57fd5" />
           </dependency>
         </suppliersInternal>
-      </class>
-    </logicalClassDesignerModelHasTypes>
-    <logicalClassDesignerModelHasTypes>
-      <class Id="8f0115f1-c8e8-4c65-a62a-c06af6f52e65" name="UngroupedElementCollection" isAbstract="false" isLeaf="false" isActiveClass="false">
-        <elementDefinition Id="98320162-d6ce-478b-b708-e9d1df658b8d" />
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -148,5 +107,19 @@ No additional events added by UIInteractiveElement</body>
   </packagedElements>
   <package Id="b359046c-d138-4083-b773-1d165889eb3f" name="Drydock Schematics">
     <elementDefinition Id="225123ec-adb8-43c5-b9ef-2e66df5b57d9" />
+    <profileInstances>
+      <packageHasProfileInstances Id="7bc554c9-860d-4687-85c9-100b2ee10ae9">
+        <profileInstance Id="71174a9b-ebd0-4fe9-bf53-51226be45a3d" name="StandardProfileL2">
+          <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+        </profileInstance>
+        <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+      </packageHasProfileInstances>
+      <packageHasProfileInstances Id="7ff611fc-9fb5-4624-a2bb-960062a62784">
+        <profileInstance Id="525e9115-91d8-4b75-bf0b-f240ce8ac7bb" name="StandardProfileL3">
+          <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+        </profileInstance>
+        <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+      </packageHasProfileInstances>
+    </profileInstances>
   </package>
 </logicalClassDesignerModel>

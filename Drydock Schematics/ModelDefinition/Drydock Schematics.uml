@@ -5,19 +5,12 @@
   name="Drydock Schematics" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
   <ownedCommentsInternal>
     <comment
-      Id="edaf681d-f616-4e43-b143-01f323ad6d0b">
-      <body>OnLeftButtonAction
-OnMouseMovement
-OnKeyboardAction
-</body>
-    </comment>
-    <comment
       Id="14c81ff5-95ee-48ae-be60-63d8d0bad5a5">
       <body>OnMouseMovement
 OnKeyboardAction
-+OnLeftButtonClick
-+OnLeftButtonDown
-+OnLeftButtonUp
+OnLeftButtonClick
+OnLeftButtonDown
+OnLeftButtonUp
 </body>
     </comment>
     <comment
@@ -327,6 +320,13 @@ No additional events added by UIInteractiveElement</body>
             <classMoniker
               Id="19bbdf9b-8371-4f4a-b78e-3d2f798c04e7"
               LastKnownName="UIContext (static)"
+              LastKnownLocation="Drydock Schematics.uml" />
+          </dependency>
+          <dependency
+            Id="00365312-a8a6-4812-9eb6-7e98a8b4a7c6">
+            <classMoniker
+              Id="5b1abb79-1dfe-4d09-bc04-1b875e8f4535"
+              LastKnownName="UIElementCollection"
               LastKnownLocation="Drydock Schematics.uml" />
           </dependency>
         </suppliersInternal>

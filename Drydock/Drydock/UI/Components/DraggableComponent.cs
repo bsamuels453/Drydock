@@ -46,9 +46,9 @@ namespace Drydock.UI.Components{
 
             _isEnabled = true;
             _isMoving = false;
-            _owner.OnLeftButtonDown.Add(OnLeftButtonDown);
-            _owner.OnLeftButtonUp.Add(OnLeftButtonUp);
-            _owner.OnMouseMovement.Add(OnMouseMovement);
+            _owner.OnLeftButtonPressDispatch.Add(OnLeftButtonDown);
+            _owner.OnLeftButtonReleaseDispatch.Add(OnLeftButtonUp);
+            _owner.OnMouseMovementDispatch.Add(OnMouseMovement);
         }
 
         #endregion
@@ -71,7 +71,7 @@ namespace Drydock.UI.Components{
             if (!_isMoving){
                 if (_owner.BoundingBox.Contains(state.X, state.Y)){
                     _isMoving = true;
-                    UIContext.DisableEntryHandlers = true;
+                    _owner.Owner.DisableEntryHandlers = true;
                     _mouseOffset.X = _owner.X - state.X;
                     _mouseOffset.Y = _owner.Y - state.Y;
                     return InterruptState.AllowOtherEvents;
@@ -84,7 +84,7 @@ namespace Drydock.UI.Components{
             if (_isMoving){
                 if (state.LeftButton == ButtonState.Released){
                     _isMoving = false;
-                    UIContext.DisableEntryHandlers = false;
+                    _owner.Owner.DisableEntryHandlers = false;
                 }
             }
             return InterruptState.AllowOtherEvents;

@@ -21,6 +21,7 @@ namespace Drydock.Logic {
         private List<Line> _prevLines;
         private readonly CurveController _controller;
         private readonly int _linesPerSide;
+        private readonly UIElementCollection _elementCollection;
 
         public Vector2 PrevHandlePos {
             get { return _controller.PrevHandlePos; }
@@ -41,21 +42,21 @@ namespace Drydock.Logic {
                 if (_prevLines == null) {
                     _prevLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++) {
-                        _prevLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                        _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
                     }
                 }
             }
         }
         public BezierCurve NextCurveReference {
-            set { 
+            set{
                 _nextCurve = value;
-                if (_nextLines == null) {
+                if (_nextLines == null){
                     _nextLines = new List<Line>(_linesPerSide);
-                    for (int i = 0; i < _linesPerSide; i++) {
-                        _nextLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                    for (int i = 0; i < _linesPerSide; i++){
+                        _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
                     }
                 }
-                }
+            }
         }
 
         public void InsertBetweenCurves(BezierCurve prevCurve, BezierCurve nextCurve, float t){
@@ -88,26 +89,26 @@ namespace Drydock.Logic {
                 _prevLines = new List<Line>(_linesPerSide);
 
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _prevLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                    _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _prevLines[i].Dispose();
-                    _prevLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
+                    _prevLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
                 }
             }
 
             if (_nextLines == null) {
                 _nextLines = new List<Line>(_linesPerSide);
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _nextLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                    _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _nextLines[i].Dispose();
-                    _nextLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
+                    _nextLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
                 }
             }
 
@@ -121,13 +122,13 @@ namespace Drydock.Logic {
                 _prevLines = new List<Line>(_linesPerSide);
 
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _prevLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                    _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _prevLines[i].Dispose();
-                    _prevLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
+                    _prevLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
                 }
             }
             _controller.Angle1 = angle;
@@ -141,13 +142,13 @@ namespace Drydock.Logic {
             if (_nextLines == null) {
                 _nextLines = new List<Line>(_linesPerSide);
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _nextLines.Add(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                    _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _nextLines[i].Dispose();
-                    _nextLines[i] = new Line(Vector2.Zero, Vector2.Zero, 1.0f);
+                    _nextLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
                 }
             }
             _controller.Angle1 = angle;
@@ -166,6 +167,7 @@ namespace Drydock.Logic {
         /// <param name="linesPerSide"> </param>
         public BezierCurve(int x, int y, int linesPerSide=20){
             _controller = new CurveController(x, y, 20, 20,0f);
+            _elementCollection = new UIElementCollection();
             _linesPerSide = linesPerSide;
             _nextLines = null;
             _nextCurve = null;

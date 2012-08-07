@@ -41,6 +41,7 @@ namespace Drydock.UI{
             }
         }
         public int LineWidth { get; set; }
+        public UIElementCollection Owner { get; set; }
 
         public IUIElementComponent[] Components { get; set; }
         public float Opacity { get; set; }
@@ -69,7 +70,8 @@ namespace Drydock.UI{
         }
         public IAdvancedPrimitive Sprite{
             get { return _lineSprite; }
-        }
+        }        
+
         public void TranslateOrigin(int dx, int dy){
             _point1.X += dx;
             _point1.Y += dy;
@@ -137,14 +139,16 @@ namespace Drydock.UI{
         }
 
         public void Update(){
-            foreach (IUIElementComponent component in Components){
-                component.Update();
+            if (Components != null){
+                foreach (IUIElementComponent component in Components){
+                    component.Update();
+                }
             }
         }
 
         public void Dispose(){
             Sprite.Dispose();
-            UIContext.DisposeElement(this);
+            Owner.DisposeElement(this);
         }
 
         #endregion

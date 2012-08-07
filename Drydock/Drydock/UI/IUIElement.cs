@@ -7,6 +7,7 @@ namespace Drydock.UI{
         int Identifier { get; }
         IUIElementComponent[] Components { get; set; }
         IAdvancedPrimitive Sprite { get; }
+        UIElementCollection Owner { get;  set; }
         TComponent GetComponent<TComponent>();
         void Update();
         void Dispose();

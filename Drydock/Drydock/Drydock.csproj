@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
+    <Compile Include="Control\ICanReceiveInputEvents.cs" />
     <Compile Include="Control\InputEventDispatcher.cs" />
     <Compile Include="DebugTimer.cs" />
     <Compile Include="Logic\BezierCurve.cs" />
@@ -172,11 +173,11 @@
     <Compile Include="UI\Components\FadeComponent.cs" />
     <Compile Include="UI\Components\SelectableComponent.cs" />
     <Compile Include="UI\EDepth.cs" />
+    <Compile Include="UI\ElementCollectionUpdater.cs" />
     <Compile Include="UI\IUIElement.cs" />
     <Compile Include="UI\IUIElementComponent.cs" />
     <Compile Include="UI\IUIInteractiveElement.cs" />
     <Compile Include="UI\Line.cs" />
-    <Compile Include="UI\UIContext.cs" />
     <Compile Include="UI\UIElementCollection.cs" />
     <Compile Include="Utilities\Bezier.cs" />
     <Compile Include="Logic\CurveController.cs" />

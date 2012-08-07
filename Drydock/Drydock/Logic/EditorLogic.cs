@@ -8,10 +8,6 @@ namespace Drydock.Logic{
         private readonly CurveControllerCollection _c;
 
         public EditorLogic(Renderer renderer){
-
-
-            UIContext.Init();
-
             //initalize component classes
             _c = new CurveControllerCollection();
 
@@ -22,8 +18,8 @@ namespace Drydock.Logic{
 
             //4,000 microseconds
             InputEventDispatcher.Update();
+            ElementCollectionUpdater.Update();
             _c.Update();
-            UIContext.Update();
 
         }
     }

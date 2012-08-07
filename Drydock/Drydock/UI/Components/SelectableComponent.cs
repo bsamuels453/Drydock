@@ -32,11 +32,13 @@ namespace Drydock.UI.Components{
 
         public IUIElement Owner{
             set {
-                if (!UIContext.IsElementInteractive(value)){
+                if (value is IUIInteractiveElement){
+                    _owner = (IUIInteractiveElement)value;
+                    ComponentCtor();
+                }
+                else{
                     throw new Exception("Element is not interactive");
                 }
-                _owner = (IUIInteractiveElement)value;
-                ComponentCtor();
             }
         }
 
@@ -58,7 +60,7 @@ namespace Drydock.UI.Components{
 
         private void ComponentCtor(){
             IsEnabled = true;
-            _owner.OnLeftButtonClick.Add(OnMouseClick);
+            _owner.OnLeftButtonClickDispatch.Add(OnMouseClick);
 
             _originalTexture = _owner.Sprite.Texture;
             _widthDx = (int)(_selectedWidth - _owner.BoundingBox.Width);

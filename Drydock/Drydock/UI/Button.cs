@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Drydock.Control;
 using Drydock.Render;
 using Drydock.Utilities;
@@ -11,9 +12,6 @@ namespace Drydock.UI{
     internal class Button : IUIInteractiveElement{
         #region properties and fields
 
-        private const int _timeTillHoverProc = 1000;
-        private readonly Stopwatch _clickTimer;
-        private readonly Stopwatch _hoverTimer; //nonimp, put in superclass
         private readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
         private readonly Sprite2D _sprite; //the button's sprite
         private readonly FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
@@ -27,12 +25,14 @@ namespace Drydock.UI{
                 _boundingBox.Y = _centPosition.Y - _boundingBox.Height / 2;
             }
         }
+
         public int Identifier{
             get { return _identifier; }
         }
         public IAdvancedPrimitive Sprite{
             get { return _sprite; }
         }
+
         public float X{
             get { return _boundingBox.X; }
             set{
@@ -55,22 +55,22 @@ namespace Drydock.UI{
             get { return _boundingBox.Height; }
             set { _boundingBox.Height = value;  }
         }
-
         public FloatingRectangle BoundingBox{
             get { return _boundingBox; }
         }
 
         public float Opacity { get; set; }
         public float Depth { get; set; }
+        public UIElementCollection Owner { get; set; }
         public IUIElementComponent[] Components { get; set; }
-        public List<OnMouseAction> OnLeftButtonClick { get; set; }
-        public List<OnMouseAction> OnLeftButtonDown { get; set; }
-        public List<OnMouseAction> OnLeftButtonUp { get; set; }
-        public List<OnMouseAction> OnMouseEntry { get; set; }
-        public List<OnMouseAction> OnMouseExit { get; set; }
-        public List<OnMouseAction> OnMouseHover { get; set; }
-        public List<OnMouseAction> OnMouseMovement { get; set; }
-        public List<OnKeyboardAction> OnKeyboardAction { get; set; }
+        public List<OnMouseEvent> OnLeftButtonClickDispatch { get; set; }
+        public List<OnMouseEvent> OnLeftButtonPressDispatch { get; set; }
+        public List<OnMouseEvent> OnLeftButtonReleaseDispatch { get; set; }
+        public List<OnMouseEvent> OnMouseEntryDispatch { get; set; }
+        public List<OnMouseEvent> OnMouseExitDispatch { get; set; }
+        public List<OnMouseEvent> OnMouseHoverDispatch { get; set; }
+        public List<OnMouseEvent> OnMouseMovementDispatch { get; set; }
+        public List<OnKeyboardEvent> OnKeyboardEventDispatch { get; set; }
 
         #endregion
 
@@ -81,16 +81,14 @@ namespace Drydock.UI{
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
             _sprite = new Sprite2D(textureName, this);
-            _clickTimer = new Stopwatch();
-            _hoverTimer = new Stopwatch();
-            OnLeftButtonDown = new List<OnMouseAction>();
-            OnLeftButtonUp = new List<OnMouseAction>();
-            OnLeftButtonClick = new List<OnMouseAction>();
-            OnMouseMovement = new List<OnMouseAction>();
-            OnMouseHover = new List<OnMouseAction>();
-            OnMouseEntry = new List<OnMouseAction>();
-            OnMouseExit = new List<OnMouseAction>();
-            OnKeyboardAction = new List<OnKeyboardAction>();
+            OnLeftButtonPressDispatch = new List<OnMouseEvent>();
+            OnLeftButtonReleaseDispatch = new List<OnMouseEvent>();
+            OnLeftButtonClickDispatch = new List<OnMouseEvent>();
+            OnMouseMovementDispatch = new List<OnMouseEvent>();
+            OnMouseHoverDispatch = new List<OnMouseEvent>();
+            OnMouseEntryDispatch = new List<OnMouseEvent>();
+            OnMouseExitDispatch = new List<OnMouseEvent>();
+            OnKeyboardEventDispatch = new List<OnKeyboardEvent>();
 
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
@@ -105,77 +103,6 @@ namespace Drydock.UI{
 
         #endregion
 
-        #region event handlers
-
-        public bool MouseMovementHandler(MouseState state){
-            foreach (OnMouseAction t in OnMouseMovement){
-                t(state);
-            }
-            if (_hoverTimer.IsRunning){
-                _hoverTimer.Restart();
-            }
-            return false;
-        }
-
-        public bool MouseClickHandler(MouseState state){
-            //for this event, we can assume the mouse is within the button's boundingbox
-            bool denyOtherElementsFromClick = false;
-
-            if (state.LeftButton == ButtonState.Pressed){
-                _clickTimer.Start();
-                foreach (OnMouseAction t in OnLeftButtonDown){
-                    if (t(state) == InterruptState.InterruptEventDispatch){
-                       denyOtherElementsFromClick = true;
-                    }
-                }
-            }
-            if (state.LeftButton == ButtonState.Released){
-                foreach (OnMouseAction t in OnLeftButtonUp){
-                    if (t(state) == InterruptState.InterruptEventDispatch){
-                       denyOtherElementsFromClick = true;
-                    }
-                }
-
-                _clickTimer.Stop();
-                //this is something that should be handled by the uicontext ffs
-                if (_clickTimer.ElapsedMilliseconds < 200){
-                    //okay, click registered. now dispatch events.
-                    foreach (OnMouseAction t in OnLeftButtonClick){
-                        System.Console.WriteLine("dispatching click");
-                        if (t(state) == InterruptState.InterruptEventDispatch){
-                           denyOtherElementsFromClick = true;
-                            
-                        }
-                    }
-                }
-                _clickTimer.Reset();
-            }
-            return denyOtherElementsFromClick;
-        }
-
-        public bool MouseEntryHandler(MouseState state){
-            foreach (OnMouseAction action in OnMouseEntry){
-                action(state);
-            }
-            _hoverTimer.Start();
-
-            return false;
-        }
-
-        public bool MouseExitHandler(MouseState state){
-            foreach (OnMouseAction action in OnMouseExit){
-                action(state);
-            }
-            _hoverTimer.Reset();
-            return false;
-        }
-
-        public bool KeyboardActionHandler(KeyboardState state){
-
-            return false;
-        }
-
-        #endregion
 
         #region other IUIElement derived methods
 
@@ -192,20 +119,71 @@ namespace Drydock.UI{
             foreach (IUIElementComponent component in Components){
                 component.Update();
             }
-            if (_hoverTimer.IsRunning){
-                if (_hoverTimer.ElapsedMilliseconds > _timeTillHoverProc){
-                    _hoverTimer.Reset();
-                    foreach (OnMouseAction action in OnMouseHover){
-                        action(Mouse.GetState());
-                    }
-                }
-            }
         }
 
         public void Dispose(){
             Sprite.Dispose();
-            UIContext.DisposeElement(this);
+            Owner.DisposeElement(this);
         }
+
+        #region event dispatchers
+        public InterruptState OnMouseMovement(MouseState state){
+            if (OnMouseMovementDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)){
+                return InterruptState.InterruptEventDispatch;
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnLeftButtonClick(MouseState state) {
+            if (OnLeftButtonClickDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
+                return InterruptState.InterruptEventDispatch;
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnLeftButtonPress(MouseState state) {
+            if (OnLeftButtonPressDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
+                return InterruptState.InterruptEventDispatch;
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnLeftButtonRelease(MouseState state) {
+            if (OnLeftButtonReleaseDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
+                return InterruptState.InterruptEventDispatch;
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnKeyboardEvent(KeyboardState state) {
+            if (OnKeyboardEventDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
+                return InterruptState.InterruptEventDispatch;
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnMouseEntry(MouseState state) {
+            if (OnMouseEntryDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
+                return InterruptState.InterruptEventDispatch;
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnMouseExit(MouseState state) {
+            if (OnMouseExitDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
+                return InterruptState.InterruptEventDispatch;
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnMouseHover(MouseState state){
+            if (OnMouseHoverDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
+                return InterruptState.InterruptEventDispatch;
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        #endregion
 
         #endregion
     }
