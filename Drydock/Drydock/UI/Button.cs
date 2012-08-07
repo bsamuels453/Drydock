@@ -63,14 +63,13 @@ namespace Drydock.UI{
         public float Depth { get; set; }
         public UIElementCollection Owner { get; set; }
         public IUIElementComponent[] Components { get; set; }
-        public List<OnMouseEvent> OnLeftButtonClickDispatch { get; set; }
-        public List<OnMouseEvent> OnLeftButtonPressDispatch { get; set; }
-        public List<OnMouseEvent> OnLeftButtonReleaseDispatch { get; set; }
-        public List<OnMouseEvent> OnMouseEntryDispatch { get; set; }
-        public List<OnMouseEvent> OnMouseExitDispatch { get; set; }
-        public List<OnMouseEvent> OnMouseHoverDispatch { get; set; }
-        public List<OnMouseEvent> OnMouseMovementDispatch { get; set; }
-        public List<OnKeyboardEvent> OnKeyboardEventDispatch { get; set; }
+        public List<EOnMouseEvent> OnLeftButtonClick { get; set; }
+        public List<EOnMouseEvent> OnLeftButtonPress { get; set; }
+        public List<EOnMouseEvent> OnLeftButtonRelease { get; set; }
+        public List<EOnMouseEvent> OnMouseEntry { get; set; }
+        public List<EOnMouseEvent> OnMouseExit { get; set; }
+        public List<EOnMouseEvent> OnMouseMovement { get; set; }
+        public List<EOnKeyboardEvent> OnKeyboardEvent { get; set; }
 
         #endregion
 
@@ -81,14 +80,13 @@ namespace Drydock.UI{
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
             _sprite = new Sprite2D(textureName, this);
-            OnLeftButtonPressDispatch = new List<OnMouseEvent>();
-            OnLeftButtonReleaseDispatch = new List<OnMouseEvent>();
-            OnLeftButtonClickDispatch = new List<OnMouseEvent>();
-            OnMouseMovementDispatch = new List<OnMouseEvent>();
-            OnMouseHoverDispatch = new List<OnMouseEvent>();
-            OnMouseEntryDispatch = new List<OnMouseEvent>();
-            OnMouseExitDispatch = new List<OnMouseEvent>();
-            OnKeyboardEventDispatch = new List<OnKeyboardEvent>();
+            OnLeftButtonClick = new List<EOnMouseEvent>();
+            OnLeftButtonPress = new List<EOnMouseEvent>();
+            OnLeftButtonRelease = new List<EOnMouseEvent>();
+            OnMouseEntry = new List<EOnMouseEvent>();
+            OnMouseExit = new List<EOnMouseEvent>();
+            OnMouseMovement = new List<EOnMouseEvent>();
+            OnKeyboardEvent = new List<EOnKeyboardEvent>();
 
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
@@ -125,65 +123,6 @@ namespace Drydock.UI{
             Sprite.Dispose();
             Owner.DisposeElement(this);
         }
-
-        #region event dispatchers
-        public InterruptState OnMouseMovement(MouseState state){
-            if (OnMouseMovementDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)){
-                return InterruptState.InterruptEventDispatch;
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnLeftButtonClick(MouseState state) {
-            if (OnLeftButtonClickDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
-                return InterruptState.InterruptEventDispatch;
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnLeftButtonPress(MouseState state) {
-            if (OnLeftButtonPressDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
-                return InterruptState.InterruptEventDispatch;
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnLeftButtonRelease(MouseState state) {
-            if (OnLeftButtonReleaseDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
-                return InterruptState.InterruptEventDispatch;
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnKeyboardEvent(KeyboardState state) {
-            if (OnKeyboardEventDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
-                return InterruptState.InterruptEventDispatch;
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnMouseEntry(MouseState state) {
-            if (OnMouseEntryDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
-                return InterruptState.InterruptEventDispatch;
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnMouseExit(MouseState state) {
-            if (OnMouseExitDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
-                return InterruptState.InterruptEventDispatch;
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnMouseHover(MouseState state){
-            if (OnMouseHoverDispatch.Any(@event => @event(state) == InterruptState.InterruptEventDispatch)) {
-                return InterruptState.InterruptEventDispatch;
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        #endregion
 
         #endregion
     }

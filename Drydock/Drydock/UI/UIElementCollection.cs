@@ -45,11 +45,19 @@ namespace Drydock.UI{
             return (TElement) elementToAdd;
         }
 
+        public UIElementCollection Add(UIElementCollection collectionToAdd){
+            _childCollections.Add(collectionToAdd);
+            return collectionToAdd;
+        }
+
         #endregion
 
         public void Update(){
             foreach (IUIElement element in _elements){
                 element.Update();
+            }
+            foreach (var collection in _childCollections){
+                collection.Update();
             }
         }
 
@@ -60,30 +68,35 @@ namespace Drydock.UI{
             _elements.Remove(element);
         }
 
+        public void DisposeCollection(UIElementCollection collection){
+            _childCollections.Remove(collection);
+        }
+
         public InterruptState OnMouseMovement(MouseState state){
-            for (int i = 0; i < _layerSortedIElements.Count; i++) {
-                if (_layerSortedIElements[i].OnMouseMovement(state) == InterruptState.InterruptEventDispatch){
-                    _prevMouseState = state;
-                    return InterruptState.InterruptEventDispatch;
+            for (int i = 0; i < _layerSortedIElements.Count; i++){
+                foreach (var mouseEvent in _layerSortedIElements[i].OnMouseMovement) {
+                    mouseEvent(state);
+                }
+                foreach (var collection in _childCollections){
+                    collection.OnMouseMovement(state);
                 }
 
-                if (_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) && !_layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)) {
+                if (_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) && !_layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                     //dispatch event for mouse entering the bounding box of the element
-                    if (!DisableEntryHandlers) {
-                        if (_layerSortedIElements[i].OnMouseEntry(state) == InterruptState.InterruptEventDispatch){
-                            _prevMouseState = state;
-                            return InterruptState.InterruptEventDispatch;
+                    if (!DisableEntryHandlers){
+                        foreach (var mouseEvent in _layerSortedIElements[i].OnMouseEntry) {
+                            mouseEvent(state);
                         }
                     }
                 }
 
-                else {
-                    if (!_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) && _layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)) {
+                else{
+                    if (!_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) && _layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                         //dispatch event for mouse exiting the bounding box of the element
-                        if (_layerSortedIElements[i].OnMouseExit(state) == InterruptState.InterruptEventDispatch){
-                            _prevMouseState = state;
-                            return InterruptState.InterruptEventDispatch;
+                        foreach (var mouseEvent in _layerSortedIElements[i].OnMouseExit){
+                            mouseEvent(state);
                         }
+
                     }
                 }
             }
@@ -92,9 +105,9 @@ namespace Drydock.UI{
         }
 
         public InterruptState OnLeftButtonClick(MouseState state){
-            for (int i = 0; i < _layerSortedIElements.Count; i++){
-                if (_layerSortedIElements[i].OnLeftButtonClick(state) == InterruptState.InterruptEventDispatch){
-                    return InterruptState.InterruptEventDispatch;
+            for (int i = 0; i < _layerSortedIElements.Count; i++) {
+                foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonClick) {
+                    mouseEvent(state);
                 }
             }
             return InterruptState.AllowOtherEvents;
@@ -102,8 +115,8 @@ namespace Drydock.UI{
 
         public InterruptState OnLeftButtonPress(MouseState state) {
             for (int i = 0; i < _layerSortedIElements.Count; i++) {
-                if (_layerSortedIElements[i].OnLeftButtonPress(state) == InterruptState.InterruptEventDispatch) {
-                    return InterruptState.InterruptEventDispatch;
+                foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonPress) {
+                    mouseEvent(state);
                 }
             }
             return InterruptState.AllowOtherEvents;
@@ -111,17 +124,17 @@ namespace Drydock.UI{
 
         public InterruptState OnLeftButtonRelease(MouseState state){
             for (int i = 0; i < _layerSortedIElements.Count; i++) {
-                if (_layerSortedIElements[i].OnLeftButtonRelease(state) == InterruptState.InterruptEventDispatch) {
-                    return InterruptState.InterruptEventDispatch;
+                foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonRelease){
+                    mouseEvent(state);
                 }
             }
             return InterruptState.AllowOtherEvents;
         }
 
         public InterruptState OnKeyboardEvent(KeyboardState state){
-            for (int i = 0; i < _layerSortedIElements.Count; i++) {
-                if (_layerSortedIElements[i].OnKeyboardEvent(state) == InterruptState.InterruptEventDispatch) {
-                    return InterruptState.InterruptEventDispatch;
+            for (int i = 0; i < _layerSortedIElements.Count; i++){
+                foreach (var keyboardEvent in _layerSortedIElements[i].OnKeyboardEvent){
+                    keyboardEvent(state);
                 }
             }
             return InterruptState.AllowOtherEvents;

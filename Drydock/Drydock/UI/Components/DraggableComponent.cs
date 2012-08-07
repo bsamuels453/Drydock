@@ -46,9 +46,9 @@ namespace Drydock.UI.Components{
 
             _isEnabled = true;
             _isMoving = false;
-            _owner.OnLeftButtonPressDispatch.Add(OnLeftButtonDown);
-            _owner.OnLeftButtonReleaseDispatch.Add(OnLeftButtonUp);
-            _owner.OnMouseMovementDispatch.Add(OnMouseMovement);
+            _owner.OnLeftButtonPress.Add(OnLeftButtonDown);
+            _owner.OnLeftButtonRelease.Add(OnLeftButtonUp);
+            _owner.OnMouseMovement.Add(OnMouseMovement);
         }
 
         #endregion
@@ -67,30 +67,27 @@ namespace Drydock.UI.Components{
 
         #region event handlers
 
-        private InterruptState OnLeftButtonDown(MouseState state){
+        private void OnLeftButtonDown(MouseState state){
             if (!_isMoving){
                 if (_owner.BoundingBox.Contains(state.X, state.Y)){
                     _isMoving = true;
                     _owner.Owner.DisableEntryHandlers = true;
                     _mouseOffset.X = _owner.X - state.X;
                     _mouseOffset.Y = _owner.Y - state.Y;
-                    return InterruptState.AllowOtherEvents;
                 }
             }
-            return InterruptState.AllowOtherEvents;
         }
 
-        private InterruptState OnLeftButtonUp(MouseState state) {
+        private void OnLeftButtonUp(MouseState state) {
             if (_isMoving){
                 if (state.LeftButton == ButtonState.Released){
                     _isMoving = false;
                     _owner.Owner.DisableEntryHandlers = false;
                 }
             }
-            return InterruptState.AllowOtherEvents;
         }
 
-        private InterruptState OnMouseMovement(MouseState state) {
+        private void OnMouseMovement(MouseState state) {
             if (_isMoving){
                 var oldX = (int)_owner.X;
                 var oldY = (int)_owner.Y;
@@ -106,7 +103,6 @@ namespace Drydock.UI.Components{
                     _alertToDragMovement(_owner, x - oldX, y - oldY);
                 }
             }
-            return InterruptState.AllowOtherEvents;
         }
 
         #endregion

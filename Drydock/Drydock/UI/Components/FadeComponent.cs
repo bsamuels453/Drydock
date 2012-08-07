@@ -97,8 +97,8 @@ namespace Drydock.UI.Components{
                         throw new Exception("Invalid fade trigger: Unable to set an interactive trigger to a non-interactive element.");
                     }
 
-                    ((IUIInteractiveElement) _owner).OnMouseEntryDispatch.Add(ForceFadein);
-                    ((IUIInteractiveElement) _owner).OnMouseExitDispatch.Add(ForceFadeout);
+                    ((IUIInteractiveElement) _owner).OnMouseEntry.Add(ForceFadein);
+                    ((IUIInteractiveElement) _owner).OnMouseExit.Add(ForceFadeout);
                     break;
 
                 case FadeTrigger.None:
@@ -138,23 +138,21 @@ namespace Drydock.UI.Components{
 
         #region modification methods
 
-        public InterruptState ForceFadeout(MouseState state) {
-            //UIElementCollection.DisableEntryHandlers = false;
+        public void ForceFadeout(MouseState state) {
+            _owner.Owner.DisableEntryHandlers = false;
             if (IsEnabled){
                 _isInTransition = true;
                 _isFadingOut = true;
             }
-            return InterruptState.AllowOtherEvents;
         }
 
-        public InterruptState ForceFadein(MouseState state) {
-            //UIElementCollection.DisableEntryHandlers = true;
+        public void ForceFadein(MouseState state) {
+            _owner.Owner.DisableEntryHandlers = true;
             //UIElementCollection.ForceExitHandlers(_owner);
             if (IsEnabled){
                 _isInTransition = true;
                 _isFadingOut = false;
             }
-            return InterruptState.AllowOtherEvents;
         }
 
         #endregion
@@ -178,11 +176,11 @@ namespace Drydock.UI.Components{
                     var e1 = (IUIInteractiveElement)element1;
                     var e2 = (IUIInteractiveElement)element2;
 
-                    e1.OnMouseEntryDispatch.Add(e2.GetComponent<FadeComponent>().ForceFadein);
-                    e2.OnMouseEntryDispatch.Add(e1.GetComponent<FadeComponent>().ForceFadein);
+                    e1.OnMouseEntry.Add(e2.GetComponent<FadeComponent>().ForceFadein);
+                    e2.OnMouseEntry.Add(e1.GetComponent<FadeComponent>().ForceFadein);
 
-                    e1.OnMouseExitDispatch.Add(e2.GetComponent<FadeComponent>().ForceFadeout);
-                    e2.OnMouseExitDispatch.Add(e1.GetComponent<FadeComponent>().ForceFadeout);
+                    e1.OnMouseExit.Add(e2.GetComponent<FadeComponent>().ForceFadeout);
+                    e2.OnMouseExit.Add(e1.GetComponent<FadeComponent>().ForceFadeout);
 
                     break;
 
@@ -206,8 +204,8 @@ namespace Drydock.UI.Components{
                     //cast to interactive
                     var e1 = (IUIInteractiveElement)eventProcElement;
 
-                    e1.OnMouseEntryDispatch.Add(eventRecieveElement.GetComponent<FadeComponent>().ForceFadein);
-                    e1.OnMouseExitDispatch.Add(eventRecieveElement.GetComponent<FadeComponent>().ForceFadeout);
+                    e1.OnMouseEntry.Add(eventRecieveElement.GetComponent<FadeComponent>().ForceFadein);
+                    e1.OnMouseExit.Add(eventRecieveElement.GetComponent<FadeComponent>().ForceFadeout);
 
                     break;
 
@@ -230,8 +228,8 @@ namespace Drydock.UI.Components{
                             throw new Exception("Unable to link interactive element fade triggers; the event proc element is not interactive.");
                         }
                         foreach (var eElement in eventRecieveElements){
-                            ((IUIInteractiveElement)pElement).OnMouseEntryDispatch.Add(eElement.GetComponent<FadeComponent>().ForceFadein);
-                            ((IUIInteractiveElement)pElement).OnMouseExitDispatch.Add(eElement.GetComponent<FadeComponent>().ForceFadeout);
+                            ((IUIInteractiveElement)pElement).OnMouseEntry.Add(eElement.GetComponent<FadeComponent>().ForceFadein);
+                            ((IUIInteractiveElement)pElement).OnMouseExit.Add(eElement.GetComponent<FadeComponent>().ForceFadeout);
                         }
                     }
 

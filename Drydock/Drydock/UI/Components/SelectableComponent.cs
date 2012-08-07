@@ -60,7 +60,7 @@ namespace Drydock.UI.Components{
 
         private void ComponentCtor(){
             IsEnabled = true;
-            _owner.OnLeftButtonClickDispatch.Add(OnMouseClick);
+            _owner.OnLeftButtonClick.Add(OnMouseClick);
 
             _originalTexture = _owner.Sprite.Texture;
             _widthDx = (int)(_selectedWidth - _owner.BoundingBox.Width);
@@ -69,7 +69,7 @@ namespace Drydock.UI.Components{
             _positionDy = _heightDx / 2;
         }
 
-        private InterruptState OnMouseClick(MouseState state) {
+        private void OnMouseClick(MouseState state) {
             if (IsEnabled){
                 if (_isSelected) {
                     DeselectThis();
@@ -80,7 +80,6 @@ namespace Drydock.UI.Components{
                     }
                 }
             }
-            return InterruptState.AllowOtherEvents;
         }
 
         private void SelectThis(){
