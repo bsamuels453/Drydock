@@ -8,15 +8,16 @@ namespace Drydock.UI{
     internal class UIElementCollection : ICanReceiveInputEvents{
         private readonly List<IUIElement> _elements;
         private readonly UISortedList _layerSortedIElements;
+        private readonly List<UIElementCollection> _childCollections;
         private MouseState _prevMouseState;
         public bool DisableEntryHandlers;
-        private Stopwatch _hovertimer;
 
         #region ctor
 
         public UIElementCollection(){
             _elements = new List<IUIElement>();
             _layerSortedIElements = new UISortedList();
+            _childCollections = new List<UIElementCollection>();
             ElementCollectionUpdater.Add(this);
             _prevMouseState = Mouse.GetState();
             DisableEntryHandlers = false;
@@ -58,7 +59,6 @@ namespace Drydock.UI{
             }
             _elements.Remove(element);
         }
-
 
         public InterruptState OnMouseMovement(MouseState state){
             for (int i = 0; i < _layerSortedIElements.Count; i++) {
@@ -168,7 +168,6 @@ namespace Drydock.UI{
             _depthList.Clear();
             _objList.Clear();
         }
-
 
         public void RemoveAt(int index){
             _depthList.RemoveAt(index);

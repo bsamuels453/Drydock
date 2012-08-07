@@ -15,6 +15,7 @@ namespace Drydock.Logic{
         private readonly List<BezierCurve> _curveList;
 
         public CurveControllerCollection(){
+            InputEventDispatcher.EventSubscribers.Add(this);
             _curveList = new List<BezierCurve>(_initlNumCurves);
             int x = 200;
             int y = 200;

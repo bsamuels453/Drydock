@@ -15,6 +15,10 @@ namespace Drydock.Control {
     internal delegate InterruptState OnMouseEvent(MouseState state);
     internal delegate InterruptState OnKeyboardEvent(KeyboardState state);
 
+    //these two delegates are to be used in literal events
+    internal delegate void EOnMouseEvent(MouseState state);
+    internal delegate void EOnKeyboardEvent(KeyboardState state);
+
     internal static class InputEventDispatcher{
         public static List<ICanReceiveInputEvents> EventSubscribers;
 
