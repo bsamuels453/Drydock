@@ -72,13 +72,18 @@ namespace Drydock.UI{
             _childCollections.Remove(collection);
         }
 
+        #region event dispatchers
         public InterruptState OnMouseMovement(MouseState state){
+            if (!DisableEntryHandlers) {
+                System.Console.WriteLine("entry handler firing");
+            }
+            else{
+                System.Console.WriteLine("noooooo");
+            }
+
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var mouseEvent in _layerSortedIElements[i].OnMouseMovement) {
                     mouseEvent(state);
-                }
-                foreach (var collection in _childCollections){
-                    collection.OnMouseMovement(state);
                 }
 
                 if (_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) && !_layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
@@ -100,6 +105,14 @@ namespace Drydock.UI{
                     }
                 }
             }
+
+            if (!DisableEntryHandlers) {//disabling entry handlers disables movement dispatch for child collections
+                foreach (var collection in _childCollections) {
+                    //collection.OnMouseMovement(state);
+                }
+            }
+
+
             _prevMouseState = state;
             return InterruptState.AllowOtherEvents;
         }
@@ -110,6 +123,9 @@ namespace Drydock.UI{
                     mouseEvent(state);
                 }
             }
+            foreach (var collection in _childCollections) {
+                collection.OnLeftButtonClick(state);
+            }
             return InterruptState.AllowOtherEvents;
         }
 
@@ -118,6 +134,9 @@ namespace Drydock.UI{
                 foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonPress) {
                     mouseEvent(state);
                 }
+            }
+            foreach (var collection in _childCollections) {
+                collection.OnLeftButtonPress(state);
             }
             return InterruptState.AllowOtherEvents;
         }
@@ -128,6 +147,9 @@ namespace Drydock.UI{
                     mouseEvent(state);
                 }
             }
+            foreach (var collection in _childCollections) {
+                collection.OnLeftButtonRelease(state);
+            }
             return InterruptState.AllowOtherEvents;
         }
 
@@ -137,8 +159,12 @@ namespace Drydock.UI{
                     keyboardEvent(state);
                 }
             }
+            foreach (var collection in _childCollections) {
+                collection.OnKeyboardEvent(state);
+            }
             return InterruptState.AllowOtherEvents;
         }
+        #endregion
     }
 
     #region uisortedlist

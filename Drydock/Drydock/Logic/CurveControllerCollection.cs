@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Drydock.Control;
+using Drydock.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -11,16 +12,19 @@ namespace Drydock.Logic{
     internal class CurveControllerCollection : ICanReceiveInputEvents{
         private const int _segmentsBetweenControllers = 40;
         private const int _initlNumCurves = 4;
+        private readonly UIElementCollection _elementCollection;
 
         private readonly List<BezierCurve> _curveList;
 
         public CurveControllerCollection(){
             InputEventDispatcher.EventSubscribers.Add(this);
+            _elementCollection = new UIElementCollection();
+
             _curveList = new List<BezierCurve>(_initlNumCurves);
             int x = 200;
             int y = 200;
             for (int i = 0; i < _initlNumCurves; i++){
-                _curveList.Add(new BezierCurve(x, y, _segmentsBetweenControllers));
+                _curveList.Add(new BezierCurve(x, y, _elementCollection, _segmentsBetweenControllers));
                 x += 200;
             }
             for (int i = 1; i < _initlNumCurves - 1; i++){
@@ -43,7 +47,7 @@ namespace Drydock.Logic{
                 for (int i = 1; i < _curveList.Count; i++) {
                     if ((pos = _curveList[i].PrevContains(state, out t)) != Point.Zero) {
                         //i -= 1;
-                        _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
+                        _curveList.Insert(i, new BezierCurve(pos.X, pos.Y,_elementCollection, _segmentsBetweenControllers));
                         _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], t);
                         return InterruptState.InterruptEventDispatch;
                     }
@@ -54,7 +58,7 @@ namespace Drydock.Logic{
                     if ((pos = _curveList[i].NextContains(state, out t)) != Point.Zero) {
                         i += 1;
 
-                        _curveList.Insert(i, new BezierCurve(pos.X, pos.Y, _segmentsBetweenControllers));
+                        _curveList.Insert(i, new BezierCurve(pos.X, pos.Y,_elementCollection, _segmentsBetweenControllers));
                         _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], t);
                         return InterruptState.InterruptEventDispatch;
                     }

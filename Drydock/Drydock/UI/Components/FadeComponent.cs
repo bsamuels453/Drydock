@@ -183,9 +183,6 @@ namespace Drydock.UI.Components{
                     e2.OnMouseExit.Add(e1.GetComponent<FadeComponent>().ForceFadeout);
 
                     break;
-
-                default:
-                    break;
             }
         }
 

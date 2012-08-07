@@ -41,9 +41,7 @@ namespace Drydock.UI.Components{
                 }
             }
         }
-
         public bool IsEnabled { get; set; }
-
 
         public void Update(){
 
@@ -100,7 +98,7 @@ namespace Drydock.UI.Components{
                 if (_selectionCallback != null){
                     _selectionCallback(SelectState.Selected);
                 }
-                SelectedElements.Add(_owner);
+
             }
         }
 
@@ -121,16 +119,9 @@ namespace Drydock.UI.Components{
                 if (_selectionCallback != null){
                     _selectionCallback(SelectState.UnSelected);
                 }
-                SelectedElements.Remove(_owner);
                 
             }
         }
-        static SelectableComponent(){
-            SelectedElements = new List<IUIInteractiveElement>();
-        }
-
-        public static List<IUIInteractiveElement> SelectedElements; 
-
         
     }
 }

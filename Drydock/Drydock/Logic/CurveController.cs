@@ -14,7 +14,7 @@ namespace Drydock.Logic{
         private readonly Button _centerHandle;
         private readonly Button _handle1;
         private readonly Button _handle2;
-        private readonly UIElementCollection _elements;
+        private readonly UIElementCollection _elementCollection;
 
         private readonly Line _line1;
         private readonly Line _line2;
@@ -53,12 +53,12 @@ namespace Drydock.Logic{
 
         // private bool _isSelected;
 
-        public CurveController(int initX, int initY, float length1, float length2, float angle){
+        public CurveController(int initX, int initY,UIElementCollection collection, float length1, float length2, float angle){
+            _elementCollection = collection;
             Vector2 component1 = Common.GetComponentFromAngle(angle, length1);
             Vector2 component2 = Common.GetComponentFromAngle((float) (angle - Math.PI), length2); // minus math.pi to reverse direction
-            _elements = new UIElementCollection();
             #region crap
-            _handle1 = _elements.Add<Button>(
+            _handle1 = _elementCollection.Add<Button>(
                 new Button(
                     identifier: 1,
                     width: 9,
@@ -75,7 +75,7 @@ namespace Drydock.Logic{
                     )
                 );
 
-            _handle2 = _elements.Add<Button>(
+            _handle2 = _elementCollection.Add<Button>(
                 new Button(
                     identifier: 2,
                     width: 9,
@@ -92,7 +92,7 @@ namespace Drydock.Logic{
                     )
                 );
 
-            _centerHandle = _elements.Add<Button>(
+            _centerHandle = _elementCollection.Add<Button>(
                 new Button(
                     identifier: 0,
                     width: 9,
@@ -109,7 +109,7 @@ namespace Drydock.Logic{
                     )
                 );
 
-            _line1 = _elements.Add<Line>(
+            _line1 = _elementCollection.Add<Line>(
                 new Line(
                     v1: _centerHandle.CentPosition,
                     v2: _handle1.CentPosition,
@@ -120,7 +120,7 @@ namespace Drydock.Logic{
                     )
                 );
 
-            _line2 = _elements.Add<Line>(
+            _line2 = _elementCollection.Add<Line>(
                 new Line(
                     v1: _centerHandle.CentPosition,
                     v2: _handle2.CentPosition,
