@@ -68,12 +68,13 @@ namespace Drydock.Logic{
                     layerDepth: 1.0f,
                     textureName: "box",
                     components: new IUIElementComponent[]{
-                        new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
+                        new DraggableComponent(ClampHandleMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
                         new SelectableComponent("bigbox", 15, 15)
                     }
                     )
                 );
+            _handle1.GetComponent<DraggableComponent>().DragMovementDispatcher += ReactToDragMovement;
 
             _handle2 = _elementCollection.Add<Button>(
                 new Button(
@@ -85,12 +86,13 @@ namespace Drydock.Logic{
                     layerDepth: 1.0f,
                     textureName: "box",
                     components: new IUIElementComponent[]{
-                        new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
+                        new DraggableComponent(ClampHandleMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
                         new SelectableComponent("bigbox", 15, 15)
                     }
                     )
                 );
+            _handle2.GetComponent<DraggableComponent>().DragMovementDispatcher += ReactToDragMovement;
 
             _centerHandle = _elementCollection.Add<Button>(
                 new Button(
@@ -102,12 +104,13 @@ namespace Drydock.Logic{
                     layerDepth: 1.0f,
                     textureName: "box",
                     components: new IUIElementComponent[]{
-                        new DraggableComponent(ClampHandleMovement, ReactToDragMovement),
+                        new DraggableComponent(ClampHandleMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
                         new SelectableComponent("bigbox", 15, 15)
                     }
                     )
                 );
+            _centerHandle.GetComponent<DraggableComponent>().DragMovementDispatcher += ReactToDragMovement;
 
             _line1 = _elementCollection.Add<Line>(
                 new Line(
