@@ -166,6 +166,7 @@
     <Compile Include="Logic\BezierCurve.cs" />
     <Compile Include="Logic\CurveControllerCollection.cs" />
     <Compile Include="Logic\HullEditor.cs" />
+    <Compile Include="Logic\HullEditorPanel.cs" />
     <Compile Include="Render\IAdvancedPrimitive.cs" />
     <Compile Include="Render\IDrawable.cs" />
     <Compile Include="UI\Button.cs" />

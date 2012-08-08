@@ -8,7 +8,11 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.UI{
-
+    /// <summary>
+    /// This class serves as a container for UI elements. 
+    /// Its purpose is to update said elements through the UIContext, and
+    /// to provide collection-wide modification methods for use by external classes.
+    /// </summary>
     internal class UIElementCollection : ICanReceiveInputEvents{
         private readonly List<UIElementCollection> _childCollections;
         private readonly List<IUIElement> _elements;
@@ -57,16 +61,18 @@ namespace Drydock.UI{
         #endregion
 
         #region disposal methods
-        public void DisposeElement(IUIElement element) {
-            if (element is IUIInteractiveElement) {
+
+        public void DisposeElement(IUIElement element){
+            if (element is IUIInteractiveElement){
                 _layerSortedIElements.Remove(element);
             }
             _elements.Remove(element);
         }
 
-        public void DisposeCollection(UIElementCollection collection) {
+        public void DisposeCollection(UIElementCollection collection){
             _childCollections.Remove(collection);
         }
+
         #endregion
 
         public void Update(){
@@ -79,24 +85,25 @@ namespace Drydock.UI{
         }
 
         #region event dispatchers
+
         public InterruptState OnMouseMovement(MouseState state){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
-                foreach (var mouseEvent in _layerSortedIElements[i].OnMouseMovement) {
+                foreach (var mouseEvent in _layerSortedIElements[i].OnMouseMovement){
                     mouseEvent(state);
                 }
 
-                if (_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) 
+                if (_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y)
                     && !_layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                     //dispatch event for mouse entering the bounding box of the element
                     if (!DisableEntryHandlers){
-                        foreach (var mouseEvent in _layerSortedIElements[i].OnMouseEntry) {
+                        foreach (var mouseEvent in _layerSortedIElements[i].OnMouseEntry){
                             mouseEvent(state);
                         }
                     }
                 }
 
                 else{
-                    if (!_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y) 
+                    if (!_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y)
                         && _layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
                         //dispatch event for mouse exiting the bounding box of the element
                         foreach (var mouseEvent in _layerSortedIElements[i].OnMouseExit){
@@ -107,8 +114,8 @@ namespace Drydock.UI{
                 }
             }
 
-            if (!DisableEntryHandlers) {//disabling entry handlers disables movement dispatch for child collections
-                foreach (var collection in _childCollections) {
+            if (!DisableEntryHandlers){ //disabling entry handlers disables movement dispatch for child collections
+                foreach (var collection in _childCollections){
                     collection.OnMouseMovement(state);
                 }
             }
@@ -119,36 +126,36 @@ namespace Drydock.UI{
         }
 
         public InterruptState OnLeftButtonClick(MouseState state){
-            for (int i = 0; i < _layerSortedIElements.Count; i++) {
-                foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonClick) {
+            for (int i = 0; i < _layerSortedIElements.Count; i++){
+                foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonClick){
                     mouseEvent(state);
                 }
             }
-            foreach (var collection in _childCollections) {
+            foreach (var collection in _childCollections){
                 collection.OnLeftButtonClick(state);
             }
             return InterruptState.AllowOtherEvents;
         }
 
-        public InterruptState OnLeftButtonPress(MouseState state) {
-            for (int i = 0; i < _layerSortedIElements.Count; i++) {
-                foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonPress) {
+        public InterruptState OnLeftButtonPress(MouseState state){
+            for (int i = 0; i < _layerSortedIElements.Count; i++){
+                foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonPress){
                     mouseEvent(state);
                 }
             }
-            foreach (var collection in _childCollections) {
+            foreach (var collection in _childCollections){
                 collection.OnLeftButtonPress(state);
             }
             return InterruptState.AllowOtherEvents;
         }
 
         public InterruptState OnLeftButtonRelease(MouseState state){
-            for (int i = 0; i < _layerSortedIElements.Count; i++) {
+            for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonRelease){
                     mouseEvent(state);
                 }
             }
-            foreach (var collection in _childCollections) {
+            foreach (var collection in _childCollections){
                 collection.OnLeftButtonRelease(state);
             }
             return InterruptState.AllowOtherEvents;
@@ -160,11 +167,12 @@ namespace Drydock.UI{
                     keyboardEvent(state);
                 }
             }
-            foreach (var collection in _childCollections) {
+            foreach (var collection in _childCollections){
                 collection.OnKeyboardEvent(state);
             }
             return InterruptState.AllowOtherEvents;
         }
+
         #endregion
 
         #region collection modification methods
@@ -172,7 +180,7 @@ namespace Drydock.UI{
         public void EnableComponents<TComponent>(){
             foreach (var element in _elements){
                 if (element.DoesComponentExist<TComponent>()){
-                    ((IUIComponent)(element.GetComponent<TComponent>())).IsEnabled = true;//()()()()()((()))
+                    ((IUIComponent) (element.GetComponent<TComponent>())).IsEnabled = true; //()()()()()((()))
                 }
             }
             //propogate changes to children
@@ -181,58 +189,102 @@ namespace Drydock.UI{
             }
         }
 
-        public void DisableComponents<TComponent>() {
-            foreach (var element in _elements) {
-                if (element.DoesComponentExist<TComponent>()) {
-                    ((IUIComponent)(element.GetComponent<TComponent>())).IsEnabled = false;
+        public void DisableComponents<TComponent>(){
+            foreach (var element in _elements){
+                if (element.DoesComponentExist<TComponent>()){
+                    ((IUIComponent) (element.GetComponent<TComponent>())).IsEnabled = false;
                 }
             }
-            foreach (var collection in _childCollections) {
+            foreach (var collection in _childCollections){
                 collection.DisableComponents<TComponent>();
             }
         }
 
-        public void SelectAllElements() {
-            foreach (var element in _elements) {
-                if (element.DoesComponentExist<SelectableComponent>()) {
+        public void SelectAllElements(){
+            foreach (var element in _elements){
+                if (element.DoesComponentExist<SelectableComponent>()){
                     element.GetComponent<SelectableComponent>().SelectThis();
                 }
             }
-            foreach (var collection in _childCollections) {
+            foreach (var collection in _childCollections){
                 collection.SelectAllElements();
             }
         }
 
-        public void DeselectAllElements() {
-            foreach (var element in _elements) {
-                if (element.DoesComponentExist<SelectableComponent>()) {
+        public void DeselectAllElements(){
+            foreach (var element in _elements){
+                if (element.DoesComponentExist<SelectableComponent>()){
                     element.GetComponent<SelectableComponent>().DeselectThis();
                 }
             }
-            foreach (var collection in _childCollections) {
+            foreach (var collection in _childCollections){
                 collection.DeselectAllElements();
             }
         }
 
-        public void FadeInAllElements() {
-            foreach (var element in _elements) {
-                if (element.DoesComponentExist<FadeComponent>()) {
+        public void FadeInAllElements(){
+            foreach (var element in _elements){
+                if (element.DoesComponentExist<FadeComponent>()){
                     element.GetComponent<FadeComponent>().ForceFadein(Mouse.GetState());
                 }
             }
-            foreach (var collection in _childCollections) {
+            foreach (var collection in _childCollections){
                 collection.FadeInAllElements();
             }
         }
 
-        public void FadeOutAllElements() {
-            foreach (var element in _elements) {
-                if (element.DoesComponentExist<FadeComponent>()) {
+        public void FadeOutAllElements(){
+            foreach (var element in _elements){
+                if (element.DoesComponentExist<FadeComponent>()){
                     element.GetComponent<FadeComponent>().ForceFadeout(Mouse.GetState());
                 }
             }
-            foreach (var collection in _childCollections) {
+            foreach (var collection in _childCollections){
                 collection.FadeOutAllElements();
+            }
+        }
+
+        public void AddFadeCallback(FadeStateChange deleg){
+            foreach (var element in _elements){
+                if (element.DoesComponentExist<FadeComponent>()){
+                    element.GetComponent<FadeComponent>().FadeStateChangeDispatcher += deleg;
+                }
+            }
+            foreach (var collection in _childCollections){
+                collection.AddFadeCallback(deleg);
+            }
+        }
+
+        public void AddSelectionCallback(ReactToSelection deleg){
+            foreach (var element in _elements){
+                if (element.DoesComponentExist<SelectableComponent>()){
+                    element.GetComponent<SelectableComponent>().ReactToSelectionDispatcher += deleg;
+                }
+            }
+            foreach (var collection in _childCollections){
+                collection.AddSelectionCallback(deleg);
+            }
+        }
+
+        public void AddDragCallback(OnDragMovement deleg){
+            foreach (var element in _elements) {
+                if (element.DoesComponentExist<DraggableComponent>()) {
+                    element.GetComponent<DraggableComponent>().DragMovementDispatcher += deleg;
+                }
+            }
+            foreach (var collection in _childCollections) {
+                collection.AddDragCallback(deleg);
+            }
+        }
+
+        public void AddDragConstraintCallback(DraggableObjectClamp deleg) {
+            foreach (var element in _elements) {
+                if (element.DoesComponentExist<DraggableComponent>()) {
+                    element.GetComponent<DraggableComponent>().DragMovementClamp += deleg;
+                }
+            }
+            foreach (var collection in _childCollections) {
+                collection.AddDragConstraintCallback(deleg);
             }
         }
 

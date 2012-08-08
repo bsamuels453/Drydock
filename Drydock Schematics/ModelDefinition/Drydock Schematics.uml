@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ActivityDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="225123ec-adb8-43c5-b9ef-2e66df5b57d9"
   name="Drydock Schematics" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -395,7 +395,7 @@ No additional events added by UIInteractiveElement</body>
             Id="db368aac-0f71-479b-8ea6-d28cddb98758">
             <classMoniker
               Id="20a8e2b3-790b-4c23-a1f3-292cca986022"
-              LastKnownName="UIElementComponent"
+              LastKnownName="UIComponent"
               LastKnownLocation="Drydock Schematics.uml" />
           </dependency>
         </suppliersInternal>
@@ -467,7 +467,7 @@ No additional events added by UIInteractiveElement</body>
     <packageHasNamedElement>
       <class
         Id="20a8e2b3-790b-4c23-a1f3-292cca986022"
-        name="UIElementComponent"
+        name="UIComponent"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false" />

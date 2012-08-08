@@ -24,13 +24,6 @@
       <SubType>Content</SubType>
       <DependentUpon>UI Event Dispatch.classdiagram</DependentUpon>
     </Content>
-    <Content Include="UI Interface Schematics.classdiagram">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="UI Interface Schematics.classdiagram.layout">
-      <SubType>Content</SubType>
-      <DependentUpon>UI Interface Schematics.classdiagram</DependentUpon>
-    </Content>
     <Folder Include="ModelDefinition\" />
     <Content Include="ModelDefinition\Drydock Schematics.uml">
       <SubType>Content</SubType>

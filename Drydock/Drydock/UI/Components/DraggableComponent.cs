@@ -16,7 +16,6 @@ namespace Drydock.UI.Components{
     /// allows a UI element to be dragged. Required element to be IUIInteractiveComponent
     /// </summary>
     internal class DraggableComponent : IUIComponent{
-        private readonly DraggableObjectClamp _clampNewPosition;
         private bool _isEnabled;
         private bool _isMoving;
         private Vector2 _mouseOffset;
@@ -38,8 +37,7 @@ namespace Drydock.UI.Components{
 
         #region ctor
 
-        public DraggableComponent(DraggableObjectClamp clampFunction = null){
-            _clampNewPosition = clampFunction;
+        public DraggableComponent(){
             _mouseOffset = new Vector2();
         }
 
@@ -94,8 +92,8 @@ namespace Drydock.UI.Components{
                 var oldY = (int)_owner.Y;
                 var x = (int) (state.X + _mouseOffset.X);
                 var y = (int) (state.Y + _mouseOffset.Y);
-                if (_clampNewPosition != null){
-                    _clampNewPosition(_owner, ref x, ref y, oldX, oldY);
+                if (DragMovementClamp != null) {
+                    DragMovementClamp(_owner, ref x, ref y, oldX, oldY);
                 }
                 _owner.X = x;
                 _owner.Y = y;
@@ -109,5 +107,6 @@ namespace Drydock.UI.Components{
         #endregion
 
         public event OnDragMovement DragMovementDispatcher;
+        public event DraggableObjectClamp DragMovementClamp;
     }
 }

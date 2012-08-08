@@ -5,7 +5,13 @@ using System.Collections.Generic;
 #endregion
 
 namespace Drydock.UI {
-    static class UIContext {
+
+    /// <summary>
+    /// this class serves as a super-container for all UIElementCollections. 
+    /// Its purpose is to dispatch updates to said collections, and to provide
+    /// global UI modification methods.
+    /// </summary>
+    static class UIContext{
         private static readonly List<UIElementCollection> _collections;
 
         static UIContext(){

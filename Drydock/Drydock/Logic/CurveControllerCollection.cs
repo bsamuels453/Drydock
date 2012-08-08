@@ -15,9 +15,14 @@ namespace Drydock.Logic{
         public readonly List<BezierCurve> CurveList;
         public readonly UIElementCollection ElementCollection;
 
-        public CurveControllerCollection(string defaultConfig){
+        public CurveControllerCollection(string defaultConfig, UIElementCollection parentCollection = null){
             InputEventDispatcher.EventSubscribers.Add(this);
-            ElementCollection = new UIElementCollection();
+            if (parentCollection != null) {
+                ElementCollection = parentCollection.Add(new UIElementCollection());
+            }
+            else{
+                ElementCollection = new UIElementCollection();
+            }
 
             var config = new ConfigRetriever(defaultConfig);
             int numControllers = int.Parse(config.GetValue("NumControllers"));
