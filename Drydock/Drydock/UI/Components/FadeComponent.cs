@@ -73,7 +73,7 @@ namespace Drydock.UI.Components{
         /// <param name="trigger"> </param>
         /// <param name="fadeoutOpacity">opacity level to fade out to. range 0-1f</param>
         /// <param name="fadeDuration">the time it takes for sprite to fade out in milliseconds</param>
-        public FadeComponent(FadeState defaultState, FadeTrigger trigger = FadeTrigger.None, float fadeoutOpacity = .2f, float fadeDuration = 250){
+        public FadeComponent(FadeState defaultState, FadeTrigger trigger = FadeTrigger.None, float fadeoutOpacity = .1f, float fadeDuration = 250){
             _fadeoutOpacity = fadeoutOpacity;
             _fadeDuration = fadeDuration*10000; //10k ticks in a millisecond
             _isInTransition = false;

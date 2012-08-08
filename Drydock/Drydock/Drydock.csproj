@@ -194,6 +194,7 @@
     <Compile Include="Render\ShipBatch.cs" />
     <Compile Include="Render\ShipVbo.cs" />
     <Compile Include="Render\TextBatch.cs" />
+    <Compile Include="Utilities\ConfigRetriever.cs" />
     <Compile Include="Utilities\FloatingRectangle.cs" />
   </ItemGroup>
   <ItemGroup>

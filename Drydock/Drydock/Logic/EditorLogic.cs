@@ -9,7 +9,7 @@ namespace Drydock.Logic{
 
         public EditorLogic(Renderer renderer){
             //initalize component classes
-            _c = new CurveControllerCollection();
+            _c = new CurveControllerCollection("Config Files/SidecurveControllerDefaults.xml");
 
         }
 

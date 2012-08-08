@@ -75,7 +75,7 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Button(int x, int y, int width, int height, float layerDepth, string textureName, IUIElementComponent[] components, int identifier = 0){
+        public Button(float x, float y, float width, float height, float layerDepth, string textureName, IUIElementComponent[] components, int identifier = 0){
             _identifier = identifier;
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);

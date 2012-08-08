@@ -53,7 +53,7 @@ namespace Drydock.Logic{
 
         // private bool _isSelected;
 
-        public CurveController(int initX, int initY,UIElementCollection collection, float length1, float length2, float angle){
+        public CurveController(float initX, float initY,UIElementCollection collection, float length1, float length2, float angle){
             _elementCollection = collection;
             Vector2 component1 = Common.GetComponentFromAngle(angle, length1);
             Vector2 component2 = Common.GetComponentFromAngle((float) (angle - Math.PI), length2); // minus math.pi to reverse direction
@@ -63,8 +63,8 @@ namespace Drydock.Logic{
                     identifier: 1,
                     width: 9,
                     height: 9,
-                    x: (int) component1.X + initX,
-                    y: (int) component1.Y + initY,
+                    x:  component1.X + initX,
+                    y:  component1.Y + initY,
                     layerDepth: 1.0f,
                     textureName: "box",
                     components: new IUIElementComponent[]{
@@ -81,8 +81,8 @@ namespace Drydock.Logic{
                     identifier: 2,
                     width: 9,
                     height: 9,
-                    x: (int) component2.X + initX,
-                    y: (int) component2.Y + initY,
+                    x:  component2.X + initX,
+                    y:  component2.Y + initY,
                     layerDepth: 1.0f,
                     textureName: "box",
                     components: new IUIElementComponent[]{

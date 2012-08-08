@@ -1,8 +1,10 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using Drydock.Control;
 using Drydock.UI;
+using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -11,55 +13,60 @@ using Microsoft.Xna.Framework.Input;
 namespace Drydock.Logic{
     internal class CurveControllerCollection : ICanReceiveInputEvents{
         private const int _segmentsBetweenControllers = 40;
-        private const int _initlNumCurves = 4;
-        private readonly UIElementCollection _elementCollection;
+        public readonly UIElementCollection ElementCollection;
 
-        private readonly List<BezierCurve> _curveList;
+        public readonly List<BezierCurve> CurveList;
 
-        public CurveControllerCollection(){
+        public CurveControllerCollection(string defaultConfig){
             InputEventDispatcher.EventSubscribers.Add(this);
-            _elementCollection = new UIElementCollection();
+            ElementCollection = new UIElementCollection();
 
-            _curveList = new List<BezierCurve>(_initlNumCurves);
-            int x = 200;
-            int y = 200;
-            for (int i = 0; i < _initlNumCurves; i++){
-                _curveList.Add(new BezierCurve(x, y, _elementCollection, _segmentsBetweenControllers));
-                x += 200;
+            var config = new ConfigRetriever(defaultConfig);
+            int numControllers = int.Parse(config.GetValue("NumControllers"));
+            var curveInitData = new List<CurveInitalizeData>(numControllers);
+            CurveList = new List<BezierCurve>(numControllers);
+
+            for (int i = 0; i < numControllers; i++){
+                curveInitData.Add(new CurveInitalizeData(defaultConfig, i));
+
             }
-            for (int i = 1; i < _initlNumCurves - 1; i++){
-                _curveList[i].SetPrevCurve(_curveList[i - 1], 1.5f, 20);
-                _curveList[i].SetNextCurve(_curveList[i + 1], 1.5f, 20);
+
+            for (int i = 0; i < numControllers; i++){
+                CurveList.Add(new BezierCurve(0, 0, ElementCollection,curveInitData[i]));
+            }
+            for (int i = 1; i < numControllers - 1; i++){
+                CurveList[i].SetPrevCurve(CurveList[i - 1], curveInitData[i].Angle, 20);
+                CurveList[i].SetNextCurve(CurveList[i + 1], curveInitData[i].Angle - (float)Math.PI, 20);
             }
         }
 
         public void Update(){
-            foreach (var curve in _curveList){
+            foreach (var curve in CurveList){
                 curve.Update();
             }
         }
 
-        public InterruptState OnLeftButtonClick(MouseState state) {
-            Point pos;
+        public InterruptState OnLeftButtonClick(MouseState state){
+            Vector2 pos;
             float t;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)) {
-                for (int i = 1; i < _curveList.Count; i++) {
-                    if ((pos = _curveList[i].PrevContains(state, out t)) != Point.Zero) {
+            if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
+                for (int i = 1; i < CurveList.Count; i++){
+                    if ((pos = CurveList[i].PrevContains(state, out t)) != Vector2.Zero){
                         //i -= 1;
-                        _curveList.Insert(i, new BezierCurve(pos.X, pos.Y,_elementCollection, _segmentsBetweenControllers));
-                        _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], t);
+                        CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection));
+                        CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
                         return InterruptState.InterruptEventDispatch;
                     }
                 }
-                for (int i = 0; i < _curveList.Count - 1; i++) {
+                for (int i = 0; i < CurveList.Count - 1; i++){
 
 
-                    if ((pos = _curveList[i].NextContains(state, out t)) != Point.Zero) {
+                    if ((pos = CurveList[i].NextContains(state, out t)) != Vector2.Zero){
                         i += 1;
 
-                        _curveList.Insert(i, new BezierCurve(pos.X, pos.Y,_elementCollection, _segmentsBetweenControllers));
-                        _curveList[i].InsertBetweenCurves(_curveList[i - 1], _curveList[i + 1], t);
+                        CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection ));
+                        CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
                         return InterruptState.InterruptEventDispatch;
                     }
                 }
@@ -69,6 +76,7 @@ namespace Drydock.Logic{
         }
 
         #region unused input events
+
         public InterruptState OnMouseMovement(MouseState state){
             return InterruptState.AllowOtherEvents;
         }
@@ -84,6 +92,38 @@ namespace Drydock.Logic{
         public InterruptState OnKeyboardEvent(KeyboardState state){
             return InterruptState.AllowOtherEvents;
         }
+
         #endregion
     }
+
+    #region nested struct
+
+        class CurveInitalizeData{
+            public float HandlePosX;
+            public float HandlePosY;
+            public float Angle;
+            public float Length1;
+            public float Length2;
+
+            public void RetrieveDataFromXML(string xmlFile, int i){
+                var config = new ConfigRetriever(xmlFile);
+                HandlePosX = float.Parse(config.GetValue("Handle" + i + "X"));
+                HandlePosY = float.Parse(config.GetValue("Handle" + i + "Y"));
+                Angle = float.Parse(config.GetValue("Handle" + i + "Angle"));
+                Length1 = float.Parse(config.GetValue("Handle" + i + "Length1"));
+                Length2 = float.Parse(config.GetValue("Handle" + i + "Length2"));
+            }
+
+            public CurveInitalizeData(string xmlFile, int i){
+                var config = new ConfigRetriever(xmlFile);
+                HandlePosX = float.Parse(config.GetValue("Handle" + i + "X"));
+                HandlePosY = float.Parse(config.GetValue("Handle" + i + "Y"));
+                Angle = float.Parse(config.GetValue("Handle" + i + "Angle"));
+                Length1 = float.Parse(config.GetValue("Handle" + i + "Length1"));
+                Length2 = float.Parse(config.GetValue("Handle" + i + "Length2"));
+            }
+
+        }
+
+        #endregion
 }

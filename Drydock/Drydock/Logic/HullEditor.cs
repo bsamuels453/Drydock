@@ -5,15 +5,11 @@ using System.Text;
 
 namespace Drydock.Logic {
     class HullEditor {
-        /*CurveControllerCollection _sideColl;
-        CurveControllerCollection _topdownColl;
-        CurveControllerCollection _backfrontColl;
-
-
+        CurveControllerCollection _sideColl;
 
 
         public HullEditor(){
-
-        }*/
+            _sideColl = new CurveControllerCollection("Config Files/SideCurveControllerDefaults.xml");
+        }
     }
 }

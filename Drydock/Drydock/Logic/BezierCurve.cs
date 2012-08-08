@@ -15,12 +15,12 @@ namespace Drydock.Logic {
     /// </summary>
     class BezierCurve {
         #region fields and properties
+        private const int _linesPerSide = 20;
         private BezierCurve _nextCurve;
         private List<Line> _nextLines;
         private  BezierCurve _prevCurve;
         private List<Line> _prevLines;
         private readonly CurveController _controller;
-        private readonly int _linesPerSide;
         private readonly UIElementCollection _elementCollection;
 
         public Vector2 PrevHandlePos {
@@ -162,14 +162,21 @@ namespace Drydock.Logic {
         /// <summary>
         /// usually used to add new curves between two points
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="parentCollection"> </param>
-        /// <param name="linesPerSide"> </param>
-        public BezierCurve(int x, int y, UIElementCollection parentCollection, int linesPerSide=20){
-            _controller = new CurveController(x, y, parentCollection,  20, 20,0f);
+        public BezierCurve( float offsetX, float offsetY, UIElementCollection parentCollection,CurveInitalizeData initData = null){
+            if (initData != null) {
+                _controller = new CurveController(
+                    initData.HandlePosX + offsetX,
+                    initData.HandlePosY + offsetY,
+                    parentCollection,
+                    initData.Length1,
+                    initData.Length2,
+                    initData.Angle
+                    );
+            }
+            else{
+
+            }
             _elementCollection = parentCollection;
-            _linesPerSide = linesPerSide;
             _nextLines = null;
             _nextCurve = null;
             _prevCurve = null;
@@ -180,7 +187,7 @@ namespace Drydock.Logic {
             throw new NotImplementedException();
         }
 
-        public Point PrevContains(MouseState state, out float t){
+        public Vector2 PrevContains(MouseState state, out float t){
             var mousePoint = new Vector2(state.X,state.Y);
             const int width = 5;
 
@@ -188,7 +195,7 @@ namespace Drydock.Logic {
                 for (int i = 0; i < _prevLines.Count; i++){
                     if (Vector2.Distance(_prevLines[i].DestPoint, mousePoint) < width) {
                         t = ((float)i) / (_linesPerSide * 2) + 0.5f;
-                        return new Point((int)_prevLines[i].DestPoint.X, (int)_prevLines[i].DestPoint.Y);
+                        return new Vector2(_prevLines[i].DestPoint.X, _prevLines[i].DestPoint.Y);
                     }
 
                 }
@@ -198,10 +205,10 @@ namespace Drydock.Logic {
             }
             //todo: fix these returns to not break on zero
             t = -1;
-            return Point.Zero;
+            return Vector2.Zero;
         }
 
-        public Point NextContains(MouseState state, out float t){
+        public Vector2 NextContains(MouseState state, out float t){
             var mousePoint = new Vector2(state.X, state.Y);
             const int width = 5;
             if (_nextLines != null){
@@ -209,13 +216,13 @@ namespace Drydock.Logic {
                     if (Vector2.Distance(_nextLines[i].DestPoint, mousePoint) < width) {
 
                         t = ((float)i) / (_linesPerSide*2);
-                        return new Point((int)_nextLines[i].DestPoint.X, (int)_nextLines[i].DestPoint.Y);
+                        return new Vector2(_nextLines[i].DestPoint.X, _nextLines[i].DestPoint.Y);
                     }
 
                 }
             }
             t = -1;
-            return Point.Zero;
+            return Vector2.Zero;
 
         }
 

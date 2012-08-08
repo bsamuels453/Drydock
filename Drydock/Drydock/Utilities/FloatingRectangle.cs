@@ -32,6 +32,15 @@ namespace Drydock.Utilities {
             _position = new Vector2(x,y);
         }
 
+        public FloatingRectangle(float x, float y, float width, float height) {
+            _x = x;
+            _y = y;
+            _width = width;
+            _height = height;
+            _intRect = new Rectangle((int)x, (int)y, (int)width, (int)height);
+            _position = new Vector2(x, y);
+        }
+
         public float X{
             get { return _x; }
             set {
