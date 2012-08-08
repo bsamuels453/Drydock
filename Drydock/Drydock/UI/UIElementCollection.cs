@@ -1,16 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿#region
+
+using System.Collections.Generic;
 using Drydock.Control;
+using Drydock.UI.Components;
 using Microsoft.Xna.Framework.Input;
+
+#endregion
 
 namespace Drydock.UI{
 
     internal class UIElementCollection : ICanReceiveInputEvents{
+        private readonly List<UIElementCollection> _childCollections;
         private readonly List<IUIElement> _elements;
         private readonly UISortedList _layerSortedIElements;
-        private readonly List<UIElementCollection> _childCollections;
-        private MouseState _prevMouseState;
         public bool DisableEntryHandlers;
+        private MouseState _prevMouseState;
 
         #region ctor
 
@@ -18,7 +22,7 @@ namespace Drydock.UI{
             _elements = new List<IUIElement>();
             _layerSortedIElements = new UISortedList();
             _childCollections = new List<UIElementCollection>();
-            ElementCollectionUpdater.Add(this);
+            UIContext.Add(this);
             _prevMouseState = Mouse.GetState();
             DisableEntryHandlers = false;
 
@@ -52,6 +56,19 @@ namespace Drydock.UI{
 
         #endregion
 
+        #region disposal methods
+        public void DisposeElement(IUIElement element) {
+            if (element is IUIInteractiveElement) {
+                _layerSortedIElements.Remove(element);
+            }
+            _elements.Remove(element);
+        }
+
+        public void DisposeCollection(UIElementCollection collection) {
+            _childCollections.Remove(collection);
+        }
+        #endregion
+
         public void Update(){
             foreach (IUIElement element in _elements){
                 element.Update();
@@ -59,17 +76,6 @@ namespace Drydock.UI{
             foreach (var collection in _childCollections){
                 collection.Update();
             }
-        }
-
-        public void DisposeElement(IUIElement element){
-            if (element is IUIInteractiveElement){
-                _layerSortedIElements.Remove(element);
-            }
-            _elements.Remove(element);
-        }
-
-        public void DisposeCollection(UIElementCollection collection){
-            _childCollections.Remove(collection);
         }
 
         #region event dispatchers
@@ -159,6 +165,77 @@ namespace Drydock.UI{
             }
             return InterruptState.AllowOtherEvents;
         }
+        #endregion
+
+        #region collection modification methods
+
+        public void EnableComponents<TComponent>(){
+            foreach (var element in _elements){
+                if (element.DoesComponentExist<TComponent>()){
+                    ((IUIComponent)(element.GetComponent<TComponent>())).IsEnabled = true;//()()()()()((()))
+                }
+            }
+            //propogate changes to children
+            foreach (var collection in _childCollections){
+                collection.EnableComponents<TComponent>();
+            }
+        }
+
+        public void DisableComponents<TComponent>() {
+            foreach (var element in _elements) {
+                if (element.DoesComponentExist<TComponent>()) {
+                    ((IUIComponent)(element.GetComponent<TComponent>())).IsEnabled = false;
+                }
+            }
+            foreach (var collection in _childCollections) {
+                collection.DisableComponents<TComponent>();
+            }
+        }
+
+        public void SelectAllElements() {
+            foreach (var element in _elements) {
+                if (element.DoesComponentExist<SelectableComponent>()) {
+                    element.GetComponent<SelectableComponent>().SelectThis();
+                }
+            }
+            foreach (var collection in _childCollections) {
+                collection.SelectAllElements();
+            }
+        }
+
+        public void DeselectAllElements() {
+            foreach (var element in _elements) {
+                if (element.DoesComponentExist<SelectableComponent>()) {
+                    element.GetComponent<SelectableComponent>().DeselectThis();
+                }
+            }
+            foreach (var collection in _childCollections) {
+                collection.DeselectAllElements();
+            }
+        }
+
+        public void FadeInAllElements() {
+            foreach (var element in _elements) {
+                if (element.DoesComponentExist<FadeComponent>()) {
+                    element.GetComponent<FadeComponent>().ForceFadein(Mouse.GetState());
+                }
+            }
+            foreach (var collection in _childCollections) {
+                collection.FadeInAllElements();
+            }
+        }
+
+        public void FadeOutAllElements() {
+            foreach (var element in _elements) {
+                if (element.DoesComponentExist<FadeComponent>()) {
+                    element.GetComponent<FadeComponent>().ForceFadeout(Mouse.GetState());
+                }
+            }
+            foreach (var collection in _childCollections) {
+                collection.FadeOutAllElements();
+            }
+        }
+
         #endregion
     }
 

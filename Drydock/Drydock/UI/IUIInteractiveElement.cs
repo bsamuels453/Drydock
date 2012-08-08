@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
+﻿#region
+
+using System.Collections.Generic;
 using Drydock.Control;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+
+#endregion
 
 namespace Drydock.UI{
     internal interface IUIInteractiveElement : IUIElement{
-
-        //These lists will be dispatched by uielementcollection when trigger procs
         #region event dispatch lists
         List<EOnMouseEvent> OnLeftButtonClick { get; }//procs when left mouse button is pressed and released within a time interval (global)
         List<EOnMouseEvent> OnLeftButtonPress { get; }//procs when left mouse button is pressed (global)
@@ -16,5 +16,7 @@ namespace Drydock.UI{
         List<EOnMouseEvent> OnMouseMovement { get; }//procs on global mouse movement
         List<EOnKeyboardEvent> OnKeyboardEvent { get; }
         #endregion
+
+        //These lists will be dispatched by uielementcollection when trigger procs
     }
 }

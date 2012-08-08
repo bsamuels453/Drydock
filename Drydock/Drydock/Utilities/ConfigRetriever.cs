@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#region
+
 using System.Xml;
+
+#endregion
 
 namespace Drydock.Utilities {
     class ConfigRetriever {

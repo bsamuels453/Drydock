@@ -12,9 +12,9 @@ namespace Drydock.Logic{
     internal class CurveController {
         #region fields and properties
         private readonly Button _centerHandle;
+        private readonly UIElementCollection _elementCollection;
         private readonly Button _handle1;
         private readonly Button _handle2;
-        private readonly UIElementCollection _elementCollection;
 
         private readonly Line _line1;
         private readonly Line _line2;
@@ -67,7 +67,7 @@ namespace Drydock.Logic{
                     y:  component1.Y + initY,
                     layerDepth: 1.0f,
                     textureName: "box",
-                    components: new IUIElementComponent[]{
+                    components: new IUIComponent[]{
                         new DraggableComponent(ClampHandleMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
                         new SelectableComponent("bigbox", 15, 15)
@@ -85,7 +85,7 @@ namespace Drydock.Logic{
                     y:  component2.Y + initY,
                     layerDepth: 1.0f,
                     textureName: "box",
-                    components: new IUIElementComponent[]{
+                    components: new IUIComponent[]{
                         new DraggableComponent(ClampHandleMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
                         new SelectableComponent("bigbox", 15, 15)
@@ -103,7 +103,7 @@ namespace Drydock.Logic{
                     y: initY,
                     layerDepth: 1.0f,
                     textureName: "box",
-                    components: new IUIElementComponent[]{
+                    components: new IUIComponent[]{
                         new DraggableComponent(ClampHandleMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
                         new SelectableComponent("bigbox", 15, 15)
@@ -117,7 +117,7 @@ namespace Drydock.Logic{
                     v1: _centerHandle.CentPosition,
                     v2: _handle1.CentPosition,
                     layerDepth: 1.0f,
-                    components: new IUIElementComponent[]{
+                    components: new IUIComponent[]{
                         new FadeComponent(FadeComponent.FadeState.Faded)
                     }
                     )
@@ -128,7 +128,7 @@ namespace Drydock.Logic{
                     v1: _centerHandle.CentPosition,
                     v2: _handle2.CentPosition,
                     layerDepth: 1.0f,
-                    components: new IUIElementComponent[]{
+                    components: new IUIComponent[]{
                         new FadeComponent(FadeComponent.FadeState.Faded)
                     }
                     )

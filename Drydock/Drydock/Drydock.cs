@@ -1,7 +1,11 @@
+#region
+
 using System.Threading;
 using Drydock.Logic;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
+
+#endregion
 
 namespace Drydock{
     public class Drydock : Game{

@@ -1,7 +1,10 @@
-﻿using System.Diagnostics;
+﻿#region
+
 using Drydock.Control;
 using Drydock.Render;
 using Drydock.UI;
+
+#endregion
 
 namespace Drydock.Logic{
     internal class EditorLogic{
@@ -18,7 +21,7 @@ namespace Drydock.Logic{
 
             //4,000 microseconds
             InputEventDispatcher.Update();
-            ElementCollectionUpdater.Update();
+            UIContext.Update();
             _c.Update();
 
         }

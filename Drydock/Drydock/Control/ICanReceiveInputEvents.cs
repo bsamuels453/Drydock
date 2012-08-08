@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#region
+
 using Microsoft.Xna.Framework.Input;
+
+#endregion
 
 namespace Drydock.Control {
     interface ICanReceiveInputEvents {

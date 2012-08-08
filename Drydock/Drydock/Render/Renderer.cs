@@ -1,6 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿#region
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+
+#endregion
 
 namespace Drydock.Render{
     public class Renderer{

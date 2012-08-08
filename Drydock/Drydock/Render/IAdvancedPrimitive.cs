@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿#region
+
+using Microsoft.Xna.Framework.Graphics;
+
+#endregion
 
 namespace Drydock.Render{
     internal interface IAdvancedPrimitive{

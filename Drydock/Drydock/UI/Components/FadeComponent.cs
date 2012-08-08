@@ -1,14 +1,16 @@
-﻿using System;
-using Drydock.Control;
+﻿#region
+
+using System;
 using Microsoft.Xna.Framework.Input;
+
+#endregion
 
 namespace Drydock.UI.Components{
     delegate void FadeStateChange(FadeComponent.FadeState state);
     /// <summary>
     /// allows a UI element to be faded in and out. Required element to be IUIInteractiveComponent for certain settings.
     /// </summary>
-    internal class FadeComponent : IUIElementComponent{
-
+    internal class FadeComponent : IUIComponent{
         #region FadeState enum
 
         public enum FadeState{
@@ -27,7 +29,6 @@ namespace Drydock.UI.Components{
 
         #endregion
 
-        public event FadeStateChange FadeStateChangeDispatcher;
         private readonly FadeState _defaultState;
         private readonly float _fadeDuration;
         private readonly FadeTrigger _fadeTrigger;
@@ -73,7 +74,7 @@ namespace Drydock.UI.Components{
         /// <param name="trigger"> </param>
         /// <param name="fadeoutOpacity">opacity level to fade out to. range 0-1f</param>
         /// <param name="fadeDuration">the time it takes for sprite to fade out in milliseconds</param>
-        public FadeComponent(FadeState defaultState, FadeTrigger trigger = FadeTrigger.None, float fadeoutOpacity = .1f, float fadeDuration = 250){
+        public FadeComponent(FadeState defaultState, FadeTrigger trigger = FadeTrigger.None, float fadeoutOpacity = .05f, float fadeDuration = 250){
             _fadeoutOpacity = fadeoutOpacity;
             _fadeDuration = fadeDuration*10000; //10k ticks in a millisecond
             _isInTransition = false;
@@ -107,7 +108,7 @@ namespace Drydock.UI.Components{
 
         #endregion
 
-        #region IUIElementComponent Members
+        #region IUIComponent Members
 
         public void Update(){
             if (IsEnabled){
@@ -243,5 +244,7 @@ namespace Drydock.UI.Components{
         }
 
         #endregion
+
+        public event FadeStateChange FadeStateChangeDispatcher;
     }
 }

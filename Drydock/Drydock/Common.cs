@@ -1,6 +1,10 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+
+#endregion
 
 namespace Drydock{
     internal static class Common{

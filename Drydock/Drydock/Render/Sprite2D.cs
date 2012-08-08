@@ -1,7 +1,11 @@
-﻿using Drydock.UI;
+﻿#region
+
+using Drydock.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+
+#endregion
 
 namespace Drydock.Render{
     internal class Sprite2D : IAdvancedPrimitive{
@@ -22,10 +26,6 @@ namespace Drydock.Render{
             _isDisposed = false;
         }
 
-        ~Sprite2D(){
-            Dispose();
-        }
-
         public void Dispose(){
             if (!_isDisposed){
                 _isFrameSlotAvail[_id] = true;
@@ -40,6 +40,10 @@ namespace Drydock.Render{
 
         public void SetTextureFromString(string textureName){
             _frameTextures[_id] = _contentManager.Load<Texture2D>(textureName);
+        }
+
+        ~Sprite2D(){
+            Dispose();
         }
 
         #endregion

@@ -1,5 +1,9 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿#region
+
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+
+#endregion
 
 //todo: integrate this into screentext class
 

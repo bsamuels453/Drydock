@@ -1,5 +1,5 @@
 ﻿namespace Drydock.UI{
-    internal interface IUIElementComponent{
+    internal interface IUIComponent{
         /// <summary>
         /// A reference to the owner of the element.
         /// </summary>

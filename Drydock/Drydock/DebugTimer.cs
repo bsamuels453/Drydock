@@ -1,5 +1,9 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Diagnostics;
+
+#endregion
 
 namespace Project_Forge.utilities{
     internal static class DebugTimer{

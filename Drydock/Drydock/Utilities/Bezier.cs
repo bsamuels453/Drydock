@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿#region
+
+using Microsoft.Xna.Framework;
+
+#endregion
 
 namespace Drydock.Utilities{
     internal static class Bezier{

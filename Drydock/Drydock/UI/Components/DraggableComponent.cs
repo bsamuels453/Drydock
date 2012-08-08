@@ -1,7 +1,10 @@
-﻿using System;
-using Drydock.Control;
+﻿#region
+
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+
+#endregion
 
 namespace Drydock.UI.Components{
     internal delegate void DraggableObjectClamp(IUIInteractiveElement owner, ref int x, ref int y, int oldX, int oldY);
@@ -12,8 +15,7 @@ namespace Drydock.UI.Components{
     /// <summary>
     /// allows a UI element to be dragged. Required element to be IUIInteractiveComponent
     /// </summary>
-    internal class DraggableComponent : IUIElementComponent{
-        public event OnDragMovement DragMovementDispatcher;
+    internal class DraggableComponent : IUIComponent{
         private readonly DraggableObjectClamp _clampNewPosition;
         private bool _isEnabled;
         private bool _isMoving;
@@ -52,7 +54,7 @@ namespace Drydock.UI.Components{
 
         #endregion
 
-        #region IUIElementComponent Members
+        #region IUIComponent Members
 
         public bool IsEnabled{
             get { return _isEnabled; }
@@ -105,5 +107,7 @@ namespace Drydock.UI.Components{
         }
 
         #endregion
+
+        public event OnDragMovement DragMovementDispatcher;
     }
 }

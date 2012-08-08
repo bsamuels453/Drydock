@@ -1,20 +1,22 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Drydock.Control;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+
+#endregion
 
 namespace Drydock.UI{
     internal class Button : IUIInteractiveElement{
         #region properties and fields
 
+        private readonly FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
         private readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
         private readonly Sprite2D _sprite; //the button's sprite
-        private readonly FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
         private Vector2 _centPosition; //represents the approximate center of the button
 
         public Vector2 CentPosition{
@@ -62,7 +64,7 @@ namespace Drydock.UI{
         public float Opacity { get; set; }
         public float Depth { get; set; }
         public UIElementCollection Owner { get; set; }
-        public IUIElementComponent[] Components { get; set; }
+        public IUIComponent[] Components { get; set; }
         public List<EOnMouseEvent> OnLeftButtonClick { get; set; }
         public List<EOnMouseEvent> OnLeftButtonPress { get; set; }
         public List<EOnMouseEvent> OnLeftButtonRelease { get; set; }
@@ -75,7 +77,7 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Button(float x, float y, float width, float height, float layerDepth, string textureName, IUIElementComponent[] components, int identifier = 0){
+        public Button(float x, float y, float width, float height, float layerDepth, string textureName, IUIComponent[] components, int identifier = 0){
             _identifier = identifier;
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
@@ -94,18 +96,17 @@ namespace Drydock.UI{
             Depth = layerDepth;
             Components = components;
 
-            foreach (IUIElementComponent component in Components){
+            foreach (IUIComponent component in Components){
                 component.Owner = this;
             }
         }
 
         #endregion
 
-
         #region other IUIElement derived methods
 
         public TComponent GetComponent<TComponent>(){
-            foreach (IUIElementComponent component in Components){
+            foreach (IUIComponent component in Components){
                 if (component is TComponent){
                     return (TComponent) component;
                 }
@@ -113,8 +114,12 @@ namespace Drydock.UI{
             throw new Exception("Request made to a Button object for a component that did not exist.");
         }
 
+        public bool DoesComponentExist<TComponent>(){
+            return Components.OfType<TComponent>().Any();
+        }
+
         public void Update(){
-            foreach (IUIElementComponent component in Components){
+            foreach (IUIComponent component in Components){
                 component.Update();
             }
         }

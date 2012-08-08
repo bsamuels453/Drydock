@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Linq;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
@@ -43,7 +44,7 @@ namespace Drydock.UI{
         public int LineWidth { get; set; }
         public UIElementCollection Owner { get; set; }
 
-        public IUIElementComponent[] Components { get; set; }
+        public IUIComponent[] Components { get; set; }
         public float Opacity { get; set; }
         public float Depth { get; set; }
         public int Identifier{
@@ -87,7 +88,7 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Line(Vector2 v1, Vector2 v2, float layerDepth, IUIElementComponent[] components=null){
+        public Line(Vector2 v1, Vector2 v2, float layerDepth, IUIComponent[] components=null){
             _lineSprite = new Line2D(this, 1);
             _point1 = v1;
             _point2 = v2;
@@ -98,7 +99,7 @@ namespace Drydock.UI{
 
             Components = components;
             if (Components != null){
-                foreach (IUIElementComponent component in Components){
+                foreach (IUIComponent component in Components){
                     component.Owner = this;
                 }
             }
@@ -130,7 +131,7 @@ namespace Drydock.UI{
         #region IUIElement Members
 
         public TComponent GetComponent<TComponent>(){
-            foreach (IUIElementComponent component in Components){
+            foreach (IUIComponent component in Components){
                 if (component.GetType() == typeof (TComponent)){
                     return (TComponent) component;
                 }
@@ -138,9 +139,13 @@ namespace Drydock.UI{
             throw new Exception("Request made to a Line object for a component that did not exist.");
         }
 
+        public bool DoesComponentExist<TComponent>() {
+            return Components.OfType<TComponent>().Any();
+        }
+
         public void Update(){
             if (Components != null){
-                foreach (IUIElementComponent component in Components){
+                foreach (IUIComponent component in Components){
                     component.Update();
                 }
             }

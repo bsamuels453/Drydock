@@ -172,10 +172,9 @@
     <Compile Include="UI\Components\DraggableComponent.cs" />
     <Compile Include="UI\Components\FadeComponent.cs" />
     <Compile Include="UI\Components\SelectableComponent.cs" />
-    <Compile Include="UI\EDepth.cs" />
-    <Compile Include="UI\ElementCollectionUpdater.cs" />
+    <Compile Include="UI\UIContext.cs" />
     <Compile Include="UI\IUIElement.cs" />
-    <Compile Include="UI\IUIElementComponent.cs" />
+    <Compile Include="UI\IUIComponent.cs" />
     <Compile Include="UI\IUIInteractiveElement.cs" />
     <Compile Include="UI\Line.cs" />
     <Compile Include="UI\UIElementCollection.cs" />

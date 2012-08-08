@@ -12,10 +12,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic{
     internal class CurveControllerCollection : ICanReceiveInputEvents{
-        private const int _segmentsBetweenControllers = 40;
-        public readonly UIElementCollection ElementCollection;
-
         public readonly List<BezierCurve> CurveList;
+        public readonly UIElementCollection ElementCollection;
 
         public CurveControllerCollection(string defaultConfig){
             InputEventDispatcher.EventSubscribers.Add(this);
@@ -40,11 +38,7 @@ namespace Drydock.Logic{
             }
         }
 
-        public void Update(){
-            foreach (var curve in CurveList){
-                curve.Update();
-            }
-        }
+        #region ICanReceiveInputEvents Members
 
         public InterruptState OnLeftButtonClick(MouseState state){
             Vector2 pos;
@@ -75,6 +69,8 @@ namespace Drydock.Logic{
             return InterruptState.AllowOtherEvents;
         }
 
+        #endregion
+
         #region unused input events
 
         public InterruptState OnMouseMovement(MouseState state){
@@ -94,25 +90,22 @@ namespace Drydock.Logic{
         }
 
         #endregion
+
+        public void Update(){
+            foreach (var curve in CurveList){
+                curve.Update();
+            }
+        }
     }
 
     #region nested struct
 
         class CurveInitalizeData{
+            public float Angle;
             public float HandlePosX;
             public float HandlePosY;
-            public float Angle;
             public float Length1;
             public float Length2;
-
-            public void RetrieveDataFromXML(string xmlFile, int i){
-                var config = new ConfigRetriever(xmlFile);
-                HandlePosX = float.Parse(config.GetValue("Handle" + i + "X"));
-                HandlePosY = float.Parse(config.GetValue("Handle" + i + "Y"));
-                Angle = float.Parse(config.GetValue("Handle" + i + "Angle"));
-                Length1 = float.Parse(config.GetValue("Handle" + i + "Length1"));
-                Length2 = float.Parse(config.GetValue("Handle" + i + "Length2"));
-            }
 
             public CurveInitalizeData(string xmlFile, int i){
                 var config = new ConfigRetriever(xmlFile);
@@ -123,6 +116,14 @@ namespace Drydock.Logic{
                 Length2 = float.Parse(config.GetValue("Handle" + i + "Length2"));
             }
 
+            public void RetrieveDataFromXML(string xmlFile, int i){
+                var config = new ConfigRetriever(xmlFile);
+                HandlePosX = float.Parse(config.GetValue("Handle" + i + "X"));
+                HandlePosY = float.Parse(config.GetValue("Handle" + i + "Y"));
+                Angle = float.Parse(config.GetValue("Handle" + i + "Angle"));
+                Length1 = float.Parse(config.GetValue("Handle" + i + "Length1"));
+                Length2 = float.Parse(config.GetValue("Handle" + i + "Length2"));
+            }
         }
 
         #endregion

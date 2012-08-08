@@ -1,6 +1,10 @@
-﻿using Drydock.UI;
+﻿#region
+
+using Drydock.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
+#endregion
 
 namespace Drydock.Render{
     //todo: fix the fucking unimplemented functions you pleb
@@ -33,10 +37,6 @@ namespace Drydock.Render{
 
         #region destructors
 
-        ~Line2D(){
-            Dispose();
-        }
-
         public Texture2D Texture{
             get { throw new System.NotImplementedException(); }
             set { throw new System.NotImplementedException(); }
@@ -51,6 +51,10 @@ namespace Drydock.Render{
                 _isFrameSlotAvail[_id] = true;
                 _isDisposed = true;
             }
+        }
+
+        ~Line2D(){
+            Dispose();
         }
 
         #endregion

@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Drydock.Control;
+﻿#region
+
+using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
+#endregion
 
 namespace Drydock.UI.Components{
     internal delegate void ReactToSelection(SelectState state);
@@ -16,20 +18,29 @@ namespace Drydock.UI.Components{
     /// <summary>
     /// allows a UI element to be selected. Required element to be IUIInteractiveComponent
     /// </summary>
-    internal class SelectableComponent : IUIElementComponent{
-        public event ReactToSelection ReactToSelectionDispatcher;
-        private IUIInteractiveElement _owner;
+    internal class SelectableComponent : IUIComponent{
+        private readonly int _selectedHeight;
+        private readonly String _selectedTexture;
+        private readonly int _selectedWidth;
+        private int _heightDx;
         private bool _isSelected;
 
         //these fields contain the "differences" in bounding boxes between the owner's selected texture/bbox and normal texture/bbox
         private Texture2D _originalTexture;
-        private readonly String _selectedTexture;
+        private IUIInteractiveElement _owner;
         private int _positionDx;
         private int _positionDy;
         private int _widthDx;
-        private int _heightDx;
-        private readonly int _selectedWidth;
-        private readonly int _selectedHeight;
+
+        public SelectableComponent(string selectedTexture, int width, int height){
+            _selectedTexture = selectedTexture;
+            _selectedWidth = width;
+            _selectedHeight = height;
+            IsEnabled = true;
+            _isSelected = false;
+        }
+
+        #region IUIComponent Members
 
         public IUIElement Owner{
             set {
@@ -48,13 +59,9 @@ namespace Drydock.UI.Components{
 
         }
 
-        public SelectableComponent(string selectedTexture, int width, int height){
-            _selectedTexture = selectedTexture;
-            _selectedWidth = width;
-            _selectedHeight = height;
-            IsEnabled = true;
-            _isSelected = false;
-        }
+        #endregion
+
+        public event ReactToSelection ReactToSelectionDispatcher;
 
         private void ComponentCtor(){
             IsEnabled = true;
@@ -80,7 +87,7 @@ namespace Drydock.UI.Components{
             }
         }
 
-        private void SelectThis(){
+        public void SelectThis(){
             if (IsEnabled && !_isSelected){
                 _owner.Sprite.SetTextureFromString(_selectedTexture);
                 _owner.Width += _widthDx;
@@ -102,7 +109,7 @@ namespace Drydock.UI.Components{
             }
         }
 
-        private void DeselectThis(){
+        public void DeselectThis(){
             if (IsEnabled && _isSelected){
                 _owner.Sprite.Texture = _originalTexture;
                 _owner.Width -= _widthDx;

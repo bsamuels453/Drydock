@@ -1,5 +1,8 @@
-﻿using Drydock.Utilities;
-using Microsoft.Xna.Framework;
+﻿#region
+
+using Drydock.Utilities;
+
+#endregion
 
 namespace Drydock.Render{
     internal interface IDrawable{

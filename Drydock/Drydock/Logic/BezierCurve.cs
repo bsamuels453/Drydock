@@ -16,12 +16,12 @@ namespace Drydock.Logic {
     class BezierCurve {
         #region fields and properties
         private const int _linesPerSide = 20;
+        private readonly CurveController _controller;
+        private readonly UIElementCollection _elementCollection;
         private BezierCurve _nextCurve;
         private List<Line> _nextLines;
         private  BezierCurve _prevCurve;
         private List<Line> _prevLines;
-        private readonly CurveController _controller;
-        private readonly UIElementCollection _elementCollection;
 
         public Vector2 PrevHandlePos {
             get { return _controller.PrevHandlePos; }
