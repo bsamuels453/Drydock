@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using Microsoft.Xna.Framework;
 
 #endregion
@@ -94,6 +95,13 @@ namespace Drydock.Utilities {
                 return true;
             }
             return false;
+        }
+
+        public static explicit operator Rectangle?(FloatingRectangle f){
+            if (f == null){
+                return null;
+            }
+            return f.ToRectangle;
         }
     }
 }

@@ -98,8 +98,8 @@ namespace Drydock.UI{
             CalculateInfoFromPoints();
 
             Components = components;
-            if (Components != null){
-                foreach (IUIComponent component in Components){
+            if (Components != null) {
+                foreach (IUIComponent component in Components) {
                     component.Owner = this;
                 }
             }
@@ -131,16 +131,21 @@ namespace Drydock.UI{
         #region IUIElement Members
 
         public TComponent GetComponent<TComponent>(){
-            foreach (IUIComponent component in Components){
-                if (component.GetType() == typeof (TComponent)){
-                    return (TComponent) component;
+            if (Components != null){
+                foreach (IUIComponent component in Components){
+                    if (component.GetType() == typeof (TComponent)){
+                        return (TComponent) component;
+                    }
                 }
             }
             throw new Exception("Request made to a Line object for a component that did not exist.");
         }
 
         public bool DoesComponentExist<TComponent>() {
-            return Components.OfType<TComponent>().Any();
+            if (Components != null){
+                return Components.OfType<TComponent>().Any();
+            }
+            return false;
         }
 
         public void Update(){

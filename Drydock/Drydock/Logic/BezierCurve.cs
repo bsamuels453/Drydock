@@ -42,7 +42,7 @@ namespace Drydock.Logic {
                 if (_prevLines == null) {
                     _prevLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++) {
-                        _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
+                        _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 0f)));
                     }
                 }
             }
@@ -53,7 +53,7 @@ namespace Drydock.Logic {
                 if (_nextLines == null){
                     _nextLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++){
-                        _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
+                        _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 0f)));
                     }
                 }
             }

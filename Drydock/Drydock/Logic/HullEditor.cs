@@ -1,10 +1,14 @@
 ﻿namespace Drydock.Logic {
     class HullEditor {
-        CurveControllerCollection _sideColl;
+        HullEditorPanel _sidepanel;
 
 
         public HullEditor(){
-            _sideColl = new CurveControllerCollection("Config Files/SideCurveControllerDefaults.xml");
+            _sidepanel = new HullEditorPanel(0, 0, 500, 500, "Config Files/SideCurveControllerDefaults.xml");
+        }
+
+        public void Update(){
+            _sidepanel.Update();
         }
     }
 }

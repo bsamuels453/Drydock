@@ -37,7 +37,10 @@ namespace Drydock.UI.Components{
 
         #region ctor
 
-        public DraggableComponent(){
+        public DraggableComponent(DraggableObjectClamp clampDelegate = null){
+            if (clampDelegate != null){
+                DragMovementClamp += clampDelegate;
+            }
             _mouseOffset = new Vector2();
         }
 

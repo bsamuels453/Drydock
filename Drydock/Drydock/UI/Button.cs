@@ -77,11 +77,12 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Button(float x, float y, float width, float height, float layerDepth, string textureName, IUIComponent[] components, int identifier = 0){
+        public Button(float x, float y, float width, float height, float layerDepth, string textureName, IUIComponent[] components = null, bool tileTexture = false, int identifier = 0){
             _identifier = identifier;
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
-            _sprite = new Sprite2D(textureName, this);
+            _sprite = new Sprite2D(textureName, this, tileTexture);
+
             OnLeftButtonClick = new List<EOnMouseEvent>();
             OnLeftButtonPress = new List<EOnMouseEvent>();
             OnLeftButtonRelease = new List<EOnMouseEvent>();
@@ -95,9 +96,10 @@ namespace Drydock.UI{
 
             Depth = layerDepth;
             Components = components;
-
-            foreach (IUIComponent component in Components){
-                component.Owner = this;
+            if (Components != null){
+                foreach (IUIComponent component in Components){
+                    component.Owner = this;
+                }
             }
         }
 
@@ -106,21 +108,28 @@ namespace Drydock.UI{
         #region other IUIElement derived methods
 
         public TComponent GetComponent<TComponent>(){
-            foreach (IUIComponent component in Components){
-                if (component is TComponent){
-                    return (TComponent) component;
+            if (Components != null){
+                foreach (IUIComponent component in Components){
+                    if (component is TComponent){
+                        return (TComponent) component;
+                    }
                 }
             }
             throw new Exception("Request made to a Button object for a component that did not exist.");
         }
 
         public bool DoesComponentExist<TComponent>(){
-            return Components.OfType<TComponent>().Any();
+            if (Components != null){
+                return Components.OfType<TComponent>().Any();
+            }
+            return false;
         }
 
         public void Update(){
-            foreach (IUIComponent component in Components){
-                component.Update();
+            if (Components != null){
+                foreach (IUIComponent component in Components){
+                    component.Update();
+                }
             }
         }
 

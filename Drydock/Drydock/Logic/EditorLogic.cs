@@ -8,21 +8,19 @@ using Drydock.UI;
 
 namespace Drydock.Logic{
     internal class EditorLogic{
-        private readonly CurveControllerCollection _c;
+        private HullEditor _e;
 
         public EditorLogic(Renderer renderer){
-            //initalize component classes
-            _c = new CurveControllerCollection("Config Files/SidecurveControllerDefaults.xml");
 
+            _e = new HullEditor();
         }
 
         public void Update(){
             //160,000 microsecond budget
-
+            _e.Update();
             //4,000 microseconds
             InputEventDispatcher.Update();
             UIContext.Update();
-            _c.Update();
 
         }
     }

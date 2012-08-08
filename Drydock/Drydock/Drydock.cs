@@ -4,6 +4,7 @@ using System.Threading;
 using Drydock.Logic;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 
 #endregion
 
@@ -13,6 +14,8 @@ namespace Drydock{
         // private EditorLogic _editorLogic;
         private EditorLogic _editorLogic;
         private Renderer _renderer;
+
+        public ContentManager ContentManager;
 
         public Drydock(){
             Content.RootDirectory = "Content";
@@ -25,6 +28,7 @@ namespace Drydock{
 
         protected override void Initialize(){
             //   _editorLogic = new EditorLogic();
+            ContentManager = Content;
             _renderer = new Renderer(_graphics.GraphicsDevice, Content);
             _editorLogic = new EditorLogic(_renderer);
             IsMouseVisible = true;
