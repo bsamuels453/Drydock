@@ -14,6 +14,7 @@ namespace Drydock.Logic{
     internal class CurveControllerCollection : ICanReceiveInputEvents{
         public readonly List<BezierCurve> CurveList;
         public readonly UIElementCollection ElementCollection;
+        public readonly float PixelsPerMeter;
 
         public CurveControllerCollection(string defaultConfig,FloatingRectangle areaToFill, UIElementCollection parentCollection = null){
             InputEventDispatcher.EventSubscribers.Add(this);
@@ -31,6 +32,35 @@ namespace Drydock.Logic{
 
             for (int i = 0; i < numControllers; i++){
                 curveInitData.Add(new CurveInitalizeData(defaultConfig, i));
+            }
+
+            //now get meters per pixel and scales
+            float maxX=0;
+            float maxY=0;
+            foreach (var data in curveInitData){
+                if (data.HandlePosX > maxX){
+                    maxX = data.HandlePosX;
+                }
+                if (data.HandlePosY > maxY) {
+                    maxY = data.HandlePosY;
+                }
+            }
+            float scaleX = areaToFill.Width / maxX;
+            float scaleY = areaToFill.Height / maxY;
+            float scale = scaleX > scaleY ? scaleY : scaleX; //scale can also be considered meters per pixel
+            PixelsPerMeter = scale;
+
+            float offsetX = (areaToFill.Width - maxX*scale)/2;
+            float offsetY = (areaToFill.Height - maxY*scale) / 2;
+
+            foreach (var data in curveInitData){
+                float _;
+                data.HandlePosX *= scale;
+                data.HandlePosY *= scale;
+                data.HandlePosX += offsetX + areaToFill.X;
+                data.HandlePosY += offsetY + areaToFill.Y;
+                data.Length1 *= scale;
+                data.Length2 *= scale;
             }
 
             for (int i = 0; i < numControllers; i++){
