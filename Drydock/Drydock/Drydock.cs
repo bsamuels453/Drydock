@@ -3,6 +3,7 @@
 using System.Threading;
 using Drydock.Logic;
 using Drydock.Render;
+using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
@@ -29,6 +30,7 @@ namespace Drydock{
         protected override void Initialize(){
             //   _editorLogic = new EditorLogic();
             ContentManager = Content;
+            Singleton.ContentManager = ContentManager;
             _renderer = new Renderer(_graphics.GraphicsDevice, Content);
             _editorLogic = new EditorLogic(_renderer);
             IsMouseVisible = true;

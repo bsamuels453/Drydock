@@ -15,7 +15,7 @@ namespace Drydock.Logic{
         public readonly List<BezierCurve> CurveList;
         public readonly UIElementCollection ElementCollection;
 
-        public CurveControllerCollection(string defaultConfig, UIElementCollection parentCollection = null){
+        public CurveControllerCollection(string defaultConfig,FloatingRectangle areaToFill, UIElementCollection parentCollection = null){
             InputEventDispatcher.EventSubscribers.Add(this);
             if (parentCollection != null) {
                 ElementCollection = parentCollection.Add(new UIElementCollection());
@@ -31,7 +31,6 @@ namespace Drydock.Logic{
 
             for (int i = 0; i < numControllers; i++){
                 curveInitData.Add(new CurveInitalizeData(defaultConfig, i));
-
             }
 
             for (int i = 0; i < numControllers; i++){

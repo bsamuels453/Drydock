@@ -42,7 +42,7 @@ namespace Drydock.Logic {
                 if (_prevLines == null) {
                     _prevLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++) {
-                        _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 0f)));
+                        _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, 0.5f)));
                     }
                 }
             }
@@ -53,7 +53,7 @@ namespace Drydock.Logic {
                 if (_nextLines == null){
                     _nextLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++){
-                        _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 0f)));
+                        _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, 0.5f)));
                     }
                 }
             }
@@ -89,26 +89,26 @@ namespace Drydock.Logic {
                 _prevLines = new List<Line>(_linesPerSide);
 
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
+                    _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, 0.5f)));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _prevLines[i].Dispose();
-                    _prevLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                    _prevLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, 0.5f));
                 }
             }
 
             if (_nextLines == null) {
                 _nextLines = new List<Line>(_linesPerSide);
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
+                    _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, 0.5f)));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _nextLines[i].Dispose();
-                    _nextLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                    _nextLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, 0.5f));
                 }
             }
 
@@ -122,13 +122,13 @@ namespace Drydock.Logic {
                 _prevLines = new List<Line>(_linesPerSide);
 
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
+                    _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, 0.5f)));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _prevLines[i].Dispose();
-                    _prevLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                    _prevLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, 0.5f));
                 }
             }
             _controller.Angle1 = angle;
@@ -142,13 +142,13 @@ namespace Drydock.Logic {
             if (_nextLines == null) {
                 _nextLines = new List<Line>(_linesPerSide);
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f)));
+                    _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, 0.5f)));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _nextLines[i].Dispose();
-                    _nextLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, 1.0f));
+                    _nextLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, 0.5f));
                 }
             }
             _controller.Angle1 = angle;

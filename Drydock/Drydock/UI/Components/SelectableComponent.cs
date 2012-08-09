@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using Drydock.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -67,7 +68,7 @@ namespace Drydock.UI.Components{
             IsEnabled = true;
             _owner.OnLeftButtonClick.Add(OnMouseClick);
 
-            _originalTexture = _owner.Sprite.Texture;
+            _originalTexture = _owner.Texture;
             _widthDx = (int)(_selectedWidth - _owner.BoundingBox.Width);
             _heightDx = (int)(_selectedHeight - _owner.BoundingBox.Height);
             _positionDx = _widthDx / 2;
@@ -89,7 +90,7 @@ namespace Drydock.UI.Components{
 
         public void SelectThis(){
             if (IsEnabled && !_isSelected){
-                _owner.Sprite.SetTextureFromString(_selectedTexture);
+                _owner.Texture = Singleton.ContentManager.Load<Texture2D>( _selectedTexture);
                 _owner.Width += _widthDx;
                 _owner.Height += _heightDx;
                 _owner.X -= _positionDx;
@@ -111,7 +112,7 @@ namespace Drydock.UI.Components{
 
         public void DeselectThis(){
             if (IsEnabled && _isSelected){
-                _owner.Sprite.Texture = _originalTexture;
+                _owner.Texture = _originalTexture;
                 _owner.Width -= _widthDx;
                 _owner.Height -= _heightDx;
                 _owner.X += _positionDx;

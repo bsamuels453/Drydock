@@ -18,7 +18,7 @@ namespace Drydock.Render{
 
         #region constructors
 
-        public Line2D(Line owner, float opacity = 1){
+        public Line2D(Line owner, Color color, float opacity = 1){
             int i = 0;
             while (!_isFrameSlotAvail[i]){ //i cant wait for this to crash
                 i++;
@@ -29,7 +29,7 @@ namespace Drydock.Render{
             _isDisposed = false;
 
             _lineTextures[_id] = new Texture2D(_device, 1, 1, false, SurfaceFormat.Color);
-            _lineTextures[_id].SetData(new[]{Color.Black});
+            _lineTextures[_id].SetData(new[] { color });
             _lineOwners[_id] = owner;
         }
 
@@ -65,6 +65,7 @@ namespace Drydock.Render{
         private static bool[] _isFrameSlotAvail;
         private static Texture2D[] _lineTextures;
         private static Line[] _lineOwners;
+        private static Color[] _lineColor;
         private static SpriteBatch _spriteBatch;
         private static GraphicsDevice _device;
 
@@ -73,6 +74,7 @@ namespace Drydock.Render{
             _lineOwners = new Line[_maxLines];
             _spriteBatch = new SpriteBatch(device);
             _lineTextures = new Texture2D[_maxLines];
+            _lineColor = new Color[_maxLines];
 
             for (int i = 0; i < _maxLines; i++){
                 _isFrameSlotAvail[i] = true;
@@ -81,14 +83,14 @@ namespace Drydock.Render{
         }
 
         public static void Draw(){
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap,DepthStencilState.Default, RasterizerState.CullNone);
             for (int i = 0; i < _maxLines; i++){
                 if (_isFrameSlotAvail[i] == false){
                     _spriteBatch.Draw( //welp
                         _lineTextures[i],
                         _lineOwners[i].OriginPoint,
                         null,
-                        new Color(1, 1, 1, _lineOwners[i].Opacity),
+                        Color.White * _lineOwners[i].Opacity,
                         _lineOwners[i].Angle,
                         Vector2.Zero,
                         new Vector2(_lineOwners[i].Length, _lineOwners[i].LineWidth),

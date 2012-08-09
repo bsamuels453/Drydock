@@ -169,6 +169,7 @@
     <Compile Include="Logic\HullEditorPanel.cs" />
     <Compile Include="Render\IAdvancedPrimitive.cs" />
     <Compile Include="Render\IDrawable.cs" />
+    <Compile Include="UI\Border.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="UI\Components\DraggableComponent.cs" />
     <Compile Include="UI\Components\FadeComponent.cs" />
@@ -196,6 +197,7 @@
     <Compile Include="Render\TextBatch.cs" />
     <Compile Include="Utilities\ConfigRetriever.cs" />
     <Compile Include="Utilities\FloatingRectangle.cs" />
+    <Compile Include="Utilities\Singleton.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

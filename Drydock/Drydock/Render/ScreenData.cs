@@ -12,5 +12,13 @@
             x = (int) (ScreenWidth*percentX);
             y = (int) (ScreenHeight*percentY);
         }
+
+        public static int GetScreenValueX(float percentX) {
+            return (int)(ScreenWidth * percentX);
+        }
+
+        public static int GetScreenValueY(float percentY) {
+            return (int)(ScreenHeight * percentY);
+        }
     }
 }

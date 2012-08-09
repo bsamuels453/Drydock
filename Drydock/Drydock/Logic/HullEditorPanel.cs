@@ -17,7 +17,7 @@ namespace Drydock.Logic {
             _elementCollection = new UIElementCollection();
             _curves = new CurveControllerCollection(defaultCurveConfiguration, _elementCollection);
             _curves.ElementCollection.AddDragConstraintCallback(ClampChildElements);
-            _background = _elementCollection.Add<Button>(new Button(x, y, width, height, 1, "panelBG", null, true));
+            _background = _elementCollection.Add<Button>(new Button(x, y, width, height, 1f, "panelBG", width/20f, height/20f));
 
         }
 
@@ -32,6 +32,7 @@ namespace Drydock.Logic {
 
         public void Update(){
             _curves.Update();
+            
         }
 
     }

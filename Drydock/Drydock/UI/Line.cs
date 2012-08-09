@@ -5,6 +5,7 @@ using System.Linq;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
@@ -47,6 +48,12 @@ namespace Drydock.UI{
         public IUIComponent[] Components { get; set; }
         public float Opacity { get; set; }
         public float Depth { get; set; }
+
+        public Texture2D Texture{
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
         public int Identifier{
             get { throw new NotImplementedException(); }
         }
@@ -88,8 +95,8 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Line(Vector2 v1, Vector2 v2, float layerDepth, IUIComponent[] components=null){
-            _lineSprite = new Line2D(this, 1);
+        public Line(Vector2 v1, Vector2 v2, Color color, float layerDepth, IUIComponent[] components=null){
+            _lineSprite = new Line2D(this, color);
             _point1 = v1;
             _point2 = v2;
             Depth = layerDepth;

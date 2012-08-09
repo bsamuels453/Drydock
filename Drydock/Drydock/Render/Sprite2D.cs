@@ -1,5 +1,6 @@
 ﻿#region
 
+using System.Diagnostics;
 using Drydock.UI;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
@@ -20,7 +21,9 @@ namespace Drydock.Render{
         /// </summary>
         /// <param name="textureName"></param>
         /// <param name="parent"></param>
-        public Sprite2D(string textureName, IUIElement parent, bool tileSprite = false){
+        /// <param name="spriteRepeatX"> </param>
+        /// <param name="spriteRepeatY"> </param>
+        public Sprite2D(string textureName, IUIElement parent, float spriteRepeatX = 1, float spriteRepeatY = 1) {
             int i = 0;
             while (!_isFrameSlotAvail[i]){ //i cant wait for this to crash
                 i++;
@@ -29,12 +32,7 @@ namespace Drydock.Render{
             _id = i;
             _frameTextures[i] = _contentManager.Load<Texture2D>(textureName);
             _frameParents[i] = parent;
-            if (tileSprite) {
-                _srcRects[i] = new FloatingRectangle(0, 0, _frameTextures[i].Height, _frameTextures[i].Width);
-            }
-            else{
-                _srcRects[i] = null;
-            }
+            _srcRects[i] = new FloatingRectangle(0f, 0f, _frameTextures[i].Height * spriteRepeatX, _frameTextures[i].Width * spriteRepeatY);
             _isDisposed = false;
         }
 
@@ -86,14 +84,14 @@ namespace Drydock.Render{
         }
 
         public static void Draw(){
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap,DepthStencilState.Default, RasterizerState.CullNone);
             for (int i = 0; i < _maxSprites; i++){
                 if (_isFrameSlotAvail[i] == false){
                     _spriteBatch.Draw(
                         _frameTextures[i],
                         _frameParents[i].BoundingBox.ToRectangle,
-                        (Rectangle?) _srcRects[i],
-                        new Color(1, 1, 1, _frameParents[i].Opacity),
+                        (Rectangle?)_srcRects[i],
+                        Color.White *  _frameParents[i].Opacity,
                         0,
                         Vector2.Zero,
                         SpriteEffects.None,

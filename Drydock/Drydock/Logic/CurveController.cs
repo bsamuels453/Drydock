@@ -65,8 +65,8 @@ namespace Drydock.Logic{
                     height: 9,
                     x:  component1.X + initX,
                     y:  component1.Y + initY,
-                    layerDepth: 0f,
-                    textureName: "box",
+                    layerDepth: 0.5f,
+                    textureName: "whitebox",
                     components: new IUIComponent[]{
                         new DraggableComponent(ClampHandleMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
@@ -83,8 +83,8 @@ namespace Drydock.Logic{
                     height: 9,
                     x:  component2.X + initX,
                     y:  component2.Y + initY,
-                    layerDepth: 0f,
-                    textureName: "box",
+                    layerDepth: 0.5f,
+                    textureName: "whitebox",
                     components: new IUIComponent[]{
                         new DraggableComponent(ClampHandleMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
@@ -101,8 +101,8 @@ namespace Drydock.Logic{
                     height: 9,
                     x: initX,
                     y: initY,
-                    layerDepth: 0f,
-                    textureName: "box",
+                    layerDepth: 0.5f,
+                    textureName: "whitebox",
                     components: new IUIComponent[]{
                         new DraggableComponent(ClampHandleMovement),
                         new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
@@ -116,7 +116,8 @@ namespace Drydock.Logic{
                 new Line(
                     v1: _centerHandle.CentPosition,
                     v2: _handle1.CentPosition,
-                    layerDepth: 0f,
+                    layerDepth: 0.5f,
+                    color: Color.White,
                     components: new IUIComponent[]{
                         new FadeComponent(FadeComponent.FadeState.Faded)
                     }
@@ -127,7 +128,8 @@ namespace Drydock.Logic{
                 new Line(
                     v1: _centerHandle.CentPosition,
                     v2: _handle2.CentPosition,
-                    layerDepth: 0f,
+                    layerDepth: 0.5f,
+                    color: Color.White,
                     components: new IUIComponent[]{
                         new FadeComponent(FadeComponent.FadeState.Faded)
                     }

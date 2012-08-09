@@ -7,6 +7,7 @@ using Drydock.Control;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
@@ -19,20 +20,20 @@ namespace Drydock.UI{
         private readonly Sprite2D _sprite; //the button's sprite
         private Vector2 _centPosition; //represents the approximate center of the button
 
-        public Vector2 CentPosition{
+        public Texture2D Texture{
+            get { return _sprite.Texture; }
+            set {_sprite.Texture = value;}
+        }
+        public Vector2 CentPosition {
             get { return _centPosition; }
-            set {  
+            set {
                 _centPosition = value;
                 _boundingBox.X = _centPosition.X - _boundingBox.Width / 2;
                 _boundingBox.Y = _centPosition.Y - _boundingBox.Height / 2;
             }
         }
-
         public int Identifier{
             get { return _identifier; }
-        }
-        public IAdvancedPrimitive Sprite{
-            get { return _sprite; }
         }
 
         public float X{
@@ -77,11 +78,11 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Button(float x, float y, float width, float height, float layerDepth, string textureName, IUIComponent[] components = null, bool tileTexture = false, int identifier = 0){
+        public Button(float x, float y, float width, float height, float layerDepth, string textureName, float spriteTexRepeatX = 1,float spriteTexRepeatY = 1, IUIComponent[] components = null, bool tileTexture = false, int identifier = 0){
             _identifier = identifier;
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
-            _sprite = new Sprite2D(textureName, this, tileTexture);
+            _sprite = new Sprite2D(textureName, this, spriteTexRepeatX, spriteTexRepeatY);
 
             OnLeftButtonClick = new List<EOnMouseEvent>();
             OnLeftButtonPress = new List<EOnMouseEvent>();
@@ -95,6 +96,7 @@ namespace Drydock.UI{
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
 
             Depth = layerDepth;
+            Opacity = 1;
             Components = components;
             if (Components != null){
                 foreach (IUIComponent component in Components){
@@ -134,7 +136,7 @@ namespace Drydock.UI{
         }
 
         public void Dispose(){
-            Sprite.Dispose();
+            _sprite.Dispose();
             Owner.DisposeElement(this);
         }
 
