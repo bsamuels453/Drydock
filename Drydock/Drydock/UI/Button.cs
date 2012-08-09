@@ -19,10 +19,14 @@ namespace Drydock.UI{
         private readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
         private readonly Sprite2D _sprite; //the button's sprite
         private Vector2 _centPosition; //represents the approximate center of the button
+        private string _texture;
 
-        public Texture2D Texture{
-            get { return _sprite.Texture; }
-            set {_sprite.Texture = value;}
+        public String Texture{
+            get { return _texture; }
+            set {
+                _texture = value;
+                _sprite.SetTextureFromString(value);
+            }
         }
         public Vector2 CentPosition {
             get { return _centPosition; }

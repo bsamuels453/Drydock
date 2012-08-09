@@ -49,7 +49,7 @@ namespace Drydock.UI{
         public float Opacity { get; set; }
         public float Depth { get; set; }
 
-        public Texture2D Texture{
+        public String Texture{
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
         }

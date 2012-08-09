@@ -9,7 +9,7 @@ namespace Drydock.UI{
     internal interface IUIElement : IDrawable{
         float Opacity { get; set; }
         float Depth { get; set; }
-        Texture2D Texture { get; set; }
+        string Texture { get; set; }
         int Identifier { get; }
         IUIComponent[] Components { get; set; }
         UIElementCollection Owner { get;  set; }

@@ -27,7 +27,7 @@ namespace Drydock.UI.Components{
         private bool _isSelected;
 
         //these fields contain the "differences" in bounding boxes between the owner's selected texture/bbox and normal texture/bbox
-        private Texture2D _originalTexture;
+        private string _originalTexture;
         private IUIInteractiveElement _owner;
         private int _positionDx;
         private int _positionDy;
@@ -90,7 +90,7 @@ namespace Drydock.UI.Components{
 
         public void SelectThis(){
             if (IsEnabled && !_isSelected){
-                _owner.Texture = Singleton.ContentManager.Load<Texture2D>( _selectedTexture);
+                _owner.Texture = _selectedTexture;
                 _owner.Width += _widthDx;
                 _owner.Height += _heightDx;
                 _owner.X -= _positionDx;

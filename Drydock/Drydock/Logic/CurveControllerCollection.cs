@@ -47,7 +47,7 @@ namespace Drydock.Logic{
             }
             float scaleX = areaToFill.Width / maxX;
             float scaleY = areaToFill.Height / maxY;
-            float scale = scaleX > scaleY ? scaleY : scaleX; //scale can also be considered meters per pixel
+            float scale = scaleX > scaleY ? scaleY : scaleX; //scale can also be considered pixels per meter
             PixelsPerMeter = scale;
 
             float offsetX = (areaToFill.Width - maxX*scale)/2;

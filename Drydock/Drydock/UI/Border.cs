@@ -6,6 +6,7 @@ using Drydock.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.UI {
+    //get around to this -eventually-
     class Border : IUIElement{
         public float X{
             get { throw new NotImplementedException(); }
@@ -41,7 +42,7 @@ namespace Drydock.UI {
             set { throw new NotImplementedException(); }
         }
 
-        public Texture2D Texture{
+        public String Texture{
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
         }
