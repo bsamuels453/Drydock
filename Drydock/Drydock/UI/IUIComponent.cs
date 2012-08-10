@@ -1,4 +1,6 @@
-﻿namespace Drydock.UI{
+﻿using System;
+
+namespace Drydock.UI{
     internal interface IUIComponent{
         /// <summary>
         /// A reference to the owner of the element.

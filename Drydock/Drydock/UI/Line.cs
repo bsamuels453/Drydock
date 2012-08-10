@@ -95,11 +95,11 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Line(Vector2 v1, Vector2 v2, Color color, float layerDepth, IUIComponent[] components=null){
+        public Line(Vector2 v1, Vector2 v2, Color color, DepthLevel depth, UIElementCollection owner, IUIComponent[] components=null){
             _lineSprite = new Line2D(this, color);
             _point1 = v1;
             _point2 = v2;
-            Depth = layerDepth;
+            Depth = owner.DepthManager.GetDepth(depth);
             Opacity = 1;
             LineWidth = 1;
             CalculateInfoFromPoints();

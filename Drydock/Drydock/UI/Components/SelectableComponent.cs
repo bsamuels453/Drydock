@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework.Input;
 namespace Drydock.UI.Components{
     internal delegate void ReactToSelection(SelectState state);
 
-
     internal enum SelectState{
         Selected,
         UnSelected
@@ -20,6 +19,7 @@ namespace Drydock.UI.Components{
     /// allows a UI element to be selected. Required element to be IUIInteractiveComponent
     /// </summary>
     internal class SelectableComponent : IUIComponent{
+
         private readonly int _selectedHeight;
         private readonly String _selectedTexture;
         private readonly int _selectedWidth;
@@ -130,6 +130,5 @@ namespace Drydock.UI.Components{
                 
             }
         }
-        
     }
 }

@@ -32,7 +32,8 @@ namespace Drydock.Logic {
                     y: y,
                     width: width,
                     height: height,
-                    layerDepth: 1f,
+                    depth: DepthLevel.Background,
+                    owner: _elementCollection,
                     textureName: "panelBG",
                     spriteTexRepeatX: width/(_curves.PixelsPerMeter*10),
                     spriteTexRepeatY: height/(_curves.PixelsPerMeter*10)

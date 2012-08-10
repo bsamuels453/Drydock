@@ -7,7 +7,6 @@ using Drydock.Control;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
@@ -15,27 +14,33 @@ namespace Drydock.UI{
     internal class Button : IUIInteractiveElement{
         #region properties and fields
 
+        public const int DefaultTexRepeat = 1;
+        public const int DefaultIdentifier = 1;
+        private const float f = 5f;
+
         private readonly FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
         private readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
         private readonly Sprite2D _sprite; //the button's sprite
         private Vector2 _centPosition; //represents the approximate center of the button
         private string _texture;
 
+        public Vector2 CentPosition{
+            get { return _centPosition; }
+            set{
+                _centPosition = value;
+                _boundingBox.X = _centPosition.X - _boundingBox.Width/2;
+                _boundingBox.Y = _centPosition.Y - _boundingBox.Height/2;
+            }
+        }
+
         public String Texture{
             get { return _texture; }
-            set {
+            set{
                 _texture = value;
                 _sprite.SetTextureFromString(value);
             }
         }
-        public Vector2 CentPosition {
-            get { return _centPosition; }
-            set {
-                _centPosition = value;
-                _boundingBox.X = _centPosition.X - _boundingBox.Width / 2;
-                _boundingBox.Y = _centPosition.Y - _boundingBox.Height / 2;
-            }
-        }
+
         public int Identifier{
             get { return _identifier; }
         }
@@ -47,6 +52,7 @@ namespace Drydock.UI{
                 _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             }
         }
+
         public float Y{
             get { return _boundingBox.Y; }
             set{
@@ -54,14 +60,17 @@ namespace Drydock.UI{
                 _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
             }
         }
+
         public float Width{
             get { return _boundingBox.Width; }
             set { _boundingBox.Width = value; }
         }
+
         public float Height{
             get { return _boundingBox.Height; }
-            set { _boundingBox.Height = value;  }
+            set { _boundingBox.Height = value; }
         }
+
         public FloatingRectangle BoundingBox{
             get { return _boundingBox; }
         }
@@ -82,8 +91,11 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Button(float x, float y, float width, float height, float layerDepth, string textureName, float spriteTexRepeatX = 1,float spriteTexRepeatY = 1, IUIComponent[] components = null, bool tileTexture = false, int identifier = 0){
+        public Button(float x, float y, float width, float height, DepthLevel depth, UIElementCollection owner, string textureName, float spriteTexRepeatX = DefaultTexRepeat, float spriteTexRepeatY = DefaultTexRepeat, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _identifier = identifier;
+            Owner = owner;
+            Depth = Owner.DepthManager.GetDepth(depth);
+
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
             _sprite = new Sprite2D(textureName, this, spriteTexRepeatX, spriteTexRepeatY);
@@ -99,9 +111,8 @@ namespace Drydock.UI{
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
 
-            Depth = layerDepth;
-            Opacity = 1;
             Components = components;
+            Opacity = 1;
             if (Components != null){
                 foreach (IUIComponent component in Components){
                     component.Owner = this;
@@ -145,5 +156,71 @@ namespace Drydock.UI{
         }
 
         #endregion
+    }
+
+    internal class ButtonGenerator : ComponentGenerator{
+        public Dictionary<string, object[]> Components;
+        public DepthLevel? Depth;
+        public float? Height;
+        public int? Identifier;
+        public UIElementCollection Owner;
+        public float? SpriteTexRepeatX;
+        public float? SpriteTexRepeatY;
+        public string TextureName;
+        public float? Width;
+        public float? X;
+        public float? Y;
+
+        public Button GenerateButton(){
+            //make sure we have all the data required
+            if (X == null ||
+                Y == null ||
+                Width == null ||
+                Height == null ||
+                Depth == null ||
+                Owner == null ||
+                TextureName == null){
+                throw new Exception("Template did not contain enough information to generate button");
+            }
+            //generate component list
+            IUIComponent[] components = null;
+            if (Components != null){
+                components = GenerateComponents(Components);
+            }
+
+            //now we handle optional parameters
+            float spriteTexRepeatX;
+            float spriteTexRepeatY;
+            int identifier;
+
+            if (SpriteTexRepeatX != null)
+                spriteTexRepeatX = (float) SpriteTexRepeatX;
+            else
+                spriteTexRepeatX = Button.DefaultTexRepeat;
+
+            if (SpriteTexRepeatY != null)
+                spriteTexRepeatY = (float) SpriteTexRepeatY;
+            else
+                spriteTexRepeatY = Button.DefaultTexRepeat;
+
+            if (Identifier != null)
+                identifier = (int) Identifier;
+            else
+                identifier = Button.DefaultIdentifier;
+
+            return new Button(
+                (float) X,
+                (float) Y,
+                (float) Width,
+                (float) Height,
+                (DepthLevel) Depth,
+                Owner,
+                TextureName,
+                spriteTexRepeatX,
+                spriteTexRepeatY,
+                identifier,
+                components
+                );
+        }
     }
 }

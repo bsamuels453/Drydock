@@ -17,6 +17,7 @@ namespace Drydock.UI{
         private readonly List<UIElementCollection> _childCollections;
         private readonly List<IUIElement> _elements;
         private readonly UISortedList _layerSortedIElements;
+        public DepthManager DepthManager;
         public bool DisableEntryHandlers;
         private MouseState _prevMouseState;
 
@@ -26,6 +27,7 @@ namespace Drydock.UI{
             _elements = new List<IUIElement>();
             _layerSortedIElements = new UISortedList();
             _childCollections = new List<UIElementCollection>();
+            DepthManager = new DepthManager();
             UIContext.Add(this);
             _prevMouseState = Mouse.GetState();
             DisableEntryHandlers = false;

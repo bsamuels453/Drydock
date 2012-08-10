@@ -13,6 +13,8 @@ namespace Drydock.Logic{
         public EditorLogic(Renderer renderer){
 
             _e = new HullEditor();
+
+
         }
 
         public void Update(){

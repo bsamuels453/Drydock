@@ -58,65 +58,42 @@ namespace Drydock.Logic{
             Vector2 component1 = Common.GetComponentFromAngle(angle, length1);
             Vector2 component2 = Common.GetComponentFromAngle((float) (angle - Math.PI), length2); // minus math.pi to reverse direction
             #region crap
-            _handle1 = _elementCollection.Add<Button>(
-                new Button(
-                    identifier: 1,
-                    width: 9,
-                    height: 9,
-                    x:  component1.X + initX,
-                    y:  component1.Y + initY,
-                    layerDepth: 0.5f,
-                    textureName: "whitebox",
-                    components: new IUIComponent[]{
-                        new DraggableComponent(ClampHandleMovement),
-                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
-                        new SelectableComponent("bigbox", 15, 15)
-                    }
-                    )
-                );
+            var buttonTemplate = new ButtonGenerator();
+            buttonTemplate.Width = 9;
+            buttonTemplate.Height = 9;
+            buttonTemplate.Depth = DepthLevel.Medium;
+            buttonTemplate.Owner = _elementCollection;
+            buttonTemplate.TextureName = "whitebox";
+            buttonTemplate.Components = new Dictionary<string, object[]>{
+                    {"DraggableComponent",null},
+                    {"FadeComponent", new object[] { FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit } },
+                    {"SelectableComponent", new object[]{"bigbox", 15, 15}}
+            };
+
+            buttonTemplate.Identifier = 1;
+            buttonTemplate.X = component1.X + initX;
+            buttonTemplate.Y = component1.Y + initY;
+            _handle1 = _elementCollection.Add<Button>(buttonTemplate.GenerateButton());
             _handle1.GetComponent<DraggableComponent>().DragMovementDispatcher += ReactToDragMovement;
 
-            _handle2 = _elementCollection.Add<Button>(
-                new Button(
-                    identifier: 2,
-                    width: 9,
-                    height: 9,
-                    x:  component2.X + initX,
-                    y:  component2.Y + initY,
-                    layerDepth: 0.5f,
-                    textureName: "whitebox",
-                    components: new IUIComponent[]{
-                        new DraggableComponent(ClampHandleMovement),
-                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
-                        new SelectableComponent("bigbox", 15, 15)
-                    }
-                    )
-                );
+            buttonTemplate.Identifier = 2;
+            buttonTemplate.X = component2.X + initX;
+            buttonTemplate.Y = component2.Y + initY;
+            _handle2 = _elementCollection.Add<Button>(buttonTemplate.GenerateButton());
             _handle2.GetComponent<DraggableComponent>().DragMovementDispatcher += ReactToDragMovement;
 
-            _centerHandle = _elementCollection.Add<Button>(
-                new Button(
-                    identifier: 0,
-                    width: 9,
-                    height: 9,
-                    x: initX,
-                    y: initY,
-                    layerDepth: 0.5f,
-                    textureName: "whitebox",
-                    components: new IUIComponent[]{
-                        new DraggableComponent(ClampHandleMovement),
-                        new FadeComponent(FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit),
-                        new SelectableComponent("bigbox", 15, 15)
-                    }
-                    )
-                );
+            buttonTemplate.Identifier = 0;
+            buttonTemplate.X = initX;
+            buttonTemplate.Y = initY;
+            _centerHandle = _elementCollection.Add<Button>(buttonTemplate.GenerateButton());
             _centerHandle.GetComponent<DraggableComponent>().DragMovementDispatcher += ReactToDragMovement;
 
             _line1 = _elementCollection.Add<Line>(
                 new Line(
                     v1: _centerHandle.CentPosition,
                     v2: _handle1.CentPosition,
-                    layerDepth: 0.5f,
+                    depth: DepthLevel.Medium,
+                    owner: _elementCollection,
                     color: Color.White,
                     components: new IUIComponent[]{
                         new FadeComponent(FadeComponent.FadeState.Faded)
@@ -128,7 +105,8 @@ namespace Drydock.Logic{
                 new Line(
                     v1: _centerHandle.CentPosition,
                     v2: _handle2.CentPosition,
-                    layerDepth: 0.5f,
+                    depth: DepthLevel.Medium,
+                    owner: _elementCollection,
                     color: Color.White,
                     components: new IUIComponent[]{
                         new FadeComponent(FadeComponent.FadeState.Faded)
