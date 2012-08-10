@@ -180,7 +180,7 @@ namespace Drydock.UI{
                 Depth == null ||
                 Owner == null ||
                 TextureName == null){
-                throw new Exception("Template did not contain enough information to generate button");
+                throw new Exception("Template did not contain all of the basic variables required to generate a button.");
             }
             //generate component list
             IUIComponent[] components = null;

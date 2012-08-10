@@ -88,31 +88,21 @@ namespace Drydock.Logic{
             _centerHandle = _elementCollection.Add<Button>(buttonTemplate.GenerateButton());
             _centerHandle.GetComponent<DraggableComponent>().DragMovementDispatcher += ReactToDragMovement;
 
-            _line1 = _elementCollection.Add<Line>(
-                new Line(
-                    v1: _centerHandle.CentPosition,
-                    v2: _handle1.CentPosition,
-                    depth: DepthLevel.Medium,
-                    owner: _elementCollection,
-                    color: Color.White,
-                    components: new IUIComponent[]{
-                        new FadeComponent(FadeComponent.FadeState.Faded)
-                    }
-                    )
-                );
+            var lineTemplate = new LineGenerator();
+            lineTemplate.Depth = DepthLevel.Medium;
+            lineTemplate.Owner = _elementCollection;
+            lineTemplate.Color = Color.White;
+            lineTemplate.Components = new Dictionary<string, object[]>{
+                {"FadeComponent", new object[]{FadeComponent.FadeState.Faded}}
+            };
 
-            _line2 = _elementCollection.Add<Line>(
-                new Line(
-                    v1: _centerHandle.CentPosition,
-                    v2: _handle2.CentPosition,
-                    depth: DepthLevel.Medium,
-                    owner: _elementCollection,
-                    color: Color.White,
-                    components: new IUIComponent[]{
-                        new FadeComponent(FadeComponent.FadeState.Faded)
-                    }
-                    )
-                );
+
+            lineTemplate.V1 = _centerHandle.CentPosition;
+            lineTemplate.V2 = _handle1.CentPosition;
+            _line1 = _elementCollection.Add<Line>(lineTemplate.GenerateLine());
+
+            lineTemplate.V2 = _handle2.CentPosition;
+            _line2 = _elementCollection.Add<Line>(lineTemplate.GenerateLine());
             #endregion
             InterlinkButtonEvents();
         }

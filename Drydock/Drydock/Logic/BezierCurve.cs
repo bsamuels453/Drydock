@@ -22,6 +22,7 @@ namespace Drydock.Logic {
         private List<Line> _nextLines;
         private  BezierCurve _prevCurve;
         private List<Line> _prevLines;
+        private LineGenerator _lineTemplate; 
 
         public Vector2 PrevHandlePos {
             get { return _controller.PrevHandlePos; }
@@ -42,7 +43,7 @@ namespace Drydock.Logic {
                 if (_prevLines == null) {
                     _prevLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++) {
-                        _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, DepthLevel.Low, _elementCollection)));
+                        _prevLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
                     }
                 }
             }
@@ -53,7 +54,7 @@ namespace Drydock.Logic {
                 if (_nextLines == null){
                     _nextLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++){
-                        _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, DepthLevel.Low, _elementCollection)));
+                        _nextLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
                     }
                 }
             }
@@ -89,26 +90,26 @@ namespace Drydock.Logic {
                 _prevLines = new List<Line>(_linesPerSide);
 
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, DepthLevel.Low, _elementCollection)));
+                    _prevLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _prevLines[i].Dispose();
-                    _prevLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, DepthLevel.Low, _elementCollection));
+                    _prevLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
                 }
             }
 
             if (_nextLines == null) {
                 _nextLines = new List<Line>(_linesPerSide);
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, DepthLevel.Low, _elementCollection)));
+                    _nextLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _nextLines[i].Dispose();
-                    _nextLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, DepthLevel.Low, _elementCollection));
+                    _nextLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
                 }
             }
 
@@ -122,13 +123,13 @@ namespace Drydock.Logic {
                 _prevLines = new List<Line>(_linesPerSide);
 
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _prevLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, DepthLevel.Low, _elementCollection)));
+                    _prevLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _prevLines[i].Dispose();
-                    _prevLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, DepthLevel.Low, _elementCollection));
+                    _prevLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
                 }
             }
             _controller.Angle1 = angle;
@@ -142,13 +143,13 @@ namespace Drydock.Logic {
             if (_nextLines == null) {
                 _nextLines = new List<Line>(_linesPerSide);
                 for (int i = 0; i < _linesPerSide; i++) {
-                    _nextLines.Add(_elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, DepthLevel.Low, _elementCollection)));
+                    _nextLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
                 }
             }
             else {
                 for (int i = 0; i < _linesPerSide; i++) {
                     _nextLines[i].Dispose();
-                    _nextLines[i] = _elementCollection.Add<Line>(new Line(Vector2.Zero, Vector2.Zero, Color.White, DepthLevel.Low, _elementCollection));
+                    _nextLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
                 }
             }
             _controller.Angle1 = angle;
@@ -174,13 +175,21 @@ namespace Drydock.Logic {
                     );
             }
             else{
-
+                //lol
             }
             _elementCollection = parentCollection;
             _nextLines = null;
             _nextCurve = null;
             _prevCurve = null;
             _prevLines = null;
+            
+            _lineTemplate = new LineGenerator();
+            _lineTemplate.V1 = Vector2.Zero;
+            _lineTemplate.V2 = Vector2.Zero;
+            _lineTemplate.Color = Color.White;
+            _lineTemplate.Depth = DepthLevel.Low;
+            _lineTemplate.Owner = _elementCollection;
+
         }
 
         public void Dispose(){
