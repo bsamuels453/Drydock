@@ -20,7 +20,6 @@ namespace Drydock.UI.Components{
         private bool _isMoving;
         private Vector2 _mouseOffset;
         private IUIInteractiveElement _owner;
-        private DraggableObjectClamp _clampDelegate;//we keep this for cloning
 
         #region properties
 

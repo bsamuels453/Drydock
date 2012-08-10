@@ -22,7 +22,7 @@ namespace Drydock.Logic {
         private List<Line> _nextLines;
         private  BezierCurve _prevCurve;
         private List<Line> _prevLines;
-        private LineGenerator _lineTemplate; 
+        private readonly LineGenerator _lineTemplate; 
 
         public Vector2 PrevHandlePos {
             get { return _controller.PrevHandlePos; }
@@ -33,9 +33,12 @@ namespace Drydock.Logic {
         public Vector2 NextHandlePos {
             get { return _controller.NextHandlePos; }
         }
+        public float Angle{
+            get { return _controller.Angle1; }
+        }
 
-        public float PrevHandleLength { get; set; }//the empire strikes back
-        public float NextHandleLength { get; set; }
+        public float PrevHandleLength { get { return _controller.PrevHandleLength; } }
+        public float NextHandleLength { get { return _controller.NextHandleLength; } }
 
         public BezierCurve PrevCurveReference{
             set { 
@@ -116,7 +119,7 @@ namespace Drydock.Logic {
             Update();
         }
 
-        public void SetPrevCurve(BezierCurve val, float angle, float handleLength){
+        public void SetPrevCurve(BezierCurve val){
             _prevCurve = val;
             _prevCurve.NextCurveReference = this;
             if (_prevLines == null) {
@@ -132,12 +135,10 @@ namespace Drydock.Logic {
                     _prevLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
                 }
             }
-            _controller.Angle1 = angle;
-            _controller.PrevHandleLength = handleLength;
             Update();
         }
 
-        public void SetNextCurve(BezierCurve val, float angle, float handleLength) {
+        public void SetNextCurve(BezierCurve val) {
             _nextCurve = val;
             _nextCurve.PrevCurveReference = this;
             if (_nextLines == null) {
@@ -152,8 +153,6 @@ namespace Drydock.Logic {
                     _nextLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
                 }
             }
-            _controller.Angle1 = angle;
-            _controller.NextHandleLength = handleLength;
             Update();
         }
 

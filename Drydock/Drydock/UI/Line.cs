@@ -179,6 +179,16 @@ namespace Drydock.UI{
         public Vector2? V2;
         public int? Identifier;
 
+        public LineGenerator(){
+            Components = null;
+            Color = null;
+            Owner = null;
+            Depth = null;
+            V1 = null;
+            V2 = null;
+            Identifier = null;
+        }
+
         public Line GenerateLine() {
             //make sure we have all the data required
             if (Depth == null ||

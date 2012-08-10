@@ -57,6 +57,7 @@ namespace Drydock.UI{
 
         public UIElementCollection Add(UIElementCollection collectionToAdd){
             _childCollections.Add(collectionToAdd);
+            collectionToAdd.DepthManager.Depth = DepthManager.Depth + 1;
             return collectionToAdd;
         }
 

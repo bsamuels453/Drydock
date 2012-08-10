@@ -162,14 +162,28 @@ namespace Drydock.UI{
         public Dictionary<string, object[]> Components;
         public DepthLevel? Depth;
         public float? Height;
+        public float? Width;
         public int? Identifier;
         public UIElementCollection Owner;
         public float? SpriteTexRepeatX;
         public float? SpriteTexRepeatY;
         public string TextureName;
-        public float? Width;
         public float? X;
         public float? Y;
+
+        public ButtonGenerator(){
+            Components = null;
+            Depth = null;
+            Height = null;
+            Width = null;
+            Identifier = null;
+            Owner = null;
+            SpriteTexRepeatX = null;
+            SpriteTexRepeatY = null;
+            TextureName = null;
+            X = null;
+            Y = null;
+        }
 
         public Button GenerateButton(){
             //make sure we have all the data required

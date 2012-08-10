@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using Drydock.Control;
 using Drydock.UI;
 using Drydock.Utilities;
@@ -25,8 +26,10 @@ namespace Drydock.Logic{
                 ElementCollection = new UIElementCollection();
             }
 
-            var config = new ConfigRetriever(defaultConfig);
-            int numControllers = int.Parse(config.GetValue("NumControllers"));
+            var reader = XmlReader.Create(defaultConfig);
+            reader.ReadToFollowing("NumControllers");
+            int numControllers = int.Parse(reader.ReadString());
+            reader.Close();
             var curveInitData = new List<CurveInitalizeData>(numControllers);
             CurveList = new List<BezierCurve>(numControllers);
 
@@ -54,7 +57,6 @@ namespace Drydock.Logic{
             float offsetY = (areaToFill.Height - maxY*scale) / 2;
 
             foreach (var data in curveInitData){
-                float _;
                 data.HandlePosX *= scale;
                 data.HandlePosY *= scale;
                 data.HandlePosX += offsetX + areaToFill.X;
@@ -67,21 +69,19 @@ namespace Drydock.Logic{
                 CurveList.Add(new BezierCurve(0, 0, ElementCollection,curveInitData[i]));
             }
             for (int i = 1; i < numControllers - 1; i++){
-                CurveList[i].SetPrevCurve(CurveList[i - 1], curveInitData[i].Angle, 20);
-                CurveList[i].SetNextCurve(CurveList[i + 1], curveInitData[i].Angle - (float)Math.PI, 20);
+                CurveList[i].SetPrevCurve(CurveList[i - 1]);
+                CurveList[i].SetNextCurve(CurveList[i + 1]);
             }
         }
 
         #region ICanReceiveInputEvents Members
 
         public InterruptState OnLeftButtonClick(MouseState state){
-            Vector2 pos;
-            float t;
-
             if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
+                Vector2 pos;
+                float t;
                 for (int i = 1; i < CurveList.Count; i++){
                     if ((pos = CurveList[i].PrevContains(state, out t)) != Vector2.Zero){
-                        //i -= 1;
                         CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection));
                         CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
                         return InterruptState.InterruptEventDispatch;
@@ -92,7 +92,6 @@ namespace Drydock.Logic{
 
                     if ((pos = CurveList[i].NextContains(state, out t)) != Vector2.Zero){
                         i += 1;
-
                         CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection ));
                         CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
                         return InterruptState.InterruptEventDispatch;
@@ -142,21 +141,19 @@ namespace Drydock.Logic{
             public float Length2;
 
             public CurveInitalizeData(string xmlFile, int i){
-                var config = new ConfigRetriever(xmlFile);
-                HandlePosX = float.Parse(config.GetValue("Handle" + i + "X"));
-                HandlePosY = float.Parse(config.GetValue("Handle" + i + "Y"));
-                Angle = float.Parse(config.GetValue("Handle" + i + "Angle"));
-                Length1 = float.Parse(config.GetValue("Handle" + i + "Length1"));
-                Length2 = float.Parse(config.GetValue("Handle" + i + "Length2"));
-            }
-
-            public void RetrieveDataFromXML(string xmlFile, int i){
-                var config = new ConfigRetriever(xmlFile);
-                HandlePosX = float.Parse(config.GetValue("Handle" + i + "X"));
-                HandlePosY = float.Parse(config.GetValue("Handle" + i + "Y"));
-                Angle = float.Parse(config.GetValue("Handle" + i + "Angle"));
-                Length1 = float.Parse(config.GetValue("Handle" + i + "Length1"));
-                Length2 = float.Parse(config.GetValue("Handle" + i + "Length2"));
+                var reader = XmlReader.Create(xmlFile);
+                reader.ReadToFollowing("Handle" + i);
+                reader.ReadToFollowing("PosX");
+                HandlePosX = float.Parse(reader.ReadString());
+                reader.ReadToFollowing("PosY");
+                HandlePosY = float.Parse(reader.ReadString());
+                reader.ReadToFollowing("Angle");
+                Angle = float.Parse(reader.ReadString());
+                reader.ReadToFollowing("PrevLength");
+                Length1 = float.Parse(reader.ReadString());
+                reader.ReadToFollowing("NextLength");
+                Length2 = float.Parse(reader.ReadString());
+                reader.Close();
             }
         }
 

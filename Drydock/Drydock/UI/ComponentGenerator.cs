@@ -25,20 +25,26 @@ namespace Drydock.UI{
                         #region fadecomponent
 
                     case "FadeComponent":
-                        if (component.Value.Count() < 2)
+                        if (!component.Value.Any())
                             throw new Exception("not enough data to create a FadeComponent from template");
 
                         var defaultState = (FadeComponent.FadeState) component.Value[0];
-                        var fadeTrigger = (FadeComponent.FadeTrigger) component.Value[1];
+                        FadeComponent.FadeTrigger fadeTrigger;
                         float fadeOpacity;
                         float fadeDuration;
 
                         //this is tricky because FadeComponent has a few parameters with default values
+                        if (component.Value.Count() > 1) 
+                            fadeTrigger = (FadeComponent.FadeTrigger)component.Value[1];
+                        else
+                            fadeTrigger = FadeComponent.DefaultTrigger;
+                        
+
                         if (component.Value.Count() > 2)
                             fadeOpacity = (float) component.Value[2];
-                        else{
+                        else
                             fadeOpacity = FadeComponent.DefaultFadeoutOpacity;
-                        }
+                        
 
                         if (component.Value.Count() > 3)
                             fadeDuration = (float) component.Value[3];

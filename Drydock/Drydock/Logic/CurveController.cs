@@ -29,8 +29,8 @@ namespace Drydock.Logic{
             get { return _handle2.CentPosition; }
         }
 
-        public float PrevHandleLength { get; set; }
-        public float NextHandleLength { get; set; }
+        public float PrevHandleLength { get { return _line1.Length; } }
+        public float NextHandleLength { get { return _line2.Length; } }
 
         public float Angle1 {
             set { 
@@ -39,6 +39,7 @@ namespace Drydock.Logic{
                 _handle1.CentPosition = _line1.DestPoint;
                 _handle2.CentPosition = _line2.DestPoint;
             }
+            get { return _line1.Angle; }
         }
         public float Angle2 {
             set {
@@ -70,6 +71,14 @@ namespace Drydock.Logic{
                     {"SelectableComponent", new object[]{"bigbox", 15, 15}}
             };
 
+            var lineTemplate = new LineGenerator();
+            lineTemplate.Depth = DepthLevel.Medium;
+            lineTemplate.Owner = _elementCollection;
+            lineTemplate.Color = Color.Black;
+            lineTemplate.Components = new Dictionary<string, object[]>{
+                {"FadeComponent", new object[]{FadeComponent.FadeState.Faded}}
+            };
+
             buttonTemplate.Identifier = 1;
             buttonTemplate.X = component1.X + initX;
             buttonTemplate.Y = component1.Y + initY;
@@ -87,15 +96,6 @@ namespace Drydock.Logic{
             buttonTemplate.Y = initY;
             _centerHandle = _elementCollection.Add<Button>(buttonTemplate.GenerateButton());
             _centerHandle.GetComponent<DraggableComponent>().DragMovementDispatcher += ReactToDragMovement;
-
-            var lineTemplate = new LineGenerator();
-            lineTemplate.Depth = DepthLevel.Medium;
-            lineTemplate.Owner = _elementCollection;
-            lineTemplate.Color = Color.White;
-            lineTemplate.Components = new Dictionary<string, object[]>{
-                {"FadeComponent", new object[]{FadeComponent.FadeState.Faded}}
-            };
-
 
             lineTemplate.V1 = _centerHandle.CentPosition;
             lineTemplate.V2 = _handle1.CentPosition;
