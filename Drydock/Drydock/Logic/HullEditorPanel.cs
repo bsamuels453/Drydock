@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using System.Xml;
 using Drydock.UI;
-using Drydock.UI.Components;
 using Drydock.Utilities;
 
 #endregion
@@ -19,7 +18,7 @@ namespace Drydock.Logic{
         Side,
         Top
     }
-    delegate void ModifyHandlePosition(HandleAlias handle, int dx, int dy);
+    delegate void ModifyHandlePosition(HandleAlias handle, float dx, float dy);
 
     internal enum HandleAlias{
         First,
@@ -80,31 +79,34 @@ namespace Drydock.Logic{
             }
         }
         private void OnDragMovement(object caller, int dx, int dy) {
+            float dxf = dx/_curves.PixelsPerMeter;
+            float dyf = dy/ _curves.PixelsPerMeter;//unused?
+
             var controller = (CurveController)caller;
             switch (_curveType){
                 case CurveType.Side:
                     if (controller == _curves.CurveList[0].Controller) {
                         _curves.CurveList[_curves.CurveList.Count - 1].Controller.TranslateControllerPos(0, dy);
-                        if (dx != 0) {
+
                             if (ExternalHandleModifier != null) {
-                                ExternalHandleModifier(HandleAlias.Middle, dx, 0);
+                                ExternalHandleModifier(HandleAlias.Middle, dxf, 0);
                             }
                             else {
                                 throw new Exception("Hull editor panels were not linked correctly");
                             }
-                        }
+                        
                     }
                     else{//assume that it's the other handle
                         _curves.CurveList[0].Controller.TranslateControllerPos(0, dy);
-                        if (dx != 0) {
+
                             if (ExternalHandleModifier != null) {
-                                ExternalHandleModifier(HandleAlias.Last, dx, 0);
-                                ExternalHandleModifier(HandleAlias.First, dx, 0);
+                                ExternalHandleModifier(HandleAlias.Last, dxf, 0);
+                                ExternalHandleModifier(HandleAlias.First, dxf, 0);
                             }
                             else {
                                 throw new Exception("Hull editor panels were not linked correctly");
                             }
-                        }
+                        
                     }
 
                     break;
@@ -113,37 +115,37 @@ namespace Drydock.Logic{
                 case CurveType.Top:
                     if (controller == _curves.CurveList[0].Controller) {
                         _curves.CurveList[_curves.CurveList.Count - 1].Controller.TranslateControllerPos(dx, -dy);
-                        if (dx != 0) {
+
                             if (ExternalHandleModifier != null) {
-                                ExternalHandleModifier(HandleAlias.Last, dx, 0);
+                                ExternalHandleModifier(HandleAlias.Last, dxf, 0);
                             }
                             else {
                                 throw new Exception("Hull editor panels were not linked correctly");
                             }
-                        }
+                        
                     }
                     if (controller == _curves.CurveList[_curves.CurveList.Count - 1].Controller) {
                         _curves.CurveList[0].Controller.TranslateControllerPos(dx, -dy);
-                        if (dx != 0) {
+
                             if (ExternalHandleModifier != null) {
-                                ExternalHandleModifier(HandleAlias.Last, dx, 0);
+                                ExternalHandleModifier(HandleAlias.Last, dxf, 0);
                             }
                             else {
                                 throw new Exception("Hull editor panels were not linked correctly");
                             }
-                        }
+                        
                     }
                     if (controller == _curves.CurveList[_curves.CurveList.Count / 2].Controller) {
                         //_curves.CurveList[0].Controller.TranslateControllerPos(dx, dy);
                        // _curves.CurveList[_curves.CurveList.Count - 1].Controller.TranslateControllerPos(dx, dy);
-                        if (dx != 0) {
+
                             if (ExternalHandleModifier != null) {
-                                ExternalHandleModifier(HandleAlias.First, dx, 0);
+                                ExternalHandleModifier(HandleAlias.First, dxf, 0);
                             }
                             else {
                                 throw new Exception("Hull editor panels were not linked correctly");
                             }
-                        }
+                        
                     }
 
                     break;
@@ -158,16 +160,21 @@ namespace Drydock.Logic{
         /// <param name="handle"> </param>
         /// <param name="dx"></param>
         /// <param name="dy"></param>
-        public void ModifyHandlePosition(HandleAlias handle, int dx, int dy) {
+        public void ModifyHandlePosition(HandleAlias handle, float dx, float dy) {
+            dx *= _curves.PixelsPerMeter;
+            dy *= _curves.PixelsPerMeter;
+            var dxi = (int)Math.Round(dx);
+            var dyi = (int)Math.Round(dy);
+
             switch (handle){
                 case HandleAlias.First:
-                    _curves.CurveList[0].Controller.TranslateControllerPos(dx, dy);
+                    _curves.CurveList[0].Controller.TranslateControllerPos(dxi, dyi);
                     break;
                 case HandleAlias.Middle:
-                    _curves.CurveList[_curves.CurveList.Count / 2].Controller.TranslateControllerPos(dx, dy);
+                    _curves.CurveList[_curves.CurveList.Count / 2].Controller.TranslateControllerPos(dxi, dyi);
                     break;
                 case HandleAlias.Last:
-                    _curves.CurveList[_curves.CurveList.Count -1].Controller.TranslateControllerPos(dx, dy);
+                    _curves.CurveList[_curves.CurveList.Count - 1].Controller.TranslateControllerPos(dxi, dyi);
                     break;
             }
         }
