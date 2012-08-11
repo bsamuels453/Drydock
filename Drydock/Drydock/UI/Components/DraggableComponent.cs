@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 namespace Drydock.UI.Components{
     internal delegate void DraggableObjectClamp(IUIInteractiveElement owner, ref int x, ref int y, int oldX, int oldY);
 
-    internal delegate void OnDragMovement(IUIInteractiveElement owner, int dx, int dy);
+    internal delegate void OnDragMovement(object caller, int dx, int dy);
 
 
     /// <summary>

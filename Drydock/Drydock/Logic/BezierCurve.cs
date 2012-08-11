@@ -16,7 +16,7 @@ namespace Drydock.Logic {
     class BezierCurve {
         #region fields and properties
         private const int _linesPerSide = 20;
-        private readonly CurveController _controller;
+        public readonly CurveController Controller;
         private readonly UIElementCollection _elementCollection;
         private BezierCurve _nextCurve;
         private List<Line> _nextLines;
@@ -25,20 +25,20 @@ namespace Drydock.Logic {
         private readonly LineGenerator _lineTemplate; 
 
         public Vector2 PrevHandlePos {
-            get { return _controller.PrevHandlePos; }
+            get { return Controller.PrevHandlePos; }
         }
         public Vector2 HandlePos{
-            get { return _controller.CenterHandlePos; }
+            get { return Controller.CenterHandlePos; }
         }
         public Vector2 NextHandlePos {
-            get { return _controller.NextHandlePos; }
+            get { return Controller.NextHandlePos; }
         }
         public float Angle{
-            get { return _controller.Angle1; }
+            get { return Controller.Angle1; }
         }
 
-        public float PrevHandleLength { get { return _controller.PrevHandleLength; } }
-        public float NextHandleLength { get { return _controller.NextHandleLength; } }
+        public float PrevHandleLength { get { return Controller.PrevHandleLength; } }
+        public float NextHandleLength { get { return Controller.NextHandleLength; } }
 
         public BezierCurve PrevCurveReference{
             set { 
@@ -88,7 +88,7 @@ namespace Drydock.Logic {
                 
             Common.GetAngleFromComponents(out angle, out magnitude, pt3.X, pt3.Y);
 
-            _controller.Angle1 = angle;
+            Controller.Angle1 = angle;
             if (_prevLines == null) {
                 _prevLines = new List<Line>(_linesPerSide);
 
@@ -164,7 +164,7 @@ namespace Drydock.Logic {
         /// </summary>
         public BezierCurve( float offsetX, float offsetY, UIElementCollection parentCollection,CurveInitalizeData initData = null){
             if (initData != null) {
-                _controller = new CurveController(
+                Controller = new CurveController(
                     initData.HandlePosX + offsetX,
                     initData.HandlePosY + offsetY,
                     parentCollection,

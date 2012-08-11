@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic{
+
     internal class CurveControllerCollection : ICanReceiveInputEvents{
         public readonly List<BezierCurve> CurveList;
         public readonly UIElementCollection ElementCollection;

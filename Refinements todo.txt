@@ -1,0 +1,16 @@
+-control-modifier snaps curves to angle
+-control-modifier snaps to grid
+-ctr+z
+-actually fix curve addition and deletion
+-add border class
+-scale indicator
+--"next" button
+
+long term:
+-scale swapper
+-border highlight for selected
+-zooming in an out of each representation
+-click and drag for each representation
+-scale-swaps
+-statistics window/titlebar
+-special restrictors

@@ -15,9 +15,9 @@ namespace Drydock.Logic{
         private readonly UIElementCollection _elementCollection;
         private readonly Button _handle1;
         private readonly Button _handle2;
-
         private readonly Line _line1;
         private readonly Line _line2;
+        public OnDragMovement ReactToControllerMovement;
 
         public Vector2 CenterHandlePos{
             get { return _centerHandle.CentPosition; }
@@ -68,7 +68,8 @@ namespace Drydock.Logic{
             buttonTemplate.Components = new Dictionary<string, object[]>{
                     {"DraggableComponent",null},
                     {"FadeComponent", new object[] { FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit } },
-                    {"SelectableComponent", new object[]{"bigbox", 15, 15}}
+                    //{"SelectableComponent", new object[]{"bigbox", 15, 15}}
+            
             };
 
             var lineTemplate = new LineGenerator();
@@ -128,11 +129,33 @@ namespace Drydock.Logic{
             
         }
 
+
+        /// <summary>
+        /// this method will move the entire controller by the defined dx and dy
+        /// </summary>
+        /// <param name="dx"></param>
+        /// <param name="dy"></param>
+        public void TranslateControllerPos(int dx, int dy){
+            _line1.TranslateOrigin(dx, dy);
+            _line1.TranslateDestination(dx, dy);
+            _line2.TranslateOrigin(dx, dy);
+            _line2.TranslateDestination(dx, dy);
+            _handle1.X += dx;
+            _handle1.Y += dy;
+
+            _handle2.X += dx;
+            _handle2.Y += dy;
+
+            _centerHandle.X += dx;
+            _centerHandle.Y += dy;
+        }
+
         /// <summary>
         /// this function balances handle movement so that they stay in a straight line and their movements translate to other handles
         /// </summary>
-        public void ReactToDragMovement(IUIInteractiveElement owner, int dx, int dy){
-            switch (owner.Identifier){
+        public void ReactToDragMovement(object caller, int dx, int dy){
+            var calle = (Button)caller;
+            switch (calle.Identifier) {
                 case 0:
                     _line1.TranslateOrigin(dx, dy);
                     _line1.TranslateDestination(dx, dy);
@@ -144,6 +167,9 @@ namespace Drydock.Logic{
                     _handle2.X += dx;
                     _handle2.Y += dy;
 
+                    if (ReactToControllerMovement != null){
+                        ReactToControllerMovement(this, dx, dy);
+                    }
 
                     break;
                 case 1:

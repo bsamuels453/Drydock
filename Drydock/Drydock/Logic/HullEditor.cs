@@ -4,20 +4,31 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic {
     class HullEditor : ICanReceiveInputEvents {
-        HullEditorPanel _sidepanel;
-
+        readonly HullEditorPanel _sidepanel;
+        readonly HullEditorPanel _toppanel;
+       // readonly HullEditorPanel _backpanel;
 
         public HullEditor(){
 
-            _sidepanel = new HullEditorPanel(0, 0, ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "side.xml");
+            _sidepanel = new HullEditorPanel(CurveType.Side,  0, 0, ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "side.xml");
+            _toppanel = new HullEditorPanel(CurveType.Top,  0, ScreenData.GetScreenValueY(0.5f), ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "top.xml");
+            //_backpanel = new HullEditorPanel(this, ScreenData.GetScreenValueX(0.5f), 0, ScreenData.GetScreenValueX(0.25f), ScreenData.GetScreenValueY(0.5f), "back.xml");
 
-            _sidepanel.SaveCurves("side.xml");
+            _sidepanel.ExternalHandleModifier = _toppanel.ModifyHandlePosition;
+            _toppanel.ExternalHandleModifier = _sidepanel.ModifyHandlePosition;
+
             InputEventDispatcher.EventSubscribers.Add(this);
         
         }
 
+        public void TranslateLinkedHandleMovement(HullEditorPanel caller, float dx, float dy){
+
+        }
+
         public void Update(){
             _sidepanel.Update();
+            _toppanel.Update();
+            //_backpanel.Update();
         }
 
         public InterruptState OnMouseMovement(MouseState state){
@@ -39,6 +50,8 @@ namespace Drydock.Logic {
         public InterruptState OnKeyboardEvent(KeyboardState state){
             if (state.IsKeyDown(Keys.LeftControl) && state.IsKeyDown(Keys.S)){
                 _sidepanel.SaveCurves("side.xml");
+                _toppanel.SaveCurves("top.xml");
+                //_backpanel.SaveCurves("back.xml");
                 return InterruptState.InterruptEventDispatch;
             }
             return InterruptState.AllowOtherEvents;
