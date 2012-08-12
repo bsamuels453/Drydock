@@ -29,7 +29,7 @@ namespace Drydock.Logic{
     internal class HullEditorPanel{
         private readonly Button _background;
         private readonly FloatingRectangle _boundingBox;
-        private readonly CurveControllerCollection _curves;
+        public readonly CurveControllerCollection Curves;
         private readonly UIElementCollection _elementCollection;
         private readonly CurveType _curveType;
         public ModifyHandlePosition ExternalHandleModifier;
@@ -38,7 +38,7 @@ namespace Drydock.Logic{
             _curveType = curveType;
             _boundingBox = new FloatingRectangle(x, y, width, height);
             _elementCollection = new UIElementCollection();
-            _curves = new CurveControllerCollection(
+            Curves = new CurveControllerCollection(
                 defaultConfig: defaultCurveConfiguration,
                 areaToFill: new FloatingRectangle(
                     x + width*0.1f,
@@ -48,7 +48,7 @@ namespace Drydock.Logic{
                     ),
                 parentCollection: _elementCollection
                 );
-            _curves.ElementCollection.AddDragConstraintCallback(ClampChildElements);
+            Curves.ElementCollection.AddDragConstraintCallback(ClampChildElements);
             _background = _elementCollection.Add<Button>(
                 new Button(
                     x: x,
@@ -58,35 +58,35 @@ namespace Drydock.Logic{
                     depth: DepthLevel.Background,
                     owner: _elementCollection,
                     textureName: "panelBG",
-                    spriteTexRepeatX: width/(_curves.PixelsPerMeter*10),
-                    spriteTexRepeatY: height/(_curves.PixelsPerMeter*10)
+                    spriteTexRepeatX: width/(Curves.PixelsPerMeter*10),
+                    spriteTexRepeatY: height/(Curves.PixelsPerMeter*10)
                     )
                 );
 
 
             switch(curveType){
                 case CurveType.Side:
-                    _curves.CurveList[0].Controller.ReactToControllerMovement = OnDragMovement;
-                    _curves.CurveList[_curves.CurveList.Count - 1].Controller.ReactToControllerMovement += OnDragMovement;
+                    Curves.CurveList[0].Controller.ReactToControllerMovement = OnDragMovement;
+                    Curves.CurveList[Curves.CurveList.Count - 1].Controller.ReactToControllerMovement += OnDragMovement;
                     break;
 
                 case CurveType.Top:
-                    _curves.CurveList[0].Controller.ReactToControllerMovement += OnDragMovement;
-                    _curves.CurveList[_curves.CurveList.Count-1].Controller.ReactToControllerMovement += OnDragMovement;
-                    _curves.CurveList[_curves.CurveList.Count/2].Controller.ReactToControllerMovement += OnDragMovement;
+                    Curves.CurveList[0].Controller.ReactToControllerMovement += OnDragMovement;
+                    Curves.CurveList[Curves.CurveList.Count-1].Controller.ReactToControllerMovement += OnDragMovement;
+                    Curves.CurveList[Curves.CurveList.Count/2].Controller.ReactToControllerMovement += OnDragMovement;
                     break;
 
             }
         }
         private void OnDragMovement(object caller, int dx, int dy) {
-            float dxf = dx/_curves.PixelsPerMeter;
-            float dyf = dy/ _curves.PixelsPerMeter;//unused?
+            float dxf = dx/Curves.PixelsPerMeter;
+            float dyf = dy/ Curves.PixelsPerMeter;//unused?
 
             var controller = (CurveController)caller;
             switch (_curveType){
                 case CurveType.Side:
-                    if (controller == _curves.CurveList[0].Controller) {
-                        _curves.CurveList[_curves.CurveList.Count - 1].Controller.TranslateControllerPos(0, dy);
+                    if (controller == Curves.CurveList[0].Controller) {
+                        Curves.CurveList[Curves.CurveList.Count - 1].Controller.TranslateControllerPos(0, dy);
 
                             if (ExternalHandleModifier != null) {
                                 ExternalHandleModifier(HandleAlias.Middle, dxf, 0);
@@ -97,7 +97,7 @@ namespace Drydock.Logic{
                         
                     }
                     else{//assume that it's the other handle
-                        _curves.CurveList[0].Controller.TranslateControllerPos(0, dy);
+                        Curves.CurveList[0].Controller.TranslateControllerPos(0, dy);
 
                             if (ExternalHandleModifier != null) {
                                 ExternalHandleModifier(HandleAlias.Last, dxf, 0);
@@ -113,8 +113,8 @@ namespace Drydock.Logic{
 
 
                 case CurveType.Top:
-                    if (controller == _curves.CurveList[0].Controller) {
-                        _curves.CurveList[_curves.CurveList.Count - 1].Controller.TranslateControllerPos(dx, -dy);
+                    if (controller == Curves.CurveList[0].Controller) {
+                        Curves.CurveList[Curves.CurveList.Count - 1].Controller.TranslateControllerPos(dx, -dy);
 
                             if (ExternalHandleModifier != null) {
                                 ExternalHandleModifier(HandleAlias.Last, dxf, 0);
@@ -124,8 +124,8 @@ namespace Drydock.Logic{
                             }
                         
                     }
-                    if (controller == _curves.CurveList[_curves.CurveList.Count - 1].Controller) {
-                        _curves.CurveList[0].Controller.TranslateControllerPos(dx, -dy);
+                    if (controller == Curves.CurveList[Curves.CurveList.Count - 1].Controller) {
+                        Curves.CurveList[0].Controller.TranslateControllerPos(dx, -dy);
 
                             if (ExternalHandleModifier != null) {
                                 ExternalHandleModifier(HandleAlias.Last, dxf, 0);
@@ -135,7 +135,7 @@ namespace Drydock.Logic{
                             }
                         
                     }
-                    if (controller == _curves.CurveList[_curves.CurveList.Count / 2].Controller) {
+                    if (controller == Curves.CurveList[Curves.CurveList.Count / 2].Controller) {
                         //_curves.CurveList[0].Controller.TranslateControllerPos(dx, dy);
                        // _curves.CurveList[_curves.CurveList.Count - 1].Controller.TranslateControllerPos(dx, dy);
 
@@ -161,20 +161,20 @@ namespace Drydock.Logic{
         /// <param name="dx"></param>
         /// <param name="dy"></param>
         public void ModifyHandlePosition(HandleAlias handle, float dx, float dy) {
-            dx *= _curves.PixelsPerMeter;
-            dy *= _curves.PixelsPerMeter;
+            dx *= Curves.PixelsPerMeter;
+            dy *= Curves.PixelsPerMeter;
             var dxi = (int)Math.Round(dx);
             var dyi = (int)Math.Round(dy);
 
             switch (handle){
                 case HandleAlias.First:
-                    _curves.CurveList[0].Controller.TranslateControllerPos(dxi, dyi);
+                    Curves.CurveList[0].Controller.TranslateControllerPos(dxi, dyi);
                     break;
                 case HandleAlias.Middle:
-                    _curves.CurveList[_curves.CurveList.Count / 2].Controller.TranslateControllerPos(dxi, dyi);
+                    Curves.CurveList[Curves.CurveList.Count / 2].Controller.TranslateControllerPos(dxi, dyi);
                     break;
                 case HandleAlias.Last:
-                    _curves.CurveList[_curves.CurveList.Count - 1].Controller.TranslateControllerPos(dxi, dyi);
+                    Curves.CurveList[Curves.CurveList.Count - 1].Controller.TranslateControllerPos(dxi, dyi);
                     break;
             }
         }
@@ -188,10 +188,10 @@ namespace Drydock.Logic{
 
             writer.WriteStartDocument();
             writer.WriteStartElement("Data");
-            writer.WriteElementString("NumControllers", null, _curves.CurveList.Count.ToString());
+            writer.WriteElementString("NumControllers", null, Curves.CurveList.Count.ToString());
 
             float minX=9999999, minY=9999999;
-            foreach (var curve in _curves.CurveList){
+            foreach (var curve in Curves.CurveList){
                 if (curve.HandlePos.X < minX){
                     minX = curve.HandlePos.X;
                 }
@@ -199,13 +199,13 @@ namespace Drydock.Logic{
                     minY = curve.HandlePos.Y;
                 }
             }
-            for (int i = 0; i < _curves.CurveList.Count; i++){
+            for (int i = 0; i < Curves.CurveList.Count; i++){
                 writer.WriteStartElement("Handle" + i, null);
-                writer.WriteElementString("PosX", null, ((_curves.CurveList[i].HandlePos.X - minX) / _curves.PixelsPerMeter).ToString());
-                writer.WriteElementString("PosY", null, ((_curves.CurveList[i].HandlePos.Y - minY) / _curves.PixelsPerMeter).ToString());
-                writer.WriteElementString("Angle", null, _curves.CurveList[i].Angle.ToString());
-                writer.WriteElementString("PrevLength", null, (_curves.CurveList[i].PrevHandleLength / _curves.PixelsPerMeter).ToString());
-                writer.WriteElementString("NextLength", null, (_curves.CurveList[i].NextHandleLength / _curves.PixelsPerMeter).ToString());
+                writer.WriteElementString("PosX", null, ((Curves.CurveList[i].HandlePos.X - minX) / Curves.PixelsPerMeter).ToString());
+                writer.WriteElementString("PosY", null, ((Curves.CurveList[i].HandlePos.Y - minY) / Curves.PixelsPerMeter).ToString());
+                writer.WriteElementString("Angle", null, Curves.CurveList[i].Angle.ToString());
+                writer.WriteElementString("PrevLength", null, (Curves.CurveList[i].PrevHandleLength / Curves.PixelsPerMeter).ToString());
+                writer.WriteElementString("NextLength", null, (Curves.CurveList[i].NextHandleLength / Curves.PixelsPerMeter).ToString());
                 writer.WriteEndElement();
             }
 
@@ -227,7 +227,7 @@ namespace Drydock.Logic{
 
 
         public void Update(){
-            _curves.Update();
+            Curves.Update();
 
         }
 

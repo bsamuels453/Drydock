@@ -1,11 +1,13 @@
 ﻿using Drydock.Control;
 using Drydock.Render;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic {
     class HullEditor : ICanReceiveInputEvents {
         readonly HullEditorPanel _sidepanel;
         readonly HullEditorPanel _toppanel;
+        readonly PreviewRenderer _previewRenderer;
        // readonly HullEditorPanel _backpanel;
 
         public HullEditor(){
@@ -16,6 +18,8 @@ namespace Drydock.Logic {
 
             _sidepanel.ExternalHandleModifier = _toppanel.ModifyHandlePosition;
             _toppanel.ExternalHandleModifier = _sidepanel.ModifyHandlePosition;
+
+            _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves);
 
             InputEventDispatcher.EventSubscribers.Add(this);
         
@@ -28,6 +32,12 @@ namespace Drydock.Logic {
         public void Update(){
             _sidepanel.Update();
             _toppanel.Update();
+
+            Vector2 v;
+
+            v = _toppanel.Curves.GetParameterizedPoint(0.5f);
+
+            int f = 5;
             //_backpanel.Update();
         }
 

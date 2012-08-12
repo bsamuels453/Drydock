@@ -167,6 +167,8 @@
     <Compile Include="Logic\CurveControllerCollection.cs" />
     <Compile Include="Logic\HullEditor.cs" />
     <Compile Include="Logic\HullEditorPanel.cs" />
+    <Compile Include="Logic\PreviewRenderer.cs" />
+    <Compile Include="Render\AuxBufferManager.cs" />
     <Compile Include="Render\IAdvancedPrimitive.cs" />
     <Compile Include="Render\IDrawable.cs" />
     <Compile Include="UI\Border.cs" />
@@ -194,8 +196,6 @@
     <Compile Include="Render\Renderer.cs" />
     <Compile Include="Render\ScreenData.cs" />
     <Compile Include="Render\ScreenText.cs" />
-    <Compile Include="Render\ShipBatch.cs" />
-    <Compile Include="Render\ShipVbo.cs" />
     <Compile Include="Render\TextBatch.cs" />
     <Compile Include="Utilities\ConfigRetriever.cs" />
     <Compile Include="Utilities\FloatingRectangle.cs" />

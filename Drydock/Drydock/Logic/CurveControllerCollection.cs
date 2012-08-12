@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using Drydock.Control;
 using Drydock.UI;
@@ -75,6 +76,66 @@ namespace Drydock.Logic{
             }
         }
 
+        /// <summary>
+        /// Returns the point on the curve associated with the parameter t
+        /// </summary>
+        /// <param name="t">range from 0-1f</param>
+        /// <returns></returns>
+        public Vector2 GetParameterizedPoint(float t){
+            var lenList = new float[CurveList.Count];
+            float totalArcLen = 0;
+            for (int i = 0; i < lenList.Count(); i++){
+                lenList[i] = CurveList[i].GetArcLength();
+                totalArcLen += lenList[i];
+            }
+
+            float pointArcLen = totalArcLen * t;
+            float tempLen = pointArcLen;
+
+            //figure out which curve is going to contain point t
+            int curveIndex = 0;
+            for (curveIndex = 0; curveIndex < lenList.Count(); curveIndex++) {
+                tempLen -= lenList[curveIndex];
+                if ((int)tempLen <= 0) {
+                    tempLen += lenList[curveIndex];
+                    tempLen /= lenList[curveIndex];//this turns tempLen into a t(0-1)
+                    break;
+                }
+            }
+            if (curveIndex == 0) {
+                tempLen += 1f;
+                tempLen /= 2;
+            }
+            if (curveIndex == lenList.Count() - 1) {
+                tempLen /= 2;
+            }
+
+            Vector2 unNormalizedPoint = CurveList[curveIndex].GetBezierValue(tempLen); 
+            //var unNormalizedPoint = new Vector2();
+            //now we need to normalize the point to meters
+            float  minX = 9999999, minY = 9999999;
+            foreach (var curve in CurveList) {
+                if (curve.HandlePos.X < minX) {
+                    minX = curve.HandlePos.X;
+                }
+                if (curve.HandlePos.Y < minY) {
+                    minY = curve.HandlePos.Y;
+                }
+            }
+
+            var normalizedPoint = new Vector2();
+            normalizedPoint.X = (unNormalizedPoint.X - minX) / PixelsPerMeter;
+            normalizedPoint.Y = (unNormalizedPoint.Y - minY) / PixelsPerMeter;
+
+            return normalizedPoint;
+        }
+
+        public void Update() {
+            foreach (var curve in CurveList) {
+                curve.Update();
+            }
+        }
+
         #region ICanReceiveInputEvents Members
 
         public InterruptState OnLeftButtonClick(MouseState state){
@@ -125,11 +186,6 @@ namespace Drydock.Logic{
 
         #endregion
 
-        public void Update(){
-            foreach (var curve in CurveList){
-                curve.Update();
-            }
-        }
     }
 
     #region nested struct

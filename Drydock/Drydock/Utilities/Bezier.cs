@@ -12,11 +12,11 @@ namespace Drydock.Utilities{
         }
 
         /// <summary>
-        /// b and c are controllers. a and d are statics
+        /// b and c are controllers. a and d are statics. AB is origin and CD is dest
         /// </summary>
         /// <param name="dest"></param>
         /// <param name="ptA"></param>
-        /// <param name="ptB"></param>
+        /// <param name="ptB">dest</param>
         /// <param name="ptC"></param>
         /// <param name="ptD"></param>
         /// <param name="t"></param>
