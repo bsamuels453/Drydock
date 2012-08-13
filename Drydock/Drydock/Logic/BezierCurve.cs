@@ -191,16 +191,18 @@ namespace Drydock.Logic {
             _lineTemplate.Owner = _elementCollection;
 
         }
-
-        public float GetArcLength(){
+        public float GetNextArcLength() {
+            float len = 0;
+            if (_nextLines != null) {
+                len += _nextLines.Sum(line => line.Length);
+            }
+            return len;
+        }
+        public float GetPrevArcLength(){
             float len = 0;
             if (_prevLines != null){
                 len += _prevLines.Sum(line => line.Length);
             }
-            if (_nextLines != null){
-                len += _nextLines.Sum(line => line.Length);
-            }
-
             return len;
         }
 
@@ -246,65 +248,6 @@ namespace Drydock.Logic {
             return Vector2.Zero;
 
         }
-
-        public Vector2 GetBezierValue(float t){
-            Vector2 retVal;
-
-            const float epsilon = 0.00001f;
-            if (Math.Abs(t - 0.5) < epsilon){
-                if (_prevLines != null){
-                    Bezier.GetBezierValue(
-                        out retVal,
-                        _prevCurve.HandlePos,
-                        _prevCurve.NextHandlePos,
-                        PrevHandlePos,
-                        HandlePos,
-                        t*2
-                        );
-                    return retVal;
-                }
-                else{
-                    Bezier.GetBezierValue(
-                        out retVal,
-                        HandlePos,
-                        NextHandlePos,
-                        _nextCurve.HandlePos,
-                        _nextCurve.NextHandlePos,
-                        (t-0.5f)*2
-                        );
-                    return retVal;
-                }
-            }
-
-
-            if (t > 0.5){
-                //t is on the Next side of the controller
-                Bezier.GetBezierValue(
-                    out retVal,
-                    HandlePos,
-                    NextHandlePos,
-                    _nextCurve.HandlePos,
-                    _nextCurve.NextHandlePos,
-                    (t - 0.5f)*2
-                    );
-                return retVal;
-            }
-
-
-            if (t < 0.5){
-                //t is on the Prev side of the controller
-                Bezier.GetBezierValue(
-                    out retVal,
-                    _prevCurve.HandlePos,
-                    _prevCurve.NextHandlePos,
-                    PrevHandlePos,
-                    HandlePos,
-                    t*2
-                    );
-                return retVal;
-            }
-            return Vector2.Zero;
-    }
 
         public void Update(){
             float t, dt;

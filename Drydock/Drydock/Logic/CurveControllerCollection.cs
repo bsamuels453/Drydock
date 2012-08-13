@@ -93,10 +93,10 @@ namespace Drydock.Logic{
         public Vector2 GetParameterizedPoint(float t, bool regenerateMethodCache = false){
 
             if (regenerateMethodCache){
-                _lenList = new float[CurveList.Count];
-                _totalArcLen = 0;
+                _lenList = new float[CurveList.Count-1];
+
                 for (int i = 0; i < _lenList.Count(); i++) {
-                    _lenList[i] = CurveList[i].GetArcLength();
+                    _lenList[i] = CurveList[i].GetNextArcLength() + CurveList[i + 1].GetPrevArcLength();
                     _totalArcLen += _lenList[i];
                 }
                 _minX = 9999999;
@@ -114,31 +114,56 @@ namespace Drydock.Logic{
             float pointArcLen = _totalArcLen * t;
             float tempLen = pointArcLen;
 
+            Vector2 point = Vector2.Zero;
+
             //figure out which curve is going to contain point t
-            int curveIndex;
-            for (curveIndex = 0; curveIndex < CurveList.Count; curveIndex++) {
-                tempLen -= _lenList[curveIndex];
-                if ((int)tempLen <= 0) {
-                    tempLen += _lenList[curveIndex];
-                    tempLen /= _lenList[curveIndex];//this turns tempLen into a t(0-1)
+            const float epsilon = 0.0001f;
+            int segmentIndex;
+            for (segmentIndex = 0; segmentIndex < _lenList.Count(); segmentIndex++) {
+                tempLen -= _lenList[segmentIndex];
+                if (tempLen < 0){
+                    tempLen += _lenList[segmentIndex];
+                    tempLen /= _lenList[segmentIndex];//this turns tempLen into a t(0-1)
                     break;
                 }
             }
-            if (curveIndex == 0) {
+
+            if (segmentIndex == CurveList.Count - 1){//clamp it 
+                segmentIndex--;
+                tempLen = 1;
+            }
+            point = GetBezierValue(CurveList[segmentIndex], CurveList[segmentIndex + 1], tempLen);
+
+
+            /*if (curveIndex == 0) {
                 tempLen += 1f;
                 tempLen /= 2;
             }
             if (curveIndex == CurveList.Count - 1) {
                 tempLen /= 2;
-            }
+            }*/
 
-            Vector2 point = CurveList[curveIndex].GetBezierValue(tempLen); 
+            
             //var unNormalizedPoint = new Vector2();
             //now we need to normalize the point to meters
-            point.X = (point.X - _minX) / PixelsPerMeter;
-            point.Y = (point.Y - _minY) / PixelsPerMeter;
+            //point.X = (point.X - _minX) / PixelsPerMeter;
+            //point.Y = (point.Y - _minY) / PixelsPerMeter;
 
             return point;
+        }
+
+        public Vector2 GetBezierValue(BezierCurve prevCurve, BezierCurve nextCurve, float t){
+            Vector2 retVal;
+
+            Bezier.GetBezierValue(
+                out retVal,
+                prevCurve.HandlePos,
+                prevCurve.NextHandlePos,
+                nextCurve.PrevHandlePos,
+                nextCurve.HandlePos,
+                t
+                );
+            return retVal;
         }
 
         public void Update() {

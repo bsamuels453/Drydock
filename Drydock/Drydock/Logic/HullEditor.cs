@@ -19,6 +19,8 @@ namespace Drydock.Logic {
 
             _sidepanel.ExternalHandleModifier = _toppanel.ModifyHandlePosition;
             _toppanel.ExternalHandleModifier = _sidepanel.ModifyHandlePosition;
+            _sidepanel.Update();
+            _toppanel.Update();
 
             _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves);
 

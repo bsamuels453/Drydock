@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Drydock.Render;
+using Drydock.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -15,6 +16,8 @@ namespace Drydock.Logic {
         private readonly int _bufferId;
         private readonly CurveControllerCollection _sideCurves;
         private readonly CurveControllerCollection _topCurves;
+        private readonly Button[] _buttons;
+        private readonly UIElementCollection _coll;
 
         public PreviewRenderer(CurveControllerCollection sideCurves, CurveControllerCollection topCurves){
             _verticies = new VertexPositionNormalTexture[_meshPrimitiveWidth * _meshPrimitiveWidth * 4];
@@ -48,6 +51,21 @@ namespace Drydock.Logic {
                 _indicies[i+5] = curVertex+3;
 
                 curVertex += 4;
+            }
+
+            _topCurves.GetParameterizedPoint(0, true);
+            var topPts = new Vector2[_meshPrimitiveWidth];
+            for (float i = 0; i < _meshPrimitiveWidth; i++){
+                float t = i / (_meshPrimitiveWidth-1);
+                topPts[(int)i] = _topCurves.GetParameterizedPoint(t);
+            }
+
+
+            _coll = new UIElementCollection();
+            _buttons = new Button[_meshPrimitiveWidth];
+            for (int i = 0; i < _buttons.Count(); i++){
+                _buttons[i] = _coll.Add<Button>(
+                    new Button(topPts[i].X, topPts[i].Y, 9, 9, DepthLevel.High, _coll, "box"));
             }
 
             AuxBufferManager.SetIndicies(_bufferId, _indicies);
