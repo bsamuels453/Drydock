@@ -13,7 +13,7 @@ namespace Drydock.Utilities{
     internal class BezierIntersect{
         private readonly List<BezierInfo> _curveinfo;
         private readonly int _resolution; //represents the number of halfing operations required to get a result with an accuracy of less than one pixel in the worst case
-
+        private readonly List<BoundCache> _boundCache;
 
         public BezierIntersect(List<BezierInfo> curveinfo) {
             _curveinfo = curveinfo;
@@ -31,61 +31,134 @@ namespace Drydock.Utilities{
                 powResult = (int) Math.Pow(2, pow);
             }
             _resolution = pow;
+
+            _boundCache = new List<BoundCache>(curveinfo.Count-1);
+            for (int i = 0; i < curveinfo.Count-1; i++){
+                _boundCache.Add( new BoundCache(0, 1, curveinfo[i].Pos, curveinfo[i + 1].Pos, 0));
+            }
         }
 
-        public Vector2 GetIntersectionFromX(float x){
+        public Vector2 GetIntersectionFromX(float x) {
             //we run on the assumption that t=0 is on the left, and t=1 is on the right
             //we also run on the assumption that the given controllers form a curve that passes the vertical line test
 
             //using the assumption of vertical line test and sorted controllers left->right, we can figure out which segment to check for intersection
             int curvesToUse=-1;
-            for (int i = 0; i < _curveinfo.Count - 1; i++){
-                if (x > _curveinfo[i].Pos.X && x < _curveinfo[i + 1].Pos.X){
+            for (int i = 0; i < _boundCache.Count; i++) {
+                if(_boundCache[i].Contains(x)){
                     curvesToUse = i;
                 }
             }
             if (curvesToUse == -1){
                 throw new Exception("Supplied X value is not contained within the bezier curve collection");
             }
-
-            var leftbound = new Pair<float, Vector2>();
-            var rightbound = new Pair<float, Vector2>();
-            leftbound.Val1 = 0;
-            rightbound.Val1 = 1;
-            GenerateBoundValues(leftbound, curvesToUse);
-            GenerateBoundValues(rightbound, curvesToUse);
-
-            int numRuns = 0;
-            while (numRuns++ <= _resolution){
-                float leftDist = Math.Abs(leftbound.Val2.X - x);
-                float rightDist = Math.Abs(rightbound.Val2.X - x);
-
-                if (leftDist > rightDist){ //adjust the leftbound
-                    leftbound.Val1 += (rightbound.Val1 - leftbound.Val1)/2;
+            //now we traverse the cache
+            BoundCache curCache = _boundCache[curvesToUse];
+            while (true){
+                if (curCache.LeftChild != null){
+                    if (curCache.LeftChild.Contains(x)){
+                        curCache = curCache.LeftChild;
+                        continue;
+                    }
                 }
-                else{ //adjust the rightbound
-                    rightbound.Val1 -= (rightbound.Val1 - leftbound.Val1)/2;
+                if (curCache.RightChild != null){
+                    if (curCache.RightChild.Contains(x)) {
+                        curCache = curCache.RightChild;
+                        continue;
+                    }
                 }
-                GenerateBoundValues(leftbound, curvesToUse);
-                GenerateBoundValues(rightbound, curvesToUse);
+                break;
             }
-            return (leftbound.Val2 + rightbound.Val2)/2;
+
+            //now continue until we get to dest
+            int numRuns = curCache.Depth;
+            while (numRuns++ <= _resolution){
+                float leftDist = Math.Abs(curCache.LeftVal.X - x);
+                float rightDist = Math.Abs(curCache.RightVal.X - x);
+
+                if (leftDist > rightDist){ //create a new rightchild
+                    //leftbound.Val1 += (rightbound.Val1 - leftbound.Val1)/2;
+                    float newLeftT = curCache.LeftT + (curCache.RightT - curCache.LeftT) / 2;
+                    curCache.RightChild = new BoundCache(
+                        newLeftT,
+                        curCache.RightT,
+                        GenerateBoundValue(newLeftT, curvesToUse),
+                        curCache.RightVal,
+                        curCache.Depth + 1
+                        );
+                    curCache = curCache.RightChild;
+                }
+                else{ //create a new leftchild
+                    //rightbound.Val1 -= (rightbound.Val1 - leftbound.Val1)/2;
+                    float newRightT = curCache.RightT - (curCache.RightT - curCache.LeftT) / 2;
+                    curCache.LeftChild = new BoundCache(
+                        curCache.LeftT,
+                        newRightT,
+                        curCache.LeftVal,
+                        GenerateBoundValue(newRightT, curvesToUse),
+                        curCache.Depth + 1
+                        );
+                    curCache = curCache.LeftChild;
+                }
+
+            }
+
+            return (curCache.LeftVal + curCache.RightVal) / 2;
         }
 
 
-        private void GenerateBoundValues(Pair<float, Vector2> bound, int curvesToUse){
+        private float GenerateBoundValueX(float t, int curvesToUse){
+            Vector2 v;
             Bezier.GetBezierValue(
-                out bound.Val2,
+                out v,
                 _curveinfo[curvesToUse].Pos,
                 _curveinfo[curvesToUse].NextControl,
                 _curveinfo[curvesToUse+1].PrevControl,
                 _curveinfo[curvesToUse+1].Pos,
-                bound.Val1
+                t
                 );
-
+            return v.X;
         }
 
+        private Vector2 GenerateBoundValue(float t, int curvesToUse) {
+            Vector2 v;
+            Bezier.GetBezierValue(
+                out v,
+                _curveinfo[curvesToUse].Pos,
+                _curveinfo[curvesToUse].NextControl,
+                _curveinfo[curvesToUse + 1].PrevControl,
+                _curveinfo[curvesToUse + 1].Pos,
+                t
+                );
+            return v;
+        }
 
+        private class BoundCache{
+            public readonly float LeftT;
+            public readonly float RightT;
+
+            public readonly Vector2 LeftVal;
+            public readonly Vector2 RightVal;
+
+            public BoundCache LeftChild;
+            public BoundCache RightChild;
+            public int Depth;
+
+            public BoundCache(float leftT, float rightT, Vector2 leftVal, Vector2 rightVal, int depth){
+                Depth = depth;
+                LeftT = leftT;
+                RightT = rightT;
+                LeftVal = leftVal;
+                RightVal = rightVal;
+            }
+
+            public bool Contains(float x){
+                if (x > LeftVal.X && x < RightVal.X){
+                    return true;
+                }
+                return false;
+            }
+        }
 
 
     }
