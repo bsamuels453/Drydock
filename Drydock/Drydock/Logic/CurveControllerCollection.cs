@@ -23,8 +23,8 @@ namespace Drydock.Logic{
         //method specific caching fields
         private double[] _lenList;
         private double _totalArcLen;
-        private double _minX;
-        private double _minY;
+        public double MinX;
+        public double MinY;
         //
 
         public CurveControllerCollection(string defaultConfig,FloatingRectangle areaToFill, UIElementCollection parentCollection = null){
@@ -99,22 +99,20 @@ namespace Drydock.Logic{
                     _lenList[i] = CurveList[i].GetNextArcLength() + CurveList[i + 1].GetPrevArcLength();
                     _totalArcLen += _lenList[i];
                 }
-                _minX = 9999999;
-                _minY = 9999999;
+                MinX = 9999999;
+                MinY = 9999999;
                 foreach (var curve in CurveList) {
-                    if (curve.HandlePos.X < _minX) {
-                        _minX = curve.HandlePos.X;
+                    if (curve.HandlePos.X < MinX) {
+                        MinX = curve.HandlePos.X;
                     }
-                    if (curve.HandlePos.Y < _minY) {
-                        _minY = curve.HandlePos.Y;
+                    if (curve.HandlePos.Y < MinY) {
+                        MinY = curve.HandlePos.Y;
                     }
                 }
             }
 
             double pointArcLen = _totalArcLen * t;
             double tempLen = pointArcLen;
-
-            Vector2 point = Vector2.Zero;
 
             //figure out which curve is going to contain point t
             int segmentIndex;
@@ -131,11 +129,11 @@ namespace Drydock.Logic{
                 segmentIndex--;
                 tempLen = 1;
             }
-            point = GetBezierValue(CurveList[segmentIndex], CurveList[segmentIndex + 1], tempLen);
+            Vector2 point = GetBezierValue(CurveList[segmentIndex], CurveList[segmentIndex + 1], tempLen);
 
             //now we need to normalize the point to meters
-            //point.X = (point.X - _minX) / PixelsPerMeter;
-            //point.Y = (point.Y - _minY) / PixelsPerMeter;
+            point.X =(float) (point.X - MinX) / PixelsPerMeter;
+            point.Y =(float) (point.Y - MinY) / PixelsPerMeter;
 
             return point;
         }

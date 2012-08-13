@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Drydock.Render;
@@ -12,18 +13,16 @@ namespace Drydock.Logic {
         private readonly Vector3[,] _mesh;
         private readonly VertexPositionNormalTexture[] _verticies;
         private readonly int[] _indicies;
-        private const int _meshPrimitiveWidth = 30;//this is in primitives
+        private const int _meshVertexWidth = 32;//this is in primitives
         private readonly int _bufferId;
         private readonly CurveControllerCollection _sideCurves;
         private readonly CurveControllerCollection _topCurves;
-        private readonly Button[] _buttons;
-        private readonly UIElementCollection _coll;
 
         public PreviewRenderer(CurveControllerCollection sideCurves, CurveControllerCollection topCurves){
-            _verticies = new VertexPositionNormalTexture[_meshPrimitiveWidth * _meshPrimitiveWidth * 4];
-            _indicies = new int[_meshPrimitiveWidth * _meshPrimitiveWidth * 6];// 6 indicies make up 2 triangles, can make this into triangle strip in future if have optimization boner
-            _bufferId = AuxBufferManager.AddVbo(_verticies.Count(), _indicies.Count(), (_meshPrimitiveWidth ) * (_meshPrimitiveWidth ) * 2, "brown");
-            _mesh = new Vector3[_meshPrimitiveWidth+1,_meshPrimitiveWidth+1];
+            _verticies = new VertexPositionNormalTexture[_meshVertexWidth * _meshVertexWidth * 4];
+            _indicies = new int[_meshVertexWidth * _meshVertexWidth * 6];// 6 indicies make up 2 triangles, can make this into triangle strip in future if have optimization boner
+            _bufferId = AuxBufferManager.AddVbo(_verticies.Count(), _indicies.Count(), (_meshVertexWidth ) * (_meshVertexWidth ) * 2, "brown");
+            _mesh = new Vector3[_meshVertexWidth+1,_meshVertexWidth+1];
 
             _sideCurves = sideCurves;
             _topCurves = topCurves;
@@ -54,19 +53,42 @@ namespace Drydock.Logic {
             }
 
             _sideCurves.GetParameterizedPoint(0, true);
-            var topPts = new Vector2[_meshPrimitiveWidth];
-            for (double i = 0; i < _meshPrimitiveWidth; i++){
-                double t = i / (_meshPrimitiveWidth-1);
-                topPts[(int)i] = _sideCurves.GetParameterizedPoint(t);
+            var sidePts = new Vector2[_meshVertexWidth*2];
+            for (double i = 0; i < _meshVertexWidth*2; i++){
+                double t = i / (_meshVertexWidth*2-1);
+                sidePts[(int)i] = _sideCurves.GetParameterizedPoint(t);
+            }
+
+            _topCurves.GetParameterizedPoint(0, true);
+            var topPts = new Vector2[_meshVertexWidth];
+            for (double i = 0; i < _meshVertexWidth; i++) {
+                double t = i / (_meshVertexWidth*2 - 1);
+                // ReSharper disable CompareOfFloatsByEqualityOperator
+                if (i == _meshVertexWidth - 1){//special exception to force a pointed tip
+                    t = 0.5d;
+                }
+                // ReSharper restore CompareOfFloatsByEqualityOperator
+                topPts[(int)i] = _topCurves.GetParameterizedPoint(t);
+            }
+            topPts = topPts.Reverse().ToArray();
+
+            float reflectionPoint = topPts[0].Y;
+
+            var yDelta = new float[_meshVertexWidth];
+
+            for (int i = 0; i < _meshVertexWidth; i++){
+                yDelta[i] = Math.Abs(topPts[i].Y - reflectionPoint) * 2 / _meshVertexWidth;
             }
 
 
-            _coll = new UIElementCollection();
-            _buttons = new Button[_meshPrimitiveWidth];
-            for (int i = 0; i < _buttons.Count(); i++){
-                _buttons[i] = _coll.Add<Button>(
-                    new Button(topPts[i].X, topPts[i].Y, 9, 9, DepthLevel.High, _coll, "box"));
+            for (int x = 0; x < _meshVertexWidth; x++){
+                for (int y = 0; y < _meshVertexWidth; y++){
+
+                }
             }
+
+
+
 
             AuxBufferManager.SetIndicies(_bufferId, _indicies);
         }
