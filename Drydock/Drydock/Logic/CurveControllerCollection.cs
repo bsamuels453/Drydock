@@ -153,6 +153,17 @@ namespace Drydock.Logic{
             return retVal;
         }
 
+        /// <summary>
+        /// converts a point from screen pixels to meters. 
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public Vector2 Normalize(Vector2 point){
+            point.X = (float)(point.X - MinX) / PixelsPerMeter;
+            point.Y = (float)(point.Y - MinY) / PixelsPerMeter;
+            return point;
+        }
+
         public void Update() {
             foreach (var curve in CurveList) {
                 curve.Update();

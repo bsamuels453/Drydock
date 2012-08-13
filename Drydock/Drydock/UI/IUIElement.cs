@@ -6,12 +6,18 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.UI{
-    internal interface IUIElement : IDrawable{
+
+    internal abstract class ComponentThing{
+        IUIComponent[] Components { get; set; }
+
+    }
+
+    internal interface IUIElement :  IDrawable{
         float Opacity { get; set; }
         float Depth { get; set; }
         string Texture { get; set; }
         int Identifier { get; }
-        IUIComponent[] Components { get; set; }
+        
         UIElementCollection Owner { get;  set; }
         TComponent GetComponent<TComponent>();
         bool DoesComponentExist<TComponent>();

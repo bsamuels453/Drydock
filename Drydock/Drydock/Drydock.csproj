@@ -200,6 +200,7 @@
     <Compile Include="Utilities\BezierIntersect.cs" />
     <Compile Include="Utilities\ConfigRetriever.cs" />
     <Compile Include="Utilities\FloatingRectangle.cs" />
+    <Compile Include="Utilities\Pair.cs" />
     <Compile Include="Utilities\Singleton.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Drydock.Render;
 using Drydock.UI;
+using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -70,16 +71,24 @@ namespace Drydock.Logic {
                 // ReSharper restore CompareOfFloatsByEqualityOperator
                 topPts[(int)i] = _topCurves.GetParameterizedPoint(t);
             }
+
             topPts = topPts.Reverse().ToArray();
-
             float reflectionPoint = topPts[0].Y;
-
             var yDelta = new float[_meshVertexWidth];
 
             for (int i = 0; i < _meshVertexWidth; i++){
                 yDelta[i] = Math.Abs(topPts[i].Y - reflectionPoint) * 2 / _meshVertexWidth;
             }
 
+            //orient controllers correctly for the bezierintersect
+            var li = _sideCurves.CurveList.Select(bezierCurve => new BezierInfo(
+                _sideCurves.Normalize(bezierCurve.HandlePos),
+                _sideCurves.Normalize(bezierCurve.PrevHandlePos),
+                _sideCurves.Normalize(bezierCurve.NextHandlePos))).ToList();
+
+            var intersect = new BezierIntersect(li);
+
+            Vector2 v = intersect.GetIntersectionFromX(280);
 
             for (int x = 0; x < _meshVertexWidth; x++){
                 for (int y = 0; y < _meshVertexWidth; y++){
