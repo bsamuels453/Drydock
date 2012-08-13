@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Drydock.Render;
@@ -38,12 +39,12 @@ namespace Drydock.Control {
             _mousePos = new ScreenText(0, 0, "not init");
         }
 
-        public static void Update(){
-            UpdateMouse();
-            UpdateKeyboard();
+        public static void Update(Renderer renderer){
+            UpdateMouse(renderer);
+            UpdateKeyboard(renderer);
         }
 
-        private static void UpdateMouse(){
+        private static void UpdateMouse(Renderer renderer){
             MouseState newState = Mouse.GetState();
             if (newState.LeftButton != _prevMouseState.LeftButton ||
                 newState.RightButton != _prevMouseState.RightButton ||
@@ -82,18 +83,30 @@ namespace Drydock.Control {
 
             if (newState.X != _prevMouseState.X ||
                 newState.Y != _prevMouseState.Y){
-                    _mousePos.EditText("X:" + newState.X + " Y:" + newState.Y);
+                _mousePos.EditText("X:" + newState.X + " Y:" + newState.Y);
                 //dispatch onmovement
-                    foreach (var subscriber in EventSubscribers) {
+                foreach (var subscriber in EventSubscribers){
                     if (subscriber.OnMouseMovement(newState) == InterruptState.InterruptEventDispatch){
                         break;
                     }
                 }
+                int dx = newState.X - _prevMouseState.X;
+                int dy = newState.Y - _prevMouseState.Y;
+
+                //now apply viewport changes
+                renderer.ViewportYaw -= dx*0.005f;
+                if (
+                    (renderer.ViewportPitch - dy*0.005f) < 1.55 &&
+                    (renderer.ViewportPitch - dy*0.005f) > -1.55){
+                    renderer.ViewportPitch -= dy*0.005f;
+                }
+
+
             }
             _prevMouseState = newState;
         }
 
-        private static void UpdateKeyboard(){
+        private static void UpdateKeyboard(Renderer renderer){
             var state = Keyboard.GetState();
             if (state != _prevKeyboardState){
                 foreach (var subscriber in EventSubscribers) {
@@ -102,6 +115,27 @@ namespace Drydock.Control {
                     }
                 }
             }
+            float movementspeed = 1f;
+            if (state.IsKeyDown(Keys.W)) {
+                renderer.ViewportPosition.X = renderer.ViewportPosition.X + (float)Math.Sin(renderer.ViewportYaw) * (float)Math.Cos(renderer.ViewportPitch) * movementspeed;
+                renderer.ViewportPosition.Y = renderer.ViewportPosition.Y + (float)Math.Sin(renderer.ViewportPitch) * movementspeed;
+                renderer.ViewportPosition.Z = renderer.ViewportPosition.Z + (float)Math.Cos(renderer.ViewportYaw) * (float)Math.Cos(renderer.ViewportPitch) * movementspeed;
+            }
+            if (state.IsKeyDown(Keys.S)) {
+                renderer.ViewportPosition.X = renderer.ViewportPosition.X - (float)Math.Sin(renderer.ViewportYaw) * (float)Math.Cos(renderer.ViewportPitch) * movementspeed;
+                renderer.ViewportPosition.Y = renderer.ViewportPosition.Y - (float)Math.Sin(renderer.ViewportPitch) * movementspeed;
+                renderer.ViewportPosition.Z = renderer.ViewportPosition.Z - (float)Math.Cos(renderer.ViewportYaw) * (float)Math.Cos(renderer.ViewportPitch) * movementspeed;
+            }
+            if (state.IsKeyDown(Keys.A)) {
+                renderer.ViewportPosition.X = renderer.ViewportPosition.X + (float)Math.Sin(renderer.ViewportYaw + 3.14159f / 2) * movementspeed;
+                renderer.ViewportPosition.Z = renderer.ViewportPosition.Z + (float)Math.Cos(renderer.ViewportYaw + 3.14159f / 2) * movementspeed;
+            }
+
+            if (state.IsKeyDown(Keys.D)) {
+                renderer.ViewportPosition.X = renderer.ViewportPosition.X - (float)Math.Sin(renderer.ViewportYaw + 3.14159f / 2) * movementspeed;
+                renderer.ViewportPosition.Z = renderer.ViewportPosition.Z - (float)Math.Cos(renderer.ViewportYaw + 3.14159f / 2) * movementspeed;
+            }
+
             _prevKeyboardState = state;
         }
     }

@@ -43,6 +43,10 @@ namespace Drydock.Utilities{
             //we also run on the assumption that the given controllers form a curve that passes the vertical line test
 
             //using the assumption of vertical line test and sorted controllers left->right, we can figure out which segment to check for intersection
+
+            x = (float)Math.Round(x, 4);
+
+
             int curvesToUse=-1;
             for (int i = 0; i < _boundCache.Count; i++) {
                 if(_boundCache[i].Contains(x)){
@@ -153,7 +157,7 @@ namespace Drydock.Utilities{
             }
 
             public bool Contains(float x){
-                if (x > LeftVal.X && x < RightVal.X){
+                if (x >= LeftVal.X && x <= RightVal.X){
                     return true;
                 }
                 return false;

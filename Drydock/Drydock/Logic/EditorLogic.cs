@@ -21,7 +21,7 @@ namespace Drydock.Logic{
             //160,000 microsecond budget
             _e.Update();
             //4,000 microseconds
-            InputEventDispatcher.Update();
+           
             UIContext.Update();
 
         }

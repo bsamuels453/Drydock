@@ -53,6 +53,11 @@ namespace Drydock.Logic {
                 curVertex += 4;
             }
 
+            for(int i=0; i<_verticies.Count(); i++){
+                _verticies[i] = new VertexPositionNormalTexture();
+            }
+
+
             _sideCurves.GetParameterizedPoint(0, true);
             var sidePts = new Vector2[_meshVertexWidth*2];
             for (double i = 0; i < _meshVertexWidth*2; i++){
@@ -88,18 +93,43 @@ namespace Drydock.Logic {
 
             var intersect = new BezierIntersect(li);
 
-            Vector2 v = intersect.GetIntersectionFromX(280);
-
             for (int x = 0; x < _meshVertexWidth; x++){
-                for (int y = 0; y < _meshVertexWidth; y++){
-
+                for (int z = 0; z < _meshVertexWidth; z++){
+                    _mesh[x, z] = new Vector3(topPts[x].X, intersect.GetIntersectionFromX(topPts[x].X).Y, topPts[x].Y + yDelta[x]*z);
                 }
             }
 
 
+            //convert from 2d array to 1d
+            int index = 0;
+            for(int x=0; x<_meshVertexWidth-1; x++){
+                for (int z = 0; z < _meshVertexWidth-1; z++){
+                    _verticies[index].Normal = Vector3.Zero;
+                    _verticies[index].Position = -_mesh[x, z];
+                    _verticies[index].TextureCoordinate = new Vector2(0, 0);//make  this assigned during init
 
+                    _verticies[index+1].Normal = Vector3.Zero;
+                    _verticies[index+1].Position = -_mesh[x, z+1];
+                    _verticies[index+1].TextureCoordinate = new Vector2(0, 1);
 
+                    _verticies[index+2].Normal = Vector3.Zero;
+                    _verticies[index+2].Position = -_mesh[x+1, z+1];
+                    _verticies[index+2].TextureCoordinate = new Vector2(1, 1);
+
+                    _verticies[index+3].Normal = Vector3.Zero;
+                    _verticies[index+3].Position = -_mesh[x+1, z];
+                    _verticies[index+3].TextureCoordinate = new Vector2(1, 0);
+
+                    index+=4;
+                }
+            }
+            var sw = new Stopwatch();
+            sw.Start();
             AuxBufferManager.SetIndicies(_bufferId, _indicies);
+            AuxBufferManager.SetVerticies(_bufferId, _verticies);
+            sw.Stop();
+            System.Console.WriteLine("time:" + sw.Elapsed.TotalMilliseconds * 1000000);
+
         }
 
         public void Update() {

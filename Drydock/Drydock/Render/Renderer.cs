@@ -23,15 +23,15 @@ namespace Drydock.Render{
             ScreenText.Init(content);
             Device = device;
 
-            ViewportPitch = 0;
-            ViewportPosition = new Vector3(0, 10, 0);
-            ViewportYaw = 0;
+            ViewportPitch = -0.7f;
+            ViewportPosition = new Vector3(-206, 83, 192);
+            ViewportYaw = -3.2f;
             AspectRatio = Device.Viewport.Bounds.Width/(float) Device.Viewport.Bounds.Height;
             _projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
                 fieldOfView: 3.14f/4,
                 aspectRatio: AspectRatio,
                 nearPlaneDistance: 0.1f,
-                farPlaneDistance: 500
+                farPlaneDistance: 5000
                 );
 
             _environmentBatch = new EnvironmentBatch(device, content, _projectionMatrix);
@@ -53,7 +53,7 @@ namespace Drydock.Render{
             _environmentBatch.Draw(Device, view);
 
             Line2D.Draw();
-            Sprite2D.Draw();
+            //Sprite2D.Draw();
             _textBatch.Draw();
             AuxBufferManager.Draw(view);
         }

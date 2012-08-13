@@ -1,6 +1,7 @@
 #region
 
 using System.Threading;
+using Drydock.Control;
 using Drydock.Logic;
 using Drydock.Render;
 using Drydock.Utilities;
@@ -51,6 +52,7 @@ namespace Drydock{
 
         protected override void Update(GameTime gameTime){
             _editorLogic.Update();
+            InputEventDispatcher.Update(_renderer);
             Thread.Sleep(10);
 
             base.Update(gameTime);

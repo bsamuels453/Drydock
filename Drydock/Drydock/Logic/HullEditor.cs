@@ -15,7 +15,7 @@ namespace Drydock.Logic {
 
             _sidepanel = new HullEditorPanel(CurveType.Side,  0, 0, ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "side.xml");
             _toppanel = new HullEditorPanel(CurveType.Top,  0, ScreenData.GetScreenValueY(0.5f), ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "top.xml");
-            //_backpanel = new HullEditorPanel(this, ScreenData.GetScreenValueX(0.5f), 0, ScreenData.GetScreenValueX(0.25f), ScreenData.GetScreenValueY(0.5f), "back.xml");
+            ////_backpanel = new HullEditorPanel(this, ScreenData.GetScreenValueX(0.5f), 0, ScreenData.GetScreenValueX(0.25f), ScreenData.GetScreenValueY(0.5f), "back.xml");
 
             _sidepanel.ExternalHandleModifier = _toppanel.ModifyHandlePosition;
             _toppanel.ExternalHandleModifier = _sidepanel.ModifyHandlePosition;

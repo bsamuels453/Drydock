@@ -13,6 +13,7 @@ namespace Drydock.Render {
         private static readonly int[] _numTriangles;
         private static readonly Texture2D[] _textures;
         private static readonly DepthStencilState _depthStencil;
+        private static readonly RasterizerState _rasterizer;
         private static readonly bool[] _isFrameOccupied;
         private static readonly Effect _effect;
         private static GraphicsDevice _device;
@@ -38,14 +39,15 @@ namespace Drydock.Render {
                 _isFrameOccupied[i] = false;
             }
 
+            _rasterizer = new RasterizerState();
+            _rasterizer.CullMode = CullMode.None;
         }
 
         public static void Init(GraphicsDevice device, Matrix projectionMatrix){
             _device = device;
             _effect.Parameters["Projection"].SetValue(projectionMatrix);
             _effect.Parameters["World"].SetValue(Matrix.Identity);
-            _effect.Parameters["AmbientColor"].SetValue(new Vector4(0f, 0f, 0f, 1f));
-            _effect.Parameters["AmbientIntensity"].SetValue(0.1f);
+            _effect.Parameters["AmbientIntensity"].SetValue(1f);
             _effect.Parameters["AmbientColor"].SetValue(new Vector4(1, 1, 1, 1));
         }
 
@@ -94,6 +96,7 @@ namespace Drydock.Render {
 
         public static void Draw(Matrix view) {
             _device.DepthStencilState = _depthStencil;
+            _device.RasterizerState = _rasterizer;
             _effect.Parameters["View"].SetValue(view);
             for (int i = 0; i < _maxVbos; i++){
                 if (_isFrameOccupied[i]){
