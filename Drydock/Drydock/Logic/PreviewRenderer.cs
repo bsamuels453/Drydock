@@ -12,7 +12,7 @@ namespace Drydock.Logic {
         private readonly Vector3[,] _mesh;
         private readonly VertexPositionNormalTexture[] _verticies;
         private readonly int[] _indicies;
-        private const int _meshPrimitiveWidth = 20;//this is in primitives
+        private const int _meshPrimitiveWidth = 30;//this is in primitives
         private readonly int _bufferId;
         private readonly CurveControllerCollection _sideCurves;
         private readonly CurveControllerCollection _topCurves;
@@ -53,11 +53,11 @@ namespace Drydock.Logic {
                 curVertex += 4;
             }
 
-            _topCurves.GetParameterizedPoint(0, true);
+            _sideCurves.GetParameterizedPoint(0, true);
             var topPts = new Vector2[_meshPrimitiveWidth];
-            for (float i = 0; i < _meshPrimitiveWidth; i++){
-                float t = i / (_meshPrimitiveWidth-1);
-                topPts[(int)i] = _topCurves.GetParameterizedPoint(t);
+            for (double i = 0; i < _meshPrimitiveWidth; i++){
+                double t = i / (_meshPrimitiveWidth-1);
+                topPts[(int)i] = _sideCurves.GetParameterizedPoint(t);
             }
 
 
