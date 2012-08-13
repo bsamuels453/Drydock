@@ -1,4 +1,5 @@
-﻿using Drydock.Control;
+﻿using System.Diagnostics;
+using Drydock.Control;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -32,12 +33,6 @@ namespace Drydock.Logic {
         public void Update(){
             _sidepanel.Update();
             _toppanel.Update();
-
-            Vector2 v;
-
-            v = _toppanel.Curves.GetParameterizedPoint(0.5f);
-
-            int f = 5;
             //_backpanel.Update();
         }
 

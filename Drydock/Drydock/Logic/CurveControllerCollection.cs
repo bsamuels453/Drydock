@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 using Drydock.Control;
@@ -18,6 +19,13 @@ namespace Drydock.Logic{
         public readonly List<BezierCurve> CurveList;
         public readonly UIElementCollection ElementCollection;
         public readonly float PixelsPerMeter;
+
+        //method specific caching fields
+        private float[] _lenList;
+        private float _totalArcLen;
+        private float _minX;
+        private float _minY;
+        //
 
         public CurveControllerCollection(string defaultConfig,FloatingRectangle areaToFill, UIElementCollection parentCollection = null){
             InputEventDispatcher.EventSubscribers.Add(this);
@@ -80,25 +88,39 @@ namespace Drydock.Logic{
         /// Returns the point on the curve associated with the parameter t
         /// </summary>
         /// <param name="t">range from 0-1f</param>
+        /// <param name="regenerateMethodCache"> </param>
         /// <returns></returns>
-        public Vector2 GetParameterizedPoint(float t){
-            var lenList = new float[CurveList.Count];
-            float totalArcLen = 0;
-            for (int i = 0; i < lenList.Count(); i++){
-                lenList[i] = CurveList[i].GetArcLength();
-                totalArcLen += lenList[i];
+        public Vector2 GetParameterizedPoint(float t, bool regenerateMethodCache = false){
+
+            if (regenerateMethodCache){
+                _lenList = new float[CurveList.Count];
+                _totalArcLen = 0;
+                for (int i = 0; i < _lenList.Count(); i++) {
+                    _lenList[i] = CurveList[i].GetArcLength();
+                    _totalArcLen += _lenList[i];
+                }
+                _minX = 9999999;
+                _minY = 9999999;
+                foreach (var curve in CurveList) {
+                    if (curve.HandlePos.X < _minX) {
+                        _minX = curve.HandlePos.X;
+                    }
+                    if (curve.HandlePos.Y < _minY) {
+                        _minY = curve.HandlePos.Y;
+                    }
+                }
             }
 
-            float pointArcLen = totalArcLen * t;
+            float pointArcLen = _totalArcLen * t;
             float tempLen = pointArcLen;
 
             //figure out which curve is going to contain point t
-            int curveIndex = 0;
-            for (curveIndex = 0; curveIndex < lenList.Count(); curveIndex++) {
-                tempLen -= lenList[curveIndex];
+            int curveIndex;
+            for (curveIndex = 0; curveIndex < CurveList.Count; curveIndex++) {
+                tempLen -= _lenList[curveIndex];
                 if ((int)tempLen <= 0) {
-                    tempLen += lenList[curveIndex];
-                    tempLen /= lenList[curveIndex];//this turns tempLen into a t(0-1)
+                    tempLen += _lenList[curveIndex];
+                    tempLen /= _lenList[curveIndex];//this turns tempLen into a t(0-1)
                     break;
                 }
             }
@@ -106,28 +128,17 @@ namespace Drydock.Logic{
                 tempLen += 1f;
                 tempLen /= 2;
             }
-            if (curveIndex == lenList.Count() - 1) {
+            if (curveIndex == CurveList.Count - 1) {
                 tempLen /= 2;
             }
 
-            Vector2 unNormalizedPoint = CurveList[curveIndex].GetBezierValue(tempLen); 
+            Vector2 point = CurveList[curveIndex].GetBezierValue(tempLen); 
             //var unNormalizedPoint = new Vector2();
             //now we need to normalize the point to meters
-            float  minX = 9999999, minY = 9999999;
-            foreach (var curve in CurveList) {
-                if (curve.HandlePos.X < minX) {
-                    minX = curve.HandlePos.X;
-                }
-                if (curve.HandlePos.Y < minY) {
-                    minY = curve.HandlePos.Y;
-                }
-            }
+            point.X = (point.X - _minX) / PixelsPerMeter;
+            point.Y = (point.Y - _minY) / PixelsPerMeter;
 
-            var normalizedPoint = new Vector2();
-            normalizedPoint.X = (unNormalizedPoint.X - minX) / PixelsPerMeter;
-            normalizedPoint.Y = (unNormalizedPoint.Y - minY) / PixelsPerMeter;
-
-            return normalizedPoint;
+            return point;
         }
 
         public void Update() {
