@@ -115,7 +115,7 @@ namespace Drydock.Control {
                     }
                 }
             }
-            float movementspeed = 1f;
+            float movementspeed = 2f;
             if (state.IsKeyDown(Keys.W)) {
                 renderer.ViewportPosition.X = renderer.ViewportPosition.X + (float)Math.Sin(renderer.ViewportYaw) * (float)Math.Cos(renderer.ViewportPitch) * movementspeed;
                 renderer.ViewportPosition.Y = renderer.ViewportPosition.Y + (float)Math.Sin(renderer.ViewportPitch) * movementspeed;

@@ -44,7 +44,12 @@ namespace Drydock.Utilities{
 
             //using the assumption of vertical line test and sorted controllers left->right, we can figure out which segment to check for intersection
 
-            x = (float)Math.Round(x, 4);
+            if (x <= 0){
+                x = 0.000001f;
+            }
+            if (x >= _boundCache[_boundCache.Count - 1].RightVal.X){
+                x = _boundCache[_boundCache.Count - 1].RightVal.X - 0.000001f;
+            }
 
 
             int curvesToUse=-1;
@@ -58,7 +63,7 @@ namespace Drydock.Utilities{
             }
             //now we traverse the cache
             BoundCache curCache = _boundCache[curvesToUse];
-            while (true){
+            /*while (true){
                 if (curCache.LeftChild != null){
                     if (curCache.LeftChild.Contains(x)){
                         curCache = curCache.LeftChild;
@@ -72,17 +77,18 @@ namespace Drydock.Utilities{
                     }
                 }
                 break;
-            }
+            }*/
 
             //now continue until we get to dest
             int numRuns = curCache.Depth;
             while (numRuns++ <= _resolution){
-                float leftDist = Math.Abs(curCache.LeftVal.X - x);
-                float rightDist = Math.Abs(curCache.RightVal.X - x);
 
-                if (leftDist > rightDist){ //create a new rightchild
+                Vector2 v = GenerateBoundValue((curCache.RightT + curCache.LeftT) / 2, curvesToUse);
+
+                if (x > v.X) { //create a new rightchild
                     //leftbound.Val1 += (rightbound.Val1 - leftbound.Val1)/2;
                     float newLeftT = curCache.LeftT + (curCache.RightT - curCache.LeftT) / 2;
+
                     curCache.RightChild = new BoundCache(
                         newLeftT,
                         curCache.RightT,
@@ -95,6 +101,7 @@ namespace Drydock.Utilities{
                 else{ //create a new leftchild
                     //rightbound.Val1 -= (rightbound.Val1 - leftbound.Val1)/2;
                     float newRightT = curCache.RightT - (curCache.RightT - curCache.LeftT) / 2;
+
                     curCache.LeftChild = new BoundCache(
                         curCache.LeftT,
                         newRightT,
@@ -146,7 +153,7 @@ namespace Drydock.Utilities{
 
             public BoundCache LeftChild;
             public BoundCache RightChild;
-            public int Depth;
+            public readonly int Depth;
 
             public BoundCache(float leftT, float rightT, Vector2 leftVal, Vector2 rightVal, int depth){
                 Depth = depth;

@@ -23,9 +23,9 @@ namespace Drydock.Render{
             ScreenText.Init(content);
             Device = device;
 
-            ViewportPitch = -0.7f;
-            ViewportPosition = new Vector3(-206, 83, 192);
-            ViewportYaw = -3.2f;
+            ViewportPitch = -0.5f;
+            ViewportPosition = new Vector3(-176, 50, -319);
+            ViewportYaw = -6.4f;
             AspectRatio = Device.Viewport.Bounds.Width/(float) Device.Viewport.Bounds.Height;
             _projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
                 fieldOfView: 3.14f/4,

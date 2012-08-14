@@ -92,11 +92,15 @@ namespace Drydock.Logic {
                 _sideCurves.Normalize(bezierCurve.NextHandlePos))).ToList();
 
             var intersect = new BezierIntersect(li);
-
+            float ya;
+            float prevy;
             for (int x = 0; x < _meshVertexWidth; x++){
+                float y = intersect.GetIntersectionFromX(topPts[x].X).Y;
+                ya = y;
                 for (int z = 0; z < _meshVertexWidth; z++){
-                    _mesh[x, z] = new Vector3(topPts[x].X, intersect.GetIntersectionFromX(topPts[x].X).Y, topPts[x].Y + yDelta[x]*z);
+                    _mesh[x, z] = new Vector3(topPts[x].X, y, topPts[x].Y + yDelta[x]*z);
                 }
+                prevy = y;
             }
 
 
