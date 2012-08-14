@@ -23,7 +23,7 @@ namespace Drydock.Logic {
             _verticies = new VertexPositionNormalTexture[_meshVertexWidth * _meshVertexWidth * 4];
             _indicies = new int[_meshVertexWidth * _meshVertexWidth * 6];// 6 indicies make up 2 triangles, can make this into triangle strip in future if have optimization boner
             _bufferId = AuxBufferManager.AddVbo(_verticies.Count(), _indicies.Count(), (_meshVertexWidth ) * (_meshVertexWidth ) * 2, "brown");
-            _mesh = new Vector3[_meshVertexWidth+1,_meshVertexWidth+1];
+            _mesh = new Vector3[_meshVertexWidth,_meshVertexWidth];
 
             _sideCurves = sideCurves;
             _topCurves = topCurves;
@@ -57,18 +57,10 @@ namespace Drydock.Logic {
                 _verticies[i] = new VertexPositionNormalTexture();
             }
 
-
-            _sideCurves.GetParameterizedPoint(0, true);
-            var sidePts = new Vector2[_meshVertexWidth*2];
-            for (double i = 0; i < _meshVertexWidth*2; i++){
-                double t = i / (_meshVertexWidth*2-1);
-                sidePts[(int)i] = _sideCurves.GetParameterizedPoint(t);
-            }
-
             _topCurves.GetParameterizedPoint(0, true);
             var topPts = new Vector2[_meshVertexWidth];
             for (double i = 0; i < _meshVertexWidth; i++) {
-                double t = i / (_meshVertexWidth*2 - 1);
+                double t = i / ((_meshVertexWidth-1)*2);
                 // ReSharper disable CompareOfFloatsByEqualityOperator
                 if (i == _meshVertexWidth - 1){//special exception to force a pointed tip
                     t = 0.5d;
@@ -85,22 +77,27 @@ namespace Drydock.Logic {
                 yDelta[i] = Math.Abs(topPts[i].Y - reflectionPoint) * 2 / _meshVertexWidth;
             }
 
+
+            sideCurves.GetParameterizedPoint(0, true);//this refreshes internal fields
             //orient controllers correctly for the bezierintersect
             var li = _sideCurves.CurveList.Select(bezierCurve => new BezierInfo(
                 _sideCurves.Normalize(bezierCurve.HandlePos),
                 _sideCurves.Normalize(bezierCurve.PrevHandlePos),
                 _sideCurves.Normalize(bezierCurve.NextHandlePos))).ToList();
 
+            
+
             var intersect = new BezierIntersect(li);
-            float ya;
-            float prevy;
+            float h = intersect.GetIntersectionFromX(topPts[topPts.Count() - 1].X).Y;
+
+
+
             for (int x = 0; x < _meshVertexWidth; x++){
+
                 float y = intersect.GetIntersectionFromX(topPts[x].X).Y;
-                ya = y;
                 for (int z = 0; z < _meshVertexWidth; z++){
                     _mesh[x, z] = new Vector3(topPts[x].X, y, topPts[x].Y + yDelta[x]*z);
                 }
-                prevy = y;
             }
 
 
