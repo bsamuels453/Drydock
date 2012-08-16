@@ -23,12 +23,15 @@ namespace Drydock.Logic{
         public readonly UIElementCollection ElementCollection;
         public readonly float PixelsPerMeter;
 
-        //method specific caching fields, these will NOT be up to date unless GetParameterizedPoint is called where regenerateMethodCache is true
         private double[] _lenList;
         private double _totalArcLen;
+
         public double MinX;
         public double MinY;
-        //
+        public double MaxX;
+        public double MaxY;
+
+        public BezierCurve MaxYCurve;
 
         #endregion
 
@@ -106,16 +109,6 @@ namespace Drydock.Logic{
                     _lenList[i] = _curveList[i].GetNextArcLength() + _curveList[i + 1].GetPrevArcLength();
                     _totalArcLen += _lenList[i];
                 }
-                MinX = 9999999;
-                MinY = 9999999;
-                foreach (var curve in _curveList){
-                    if (curve.CenterHandlePos.X < MinX){
-                        MinX = curve.CenterHandlePos.X;
-                    }
-                    if (curve.CenterHandlePos.Y < MinY){
-                        MinY = curve.CenterHandlePos.Y;
-                    }
-                }
             }
 
             double pointArcLen = _totalArcLen*t;
@@ -171,12 +164,67 @@ namespace Drydock.Logic{
             return point;
         }
 
+        public double NormalizeY(double y){
+            return (y - MinY) / PixelsPerMeter;
+        }
+        public double NormalizeX(double x) {
+            return (x - MinX) / PixelsPerMeter;
+        }
+
         #endregion
 
         public void Update(){
             foreach (var curve in _curveList){
                 curve.Update();
             }
+            MinX = _curveList[0].CenterHandlePos.X;
+            MinY = _curveList[0].CenterHandlePos.Y;
+            MaxX = 0;
+            MaxY = 0;
+            MaxYCurve = _curveList[0];
+            foreach (var curve in _curveList) {
+                if (curve.CenterHandlePos.X < MinX) {
+                    MinX = curve.CenterHandlePos.X;
+                }
+                if (curve.CenterHandlePos.Y < MinY) {
+                    MinY = curve.CenterHandlePos.Y;
+                }
+                if (curve.CenterHandlePos.X > MaxX) {
+                    MaxX = curve.CenterHandlePos.X;
+                }
+                if (curve.CenterHandlePos.Y > MaxY) {
+                    MaxY = curve.CenterHandlePos.Y;
+                    MaxYCurve = curve;
+                }
+            }
+        }
+
+        public List<BezierInfo> GetControllerInfo(float scaleX = 1, float scaleY=1){
+            var li = new List<BezierInfo>(_curveList.Count/2+1);
+            /*li.Add(new BezierInfo(
+                       pos: new Vector2((float) NormalizeX(_curveList[0].CenterHandlePos.X)*scale, (float) NormalizeY(_curveList[0].CenterHandlePos.Y)*scale),
+                       prev: new Vector2((float)NormalizeX(_curveList[0].PrevHandlePos.X) * scale, (float)NormalizeY(_curveList[0].PrevHandlePos.Y)*scale),
+                       next: new Vector2((float)NormalizeX(_curveList[0].NextHandlePos.X) * scale, (float)NormalizeY(_curveList[0].NextHandlePos.Y)*scale)
+                       )
+                );*/
+            for (int i = 0; i < _curveList.Count; i++){
+                li.Add(
+                    new BezierInfo(
+                        pos: new Vector2((float) NormalizeX(_curveList[i].CenterHandlePos.X)*scaleX, (float) NormalizeY(_curveList[i].CenterHandlePos.Y)*scaleY),
+                        prev: new Vector2((float) NormalizeX(_curveList[i].PrevHandlePos.X)*scaleX, (float) NormalizeY(_curveList[i].PrevHandlePos.Y)*scaleY),
+                        next: new Vector2((float) NormalizeX(_curveList[i].NextHandlePos.X)*scaleX, (float) NormalizeY(_curveList[i].NextHandlePos.Y)*scaleY)
+                        )
+                    );
+            }
+            /*
+            li.Add(new BezierInfo(
+                       pos: new Vector2((float) NormalizeX(_curveList[Count - 1].CenterHandlePos.X)*scale, (float) NormalizeY(_curveList[Count - 1].CenterHandlePos.Y)*scale),
+                       prev: new Vector2((float)NormalizeX(_curveList[Count - 1].PrevHandlePos.X) * scale, (float)NormalizeY(_curveList[Count - 1].PrevHandlePos.Y)*scale),
+                       next: new Vector2((float)NormalizeX(_curveList[Count - 1].NextHandlePos.X) * scale, (float)NormalizeY(_curveList[Count - 1].NextHandlePos.Y)*scale)
+                       )
+                );*/
+            //li.Reverse();
+            return li;
         }
 
         #region ienumerable members + accessors

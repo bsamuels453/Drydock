@@ -32,7 +32,7 @@ namespace Drydock.Logic {
             _toppanel.Update();
             _backpanel.Update();
 
-            _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves);
+            _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves, _backpanel.Curves);
 
             InputEventDispatcher.EventSubscribers.Add(this);
         

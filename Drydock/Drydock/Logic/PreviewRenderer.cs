@@ -18,8 +18,9 @@ namespace Drydock.Logic {
         private readonly int _bufferId;
         private readonly BezierCurveCollection _sideCurves;
         private readonly BezierCurveCollection _topCurves;
+        private readonly BezierCurveCollection _backCurves;
 
-        public PreviewRenderer(BezierCurveCollection sideCurves, BezierCurveCollection topCurves){
+        public PreviewRenderer(BezierCurveCollection sideCurves, BezierCurveCollection topCurves, BezierCurveCollection backCurves){
             _verticies = new VertexPositionNormalTexture[_meshVertexWidth * _meshVertexWidth * 4];
             _indicies = new int[_meshVertexWidth * _meshVertexWidth * 6];// 6 indicies make up 2 triangles, can make this into triangle strip in future if have optimization boner
             _bufferId = AuxBufferManager.AddVbo(_verticies.Count(), _indicies.Count(), (_meshVertexWidth ) * (_meshVertexWidth ) * 2, "brown");
@@ -27,6 +28,7 @@ namespace Drydock.Logic {
 
             _sideCurves = sideCurves;
             _topCurves = topCurves;
+            _backCurves = backCurves;
 
             //construct indice list
             //remember the clockwise-fu
@@ -89,21 +91,41 @@ namespace Drydock.Logic {
 
             
 
-            var sideIntersectCache = new BezierIntersect(li);
-            float h = sideIntersectCache.GetIntersectionFromX(topPts[topPts.Count() - 1].X).Y;
+            var sideIntersectGenerator = new BezierIntersect(li);
 
-
+            var sideIntersectionCache = new float[_meshVertexWidth];
 
             for (int x = 0; x < _meshVertexWidth; x++){
 
-                float y = sideIntersectCache.GetIntersectionFromX(topPts[x].X).Y;
-                for (int z = 0; z < _meshVertexWidth; z++){
+                float y = sideIntersectGenerator.GetIntersectionFromX(topPts[x].X).Y;
+                sideIntersectionCache[x] = y;
+                /*for (int z = 0; z < _meshVertexWidth; z++){
                     _mesh[x, z] = new Vector3(topPts[x].X, y, topPts[x].Y + yDelta[x]*z);
-                }
+                }*/
             }
 
-            BezierIntersect crossIntersectCache;
+            var maxY = (float)_backCurves.NormalizeY(_backCurves.MaxY);
+            var backCurvesMaxWidth = (float)(_backCurves.NormalizeX(_backCurves[_backCurves.Count - 1].CenterHandlePos.X) - _backCurves.NormalizeX(_backCurves[0].CenterHandlePos.X));
+            //topPts = topPts.Reverse().ToArray();
 
+            for (int x = 0; x < _meshVertexWidth; x++){
+
+                float scaleX = ((reflectionPoint - topPts[x].Y) * 2) / backCurvesMaxWidth;
+                float scaleY = sideIntersectionCache[x]/ maxY;
+                
+                var bezierInfo = _backCurves.GetControllerInfo(scaleX, scaleY);
+                var crossIntersectGenerator = new BezierIntersect(bezierInfo);
+
+                for (int z = 0; z < _meshVertexWidth; z++) {
+                    if (z > _meshVertexWidth / 2 && x != 0){
+                        int g = 5;
+                    }
+                    Vector2 pos = crossIntersectGenerator.GetIntersectionFromX(yDelta[x] * (z));
+                    _mesh[x, z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x] * (z));
+                    //_mesh[x, _meshVertexWidth-1-z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x] * (z));
+                }
+
+            }
 
 
 

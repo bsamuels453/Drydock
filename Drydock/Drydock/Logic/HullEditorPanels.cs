@@ -23,9 +23,9 @@ namespace Drydock.Logic {
 
     #region abstract panel class
     internal abstract class HullEditorPanel{
+        public readonly BezierCurveCollection Curves;
         protected readonly Button Background;
         protected readonly FloatingRectangle BoundingBox;
-        public readonly BezierCurveCollection Curves;
         protected readonly UIElementCollection ElementCollection;
 
         protected HullEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration){
@@ -68,19 +68,10 @@ namespace Drydock.Logic {
             writer.WriteStartElement("Data");
             writer.WriteElementString("NumControllers", null, Curves.Count.ToString());
 
-            float minX = 9999999, minY = 9999999;
-            foreach (var curve in Curves){
-                if (curve.CenterHandlePos.X < minX){
-                    minX = curve.CenterHandlePos.X;
-                }
-                if (curve.CenterHandlePos.Y < minY){
-                    minY = curve.CenterHandlePos.Y;
-                }
-            }
             for (int i = 0; i < Curves.Count; i++){
                 writer.WriteStartElement("Handle" + i, null);
-                writer.WriteElementString("PosX", null, ((Curves[i].CenterHandlePos.X - minX)/Curves.PixelsPerMeter).ToString());
-                writer.WriteElementString("PosY", null, ((Curves[i].CenterHandlePos.Y - minY)/Curves.PixelsPerMeter).ToString());
+                writer.WriteElementString("PosX", null, ((Curves[i].CenterHandlePos.X - Curves.MinX)/Curves.PixelsPerMeter).ToString());
+                writer.WriteElementString("PosY", null, ((Curves[i].CenterHandlePos.Y - Curves.MinY) / Curves.PixelsPerMeter).ToString());
                 writer.WriteElementString("Angle", null, Curves[i].Angle.ToString());
                 writer.WriteElementString("PrevLength", null, (Curves[i].PrevHandleLength/Curves.PixelsPerMeter).ToString());
                 writer.WriteElementString("NextLength", null, (Curves[i].NextHandleLength/Curves.PixelsPerMeter).ToString());
@@ -189,14 +180,8 @@ namespace Drydock.Logic {
                     BackPanelModifier(HandleAlias.Last, 0, dyf);
                 }
             }
-
-            BezierCurve deepestController = Curves[0];
-            foreach (var curve in Curves){
-                if (curve.CenterHandlePos.Y > deepestController.CenterHandlePos.Y){
-                    deepestController = curve;
-                }
-            }
-            if (controller == deepestController){
+            
+            if (controller == Curves.MaxYCurve){
                 if (BackPanelModifier != null) {
                     BackPanelModifier(HandleAlias.Middle, 0, dyf);
                 }
@@ -303,5 +288,4 @@ namespace Drydock.Logic {
         }
     }
     #endregion
-
 }

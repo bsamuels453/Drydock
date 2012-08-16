@@ -14,6 +14,7 @@ namespace Drydock.Utilities{
         private readonly List<BezierInfo> _curveinfo;
         private readonly int _resolution; //represents the number of halfing operations required to get a result with an accuracy of less than one pixel in the worst case
         private readonly List<BoundCache> _boundCache;
+        private readonly float _largestX;
 
         public BezierIntersect(List<BezierInfo> curveinfo) {
             _curveinfo = curveinfo;
@@ -36,6 +37,15 @@ namespace Drydock.Utilities{
             for (int i = 0; i < curveinfo.Count-1; i++){
                 _boundCache.Add( new BoundCache(0, 1, curveinfo[i].Pos, curveinfo[i + 1].Pos, 0));
             }
+            _largestX = 0;
+            foreach (var cache in _boundCache) {
+                if (cache.LeftVal.X > _largestX) {
+                    _largestX = cache.LeftVal.X;
+                }
+                if (cache.RightVal.X > _largestX) {
+                    _largestX = cache.RightVal.X;
+                }
+            }
         }
 
         public Vector2 GetIntersectionFromX(float x) {
@@ -47,8 +57,9 @@ namespace Drydock.Utilities{
             if (x <= 0){
                 x = 0.000001f;
             }
-            if (x >= _boundCache[_boundCache.Count - 1].RightVal.X){
-                x = _boundCache[_boundCache.Count - 1].RightVal.X - 0.000001f;
+
+            if (x >= _largestX){
+                x = _largestX;
             }
 
 
@@ -184,6 +195,5 @@ namespace Drydock.Utilities{
             PrevControl = prev;
             NextControl = next;
         }
-
     }
 }
