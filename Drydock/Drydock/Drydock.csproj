@@ -166,7 +166,7 @@
     <Compile Include="Logic\BezierCurve.cs" />
     <Compile Include="Logic\CurveControllerCollection.cs" />
     <Compile Include="Logic\HullEditor.cs" />
-    <Compile Include="Logic\HullEditorPanel.cs" />
+    <Compile Include="Logic\HullEditorPanels.cs" />
     <Compile Include="Logic\PreviewRenderer.cs" />
     <Compile Include="Render\AuxBufferManager.cs" />
     <Compile Include="Render\IAdvancedPrimitive.cs" />

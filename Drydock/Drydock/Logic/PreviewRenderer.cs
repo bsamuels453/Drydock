@@ -57,6 +57,8 @@ namespace Drydock.Logic {
                 _verticies[i] = new VertexPositionNormalTexture();
             }
 
+            var sw = new Stopwatch();
+            sw.Start();
             _topCurves.GetParameterizedPoint(0, true);
             var topPts = new Vector2[_meshVertexWidth];
             for (double i = 0; i < _meshVertexWidth; i++) {
@@ -124,12 +126,11 @@ namespace Drydock.Logic {
                     index+=4;
                 }
             }
-            var sw = new Stopwatch();
-            sw.Start();
-            AuxBufferManager.SetIndicies(_bufferId, _indicies);
-            AuxBufferManager.SetVerticies(_bufferId, _verticies);
             sw.Stop();
             System.Console.WriteLine("time:" + sw.Elapsed.TotalMilliseconds * 1000000);
+            AuxBufferManager.SetIndicies(_bufferId, _indicies);
+            AuxBufferManager.SetVerticies(_bufferId, _verticies);
+
 
         }
 

@@ -63,7 +63,7 @@ namespace Drydock.Utilities{
             }
             //now we traverse the cache
             BoundCache curCache = _boundCache[curvesToUse];
-            /*while (true){
+            while (true){
                 if (curCache.LeftChild != null){
                     if (curCache.LeftChild.Contains(x)){
                         curCache = curCache.LeftChild;
@@ -77,7 +77,7 @@ namespace Drydock.Utilities{
                     }
                 }
                 break;
-            }*/
+            }
 
             //now continue until we get to dest
             int numRuns = curCache.Depth;
