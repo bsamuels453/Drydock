@@ -7,11 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.UI{
 
-    internal abstract class ComponentThing{
-        IUIComponent[] Components { get; set; }
-
-    }
-
     internal interface IUIElement :  IDrawable{
         float Opacity { get; set; }
         float Depth { get; set; }

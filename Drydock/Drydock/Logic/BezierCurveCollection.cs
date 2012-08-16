@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,19 +16,21 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic{
 
-    internal class CurveControllerCollection : ICanReceiveInputEvents{
-        public readonly List<BezierCurve> CurveList;
+    internal class BezierCurveCollection : ICanReceiveInputEvents, IEnumerable<BezierCurve> {
+        #region fields
+        private readonly List<BezierCurve> _curveList;
         public readonly UIElementCollection ElementCollection;
         public readonly float PixelsPerMeter;
 
-        //method specific caching fields
+        //method specific caching fields, these will NOT be up to date unless GetParameterizedPoint is called where regenerateMethodCache is true
         private double[] _lenList;
         private double _totalArcLen;
         public double MinX;
         public double MinY;
         //
+        #endregion
 
-        public CurveControllerCollection(string defaultConfig,FloatingRectangle areaToFill, UIElementCollection parentCollection = null){
+        public BezierCurveCollection(string defaultConfig,FloatingRectangle areaToFill, UIElementCollection parentCollection = null){
             InputEventDispatcher.EventSubscribers.Add(this);
             if (parentCollection != null) {
                 ElementCollection = parentCollection.Add(new UIElementCollection());
@@ -41,7 +44,7 @@ namespace Drydock.Logic{
             int numControllers = int.Parse(reader.ReadString());
             reader.Close();
             var curveInitData = new List<CurveInitalizeData>(numControllers);
-            CurveList = new List<BezierCurve>(numControllers);
+            _curveList = new List<BezierCurve>(numControllers);
 
             for (int i = 0; i < numControllers; i++){
                 curveInitData.Add(new CurveInitalizeData(defaultConfig, i));
@@ -51,7 +54,7 @@ namespace Drydock.Logic{
             float maxX=0;
             float maxY=0;
             foreach (var data in curveInitData){
-                if (data.HandlePosX > maxX){
+                if (data.HandlePosX > maxX) {
                     maxX = data.HandlePosX;
                 }
                 if (data.HandlePosY > maxY) {
@@ -76,14 +79,15 @@ namespace Drydock.Logic{
             }
 
             for (int i = 0; i < numControllers; i++){
-                CurveList.Add(new BezierCurve(0, 0, ElementCollection,curveInitData[i]));
+                _curveList.Add(new BezierCurve(0, 0, ElementCollection,curveInitData[i]));
             }
             for (int i = 1; i < numControllers - 1; i++){
-                CurveList[i].SetPrevCurve(CurveList[i - 1]);
-                CurveList[i].SetNextCurve(CurveList[i + 1]);
+                _curveList[i].SetPrevCurve(_curveList[i - 1]);
+                _curveList[i].SetNextCurve(_curveList[i + 1]);
             }
         }
 
+        #region curve information retrieval methods
         /// <summary>
         /// Returns the point on the curve associated with the parameter t
         /// </summary>
@@ -93,20 +97,20 @@ namespace Drydock.Logic{
         public Vector2 GetParameterizedPoint(double t, bool regenerateMethodCache = false) {
 
             if (regenerateMethodCache){
-                _lenList = new double[CurveList.Count - 1];
+                _lenList = new double[_curveList.Count - 1];
 
                 for (int i = 0; i < _lenList.Count(); i++) {
-                    _lenList[i] = CurveList[i].GetNextArcLength() + CurveList[i + 1].GetPrevArcLength();
+                    _lenList[i] = _curveList[i].GetNextArcLength() + _curveList[i + 1].GetPrevArcLength();
                     _totalArcLen += _lenList[i];
                 }
                 MinX = 9999999;
                 MinY = 9999999;
-                foreach (var curve in CurveList) {
-                    if (curve.HandlePos.X < MinX) {
-                        MinX = curve.HandlePos.X;
+                foreach (var curve in _curveList) {
+                    if (curve.CenterHandlePos.X < MinX) {
+                        MinX = curve.CenterHandlePos.X;
                     }
-                    if (curve.HandlePos.Y < MinY) {
-                        MinY = curve.HandlePos.Y;
+                    if (curve.CenterHandlePos.Y < MinY) {
+                        MinY = curve.CenterHandlePos.Y;
                     }
                 }
             }
@@ -125,11 +129,11 @@ namespace Drydock.Logic{
                 }
             }
 
-            if (segmentIndex == CurveList.Count - 1){//clamp it 
+            if (segmentIndex == _curveList.Count - 1){//clamp it 
                 segmentIndex--;
                 tempLen = 1;
             }
-            Vector2 point = GetBezierValue(CurveList[segmentIndex], CurveList[segmentIndex + 1], tempLen);
+            Vector2 point = GetBezierValue(_curveList[segmentIndex], _curveList[segmentIndex + 1], tempLen);
 
             //now we need to normalize the point to meters
             point.X =(float) (point.X - MinX) / PixelsPerMeter;
@@ -143,10 +147,10 @@ namespace Drydock.Logic{
 
             Bezier.GetBezierValue(
                 out retVal,
-                prevCurve.HandlePos,
+                prevCurve.CenterHandlePos,
                 prevCurve.NextHandlePos,
                 nextCurve.PrevHandlePos,
-                nextCurve.HandlePos,
+                nextCurve.CenterHandlePos,
                 t
                 );
 
@@ -163,17 +167,37 @@ namespace Drydock.Logic{
             point.Y = (float)(point.Y - MinY) / PixelsPerMeter;
             return point;
         }
+        #endregion
 
         public void Update() {
-            foreach (var curve in CurveList) {
+            foreach (var curve in _curveList) {
                 curve.Update();
             }
         }
 
+        #region ienumerable members + accessors
+        public BezierCurve this[int index] {
+            get { return _curveList[index]; }
+        }
+
+        public int Count {
+            get { return _curveList.Count; }
+        }
+
+        public IEnumerator<BezierCurve> GetEnumerator() {
+            return ((IEnumerable<BezierCurve>)_curveList).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return _curveList.GetEnumerator();
+        }
+        #endregion
+
         #region ICanReceiveInputEvents Members
 
         public InterruptState OnLeftButtonClick(MouseState state){
-            if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
+            //this is broken right now
+            /*if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
                 Vector2 pos;
                 float t;
                 for (int i = 1; i < CurveList.Count; i++){
@@ -193,7 +217,7 @@ namespace Drydock.Logic{
                         return InterruptState.InterruptEventDispatch;
                     }
                 }
-            }
+            }*/
 
             return InterruptState.AllowOtherEvents;
         }
@@ -219,7 +243,6 @@ namespace Drydock.Logic{
         }
 
         #endregion
-
     }
 
     #region nested struct

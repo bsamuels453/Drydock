@@ -25,13 +25,13 @@ namespace Drydock.Logic {
     internal abstract class HullEditorPanel{
         protected readonly Button Background;
         protected readonly FloatingRectangle BoundingBox;
-        public readonly CurveControllerCollection Curves;
+        public readonly BezierCurveCollection Curves;
         protected readonly UIElementCollection ElementCollection;
 
         protected HullEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration){
             BoundingBox = new FloatingRectangle(x, y, width, height);
             ElementCollection = new UIElementCollection();
-            Curves = new CurveControllerCollection(
+            Curves = new BezierCurveCollection(
                 defaultConfig: defaultCurveConfiguration,
                 areaToFill: new FloatingRectangle(
                     x + width*0.1f,
@@ -66,24 +66,24 @@ namespace Drydock.Logic {
 
             writer.WriteStartDocument();
             writer.WriteStartElement("Data");
-            writer.WriteElementString("NumControllers", null, Curves.CurveList.Count.ToString());
+            writer.WriteElementString("NumControllers", null, Curves.Count.ToString());
 
             float minX = 9999999, minY = 9999999;
-            foreach (var curve in Curves.CurveList){
-                if (curve.HandlePos.X < minX){
-                    minX = curve.HandlePos.X;
+            foreach (var curve in Curves){
+                if (curve.CenterHandlePos.X < minX){
+                    minX = curve.CenterHandlePos.X;
                 }
-                if (curve.HandlePos.Y < minY){
-                    minY = curve.HandlePos.Y;
+                if (curve.CenterHandlePos.Y < minY){
+                    minY = curve.CenterHandlePos.Y;
                 }
             }
-            for (int i = 0; i < Curves.CurveList.Count; i++){
+            for (int i = 0; i < Curves.Count; i++){
                 writer.WriteStartElement("Handle" + i, null);
-                writer.WriteElementString("PosX", null, ((Curves.CurveList[i].HandlePos.X - minX)/Curves.PixelsPerMeter).ToString());
-                writer.WriteElementString("PosY", null, ((Curves.CurveList[i].HandlePos.Y - minY)/Curves.PixelsPerMeter).ToString());
-                writer.WriteElementString("Angle", null, Curves.CurveList[i].Angle.ToString());
-                writer.WriteElementString("PrevLength", null, (Curves.CurveList[i].PrevHandleLength/Curves.PixelsPerMeter).ToString());
-                writer.WriteElementString("NextLength", null, (Curves.CurveList[i].NextHandleLength/Curves.PixelsPerMeter).ToString());
+                writer.WriteElementString("PosX", null, ((Curves[i].CenterHandlePos.X - minX)/Curves.PixelsPerMeter).ToString());
+                writer.WriteElementString("PosY", null, ((Curves[i].CenterHandlePos.Y - minY)/Curves.PixelsPerMeter).ToString());
+                writer.WriteElementString("Angle", null, Curves[i].Angle.ToString());
+                writer.WriteElementString("PrevLength", null, (Curves[i].PrevHandleLength/Curves.PixelsPerMeter).ToString());
+                writer.WriteElementString("NextLength", null, (Curves[i].NextHandleLength/Curves.PixelsPerMeter).ToString());
                 writer.WriteEndElement();
             }
 
@@ -120,22 +120,22 @@ namespace Drydock.Logic {
 
             switch (handle){
                 case HandleAlias.First:
-                    Curves.CurveList[0].Controller.TranslateControllerPos(dxi, dyi);
+                    Curves[0].TranslateControllerPos(dxi, dyi);
                     break;
                 case HandleAlias.Middle:
-                    Curves.CurveList[Curves.CurveList.Count/2].Controller.TranslateControllerPos(dxi, dyi);
+                    Curves[Curves.Count/2].TranslateControllerPos(dxi, dyi);
                     break;
                 case HandleAlias.Last:
-                    Curves.CurveList[Curves.CurveList.Count - 1].Controller.TranslateControllerPos(dxi, dyi);
+                    Curves[Curves.Count - 1].TranslateControllerPos(dxi, dyi);
                     break;
                 case HandleAlias.ExtremaY:
-                    var extremaController = Curves.CurveList[0];
-                    foreach (var curve in Curves.CurveList){
-                        if (curve.HandlePos.Y > extremaController.HandlePos.Y){
+                    var extremaController = Curves[0];
+                    foreach (var curve in Curves){
+                        if (curve.CenterHandlePos.Y > extremaController.CenterHandlePos.Y){
                             extremaController = curve;
                         }
                     }
-                    extremaController.Controller.TranslateControllerPos(dxi, dyi);
+                    extremaController.TranslateControllerPos(dxi, dyi);
                     break;
             }
         }
@@ -152,8 +152,8 @@ namespace Drydock.Logic {
         public SideEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration)
             : base(x, y, width, height, defaultCurveConfiguration){
 
-            foreach (var curve in Curves.CurveList){
-                curve.Controller.ReactToControllerMovement += OnCurveDrag;
+            foreach (var curve in Curves){
+                curve.ReactToControllerMovement += OnCurveDrag;
             }
         }
 
@@ -161,11 +161,11 @@ namespace Drydock.Logic {
             float dxf = dx/Curves.PixelsPerMeter;
             float dyf = dy/Curves.PixelsPerMeter;
 
-            var controller = (CurveController) caller;
+            var controller = (BezierCurve) caller;
 
-            //Curves.CurveList[0].Controller is the frontmost controller that represents the limit of the bow
-            if (controller == Curves.CurveList[0].Controller){
-                Curves.CurveList[Curves.CurveList.Count - 1].Controller.TranslateControllerPos(0, dy);
+            //Curves[0] is the frontmost controller that represents the limit of the bow
+            if (controller == Curves[0]){
+                Curves[Curves.Count - 1].TranslateControllerPos(0, dy);
 
                 if (TopPanelModifier != null) {
                     TopPanelModifier(HandleAlias.Middle, dxf, 0);
@@ -176,9 +176,9 @@ namespace Drydock.Logic {
                 }
             }
 
-            //Curves.CurveList[Curves.CurveList.Count-1] is the hindmost controller that represents the limit of the stern
-            if (controller == Curves.CurveList[Curves.CurveList.Count-1].Controller) {
-                Curves.CurveList[0].Controller.TranslateControllerPos(0, dy);
+            //Curves[Curves.Count-1] is the hindmost controller that represents the limit of the stern
+            if (controller == Curves[Curves.Count-1]) {
+                Curves[0].TranslateControllerPos(0, dy);
 
                 if (TopPanelModifier != null) {
                     TopPanelModifier(HandleAlias.Last, dxf, 0);
@@ -190,13 +190,13 @@ namespace Drydock.Logic {
                 }
             }
 
-            BezierCurve deepestController = Curves.CurveList[0];
-            foreach (var curve in Curves.CurveList){
-                if (curve.HandlePos.Y > deepestController.HandlePos.Y){
+            BezierCurve deepestController = Curves[0];
+            foreach (var curve in Curves){
+                if (curve.CenterHandlePos.Y > deepestController.CenterHandlePos.Y){
                     deepestController = curve;
                 }
             }
-            if (controller == deepestController.Controller){
+            if (controller == deepestController){
                 if (BackPanelModifier != null) {
                     BackPanelModifier(HandleAlias.Middle, 0, dyf);
                 }
@@ -212,18 +212,18 @@ namespace Drydock.Logic {
 
         public TopEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration)
             : base(x, y, width, height, defaultCurveConfiguration){
-            Curves.CurveList[0].Controller.ReactToControllerMovement += OnCurveDrag;
-            Curves.CurveList[Curves.CurveList.Count - 1].Controller.ReactToControllerMovement += OnCurveDrag;
-            Curves.CurveList[Curves.CurveList.Count/2].Controller.ReactToControllerMovement += OnCurveDrag;
+            Curves[0].ReactToControllerMovement += OnCurveDrag;
+            Curves[Curves.Count - 1].ReactToControllerMovement += OnCurveDrag;
+            Curves[Curves.Count/2].ReactToControllerMovement += OnCurveDrag;
         }
 
         override protected void OnCurveDrag(object caller, int dx, int dy){
             float dxf = dx/Curves.PixelsPerMeter;
             float dyf = dy/Curves.PixelsPerMeter; 
 
-            var controller = (CurveController) caller;
-            if (controller == Curves.CurveList[0].Controller){
-                Curves.CurveList[Curves.CurveList.Count - 1].Controller.TranslateControllerPos(dx, -dy);
+            var controller = (BezierCurve) caller;
+            if (controller == Curves[0]){
+                Curves[Curves.Count - 1].TranslateControllerPos(dx, -dy);
 
                 if (SidePanelModifier != null) {
                     SidePanelModifier(HandleAlias.Last, dxf, 0);
@@ -233,8 +233,8 @@ namespace Drydock.Logic {
                     BackPanelModifier(HandleAlias.First, dyf, 0);
                 }
             }
-            if (controller == Curves.CurveList[Curves.CurveList.Count - 1].Controller){
-                Curves.CurveList[0].Controller.TranslateControllerPos(dx, -dy);
+            if (controller == Curves[Curves.Count - 1]){
+                Curves[0].TranslateControllerPos(dx, -dy);
 
                 if (SidePanelModifier != null) {
                     SidePanelModifier(HandleAlias.Last, dxf, 0);
@@ -244,7 +244,7 @@ namespace Drydock.Logic {
                     BackPanelModifier(HandleAlias.First, -dyf, 0);
                 }
             }
-            if (controller == Curves.CurveList[Curves.CurveList.Count/2].Controller){
+            if (controller == Curves[Curves.Count/2]){
                 if (SidePanelModifier != null) {
                     SidePanelModifier(HandleAlias.First, dxf, 0);
                 }
@@ -260,18 +260,18 @@ namespace Drydock.Logic {
 
         public BackEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration)
             : base(x, y, width, height, defaultCurveConfiguration){
-            Curves.CurveList[0].Controller.ReactToControllerMovement += OnCurveDrag;
-            Curves.CurveList[Curves.CurveList.Count - 1].Controller.ReactToControllerMovement += OnCurveDrag;
-            Curves.CurveList[Curves.CurveList.Count/2].Controller.ReactToControllerMovement += OnCurveDrag;
+            Curves[0].ReactToControllerMovement += OnCurveDrag;
+            Curves[Curves.Count - 1].ReactToControllerMovement += OnCurveDrag;
+            Curves[Curves.Count/2].ReactToControllerMovement += OnCurveDrag;
         }
 
         override protected void OnCurveDrag(object caller, int dx, int dy){
             float dxf = dx / Curves.PixelsPerMeter;
             float dyf = dy / Curves.PixelsPerMeter;
 
-            var controller = (CurveController)caller;
-            if (controller == Curves.CurveList[0].Controller) {
-                Curves.CurveList[Curves.CurveList.Count - 1].Controller.TranslateControllerPos(-dx, dy);
+            var controller = (BezierCurve)caller;
+            if (controller == Curves[0]) {
+                Curves[Curves.Count - 1].TranslateControllerPos(-dx, dy);
 
                 if (SidePanelModifier != null) {
                     SidePanelModifier(HandleAlias.First, 0,dyf);
@@ -282,8 +282,8 @@ namespace Drydock.Logic {
                     TopPanelModifier(HandleAlias.Last, 0, -dxf);
                 }
             }
-            if (controller == Curves.CurveList[Curves.CurveList.Count - 1].Controller) {
-                Curves.CurveList[0].Controller.TranslateControllerPos(-dx, dy);
+            if (controller == Curves[Curves.Count - 1]) {
+                Curves[0].TranslateControllerPos(-dx, dy);
 
                 if (SidePanelModifier != null) {
                     SidePanelModifier(HandleAlias.First, 0, dyf);
@@ -294,7 +294,7 @@ namespace Drydock.Logic {
                     TopPanelModifier(HandleAlias.Last, 0, dxf);
                 }
             }
-            if (controller == Curves.CurveList[Curves.CurveList.Count / 2].Controller) {
+            if (controller == Curves[Curves.Count / 2]) {
                 if (SidePanelModifier != null) {
                     SidePanelModifier(HandleAlias.ExtremaY, 0, dyf);
                 }

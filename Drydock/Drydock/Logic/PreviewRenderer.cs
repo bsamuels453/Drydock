@@ -16,10 +16,10 @@ namespace Drydock.Logic {
         private readonly int[] _indicies;
         private const int _meshVertexWidth = 32;//this is in primitives
         private readonly int _bufferId;
-        private readonly CurveControllerCollection _sideCurves;
-        private readonly CurveControllerCollection _topCurves;
+        private readonly BezierCurveCollection _sideCurves;
+        private readonly BezierCurveCollection _topCurves;
 
-        public PreviewRenderer(CurveControllerCollection sideCurves, CurveControllerCollection topCurves){
+        public PreviewRenderer(BezierCurveCollection sideCurves, BezierCurveCollection topCurves){
             _verticies = new VertexPositionNormalTexture[_meshVertexWidth * _meshVertexWidth * 4];
             _indicies = new int[_meshVertexWidth * _meshVertexWidth * 6];// 6 indicies make up 2 triangles, can make this into triangle strip in future if have optimization boner
             _bufferId = AuxBufferManager.AddVbo(_verticies.Count(), _indicies.Count(), (_meshVertexWidth ) * (_meshVertexWidth ) * 2, "brown");
@@ -82,25 +82,29 @@ namespace Drydock.Logic {
 
             sideCurves.GetParameterizedPoint(0, true);//this refreshes internal fields
             //orient controllers correctly for the bezierintersect
-            var li = _sideCurves.CurveList.Select(bezierCurve => new BezierInfo(
-                _sideCurves.Normalize(bezierCurve.HandlePos),
+            var li = _sideCurves.Select(bezierCurve => new BezierInfo(
+                _sideCurves.Normalize(bezierCurve.CenterHandlePos),
                 _sideCurves.Normalize(bezierCurve.PrevHandlePos),
                 _sideCurves.Normalize(bezierCurve.NextHandlePos))).ToList();
 
             
 
-            var intersect = new BezierIntersect(li);
-            float h = intersect.GetIntersectionFromX(topPts[topPts.Count() - 1].X).Y;
+            var sideIntersectCache = new BezierIntersect(li);
+            float h = sideIntersectCache.GetIntersectionFromX(topPts[topPts.Count() - 1].X).Y;
 
 
 
             for (int x = 0; x < _meshVertexWidth; x++){
 
-                float y = intersect.GetIntersectionFromX(topPts[x].X).Y;
+                float y = sideIntersectCache.GetIntersectionFromX(topPts[x].X).Y;
                 for (int z = 0; z < _meshVertexWidth; z++){
                     _mesh[x, z] = new Vector3(topPts[x].X, y, topPts[x].Y + yDelta[x]*z);
                 }
             }
+
+            BezierIntersect crossIntersectCache;
+
+
 
 
             //convert from 2d array to 1d
