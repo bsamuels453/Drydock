@@ -16,8 +16,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic{
 
-    internal class BezierCurveCollection : ICanReceiveInputEvents, IEnumerable<BezierCurve> {
+    internal class BezierCurveCollection : ICanReceiveInputEvents, IEnumerable<BezierCurve>{
         #region fields
+
         private readonly List<BezierCurve> _curveList;
         public readonly UIElementCollection ElementCollection;
         public readonly float PixelsPerMeter;
@@ -28,11 +29,12 @@ namespace Drydock.Logic{
         public double MinX;
         public double MinY;
         //
+
         #endregion
 
-        public BezierCurveCollection(string defaultConfig,FloatingRectangle areaToFill, UIElementCollection parentCollection = null){
+        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, UIElementCollection parentCollection = null){
             InputEventDispatcher.EventSubscribers.Add(this);
-            if (parentCollection != null) {
+            if (parentCollection != null){
                 ElementCollection = parentCollection.Add(new UIElementCollection());
             }
             else{
@@ -51,23 +53,23 @@ namespace Drydock.Logic{
             }
 
             //now get meters per pixel and scales
-            float maxX=0;
-            float maxY=0;
+            float maxX = 0;
+            float maxY = 0;
             foreach (var data in curveInitData){
-                if (data.HandlePosX > maxX) {
+                if (data.HandlePosX > maxX){
                     maxX = data.HandlePosX;
                 }
-                if (data.HandlePosY > maxY) {
+                if (data.HandlePosY > maxY){
                     maxY = data.HandlePosY;
                 }
             }
-            float scaleX = areaToFill.Width / maxX;
-            float scaleY = areaToFill.Height / maxY;
+            float scaleX = areaToFill.Width/maxX;
+            float scaleY = areaToFill.Height/maxY;
             float scale = scaleX > scaleY ? scaleY : scaleX; //scale can also be considered pixels per meter
             PixelsPerMeter = scale;
 
             float offsetX = (areaToFill.Width - maxX*scale)/2;
-            float offsetY = (areaToFill.Height - maxY*scale) / 2;
+            float offsetY = (areaToFill.Height - maxY*scale)/2;
 
             foreach (var data in curveInitData){
                 data.HandlePosX *= scale;
@@ -79,7 +81,7 @@ namespace Drydock.Logic{
             }
 
             for (int i = 0; i < numControllers; i++){
-                _curveList.Add(new BezierCurve(0, 0, ElementCollection,curveInitData[i]));
+                _curveList.Add(new BezierCurve(0, 0, ElementCollection, curveInitData[i]));
             }
             for (int i = 1; i < numControllers - 1; i++){
                 _curveList[i].SetPrevCurve(_curveList[i - 1]);
@@ -88,61 +90,62 @@ namespace Drydock.Logic{
         }
 
         #region curve information retrieval methods
+
         /// <summary>
         /// Returns the point on the curve associated with the parameter t
         /// </summary>
         /// <param name="t">range from 0-1f</param>
         /// <param name="regenerateMethodCache"> </param>
         /// <returns></returns>
-        public Vector2 GetParameterizedPoint(double t, bool regenerateMethodCache = false) {
+        public Vector2 GetParameterizedPoint(double t, bool regenerateMethodCache = false){
 
             if (regenerateMethodCache){
                 _lenList = new double[_curveList.Count - 1];
 
-                for (int i = 0; i < _lenList.Count(); i++) {
+                for (int i = 0; i < _lenList.Count(); i++){
                     _lenList[i] = _curveList[i].GetNextArcLength() + _curveList[i + 1].GetPrevArcLength();
                     _totalArcLen += _lenList[i];
                 }
                 MinX = 9999999;
                 MinY = 9999999;
-                foreach (var curve in _curveList) {
-                    if (curve.CenterHandlePos.X < MinX) {
+                foreach (var curve in _curveList){
+                    if (curve.CenterHandlePos.X < MinX){
                         MinX = curve.CenterHandlePos.X;
                     }
-                    if (curve.CenterHandlePos.Y < MinY) {
+                    if (curve.CenterHandlePos.Y < MinY){
                         MinY = curve.CenterHandlePos.Y;
                     }
                 }
             }
 
-            double pointArcLen = _totalArcLen * t;
+            double pointArcLen = _totalArcLen*t;
             double tempLen = pointArcLen;
 
             //figure out which curve is going to contain point t
             int segmentIndex;
-            for (segmentIndex = 0; segmentIndex < _lenList.Count(); segmentIndex++) {
+            for (segmentIndex = 0; segmentIndex < _lenList.Count(); segmentIndex++){
                 tempLen -= _lenList[segmentIndex];
                 if (tempLen < 0){
                     tempLen += _lenList[segmentIndex];
-                    tempLen /= _lenList[segmentIndex];//this turns tempLen into a t(0-1)
+                    tempLen /= _lenList[segmentIndex]; //this turns tempLen into a t(0-1)
                     break;
                 }
             }
 
-            if (segmentIndex == _curveList.Count - 1){//clamp it 
+            if (segmentIndex == _curveList.Count - 1){ //clamp it 
                 segmentIndex--;
                 tempLen = 1;
             }
             Vector2 point = GetBezierValue(_curveList[segmentIndex], _curveList[segmentIndex + 1], tempLen);
 
             //now we need to normalize the point to meters
-            point.X =(float) (point.X - MinX) / PixelsPerMeter;
-            point.Y =(float) (point.Y - MinY) / PixelsPerMeter;
+            point.X = (float) (point.X - MinX)/PixelsPerMeter;
+            point.Y = (float) (point.Y - MinY)/PixelsPerMeter;
 
             return point;
         }
 
-        public Vector2 GetBezierValue(BezierCurve prevCurve, BezierCurve nextCurve, double t) {
+        public Vector2 GetBezierValue(BezierCurve prevCurve, BezierCurve nextCurve, double t){
             Vector2 retVal;
 
             Bezier.GetBezierValue(
@@ -163,34 +166,37 @@ namespace Drydock.Logic{
         /// <param name="point"></param>
         /// <returns></returns>
         public Vector2 Normalize(Vector2 point){
-            point.X = (float)(point.X - MinX) / PixelsPerMeter;
-            point.Y = (float)(point.Y - MinY) / PixelsPerMeter;
+            point.X = (float) (point.X - MinX)/PixelsPerMeter;
+            point.Y = (float) (point.Y - MinY)/PixelsPerMeter;
             return point;
         }
+
         #endregion
 
-        public void Update() {
-            foreach (var curve in _curveList) {
+        public void Update(){
+            foreach (var curve in _curveList){
                 curve.Update();
             }
         }
 
         #region ienumerable members + accessors
-        public BezierCurve this[int index] {
+
+        public BezierCurve this[int index]{
             get { return _curveList[index]; }
         }
 
-        public int Count {
+        public int Count{
             get { return _curveList.Count; }
         }
 
-        public IEnumerator<BezierCurve> GetEnumerator() {
-            return ((IEnumerable<BezierCurve>)_curveList).GetEnumerator();
+        public IEnumerator<BezierCurve> GetEnumerator(){
+            return ((IEnumerable<BezierCurve>) _curveList).GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator() {
+        IEnumerator IEnumerable.GetEnumerator(){
             return _curveList.GetEnumerator();
         }
+
         #endregion
 
         #region ICanReceiveInputEvents Members
@@ -247,29 +253,29 @@ namespace Drydock.Logic{
 
     #region nested struct
 
-        class CurveInitalizeData{
-            public float Angle;
-            public float HandlePosX;
-            public float HandlePosY;
-            public float Length1;
-            public float Length2;
+    internal class CurveInitalizeData{
+        public float Angle;
+        public float HandlePosX;
+        public float HandlePosY;
+        public float Length1;
+        public float Length2;
 
-            public CurveInitalizeData(string xmlFile, int i){
-                var reader = XmlReader.Create(xmlFile);
-                reader.ReadToFollowing("Handle" + i);
-                reader.ReadToFollowing("PosX");
-                HandlePosX = float.Parse(reader.ReadString());
-                reader.ReadToFollowing("PosY");
-                HandlePosY = float.Parse(reader.ReadString());
-                reader.ReadToFollowing("Angle");
-                Angle = float.Parse(reader.ReadString());
-                reader.ReadToFollowing("PrevLength");
-                Length1 = float.Parse(reader.ReadString());
-                reader.ReadToFollowing("NextLength");
-                Length2 = float.Parse(reader.ReadString());
-                reader.Close();
-            }
+        public CurveInitalizeData(string xmlFile, int i){
+            var reader = XmlReader.Create(xmlFile);
+            reader.ReadToFollowing("Handle" + i);
+            reader.ReadToFollowing("PosX");
+            HandlePosX = float.Parse(reader.ReadString());
+            reader.ReadToFollowing("PosY");
+            HandlePosY = float.Parse(reader.ReadString());
+            reader.ReadToFollowing("Angle");
+            Angle = float.Parse(reader.ReadString());
+            reader.ReadToFollowing("PrevLength");
+            Length1 = float.Parse(reader.ReadString());
+            reader.ReadToFollowing("NextLength");
+            Length2 = float.Parse(reader.ReadString());
+            reader.Close();
         }
+    }
 
-        #endregion
+    #endregion
 }
