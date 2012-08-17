@@ -50,10 +50,12 @@ namespace Drydock.Control {
                 newState.RightButton != _prevMouseState.RightButton ||
                 newState.MiddleButton != _prevMouseState.MiddleButton){
 
+                
                 if (newState.LeftButton == ButtonState.Released){
                     //dispatch onbuttonreleased
                     foreach (var subscriber in EventSubscribers) {
                         if (subscriber.OnLeftButtonRelease(newState) == InterruptState.InterruptEventDispatch){
+
                             break;
                         }
                     }
@@ -63,6 +65,7 @@ namespace Drydock.Control {
                         //dispatch onclick
                         foreach (var subscriber in EventSubscribers) {
                             if (subscriber.OnLeftButtonClick(newState) == InterruptState.InterruptEventDispatch){
+
                                 break;
                             }
                         }
@@ -75,6 +78,7 @@ namespace Drydock.Control {
                     //dispatch onbuttonpressed
                     foreach (var subscriber in EventSubscribers) {
                         if (subscriber.OnLeftButtonPress(newState) == InterruptState.InterruptEventDispatch) {
+
                             break;
                         }
                     }
@@ -83,9 +87,12 @@ namespace Drydock.Control {
 
             if (newState.X != _prevMouseState.X ||
                 newState.Y != _prevMouseState.Y){
+
+                bool interrupt = false;
                 //dispatch onmovement
                 foreach (var subscriber in EventSubscribers){
                     if (subscriber.OnMouseMovement(newState) == InterruptState.InterruptEventDispatch){
+                        interrupt = true;
                         break;
                     }
                 }
@@ -99,9 +106,11 @@ namespace Drydock.Control {
                     (renderer.ViewportPitch - dy*0.005f) > -1.55){
                     renderer.ViewportPitch -= dy*0.005f;
                 }*/
-                if(newState.LeftButton == ButtonState.Pressed){
-                    renderer.CameraPhi += dy * 0.01f;
-                    renderer.CameraTheta -= dx * 0.01f;
+                if (!interrupt){
+                    if (newState.LeftButton == ButtonState.Pressed){
+                        renderer.CameraPhi += dy*0.01f;
+                        renderer.CameraTheta -= dx*0.01f;
+                    }
                 }
                 _mousePos.EditText("phi:" + renderer.CameraPhi + "  theta:" + renderer.CameraTheta);
             }
@@ -110,9 +119,11 @@ namespace Drydock.Control {
 
         private static void UpdateKeyboard(Renderer renderer){
             var state = Keyboard.GetState();
+
             if (state != _prevKeyboardState){
                 foreach (var subscriber in EventSubscribers) {
                     if (subscriber.OnKeyboardEvent(state) == InterruptState.InterruptEventDispatch){
+
                         break;
                     }
                 }

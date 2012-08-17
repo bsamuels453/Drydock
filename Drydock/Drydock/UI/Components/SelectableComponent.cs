@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using Drydock.Control;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -75,7 +76,7 @@ namespace Drydock.UI.Components{
             _positionDy = _heightDx / 2;
         }
 
-        private void OnMouseClick(MouseState state) {
+        private InterruptState OnMouseClick(MouseState state) {
             if (IsEnabled){
                 if (_isSelected) {
                     DeselectThis();
@@ -86,6 +87,7 @@ namespace Drydock.UI.Components{
                     }
                 }
             }
+            return InterruptState.AllowOtherEvents;
         }
 
         public void SelectThis(){

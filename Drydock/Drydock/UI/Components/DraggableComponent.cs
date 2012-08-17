@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using Drydock.Control;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -66,7 +67,7 @@ namespace Drydock.UI.Components{
 
         #region event handlers
 
-        private void OnLeftButtonDown(MouseState state){
+        private InterruptState OnLeftButtonDown(MouseState state){
             if (!_isMoving){
                 if (_owner.BoundingBox.Contains(state.X, state.Y)){
                     _isMoving = true;
@@ -75,18 +76,20 @@ namespace Drydock.UI.Components{
                     _mouseOffset.Y = _owner.Y - state.Y;
                 }
             }
+            return InterruptState.AllowOtherEvents;
         }
 
-        private void OnLeftButtonUp(MouseState state) {
+        private InterruptState OnLeftButtonUp(MouseState state) {
             if (_isMoving){
                 if (state.LeftButton == ButtonState.Released){
                     _isMoving = false;
                     _owner.Owner.DisableEntryHandlers = false;
                 }
             }
+            return InterruptState.AllowOtherEvents;
         }
 
-        private void OnMouseMovement(MouseState state) {
+        private InterruptState OnMouseMovement(MouseState state) {
             if (_isMoving){
                 var oldX = (int)_owner.X;
                 var oldY = (int)_owner.Y;
@@ -101,7 +104,9 @@ namespace Drydock.UI.Components{
                 if (DragMovementDispatcher != null) {
                     DragMovementDispatcher(_owner, x - oldX, y - oldY);
                 }
+                return InterruptState.InterruptEventDispatch;
             }
+            return InterruptState.AllowOtherEvents;
         }
 
         #endregion

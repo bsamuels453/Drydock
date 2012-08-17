@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using Drydock.Control;
 using Microsoft.Xna.Framework.Input;
 
 #endregion
@@ -141,7 +142,7 @@ namespace Drydock.UI.Components{
 
         #region modification methods
 
-        public void ForceFadeout(MouseState state) {
+        public InterruptState ForceFadeout(MouseState state) {
             _owner.Owner.DisableEntryHandlers = false;
             if (IsEnabled){
                 _isInTransition = true;
@@ -150,9 +151,10 @@ namespace Drydock.UI.Components{
                     FadeStateChangeDispatcher(FadeState.Faded);
                 }
             }
+            return InterruptState.AllowOtherEvents;
         }
 
-        public void ForceFadein(MouseState state) {
+        public InterruptState ForceFadein(MouseState state) {
             _owner.Owner.DisableEntryHandlers = true;
             //UIElementCollection.ForceExitHandlers(_owner);
             if (IsEnabled){
@@ -162,6 +164,7 @@ namespace Drydock.UI.Components{
                     FadeStateChangeDispatcher(FadeState.Visible);
                 }
             }
+            return InterruptState.AllowOtherEvents;
         }
 
         #endregion

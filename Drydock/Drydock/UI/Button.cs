@@ -79,12 +79,12 @@ namespace Drydock.UI{
         public float Depth { get; set; }
         public UIElementCollection Owner { get; set; }
         public IUIComponent[] Components { get; set; }
-        public List<EOnMouseEvent> OnLeftButtonClick { get; set; }
-        public List<EOnMouseEvent> OnLeftButtonPress { get; set; }
-        public List<EOnMouseEvent> OnLeftButtonRelease { get; set; }
-        public List<EOnMouseEvent> OnMouseEntry { get; set; }
-        public List<EOnMouseEvent> OnMouseExit { get; set; }
-        public List<EOnMouseEvent> OnMouseMovement { get; set; }
+        public List<OnMouseEvent> OnLeftButtonClick { get; set; }
+        public List<OnMouseEvent> OnLeftButtonPress { get; set; }
+        public List<OnMouseEvent> OnLeftButtonRelease { get; set; }
+        public List<OnMouseEvent> OnMouseEntry { get; set; }
+        public List<OnMouseEvent> OnMouseExit { get; set; }
+        public List<OnMouseEvent> OnMouseMovement { get; set; }
         public List<EOnKeyboardEvent> OnKeyboardEvent { get; set; }
 
         #endregion
@@ -100,12 +100,12 @@ namespace Drydock.UI{
             _boundingBox = new FloatingRectangle(x, y, width, height);
             _sprite = new Sprite2D(textureName, this, spriteTexRepeatX, spriteTexRepeatY);
 
-            OnLeftButtonClick = new List<EOnMouseEvent>();
-            OnLeftButtonPress = new List<EOnMouseEvent>();
-            OnLeftButtonRelease = new List<EOnMouseEvent>();
-            OnMouseEntry = new List<EOnMouseEvent>();
-            OnMouseExit = new List<EOnMouseEvent>();
-            OnMouseMovement = new List<EOnMouseEvent>();
+            OnLeftButtonClick = new List<OnMouseEvent>();
+            OnLeftButtonPress = new List<OnMouseEvent>();
+            OnLeftButtonRelease = new List<OnMouseEvent>();
+            OnMouseEntry = new List<OnMouseEvent>();
+            OnMouseExit = new List<OnMouseEvent>();
+            OnMouseMovement = new List<OnMouseEvent>();
             OnKeyboardEvent = new List<EOnKeyboardEvent>();
 
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
