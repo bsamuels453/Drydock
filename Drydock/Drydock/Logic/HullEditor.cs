@@ -46,6 +46,7 @@ namespace Drydock.Logic {
             _sidepanel.Update();
             _toppanel.Update();
             _backpanel.Update();
+            _previewRenderer.Update();
         }
 
         public InterruptState OnMouseMovement(MouseState state){
@@ -71,6 +72,7 @@ namespace Drydock.Logic {
                 _backpanel.SaveCurves("back.xml");
                 return InterruptState.InterruptEventDispatch;
             }
+
             return InterruptState.AllowOtherEvents;
         }
     }

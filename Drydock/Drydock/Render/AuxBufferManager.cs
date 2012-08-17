@@ -87,6 +87,8 @@ namespace Drydock.Render {
         }
 
         public static void SetVerticies(int id, VertexPositionNormalTexture[] verts){
+            //_vertexbuffers[id].
+            
             _vertexbuffers[id].SetData(verts);
         }
 
@@ -110,6 +112,7 @@ namespace Drydock.Render {
                     }
                 }
             }
+            _device.SetVertexBuffer(null);
         }
     }
 }

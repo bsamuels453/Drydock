@@ -104,7 +104,7 @@ namespace Drydock.Logic{
 
             if (regenerateMethodCache){
                 _lenList = new double[_curveList.Count - 1];
-
+                _totalArcLen = 0;
                 for (int i = 0; i < _lenList.Count(); i++){
                     _lenList[i] = _curveList[i].GetNextArcLength() + _curveList[i + 1].GetPrevArcLength();
                     _totalArcLen += _lenList[i];
