@@ -83,7 +83,6 @@ namespace Drydock.Control {
 
             if (newState.X != _prevMouseState.X ||
                 newState.Y != _prevMouseState.Y){
-                _mousePos.EditText("X:" + newState.X + " Y:" + newState.Y);
                 //dispatch onmovement
                 foreach (var subscriber in EventSubscribers){
                     if (subscriber.OnMouseMovement(newState) == InterruptState.InterruptEventDispatch){
@@ -94,14 +93,17 @@ namespace Drydock.Control {
                 int dy = newState.Y - _prevMouseState.Y;
 
                 //now apply viewport changes
-                renderer.ViewportYaw -= dx*0.005f;
+                /*renderer.ViewportYaw -= dx*0.005f;
                 if (
                     (renderer.ViewportPitch - dy*0.005f) < 1.55 &&
                     (renderer.ViewportPitch - dy*0.005f) > -1.55){
                     renderer.ViewportPitch -= dy*0.005f;
+                }*/
+                if(newState.LeftButton == ButtonState.Pressed){
+                    renderer.CameraPhi += dy * 0.01f;
+                    renderer.CameraTheta -= dx * 0.01f;
                 }
-
-
+                _mousePos.EditText("phi:" + renderer.CameraPhi + "  theta:" + renderer.CameraTheta);
             }
             _prevMouseState = newState;
         }
