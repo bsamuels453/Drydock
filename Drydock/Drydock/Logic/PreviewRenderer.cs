@@ -62,16 +62,19 @@ namespace Drydock.Logic {
             var sw = new Stopwatch();
             sw.Start();
             _topCurves.GetParameterizedPoint(0, true);
+
             var topPts = new Vector2[_meshVertexWidth];
             for (double i = 0; i < _meshVertexWidth; i++) {
                 double t = i / ((_meshVertexWidth-1)*2);
                 // ReSharper disable CompareOfFloatsByEqualityOperator
                 if (i == _meshVertexWidth - 1){//special exception to force a pointed tip
-                    t = 0.5d;
+                    //t = 0.5d;
                 }
                 // ReSharper restore CompareOfFloatsByEqualityOperator
                 topPts[(int)i] = _topCurves.GetParameterizedPoint(t);
             }
+
+
 
             topPts = topPts.Reverse().ToArray();
             float reflectionPoint = topPts[0].Y;
@@ -109,23 +112,28 @@ namespace Drydock.Logic {
             //topPts = topPts.Reverse().ToArray();
 
             for (int x = 0; x < _meshVertexWidth; x++){
+                if (x == _meshVertexWidth - 1){
+                    int f = 5;
+                }
 
-                float scaleX = ((reflectionPoint - topPts[x].Y) * 2) / backCurvesMaxWidth;
+
+                float scaleX = Math.Abs((reflectionPoint - topPts[x].Y) * 2) / backCurvesMaxWidth;
                 float scaleY = sideIntersectionCache[x]/ maxY;
                 
                 var bezierInfo = _backCurves.GetControllerInfo(scaleX, scaleY);
                 var crossIntersectGenerator = new BezierIntersect(bezierInfo);
 
-                for (int z = 0; z < _meshVertexWidth; z++) {
+                for (int z = 0; z < _meshVertexWidth/2; z++) {
                     if (z > _meshVertexWidth / 2 && x != 0){
                         int g = 5;
                     }
                     Vector2 pos = crossIntersectGenerator.GetIntersectionFromX(yDelta[x] * (z));
                     _mesh[x, z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x] * (z));
-                    //_mesh[x, _meshVertexWidth-1-z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x] * (z));
+                    _mesh[x, _meshVertexWidth - 1 - z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x] * (_meshVertexWidth - 1 - z));
                 }
 
             }
+
 
 
 

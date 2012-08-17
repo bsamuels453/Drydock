@@ -18,7 +18,7 @@ namespace Drydock.Logic{
     internal class BezierCurve{
         #region private fields
 
-        private const int _linesPerSide = 20;
+        private const int _linesPerSide = 50;
         private readonly UIElementCollection _elementCollection;
         private BezierCurve _nextCurve;
         private BezierCurve _prevCurve;

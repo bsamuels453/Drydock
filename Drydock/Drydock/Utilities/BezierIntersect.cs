@@ -61,6 +61,9 @@ namespace Drydock.Utilities{
             if (x >= _largestX){
                 x = _largestX;
             }
+            if (_largestX == 0){
+                //return new Vector2(x,0);
+            }
 
 
             int curvesToUse=-1;
