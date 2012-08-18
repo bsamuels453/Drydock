@@ -176,6 +176,7 @@
     <Compile Include="UI\Button.cs" />
     <Compile Include="UI\Components\DraggableComponent.cs" />
     <Compile Include="UI\Components\FadeComponent.cs" />
+    <Compile Include="UI\Components\PanelComponent.cs" />
     <Compile Include="UI\Components\SelectableComponent.cs" />
     <Compile Include="UI\ComponentGenerator.cs" />
     <Compile Include="UI\DepthManager.cs" />

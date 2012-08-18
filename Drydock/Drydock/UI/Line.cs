@@ -110,7 +110,7 @@ namespace Drydock.UI{
             _lineSprite = new Line2D(this, color);
             _point1 = v1;
             _point2 = v2;
-            Depth = owner.DepthManager.GetDepth(depth);
+            Depth = (float)depth/10;
             Opacity = 1;
             LineWidth = 1;
             Identifier = identifier;

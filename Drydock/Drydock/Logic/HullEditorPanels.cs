@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml;
 using Drydock.Render;
 using Drydock.UI;
+using Drydock.UI.Components;
 using Drydock.Utilities;
 
 #endregion
@@ -38,7 +39,7 @@ namespace Drydock.Logic{
             PanelRenderTarget = new RenderPanel(x, y, width, height, DepthLevel.Medium);
             RenderPanel.SetRenderPanel(PanelRenderTarget);
 
-            ElementCollection = new UIElementCollection();
+            ElementCollection = new UIElementCollection(DepthLevel.Medium);
             Curves = new BezierCurveCollection(
                 defaultConfig: defaultCurveConfiguration,
                 areaToFill: new FloatingRectangle(
@@ -60,7 +61,8 @@ namespace Drydock.Logic{
                     owner: ElementCollection,
                     textureName: "panelBG",
                     spriteTexRepeatX: width/(Curves.PixelsPerMeter*10),
-                    spriteTexRepeatY: height/(Curves.PixelsPerMeter*10)
+                    spriteTexRepeatY: height/(Curves.PixelsPerMeter*10),
+                    components: new IUIComponent[]  {new PanelComponent()}
                     )
                 );
             Update();

@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Drydock.Render;
@@ -18,22 +19,20 @@ namespace Drydock.Control{
 
     internal delegate InterruptState OnKeyboardEvent(KeyboardState state);
 
-    //these two delegates are to be used in literal events
+    //these two delegates are to be used in literal(?) events
     internal delegate void EOnMouseEvent(MouseState state);
 
     internal delegate void EOnKeyboardEvent(KeyboardState state);
 
     internal static class InputEventDispatcher{
-        public static List<ICanReceiveInputEvents> EventSubscribers;
-
+        public static DepthSortedList EventSubscribers;
         private static KeyboardState _prevKeyboardState;
         private static MouseState _prevMouseState;
         private static readonly Stopwatch _clickTimer;
-
         private static readonly ScreenText _mousePos;
 
         static InputEventDispatcher(){
-            EventSubscribers = new List<ICanReceiveInputEvents>();
+            EventSubscribers = new DepthSortedList();
 
             _prevKeyboardState = Keyboard.GetState();
             _prevMouseState = Mouse.GetState();
@@ -53,18 +52,20 @@ namespace Drydock.Control{
                 newState.MiddleButton != _prevMouseState.MiddleButton){
                 if (newState.LeftButton == ButtonState.Released){
                     //dispatch onbuttonreleased
-                    foreach (var subscriber in EventSubscribers){
+                    foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
                         if (subscriber.OnLeftButtonRelease(newState) == InterruptState.InterruptEventDispatch){
-                            break;
+                            PrematureMouseExit(newState);
+                            return;
                         }
                     }
 
 
                     if (_clickTimer.ElapsedMilliseconds < 200){
                         //dispatch onclick
-                        foreach (var subscriber in EventSubscribers){
+                        foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
                             if (subscriber.OnLeftButtonClick(newState) == InterruptState.InterruptEventDispatch){
-                                break;
+                                PrematureMouseExit(newState);
+                                return;
                             }
                         }
                     }
@@ -74,9 +75,10 @@ namespace Drydock.Control{
                 if (newState.LeftButton == ButtonState.Pressed){
                     _clickTimer.Start();
                     //dispatch onbuttonpressed
-                    foreach (var subscriber in EventSubscribers){
+                    foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
                         if (subscriber.OnLeftButtonPress(newState) == InterruptState.InterruptEventDispatch){
-                            break;
+                            PrematureMouseExit(newState);
+                            return;
                         }
                     }
                 }
@@ -86,10 +88,11 @@ namespace Drydock.Control{
                 newState.Y != _prevMouseState.Y){
                 bool interrupt = false;
                 //dispatch onmovement
-                foreach (var subscriber in EventSubscribers){
+                foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
                     if (subscriber.OnMouseMovement(newState) == InterruptState.InterruptEventDispatch){
                         interrupt = true;
-                        break;
+                        PrematureMouseExit(newState);
+                        return;
                     }
                 }
                 int dx = newState.X - _prevMouseState.X;
@@ -105,18 +108,27 @@ namespace Drydock.Control{
             }
             if (newState.ScrollWheelValue != _prevMouseState.ScrollWheelValue) {
                 Renderer.CameraDistance += (_prevMouseState.ScrollWheelValue-newState.ScrollWheelValue)/5f;
-                int f = 5;
+                foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
+                    if (subscriber.OnMouseScroll(newState) == InterruptState.InterruptEventDispatch) {
+                        PrematureMouseExit(newState);
+                        return;
+                    }
+                }
             }
 
             _prevMouseState = newState;
+        }
+
+        private static void PrematureMouseExit(MouseState state){
+            _prevMouseState = state;
         }
 
         private static void UpdateKeyboard(){
             var state = Keyboard.GetState();
 
             if (state != _prevKeyboardState){
-                foreach (var subscriber in EventSubscribers){
-                    if (subscriber.OnKeyboardEvent(state) == InterruptState.InterruptEventDispatch){
+                foreach (ICanReceiveInputEvents subscriber in EventSubscribers){
+                    if (subscriber.OnKeyboardEvent(state) == InterruptState.InterruptEventDispatch) {
                         break;
                     }
                 }
@@ -138,4 +150,67 @@ namespace Drydock.Control{
             _prevKeyboardState = state;
         }
     }
+    #region depth sorted list
+
+    internal class DepthSortedList : IEnumerable {
+        private readonly List<float> _depthList;
+        private readonly List<ICanReceiveInputEvents> _objList;
+
+        public DepthSortedList() {
+            _depthList = new List<float>();
+            _objList = new List<ICanReceiveInputEvents>();
+        }
+
+        public int Count {
+            get { return _depthList.Count; }
+        }
+
+        public ICanReceiveInputEvents this[int index] {
+            get { return _objList[index]; }
+        }
+
+        public void Add(float depth, ICanReceiveInputEvents element) {
+            _depthList.Add(depth);
+            _objList.Add(element);
+
+            for (int i = _depthList.Count - 1; i < 0; i--) {
+                if (_depthList[i] < _depthList[i - 1]) {
+                    _depthList.RemoveAt(i);
+                    _objList.RemoveAt(i);
+                    _depthList.Insert(i - 2, depth);
+                    _objList.Insert(i - 2, element);
+                }
+                else {
+                    break;
+                }
+            }
+        }
+
+        public void Clear() {
+            _depthList.Clear();
+            _objList.Clear();
+        }
+
+        public void RemoveAt(int index) {
+            _depthList.RemoveAt(index);
+            _objList.RemoveAt(index);
+        }
+
+        public void Remove(ICanReceiveInputEvents element) {
+            int i = 0;
+            while (_objList[i] == element) {
+                i++;
+                if (i == _objList.Count) {
+                    //return;
+                }
+            }
+            RemoveAt(i);
+        }
+
+        public IEnumerator GetEnumerator(){
+            return _objList.GetEnumerator();
+        }
+    }
+
+    #endregion
 }

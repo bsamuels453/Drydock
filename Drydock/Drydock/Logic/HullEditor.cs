@@ -2,6 +2,7 @@
 
 using Drydock.Control;
 using Drydock.Render;
+using Drydock.UI;
 using Microsoft.Xna.Framework.Input;
 
 #endregion
@@ -31,7 +32,7 @@ namespace Drydock.Logic{
 
             _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves, _backpanel.Curves);
 
-            InputEventDispatcher.EventSubscribers.Add(this);
+            InputEventDispatcher.EventSubscribers.Add((float)DepthLevel.Medium/10,  this);
         }
 
         #region ICanReceiveInputEvents Members
@@ -49,6 +50,10 @@ namespace Drydock.Logic{
         }
 
         public InterruptState OnLeftButtonRelease(MouseState state){
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnMouseScroll(MouseState state){
             return InterruptState.AllowOtherEvents;
         }
 

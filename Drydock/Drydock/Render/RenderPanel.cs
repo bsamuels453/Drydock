@@ -23,7 +23,7 @@ namespace Drydock.Render{
             _sprites = new List<IDrawableSprite>();
             _buffers = new List<IDrawableBuffer>();
 
-            _depth = DepthManager.GetDepthFloat(depth);
+            _depth = (float)depth / 10;
 
             _renderPanels.Add(this);
 

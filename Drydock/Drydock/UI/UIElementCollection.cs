@@ -15,22 +15,20 @@ namespace Drydock.UI{
         private readonly List<UIElementCollection> _childCollections;
         private readonly List<IUIElement> _elements;
         private readonly UISortedList _layerSortedIElements;
-        public DepthManager DepthManager;
         public bool DisableEntryHandlers;
         private MouseState _prevMouseState;
 
         #region ctor
 
-        public UIElementCollection(){
+        public UIElementCollection(DepthLevel depth){
             _elements = new List<IUIElement>();
             _layerSortedIElements = new UISortedList();
             _childCollections = new List<UIElementCollection>();
-            DepthManager = new DepthManager();
             UIContext.Add(this);
             _prevMouseState = Mouse.GetState();
             DisableEntryHandlers = false;
 
-            InputEventDispatcher.EventSubscribers.Add(this);
+            InputEventDispatcher.EventSubscribers.Add((float)depth/10, this);
         }
 
         #endregion
@@ -55,7 +53,7 @@ namespace Drydock.UI{
 
         public UIElementCollection Add(UIElementCollection collectionToAdd){
             _childCollections.Add(collectionToAdd);
-            collectionToAdd.DepthManager.Depth = DepthManager.Depth + 1;
+            //collectionToAdd.DepthManager.Depth = DepthManager.Depth + 1;
             return collectionToAdd;
         }
 
@@ -157,7 +155,6 @@ namespace Drydock.UI{
                 foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonPress){
                     if (mouseEvent(state) == InterruptState.InterruptEventDispatch){
                         return InterruptState.InterruptEventDispatch;
-                        ;
                     }
                 }
             }
@@ -179,6 +176,22 @@ namespace Drydock.UI{
             }
             foreach (var collection in _childCollections){
                 if (collection.OnLeftButtonRelease(state) == InterruptState.InterruptEventDispatch){
+                    return InterruptState.InterruptEventDispatch;
+                }
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnMouseScroll(MouseState state){
+            for (int i = 0; i < _layerSortedIElements.Count; i++) {
+                foreach (var mouseEvent in _layerSortedIElements[i].OnMouseScroll) {
+                    if (mouseEvent(state) == InterruptState.InterruptEventDispatch) {
+                        return InterruptState.InterruptEventDispatch;
+                    }
+                }
+            }
+            foreach (var collection in _childCollections) {
+                if (collection.OnMouseScroll(state) == InterruptState.InterruptEventDispatch) {
                     return InterruptState.InterruptEventDispatch;
                 }
             }

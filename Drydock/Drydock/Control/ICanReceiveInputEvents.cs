@@ -11,6 +11,7 @@ namespace Drydock.Control{
         InterruptState OnLeftButtonClick(MouseState state);
         InterruptState OnLeftButtonPress(MouseState state);
         InterruptState OnLeftButtonRelease(MouseState state);
+        InterruptState OnMouseScroll(MouseState state);
         InterruptState OnKeyboardEvent(KeyboardState state);
     }
 }

@@ -31,14 +31,11 @@ namespace Drydock.Logic{
 
         #endregion
 
-        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, UIElementCollection parentCollection = null){
-            InputEventDispatcher.EventSubscribers.Add(this);
-            if (parentCollection != null){
-                ElementCollection = parentCollection.Add(new UIElementCollection());
-            }
-            else{
-                ElementCollection = new UIElementCollection();
-            }
+        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, UIElementCollection parentCollection){
+            InputEventDispatcher.EventSubscribers.Add((float)DepthLevel.Medium /10f, this);
+
+            ElementCollection = parentCollection; //.Add(new UIElementCollection(DepthLevel.Medium));
+
 
             var reader = XmlReader.Create(defaultConfig);
             reader.ReadToFollowing("NumControllers");
@@ -211,6 +208,10 @@ namespace Drydock.Logic{
         }
 
         public InterruptState OnLeftButtonRelease(MouseState state){
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState OnMouseScroll(MouseState state){
             return InterruptState.AllowOtherEvents;
         }
 

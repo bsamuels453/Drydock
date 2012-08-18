@@ -15,6 +15,7 @@ namespace Drydock.UI{
         List<OnMouseEvent> OnMouseEntry { get; } //procs when mouse enters the bounding box of the element
         List<OnMouseEvent> OnMouseExit { get; } //procs when the mouse exits the bounding box of the element
         List<OnMouseEvent> OnMouseMovement { get; } //procs on global mouse movement
+        List<OnMouseEvent> OnMouseScroll { get; }
         List<EOnKeyboardEvent> OnKeyboardEvent { get; }
 
         #endregion

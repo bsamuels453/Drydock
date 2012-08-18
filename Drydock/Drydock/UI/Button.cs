@@ -87,6 +87,7 @@ namespace Drydock.UI{
         public List<OnMouseEvent> OnMouseExit { get; set; }
         public List<OnMouseEvent> OnMouseMovement { get; set; }
         public List<EOnKeyboardEvent> OnKeyboardEvent { get; set; }
+        public List<OnMouseEvent> OnMouseScroll { get; set; }
 
         #endregion
 
@@ -95,7 +96,7 @@ namespace Drydock.UI{
         public Button(float x, float y, float width, float height, DepthLevel depth, UIElementCollection owner, string textureName, float spriteTexRepeatX = DefaultTexRepeat, float spriteTexRepeatY = DefaultTexRepeat, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _identifier = identifier;
             Owner = owner;
-            Depth = Owner.DepthManager.GetDepth(depth);
+            Depth = (float)depth/10;
 
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
@@ -108,6 +109,7 @@ namespace Drydock.UI{
             OnMouseExit = new List<OnMouseEvent>();
             OnMouseMovement = new List<OnMouseEvent>();
             OnKeyboardEvent = new List<EOnKeyboardEvent>();
+            OnMouseScroll = new List<OnMouseEvent>();
 
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
