@@ -28,7 +28,8 @@ namespace Drydock.Render{
             Singleton.Device = device;
 
             CameraTarget = new Vector3();
-
+            CameraPhi = 0.32f;
+            CameraTheta = 0.63f;
             CameraDistance = 300;
 
             AspectRatio = Device.Viewport.Bounds.Width/(float) Device.Viewport.Bounds.Height;

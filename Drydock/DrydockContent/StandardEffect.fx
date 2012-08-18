@@ -5,9 +5,12 @@ float4 AmbientColor;
 float AmbientIntensity;
 float4x4 WorldInverseTranspose;
 
+float3 DiffuseLightDirection = float3(0, -1, 1);
+float4 DiffuseColor = float4(1, 1, 1, 1);
+float DiffuseIntensity = 0.7;
 
 texture Texture;
-sampler2D TextureSamp = sampler_state {
+sampler2D textureSampler = sampler_state {
     Texture = (Texture);
     MinFilter = Anisotropic;
     MagFilter = Anisotropic;
@@ -29,6 +32,7 @@ struct VertexShaderInput
 struct VertexShaderOutput
 {
     float4 Position : POSITION0;
+    float4 Color : COLOR0;
     float3 Normal : TEXCOORD0;
     float2 TextureCoordinate : TEXCOORD1;
 };
@@ -40,7 +44,13 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     float4 worldPosition = mul(input.Position, World);
     float4 viewPosition = mul(worldPosition, View);
     output.Position = mul(viewPosition, Projection);
-	output.Normal = mul(input.Normal, WorldInverseTranspose);
+
+    float4 normal = mul(input.Normal, WorldInverseTranspose);
+	normal = normalize(normal);
+    float lightIntensity = dot(normal, DiffuseLightDirection);
+    output.Color = saturate(DiffuseColor * DiffuseIntensity * lightIntensity);
+
+    output.Normal = normal;
     output.TextureCoordinate = input.TextureCoordinate;
 
     return output;
@@ -51,19 +61,12 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 ////////////////////////////////////////////
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-	/////////////
-	//COLORING///
-	/////////////
-    float4 pixelColor = tex2D(TextureSamp, input.TextureCoordinate);
+	input.Color = clamp(input.Color, 0.5, 1);
 
-	/////////////
-	///SHADING///
-	/////////////
-	float4 ambientContribution = (pixelColor) *( AmbientColor * AmbientIntensity);
-	float4 shadedColor = ambientContribution;
-
-	shadedColor.a = 1;
-	return saturate(shadedColor);
+	float4 textureColor = tex2D(textureSampler, input.TextureCoordinate);
+    float4 tex = saturate(textureColor * input.Color);
+	tex.a = 1;
+	return tex;
 }
 
 technique Standard

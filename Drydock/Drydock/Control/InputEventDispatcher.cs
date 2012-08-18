@@ -91,8 +91,8 @@ namespace Drydock.Control{
                 foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
                     if (subscriber.OnMouseMovement(newState) == InterruptState.InterruptEventDispatch){
                         interrupt = true;
-                        PrematureMouseExit(newState);
-                        return;
+                        //PrematureMouseExit(newState);
+                        //return;
                     }
                 }
                 int dx = newState.X - _prevMouseState.X;
@@ -115,6 +115,9 @@ namespace Drydock.Control{
             }
             if (newState.ScrollWheelValue != _prevMouseState.ScrollWheelValue) {
                 Renderer.CameraDistance += (_prevMouseState.ScrollWheelValue-newState.ScrollWheelValue)/5f;
+                if (Renderer.CameraDistance < 50){
+                    Renderer.CameraDistance = 50;
+                }
                 foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
                     if (subscriber.OnMouseScroll(newState) == InterruptState.InterruptEventDispatch) {
                         PrematureMouseExit(newState);

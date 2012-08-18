@@ -72,8 +72,6 @@ namespace Drydock.Logic{
                 _verticies[i] = new VertexPositionNormalTexture();
             }
 
-            var sw = new Stopwatch();
-            sw.Start();
             //i sure hope you dont have to maintain this any time soon
             _topCurves.GetParameterizedPoint(0, true);
 
@@ -150,8 +148,6 @@ namespace Drydock.Logic{
                     index += 4;
                 }
             }
-            sw.Stop();
-            Console.WriteLine("time:" + sw.Elapsed.TotalMilliseconds*1000000);
             _geometryBuffer.Indexbuffer.SetData(_indicies);
             _geometryBuffer.Vertexbuffer.SetData(_verticies);
         }
@@ -207,19 +203,58 @@ namespace Drydock.Logic{
                     _mesh[x, _meshVertexWidth - 1 - z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x]*(_meshVertexWidth - 1 - z));
                 }
             }
+            var normals = new Vector3[_meshVertexWidth, _meshVertexWidth];
 
+            for (int vertX = 0; vertX < _meshVertexWidth-1; vertX++){
+                for (int vertZ = 0; vertZ < _meshVertexWidth-1; vertZ++){
+                    var crossSum = new Vector3();
+
+                    var s1 = _mesh[vertX + 1, vertZ] - _mesh[vertX, vertZ];
+                    var s2 = _mesh[vertX, vertZ + 1] - _mesh[vertX, vertZ];
+                    var s3 = _mesh[vertX + 1, vertZ + 1] - _mesh[vertX, vertZ];
+
+                    crossSum += Vector3.Cross(s1, s3);
+                    crossSum += Vector3.Cross(s3, s2);
+
+                    normals[vertX, vertZ] += crossSum;
+                }
+            }
+
+            for (int vertX = 1; vertX < _meshVertexWidth; vertX++) {
+                for (int vertZ = 1; vertZ < _meshVertexWidth; vertZ++) {
+                    var crossSum = new Vector3();
+
+                    var s1 = _mesh[vertX - 1, vertZ] - _mesh[vertX, vertZ];
+                    var s2 = _mesh[vertX, vertZ - 1] - _mesh[vertX, vertZ];
+                    var s3 = _mesh[vertX - 1, vertZ - 1] - _mesh[vertX, vertZ];
+
+                    crossSum += Vector3.Cross(s1, s3);
+                    crossSum += Vector3.Cross(s3, s2);
+
+                    normals[vertX, vertZ] += crossSum;
+                }
+            }
 
             //convert from 2d array to 1d
+            var v = new Vector3(0, -1, 0);
             int index = 0;
             for (int x = 0; x < _meshVertexWidth - 1; x++){
                 for (int z = 0; z < _meshVertexWidth - 1; z++){
                     _verticies[index].Position = -_mesh[x, z];
+                    _verticies[index].Normal = normals[x, z];
+                    //_verticies[index].Normal = v;
 
                     _verticies[index + 1].Position = -_mesh[x, z + 1];
+                    _verticies[index + 1].Normal = normals[x, z + 1];
+                    //_verticies[index + 1].Normal = v;
 
                     _verticies[index + 2].Position = -_mesh[x + 1, z + 1];
+                    _verticies[index + 2].Normal = normals[x + 1, z + 1];
+                    //_verticies[index + 2].Normal = v;
 
                     _verticies[index + 3].Position = -_mesh[x + 1, z];
+                    _verticies[index + 3].Normal = normals[x + 1, z];
+                   // _verticies[index + 3].Normal = v;
 
                     index += 4;
                 }

@@ -50,13 +50,9 @@ namespace Drydock{
 
 
         protected override void Update(GameTime gameTime){
-            var sw = new Stopwatch();
-            sw.Start();
             _editorLogic.Update();
             InputEventDispatcher.Update();
             //Thread.Sleep(10);
-            sw.Stop();
-            Console.WriteLine("time:" + sw.ElapsedMilliseconds);
             base.Update(gameTime);
         }
 
