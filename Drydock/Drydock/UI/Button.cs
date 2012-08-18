@@ -33,6 +33,8 @@ namespace Drydock.UI{
             }
         }
 
+        public IUIComponent[] Components { get; set; }
+
         public String Texture{
             get { return _texture; }
             set{
@@ -78,7 +80,6 @@ namespace Drydock.UI{
         public float Opacity { get; set; }
         public float Depth { get; set; }
         public UIElementCollection Owner { get; set; }
-        public IUIComponent[] Components { get; set; }
         public List<OnMouseEvent> OnLeftButtonClick { get; set; }
         public List<OnMouseEvent> OnLeftButtonPress { get; set; }
         public List<OnMouseEvent> OnLeftButtonRelease { get; set; }
@@ -162,12 +163,12 @@ namespace Drydock.UI{
         public Dictionary<string, object[]> Components;
         public DepthLevel? Depth;
         public float? Height;
-        public float? Width;
         public int? Identifier;
         public UIElementCollection Owner;
         public float? SpriteTexRepeatX;
         public float? SpriteTexRepeatY;
         public string TextureName;
+        public float? Width;
         public float? X;
         public float? Y;
 

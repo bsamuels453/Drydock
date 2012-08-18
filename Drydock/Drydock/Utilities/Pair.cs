@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Drydock.Utilities {
-    class Pair<TA,TB>{
+﻿namespace Drydock.Utilities{
+    internal class Pair<TA, TB>{
         public TA Val1;
         public TB Val2;
 

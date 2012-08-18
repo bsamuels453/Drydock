@@ -1,25 +1,25 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Drydock.Logic;
-using Drydock.UI;
 using Microsoft.Xna.Framework;
+
+#endregion
 
 namespace Drydock.Utilities{
     /// <summary>
-    /// REMEMEBER TO THROW AWAY THIS CLASS'S INSTANCES EVERY TIME THE RELEVANT CURVE CHANGES!
+    ///   REMEMEBER TO THROW AWAY THIS CLASS'S INSTANCES EVERY TIME THE RELEVANT CURVE CHANGES!
     /// </summary>
     internal class BezierIntersect{
-        private readonly List<BezierInfo> _curveinfo;
-        private readonly int _resolution; //represents the number of halfing operations required to get a result with an accuracy of less than one pixel in the worst case
         private readonly List<BoundCache> _boundCache;
+        private readonly List<BezierInfo> _curveinfo;
         private readonly float _largestX;
+        private readonly int _resolution; //represents the number of halfing operations required to get a result with an accuracy of less than one pixel in the worst case
 
-        public BezierIntersect(List<BezierInfo> curveinfo) {
+        public BezierIntersect(List<BezierInfo> curveinfo){
             _curveinfo = curveinfo;
             float dist = 0;
-            for (int i = 0; i < _curveinfo.Count - 1; i++) {
+            for (int i = 0; i < _curveinfo.Count - 1; i++){
                 dist += Vector2.Distance(_curveinfo[i].Pos, _curveinfo[i + 1].Pos);
             }
 
@@ -33,22 +33,22 @@ namespace Drydock.Utilities{
             }
             _resolution = pow;
 
-            _boundCache = new List<BoundCache>(curveinfo.Count-1);
-            for (int i = 0; i < curveinfo.Count-1; i++){
-                _boundCache.Add( new BoundCache(0, 1, curveinfo[i].Pos, curveinfo[i + 1].Pos, 0));
+            _boundCache = new List<BoundCache>(curveinfo.Count - 1);
+            for (int i = 0; i < curveinfo.Count - 1; i++){
+                _boundCache.Add(new BoundCache(0, 1, curveinfo[i].Pos, curveinfo[i + 1].Pos, 0));
             }
             _largestX = 0;
-            foreach (var cache in _boundCache) {
-                if (cache.LeftVal.X > _largestX) {
+            foreach (var cache in _boundCache){
+                if (cache.LeftVal.X > _largestX){
                     _largestX = cache.LeftVal.X;
                 }
-                if (cache.RightVal.X > _largestX) {
+                if (cache.RightVal.X > _largestX){
                     _largestX = cache.RightVal.X;
                 }
             }
         }
 
-        public Vector2 GetIntersectionFromX(float x) {
+        public Vector2 GetIntersectionFromX(float x){
             //we run on the assumption that t=0 is on the left, and t=1 is on the right
             //we also run on the assumption that the given controllers form a curve that passes the vertical line test
 
@@ -66,9 +66,9 @@ namespace Drydock.Utilities{
             }
 
 
-            int curvesToUse=-1;
-            for (int i = 0; i < _boundCache.Count; i++) {
-                if(_boundCache[i].Contains(x)){
+            int curvesToUse = -1;
+            for (int i = 0; i < _boundCache.Count; i++){
+                if (_boundCache[i].Contains(x)){
                     curvesToUse = i;
                 }
             }
@@ -85,7 +85,7 @@ namespace Drydock.Utilities{
                     }
                 }
                 if (curCache.RightChild != null){
-                    if (curCache.RightChild.Contains(x)) {
+                    if (curCache.RightChild.Contains(x)){
                         curCache = curCache.RightChild;
                         continue;
                     }
@@ -96,12 +96,11 @@ namespace Drydock.Utilities{
             //now continue until we get to dest
             int numRuns = curCache.Depth;
             while (numRuns++ <= _resolution){
+                Vector2 v = GenerateBoundValue((curCache.RightT + curCache.LeftT)/2, curvesToUse);
 
-                Vector2 v = GenerateBoundValue((curCache.RightT + curCache.LeftT) / 2, curvesToUse);
-
-                if (x > v.X) { //create a new rightchild
+                if (x > v.X){ //create a new rightchild
                     //leftbound.Val1 += (rightbound.Val1 - leftbound.Val1)/2;
-                    float newLeftT = curCache.LeftT + (curCache.RightT - curCache.LeftT) / 2;
+                    float newLeftT = curCache.LeftT + (curCache.RightT - curCache.LeftT)/2;
 
                     curCache.RightChild = new BoundCache(
                         newLeftT,
@@ -114,7 +113,7 @@ namespace Drydock.Utilities{
                 }
                 else{ //create a new leftchild
                     //rightbound.Val1 -= (rightbound.Val1 - leftbound.Val1)/2;
-                    float newRightT = curCache.RightT - (curCache.RightT - curCache.LeftT) / 2;
+                    float newRightT = curCache.RightT - (curCache.RightT - curCache.LeftT)/2;
 
                     curCache.LeftChild = new BoundCache(
                         curCache.LeftT,
@@ -125,10 +124,9 @@ namespace Drydock.Utilities{
                         );
                     curCache = curCache.LeftChild;
                 }
-
             }
 
-            return (curCache.LeftVal + curCache.RightVal) / 2;
+            return (curCache.LeftVal + curCache.RightVal)/2;
         }
 
 
@@ -138,14 +136,14 @@ namespace Drydock.Utilities{
                 out v,
                 _curveinfo[curvesToUse].Pos,
                 _curveinfo[curvesToUse].NextControl,
-                _curveinfo[curvesToUse+1].PrevControl,
-                _curveinfo[curvesToUse+1].Pos,
+                _curveinfo[curvesToUse + 1].PrevControl,
+                _curveinfo[curvesToUse + 1].Pos,
                 t
                 );
             return v.X;
         }
 
-        private Vector2 GenerateBoundValue(float t, int curvesToUse) {
+        private Vector2 GenerateBoundValue(float t, int curvesToUse){
             Vector2 v;
             Bezier.GetBezierValue(
                 out v,
@@ -158,16 +156,18 @@ namespace Drydock.Utilities{
             return v;
         }
 
+        #region Nested type: BoundCache
+
         private class BoundCache{
+            public readonly int Depth;
             public readonly float LeftT;
-            public readonly float RightT;
 
             public readonly Vector2 LeftVal;
+            public readonly float RightT;
             public readonly Vector2 RightVal;
 
             public BoundCache LeftChild;
             public BoundCache RightChild;
-            public readonly int Depth;
 
             public BoundCache(float leftT, float rightT, Vector2 leftVal, Vector2 rightVal, int depth){
                 Depth = depth;
@@ -185,13 +185,13 @@ namespace Drydock.Utilities{
             }
         }
 
-
+        #endregion
     }
 
     public struct BezierInfo{
+        public Vector2 NextControl;
         public Vector2 Pos;
         public Vector2 PrevControl;
-        public Vector2 NextControl;
 
         public BezierInfo(Vector2 pos, Vector2 prev, Vector2 next){
             Pos = pos;

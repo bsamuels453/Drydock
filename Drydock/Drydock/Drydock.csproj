@@ -168,9 +168,10 @@
     <Compile Include="Logic\HullEditor.cs" />
     <Compile Include="Logic\HullEditorPanels.cs" />
     <Compile Include="Logic\PreviewRenderer.cs" />
-    <Compile Include="Render\AuxBufferManager.cs" />
-    <Compile Include="Render\IAdvancedPrimitive.cs" />
+    <Compile Include="Render\BufferObject.cs" />
     <Compile Include="Render\IDrawable.cs" />
+    <Compile Include="Render\RenderPanel.cs" />
+    <Compile Include="Render\ShipGeometryBuffer.cs" />
     <Compile Include="UI\Border.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="UI\Components\DraggableComponent.cs" />

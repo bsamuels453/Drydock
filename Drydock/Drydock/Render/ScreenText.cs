@@ -20,7 +20,7 @@ namespace Drydock.Render{
     }
 
     /// <summary>
-    /// handles the drawing of all text onto the screen. Static methods exist as a controller for all instances of ScreenText. DO NOT THREAD THIS. 
+    ///   handles the drawing of all text onto the screen. Static methods exist as a controller for all instances of ScreenText. DO NOT THREAD THIS.
     /// </summary>
     internal class ScreenText{
         #region class methods and fields

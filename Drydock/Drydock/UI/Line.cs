@@ -6,13 +6,13 @@ using System.Linq;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
 namespace Drydock.UI{
     internal class Line : IUIElement{
         #region fields and properties, and element modification methods
+
         public const int DefaultIdentifier = 1;
         private readonly Line2D _lineSprite;
         public float Length;
@@ -29,6 +29,7 @@ namespace Drydock.UI{
                 CalculateDestFromUnitVector();
             }
         }
+
         public Vector2 OriginPoint{
             get { return _point1; }
             set{
@@ -36,6 +37,7 @@ namespace Drydock.UI{
                 CalculateInfoFromPoints();
             }
         }
+
         public Vector2 DestPoint{
             get { return _point2; }
             set{
@@ -43,10 +45,17 @@ namespace Drydock.UI{
                 CalculateInfoFromPoints();
             }
         }
+
         public int LineWidth { get; set; }
-        public UIElementCollection Owner { get; set; }
 
         public IUIComponent[] Components { get; set; }
+
+        public IDrawableSprite Sprite{
+            get { return _lineSprite; }
+        }
+
+        public UIElementCollection Owner { get; set; }
+
         public float Opacity { get; set; }
         public float Depth { get; set; }
 
@@ -56,34 +65,37 @@ namespace Drydock.UI{
         }
 
         public int Identifier { get; set; }
+
         public float X{
             get { return (int) _point1.X; }
             set { throw new NotImplementedException(); }
         }
+
         public float Y{
             get { return (int) _point1.Y; }
             set { throw new NotImplementedException(); }
         }
-        public float Width {
+
+        public float Width{
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
         }
-        public float Height {
+
+        public float Height{
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
         }
+
         public FloatingRectangle BoundingBox{
             get { throw new NotImplementedException(); }
         }
-        public IAdvancedPrimitive Sprite{
-            get { return _lineSprite; }
-        }        
 
         public void TranslateOrigin(int dx, int dy){
             _point1.X += dx;
             _point1.Y += dy;
             CalculateInfoFromPoints();
         }
+
         public void TranslateDestination(int dx, int dy){
             _point2.X += dx;
             _point2.Y += dy;
@@ -94,7 +106,7 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Line(Vector2 v1, Vector2 v2, Color color, DepthLevel depth, UIElementCollection owner, int identifier = DefaultIdentifier, IUIComponent[] components=null){
+        public Line(Vector2 v1, Vector2 v2, Color color, DepthLevel depth, UIElementCollection owner, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _lineSprite = new Line2D(this, color);
             _point1 = v1;
             _point2 = v2;
@@ -105,8 +117,8 @@ namespace Drydock.UI{
             CalculateInfoFromPoints();
 
             Components = components;
-            if (Components != null) {
-                foreach (IUIComponent component in Components) {
+            if (Components != null){
+                foreach (IUIComponent component in Components){
                     component.Owner = this;
                 }
             }
@@ -117,7 +129,7 @@ namespace Drydock.UI{
         #region private calculation functions
 
         /// <summary>
-        /// calculates the line's destination point from the line's unit vector and length
+        ///   calculates the line's destination point from the line's unit vector and length
         /// </summary>
         private void CalculateDestFromUnitVector(){
             _point2.X = _uvVectors.X*Length + _point1.X;
@@ -125,7 +137,7 @@ namespace Drydock.UI{
         }
 
         /// <summary>
-        /// calculates the line's blit location, angle, length, and unit vector based on the origin point and destination point
+        ///   calculates the line's blit location, angle, length, and unit vector based on the origin point and destination point
         /// </summary>
         private void CalculateInfoFromPoints(){
             _angle = (float) Math.Atan2(_point2.Y - _point1.Y, _point2.X - _point1.X);
@@ -148,7 +160,7 @@ namespace Drydock.UI{
             throw new Exception("Request made to a Line object for a component that did not exist.");
         }
 
-        public bool DoesComponentExist<TComponent>() {
+        public bool DoesComponentExist<TComponent>(){
             if (Components != null){
                 return Components.OfType<TComponent>().Any();
             }
@@ -170,14 +182,15 @@ namespace Drydock.UI{
 
         #endregion
     }
-    internal class LineGenerator : ComponentGenerator {
-        public Dictionary<string, object[]> Components;
+
+    internal class LineGenerator : ComponentGenerator{
         public Color? Color;
-        public UIElementCollection Owner;
+        public Dictionary<string, object[]> Components;
         public DepthLevel? Depth;
+        public int? Identifier;
+        public UIElementCollection Owner;
         public Vector2? V1;
         public Vector2? V2;
-        public int? Identifier;
 
         public LineGenerator(){
             Components = null;
@@ -189,34 +202,34 @@ namespace Drydock.UI{
             Identifier = null;
         }
 
-        public Line GenerateLine() {
+        public Line GenerateLine(){
             //make sure we have all the data required
             if (Depth == null ||
                 V1 == null ||
                 V2 == null ||
                 Color == null ||
                 Depth == null ||
-                Owner == null) {
+                Owner == null){
                 throw new Exception("Template did not contain all of the basic variables required to generate a button.");
             }
             //generate component list
             IUIComponent[] components = null;
-            if (Components != null) {
+            if (Components != null){
                 components = GenerateComponents(Components);
             }
 
             //now we handle optional parameters
             int identifier;
             if (Identifier != null)
-                identifier = (int)Identifier;
+                identifier = (int) Identifier;
             else
                 identifier = Button.DefaultIdentifier;
 
             return new Line(
-                (Vector2)V1,
-                (Vector2)V2,
-                (Color)Color,
-                (DepthLevel)Depth,
+                (Vector2) V1,
+                (Vector2) V2,
+                (Color) Color,
+                (DepthLevel) Depth,
                 Owner,
                 identifier,
                 components

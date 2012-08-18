@@ -4,8 +4,8 @@ using Microsoft.Xna.Framework.Input;
 
 #endregion
 
-namespace Drydock.Control {
-    interface ICanReceiveInputEvents {
+namespace Drydock.Control{
+    internal interface ICanReceiveInputEvents{
         //it'd be nice to replace this trash
         InterruptState OnMouseMovement(MouseState state);
         InterruptState OnLeftButtonClick(MouseState state);

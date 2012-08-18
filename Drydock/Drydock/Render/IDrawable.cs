@@ -1,16 +1,20 @@
 ﻿#region
 
-using Drydock.Utilities;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
 namespace Drydock.Render{
-    internal interface IDrawable{
-        float X { get; set; }
-        float Y { get; set; }
-        float Width { get; set; }
-        float  Height { get; set; }
-        FloatingRectangle BoundingBox { get; } //move somewhere else?
+    internal interface IDrawableSprite{
+        Texture2D Texture { get; set; }
+        void Draw(SpriteBatch spriteBatch, Vector2 renderTargOffset);
+        void SetTextureFromString(string textureName);
+        void Dispose();
+    }
 
+    internal interface IDrawableBuffer{
+        void Draw(Matrix viewMatrix);
+        void Dispose();
     }
 }

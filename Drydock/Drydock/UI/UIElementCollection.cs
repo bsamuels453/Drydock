@@ -9,9 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.UI{
     /// <summary>
-    /// This class serves as a container for UI elements. 
-    /// Its purpose is to update said elements through the UIContext, and
-    /// to provide collection-wide modification methods for use by external classes.
+    ///   This class serves as a container for UI elements. Its purpose is to update said elements through the UIContext, and to provide collection-wide modification methods for use by external classes.
     /// </summary>
     internal class UIElementCollection : ICanReceiveInputEvents{
         private readonly List<UIElementCollection> _childCollections;
@@ -89,6 +87,8 @@ namespace Drydock.UI{
 
         #region event dispatchers
 
+        //i'll rip your balls off if you LINQ these foreach loops
+
         public InterruptState OnMouseMovement(MouseState state){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var mouseEvent in _layerSortedIElements[i].OnMouseMovement){
@@ -118,7 +118,6 @@ namespace Drydock.UI{
                                 return InterruptState.InterruptEventDispatch;
                             }
                         }
-
                     }
                 }
             }
@@ -126,7 +125,8 @@ namespace Drydock.UI{
             if (!DisableEntryHandlers){ //disabling entry handlers disables movement dispatch for child collections
                 foreach (var collection in _childCollections){
                     if (collection.OnMouseMovement(state) == InterruptState.InterruptEventDispatch){
-                        return InterruptState.InterruptEventDispatch; ;
+                        return InterruptState.InterruptEventDispatch;
+                        ;
                     }
                 }
             }
@@ -156,7 +156,8 @@ namespace Drydock.UI{
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonPress){
                     if (mouseEvent(state) == InterruptState.InterruptEventDispatch){
-                        return InterruptState.InterruptEventDispatch; ;
+                        return InterruptState.InterruptEventDispatch;
+                        ;
                     }
                 }
             }
@@ -290,23 +291,23 @@ namespace Drydock.UI{
         }
 
         public void AddDragCallback(OnDragMovement deleg){
-            foreach (var element in _elements) {
-                if (element.DoesComponentExist<DraggableComponent>()) {
+            foreach (var element in _elements){
+                if (element.DoesComponentExist<DraggableComponent>()){
                     element.GetComponent<DraggableComponent>().DragMovementDispatcher += deleg;
                 }
             }
-            foreach (var collection in _childCollections) {
+            foreach (var collection in _childCollections){
                 collection.AddDragCallback(deleg);
             }
         }
 
-        public void AddDragConstraintCallback(DraggableObjectClamp deleg) {
-            foreach (var element in _elements) {
-                if (element.DoesComponentExist<DraggableComponent>()) {
+        public void AddDragConstraintCallback(DraggableObjectClamp deleg){
+            foreach (var element in _elements){
+                if (element.DoesComponentExist<DraggableComponent>()){
                     element.GetComponent<DraggableComponent>().DragMovementClamp += deleg;
                 }
             }
-            foreach (var collection in _childCollections) {
+            foreach (var collection in _childCollections){
                 collection.AddDragConstraintCallback(deleg);
             }
         }

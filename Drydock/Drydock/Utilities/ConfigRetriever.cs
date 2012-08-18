@@ -4,15 +4,16 @@ using System.Xml;
 
 #endregion
 
-namespace Drydock.Utilities {
-    class ConfigRetriever {
+namespace Drydock.Utilities{
+    internal class ConfigRetriever{
         private readonly string _configFile;
         private XmlReader _reader;
+
         public ConfigRetriever(string configFile){
             _configFile = configFile;
         }
 
-        public string GetValue(string key) {
+        public string GetValue(string key){
             _reader = XmlReader.Create(_configFile);
             _reader.ReadToFollowing(key);
             _reader.MoveToFirstAttribute();

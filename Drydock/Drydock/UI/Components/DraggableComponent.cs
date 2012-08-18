@@ -14,7 +14,7 @@ namespace Drydock.UI.Components{
 
 
     /// <summary>
-    /// allows a UI element to be dragged. Required element to be IUIInteractiveComponent
+    ///   allows a UI element to be dragged. Required element to be IUIInteractiveComponent
     /// </summary>
     internal class DraggableComponent : IUIComponent{
         private bool _isEnabled;
@@ -43,7 +43,6 @@ namespace Drydock.UI.Components{
         }
 
         private void ComponentCtor(){
-
             _isEnabled = true;
             _isMoving = false;
             _owner.OnLeftButtonPress.Add(OnLeftButtonDown);
@@ -79,7 +78,7 @@ namespace Drydock.UI.Components{
             return InterruptState.AllowOtherEvents;
         }
 
-        private InterruptState OnLeftButtonUp(MouseState state) {
+        private InterruptState OnLeftButtonUp(MouseState state){
             if (_isMoving){
                 if (state.LeftButton == ButtonState.Released){
                     _isMoving = false;
@@ -89,19 +88,19 @@ namespace Drydock.UI.Components{
             return InterruptState.AllowOtherEvents;
         }
 
-        private InterruptState OnMouseMovement(MouseState state) {
+        private InterruptState OnMouseMovement(MouseState state){
             if (_isMoving){
-                var oldX = (int)_owner.X;
-                var oldY = (int)_owner.Y;
+                var oldX = (int) _owner.X;
+                var oldY = (int) _owner.Y;
                 var x = (int) (state.X + _mouseOffset.X);
                 var y = (int) (state.Y + _mouseOffset.Y);
-                if (DragMovementClamp != null) {
+                if (DragMovementClamp != null){
                     DragMovementClamp(_owner, ref x, ref y, oldX, oldY);
                 }
                 _owner.X = x;
                 _owner.Y = y;
 
-                if (DragMovementDispatcher != null) {
+                if (DragMovementDispatcher != null){
                     DragMovementDispatcher(_owner, x - oldX, y - oldY);
                 }
                 return InterruptState.InterruptEventDispatch;

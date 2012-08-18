@@ -5,27 +5,28 @@ using Microsoft.Xna.Framework;
 #endregion
 
 namespace Drydock.Utilities{
-    internal static class Bezier {
+    internal static class Bezier{
         #region generation methods
+
         private static void Lerp(ref Vector2 dest, Vector2 a, Vector2 b, float t){
             dest.X = a.X + (b.X - a.X)*t;
             dest.Y = a.Y + (b.Y - a.Y)*t;
         }
 
-        private static void DLerp(ref DVector2 dest, DVector2 a, DVector2 b, double t) {
-            dest.X = a.X + (b.X - a.X) * t;
-            dest.Y = a.Y + (b.Y - a.Y) * t;
+        private static void DLerp(ref DVector2 dest, DVector2 a, DVector2 b, double t){
+            dest.X = a.X + (b.X - a.X)*t;
+            dest.Y = a.Y + (b.Y - a.Y)*t;
         }
 
         /// <summary>
-        /// b and c are controllers. a and d are statics. AB is origin and CD is dest
+        ///   b and c are controllers. a and d are statics. AB is origin and CD is dest
         /// </summary>
-        /// <param name="dest"></param>
-        /// <param name="ptA"></param>
-        /// <param name="ptB">dest</param>
-        /// <param name="ptC"></param>
-        /// <param name="ptD"></param>
-        /// <param name="t"></param>
+        /// <param name="dest"> </param>
+        /// <param name="ptA"> </param>
+        /// <param name="ptB"> dest </param>
+        /// <param name="ptC"> </param>
+        /// <param name="ptD"> </param>
+        /// <param name="t"> </param>
         public static void GetBezierValue(out Vector2 dest, Vector2 ptA, Vector2 ptB, Vector2 ptC, Vector2 ptD, float t){
             var ab = new Vector2();
             var bc = new Vector2();
@@ -44,15 +45,15 @@ namespace Drydock.Utilities{
         }
 
         /// <summary>
-        /// partial double version for the inner pedantic
+        ///   partial double version for the inner pedantic
         /// </summary>
-        /// <param name="dest"></param>
-        /// <param name="ptA"></param>
-        /// <param name="ptB">dest</param>
-        /// <param name="ptC"></param>
-        /// <param name="ptD"></param>
-        /// <param name="t"></param>
-        public static void GetBezierValue(out Vector2 dest, Vector2 ptA, Vector2 ptB, Vector2 ptC, Vector2 ptD, double t) {
+        /// <param name="dest"> </param>
+        /// <param name="ptA"> </param>
+        /// <param name="ptB"> dest </param>
+        /// <param name="ptC"> </param>
+        /// <param name="ptD"> </param>
+        /// <param name="t"> </param>
+        public static void GetBezierValue(out Vector2 dest, Vector2 ptA, Vector2 ptB, Vector2 ptC, Vector2 ptD, double t){
             var ab = new DVector2();
             var bc = new DVector2();
             var cd = new DVector2();
@@ -72,16 +73,12 @@ namespace Drydock.Utilities{
             DLerp(ref bccd, bc, cd, t);
             DLerp(ref ddest, abbc, bccd, t);
 
-            dest = new Vector2((float)ddest.X, (float)ddest.Y);
+            dest = new Vector2((float) ddest.X, (float) ddest.Y);
         }
+
         #endregion
 
-
-
-
-
-
-
+        #region Nested type: DVector2
 
         private class DVector2{
             public double X;
@@ -97,5 +94,7 @@ namespace Drydock.Utilities{
                 Y = 0;
             }
         }
+
+        #endregion
     }
 }

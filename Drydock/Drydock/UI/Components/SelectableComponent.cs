@@ -2,8 +2,6 @@
 
 using System;
 using Drydock.Control;
-using Drydock.Utilities;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 #endregion
@@ -15,12 +13,11 @@ namespace Drydock.UI.Components{
         Selected,
         UnSelected
     };
-    
+
     /// <summary>
-    /// allows a UI element to be selected. Required element to be IUIInteractiveComponent
+    ///   allows a UI element to be selected. Required element to be IUIInteractiveComponent
     /// </summary>
     internal class SelectableComponent : IUIComponent{
-
         private readonly int _selectedHeight;
         private readonly String _selectedTexture;
         private readonly int _selectedWidth;
@@ -45,9 +42,9 @@ namespace Drydock.UI.Components{
         #region IUIComponent Members
 
         public IUIElement Owner{
-            set {
+            set{
                 if (value is IUIInteractiveElement){
-                    _owner = (IUIInteractiveElement)value;
+                    _owner = (IUIInteractiveElement) value;
                     ComponentCtor();
                 }
                 else{
@@ -55,10 +52,10 @@ namespace Drydock.UI.Components{
                 }
             }
         }
+
         public bool IsEnabled { get; set; }
 
         public void Update(){
-
         }
 
         #endregion
@@ -70,19 +67,19 @@ namespace Drydock.UI.Components{
             _owner.OnLeftButtonClick.Add(OnMouseClick);
 
             _originalTexture = _owner.Texture;
-            _widthDx = (int)(_selectedWidth - _owner.BoundingBox.Width);
-            _heightDx = (int)(_selectedHeight - _owner.BoundingBox.Height);
-            _positionDx = _widthDx / 2;
-            _positionDy = _heightDx / 2;
+            _widthDx = (int) (_selectedWidth - _owner.BoundingBox.Width);
+            _heightDx = (int) (_selectedHeight - _owner.BoundingBox.Height);
+            _positionDx = _widthDx/2;
+            _positionDy = _heightDx/2;
         }
 
-        private InterruptState OnMouseClick(MouseState state) {
+        private InterruptState OnMouseClick(MouseState state){
             if (IsEnabled){
-                if (_isSelected) {
+                if (_isSelected){
                     DeselectThis();
                 }
                 else{
-                    if (_owner.BoundingBox.Contains(state.X, state.Y)) {
+                    if (_owner.BoundingBox.Contains(state.X, state.Y)){
                         SelectThis();
                     }
                 }
@@ -98,17 +95,17 @@ namespace Drydock.UI.Components{
                 _owner.X -= _positionDx;
                 _owner.Y -= _positionDy;
                 _isSelected = true;
-                
-                try {
+
+                try{
                     _owner.GetComponent<FadeComponent>().IsEnabled = false;
                 }
-                // ReSharper disable EmptyGeneralCatchClause
-                catch (Exception){/*there is no fade component*/}
+                    // ReSharper disable EmptyGeneralCatchClause
+                catch (Exception){ /*there is no fade component*/
+                }
                 // ReSharper restore EmptyGeneralCatchClause
-                if (ReactToSelectionDispatcher != null) {
+                if (ReactToSelectionDispatcher != null){
                     ReactToSelectionDispatcher(SelectState.Selected);
                 }
-
             }
         }
 
@@ -120,16 +117,16 @@ namespace Drydock.UI.Components{
                 _owner.X += _positionDx;
                 _owner.Y += _positionDy;
                 _isSelected = false;
-                try {
+                try{
                     _owner.GetComponent<FadeComponent>().IsEnabled = true;
                 }
-                // ReSharper disable EmptyGeneralCatchClause
-                catch (Exception) {/*there is no fade component*/}
+                    // ReSharper disable EmptyGeneralCatchClause
+                catch (Exception){ /*there is no fade component*/
+                }
                 // ReSharper restore EmptyGeneralCatchClause
-                if (ReactToSelectionDispatcher != null) {
+                if (ReactToSelectionDispatcher != null){
                     ReactToSelectionDispatcher(SelectState.UnSelected);
                 }
-                
             }
         }
     }

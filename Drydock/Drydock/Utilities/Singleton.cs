@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Content;
+﻿#region
 
-namespace Drydock.Utilities {
-    static class Singleton {
-        static public ContentManager ContentManager;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+
+#endregion
+
+namespace Drydock.Utilities{
+    internal static class Singleton{
+        public static ContentManager ContentManager;
+        public static GraphicsDevice Device;
+        public static Matrix ProjectionMatrix;
     }
 }

@@ -1,107 +1,71 @@
 ﻿#region
 
+using System;
 using Drydock.UI;
+using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
 namespace Drydock.Render{
-    //todo: fix the fucking unimplemented functions you pleb
-    internal class Line2D : IAdvancedPrimitive{
-        #region properties and fields
-
-        private readonly int _id;
+    internal class Line2D : IDrawableSprite{
+        private readonly Line _parent;
+        private readonly RenderPanel _renderPanel;
+        private Color _color;
         private bool _isDisposed;
+        private Texture2D _texture;
 
-        #endregion
 
-        #region constructors
-
-        public Line2D(Line owner, Color color, float opacity = 1){
-            int i = 0;
-            while (!_isFrameSlotAvail[i]){ //i cant wait for this to crash
-                i++;
-            }
-
-            _isFrameSlotAvail[i] = false;
-            _id = i;
+        public Line2D(Line parent, Color color){
             _isDisposed = false;
 
-            _lineTextures[_id] = new Texture2D(_device, 1, 1, false, SurfaceFormat.Color);
-            _lineTextures[_id].SetData(new[] { color });
-            _lineOwners[_id] = owner;
+            _texture = new Texture2D(Singleton.Device, 1, 1, false, SurfaceFormat.Color);
+            _texture.SetData(new[]{color});
+            _parent = parent;
+            _renderPanel = RenderPanel.Add(this);
+            //_color = color;
         }
 
-        #endregion
+        #region IDrawableSprite Members
 
-        #region destructors
+        public void Draw(SpriteBatch batch, Vector2 renderTargOffset){
+            batch.Draw(
+                _texture,
+                _parent.OriginPoint - renderTargOffset,
+                null,
+                Color.White*_parent.Opacity,
+                _parent.Angle,
+                Vector2.Zero,
+                new Vector2(_parent.Length, _parent.LineWidth),
+                SpriteEffects.None,
+                _parent.Depth
+                );
+        }
 
         public Texture2D Texture{
-            get { throw new System.NotImplementedException(); }
-            set { throw new System.NotImplementedException(); }
+            get { return _texture; }
+            set { _texture = value; }
         }
 
         public void SetTextureFromString(string textureName){
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void Dispose(){
             if (!_isDisposed){
-                _isFrameSlotAvail[_id] = true;
+                _renderPanel.Remove(this);
                 _isDisposed = true;
             }
         }
 
+        #endregion
+
         ~Line2D(){
-            Dispose();
-        }
-
-        #endregion
-
-        #region static methods and fields
-
-        private const int _maxLines = 10000;
-        private static bool[] _isFrameSlotAvail;
-        private static Texture2D[] _lineTextures;
-        private static Line[] _lineOwners;
-        private static Color[] _lineColor;
-        private static SpriteBatch _spriteBatch;
-        private static GraphicsDevice _device;
-
-        public static void Init(GraphicsDevice device){
-            _isFrameSlotAvail = new bool[_maxLines];
-            _lineOwners = new Line[_maxLines];
-            _spriteBatch = new SpriteBatch(device);
-            _lineTextures = new Texture2D[_maxLines];
-            _lineColor = new Color[_maxLines];
-
-            for (int i = 0; i < _maxLines; i++){
-                _isFrameSlotAvail[i] = true;
+            if (!_isDisposed){
+                _renderPanel.Remove(this);
+                _isDisposed = true;
             }
-            _device = device;
         }
-
-        public static void Draw(){
-            _spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap,DepthStencilState.Default, RasterizerState.CullNone);
-            for (int i = 0; i < _maxLines; i++){
-                if (_isFrameSlotAvail[i] == false){
-                    _spriteBatch.Draw( //welp
-                        _lineTextures[i],
-                        _lineOwners[i].OriginPoint,
-                        null,
-                        Color.White * _lineOwners[i].Opacity,
-                        _lineOwners[i].Angle,
-                        Vector2.Zero,
-                        new Vector2(_lineOwners[i].Length, _lineOwners[i].LineWidth),
-                        SpriteEffects.None,
-                        _lineOwners[i].Depth
-                        );
-                }
-            }
-            _spriteBatch.End();
-        }
-
-        #endregion
     }
 }

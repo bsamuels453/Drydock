@@ -1,13 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Drydock.Utilities;
-using Microsoft.Xna.Framework.Graphics;
+﻿#region
 
-namespace Drydock.UI {
+using System;
+using Drydock.Utilities;
+
+#endregion
+
+namespace Drydock.UI{
     //get around to this -eventually-
-    class Border : IUIElement{
+    internal class Border : IUIElement{
+        public IUIComponent[] Components{
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        #region IUIElement Members
+
         public float X{
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
@@ -51,11 +58,6 @@ namespace Drydock.UI {
             get { throw new NotImplementedException(); }
         }
 
-        public IUIComponent[] Components{
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
-        }
-
         public UIElementCollection Owner{
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
@@ -76,5 +78,7 @@ namespace Drydock.UI {
         public void Dispose(){
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

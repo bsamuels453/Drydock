@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#region
 
-namespace Drydock.UI {
+using System;
+
+#endregion
+
+namespace Drydock.UI{
     /// <summary>
-    /// This class manages depths for rendering order. It is to be only used in uielementcollection.
+    ///   This class manages depths for rendering order. It is to be only used in uielementcollection.
     /// </summary>
-    class DepthManager {
+    internal class DepthManager{
         public int Depth;
 
 
@@ -18,8 +19,13 @@ namespace Drydock.UI {
         public float GetDepth(DepthLevel d){
             return (float) d/(float) Math.Pow(10, Depth);
         }
+
+        public static float GetDepthFloat(DepthLevel d){
+            return (float) d/(float) Math.Pow(10, 1);
+        }
     }
-    internal enum DepthLevel { //can have 10 levels max
+
+    internal enum DepthLevel{ //can have 10 levels max
         Highlight,
         High,
         Medium,

@@ -1,20 +1,21 @@
-﻿using System.Diagnostics;
+﻿#region
+
 using Drydock.Control;
 using Drydock.Render;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.Logic {
-    class HullEditor : ICanReceiveInputEvents {
-        readonly SideEditorPanel _sidepanel;
-        readonly TopEditorPanel _toppanel;
-        readonly BackEditorPanel _backpanel;
+#endregion
 
-        readonly PreviewRenderer _previewRenderer;
-        
+namespace Drydock.Logic{
+    internal class HullEditor : ICanReceiveInputEvents{
+        private readonly BackEditorPanel _backpanel;
+
+        private readonly PreviewRenderer _previewRenderer;
+        private readonly SideEditorPanel _sidepanel;
+        private readonly TopEditorPanel _toppanel;
+
 
         public HullEditor(){
-
             _sidepanel = new SideEditorPanel(0, 0, ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "side.xml");
             _toppanel = new TopEditorPanel(0, ScreenData.GetScreenValueY(0.5f), ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "top.xml");
             _backpanel = new BackEditorPanel(ScreenData.GetScreenValueX(0.5f), 0, ScreenData.GetScreenValueX(0.25f), ScreenData.GetScreenValueY(0.5f), "back.xml");
@@ -28,26 +29,12 @@ namespace Drydock.Logic {
             _backpanel.TopPanelModifier = _toppanel.ModifyHandlePosition;
             _backpanel.SidePanelModifier = _sidepanel.ModifyHandlePosition;
 
-            _sidepanel.Update();
-            _toppanel.Update();
-            _backpanel.Update();
-
             _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves, _backpanel.Curves);
 
             InputEventDispatcher.EventSubscribers.Add(this);
-        
         }
 
-        public void TranslateLinkedHandleMovement(HullEditorPanel caller, float dx, float dy){
-
-        }
-
-        public void Update(){
-            _sidepanel.Update();
-            _toppanel.Update();
-            _backpanel.Update();
-            _previewRenderer.Update();
-        }
+        #region ICanReceiveInputEvents Members
 
         public InterruptState OnMouseMovement(MouseState state){
             return InterruptState.AllowOtherEvents;
@@ -74,6 +61,18 @@ namespace Drydock.Logic {
             }
 
             return InterruptState.AllowOtherEvents;
+        }
+
+        #endregion
+
+        public void TranslateLinkedHandleMovement(HullEditorPanel caller, float dx, float dy){
+        }
+
+        public void Update(){
+            _sidepanel.Update();
+            _toppanel.Update();
+            _backpanel.Update();
+            _previewRenderer.Update();
         }
     }
 }

@@ -13,23 +13,23 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic{
     /// <summary>
-    /// this class is a fucking mess, here's to hoping it never has to be used again
+    ///   this class is a fucking mess, here's to hoping it never has to be used again
     /// </summary>
     internal class BezierCurve{
         #region private fields
 
         private const int _linesPerSide = 50;
-        private readonly UIElementCollection _elementCollection;
-        private BezierCurve _nextCurve;
-        private BezierCurve _prevCurve;
-        private List<Line> _nextLines;
-        private List<Line> _prevLines;
-        private readonly LineGenerator _lineTemplate;
         private readonly Button _centerHandle;
+        private readonly UIElementCollection _elementCollection;
         private readonly Button _handle1;
         private readonly Button _handle2;
         private readonly Line _line1;
         private readonly Line _line2;
+        private readonly LineGenerator _lineTemplate;
+        private BezierCurve _nextCurve;
+        private List<Line> _nextLines;
+        private BezierCurve _prevCurve;
+        private List<Line> _prevLines;
 
         #endregion
 
@@ -206,10 +206,8 @@ namespace Drydock.Logic{
                         t = ((float) i)/(_linesPerSide*2) + 0.5f;
                         return new Vector2(_prevLines[i].DestPoint.X, _prevLines[i].DestPoint.Y);
                     }
-
                 }
                 foreach (var line in _prevLines){
-
                 }
             }
             //todo: fix these returns to not break on zero
@@ -223,27 +221,25 @@ namespace Drydock.Logic{
             if (_nextLines != null){
                 for (int i = 0; i < _nextLines.Count; i++){
                     if (Vector2.Distance(_nextLines[i].DestPoint, mousePoint) < width){
-
                         t = ((float) i)/(_linesPerSide*2);
                         return new Vector2(_nextLines[i].DestPoint.X, _nextLines[i].DestPoint.Y);
                     }
-
                 }
             }
             t = -1;
             return Vector2.Zero;
-
         }
 
         #endregion
 
         #region curve modification
+
         /// <summary>
-        /// this method will move the entire controller by the defined dx and dy
+        ///   this method will move the entire controller by the defined dx and dy
         /// </summary>
-        /// <param name="dx"></param>
-        /// <param name="dy"></param>
-        public void TranslateControllerPos(int dx, int dy) {
+        /// <param name="dx"> </param>
+        /// <param name="dy"> </param>
+        public void TranslateControllerPos(int dx, int dy){
             _line1.TranslateOrigin(dx, dy);
             _line1.TranslateDestination(dx, dy);
             _line2.TranslateOrigin(dx, dy);
@@ -257,15 +253,15 @@ namespace Drydock.Logic{
             _centerHandle.X += dx;
             _centerHandle.Y += dy;
         }
+
         #endregion
 
         #region ctor and disposal
 
         /// <summary>
-        /// usually used to add new curves between two points
+        ///   usually used to add new curves between two points
         /// </summary>
         public BezierCurve(float offsetX, float offsetY, UIElementCollection parentCollection, CurveInitalizeData initData){
-
             float initX = initData.HandlePosX + offsetX;
             float initY = initData.HandlePosY + offsetY;
 
@@ -299,7 +295,6 @@ namespace Drydock.Logic{
                 {"DraggableComponent", null},
                 {"FadeComponent", new object[]{FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit}},
                 //{"SelectableComponent", new object[]{"bigbox", 15, 15}}
-
             };
 
             var lineTemplate = new LineGenerator();
@@ -338,7 +333,6 @@ namespace Drydock.Logic{
             #endregion
 
             InterlinkButtonEvents();
-
         }
 
         public void Dispose(){
@@ -348,10 +342,11 @@ namespace Drydock.Logic{
         #endregion
 
         #region event stuff
+
         public OnDragMovement ReactToControllerMovement;
 
         /// <summary>
-        /// this function balances handle movement so that they stay in a straight line and their movements translate to other handles
+        ///   this function balances handle movement so that they stay in a straight line and their movements translate to other handles
         /// </summary>
         public void ReactToDragMovement(object caller, int dx, int dy){
             var calle = (Button) caller;
@@ -392,15 +387,16 @@ namespace Drydock.Logic{
 
         private void ClampHandleMovement(IUIInteractiveElement owner, ref int x, ref int y, int oldX, int oldY){
         }
+
         #endregion
 
-        public void Update() {
+        public void Update(){
             float t, dt;
             Vector2 firstPos, secondPos;
-            if (_prevCurve != null) {
+            if (_prevCurve != null){
                 t = 0.5f;
-                dt = 1 / (float)(_linesPerSide * 2);
-                foreach (var line in _prevLines) {
+                dt = 1/(float) (_linesPerSide*2);
+                foreach (var line in _prevLines){
                     Bezier.GetBezierValue(
                         out firstPos,
                         _prevCurve.CenterHandlePos,
@@ -423,10 +419,10 @@ namespace Drydock.Logic{
                     t += dt;
                 }
             }
-            if (_nextCurve != null) {
+            if (_nextCurve != null){
                 t = 0;
-                dt = 1 / (float)(_linesPerSide * 2);
-                foreach (var line in _nextLines) {
+                dt = 1/(float) (_linesPerSide*2);
+                foreach (var line in _nextLines){
                     Bezier.GetBezierValue(
                         out firstPos,
                         CenterHandlePos,
