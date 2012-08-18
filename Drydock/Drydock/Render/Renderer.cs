@@ -14,6 +14,7 @@ namespace Drydock.Render{
         static private Matrix _projectionMatrix;
         static private TextBatch _textBatch;
         static private ScreenText text;
+        static private SpriteBatch _batch;
         static public float AspectRatio;
         static public float CameraDistance;
         static public float CameraPhi;
@@ -43,7 +44,7 @@ namespace Drydock.Render{
             _textBatch = new TextBatch(device, content);
             ScreenData.Init(Device.Viewport.Bounds.Width, Device.Viewport.Bounds.Height);
             text = new ScreenText(0, 30, "not init");
-
+            _batch = new SpriteBatch(device);
             RenderPanel.Init();
             //BufferObject.Init(device, _projectionMatrix);
         }
@@ -55,9 +56,10 @@ namespace Drydock.Render{
             position.Y = (float)(CameraDistance * Math.Sin(CameraPhi)) + CameraTarget.Y;
 
             var viewMatrix = Matrix.CreateLookAt(position, CameraTarget, Vector3.Up);
-            text.EditText("X:" + position.X + " Y:" + position.Y + " Z:" + position.Z);
+            
 
             RenderPanel.Draw(viewMatrix);
+            ScreenText.Draw(_batch);
         }
     }
 }

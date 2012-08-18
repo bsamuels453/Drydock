@@ -102,6 +102,13 @@ namespace Drydock.Control{
                     if (newState.LeftButton == ButtonState.Pressed){
                         Renderer.CameraPhi += dy*0.01f;
                         Renderer.CameraTheta -= dx*0.01f;
+
+                        if (Renderer.CameraPhi > 1.56f){
+                            Renderer.CameraPhi = 1.56f;
+                        }
+                        if (Renderer.CameraPhi < -1.56f) {
+                            Renderer.CameraPhi = -1.56f;
+                        }
                     }
                 }
                 _mousePos.EditText("phi:" + Renderer.CameraPhi + "  theta:" + Renderer.CameraTheta);
