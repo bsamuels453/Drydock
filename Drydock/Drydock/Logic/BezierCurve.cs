@@ -288,7 +288,7 @@ namespace Drydock.Logic{
             var buttonTemplate = new ButtonGenerator();
             buttonTemplate.Width = 9;
             buttonTemplate.Height = 9;
-            buttonTemplate.Depth = DepthLevel.Medium;
+            buttonTemplate.Depth = DepthLevel.High;
             buttonTemplate.Owner = _elementCollection;
             buttonTemplate.TextureName = "whitebox";
             buttonTemplate.Components = new Dictionary<string, object[]>{
