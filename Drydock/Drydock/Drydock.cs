@@ -17,7 +17,6 @@ namespace Drydock{
         public ContentManager ContentManager;
         // private EditorLogic _editorLogic;
         private EditorLogic _editorLogic;
-        private Renderer _renderer;
 
         public Drydock(){
             Content.RootDirectory = "Content";
@@ -32,8 +31,8 @@ namespace Drydock{
             //   _editorLogic = new EditorLogic();
             ContentManager = Content;
             Singleton.ContentManager = ContentManager;
-            _renderer = new Renderer(_graphics.GraphicsDevice, Content);
-            _editorLogic = new EditorLogic(_renderer);
+            Renderer.Init(_graphics.GraphicsDevice, Content);
+            _editorLogic = new EditorLogic();
             IsMouseVisible = true;
             //var cur = new Bitmap("D:/Projects/assets/untitled-4.png", true);
             //Graphics g = Graphics.FromImage(cur);
@@ -54,7 +53,7 @@ namespace Drydock{
             var sw = new Stopwatch();
             sw.Start();
             _editorLogic.Update();
-            InputEventDispatcher.Update(_renderer);
+            InputEventDispatcher.Update();
             //Thread.Sleep(10);
             sw.Stop();
             Console.WriteLine("time:" + sw.ElapsedMilliseconds);
@@ -63,7 +62,7 @@ namespace Drydock{
 
         protected override void Draw(GameTime gameTime){
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            _renderer.Draw();
+            Renderer.Draw();
             base.Draw(gameTime);
         }
     }

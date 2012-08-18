@@ -95,8 +95,6 @@ namespace Drydock.Render{
             _spriteBatch.End();
         }
 
-        #region adding and removing methods
-
         public static RenderPanel Add(IDrawableSprite sprite){
             _curRenderPanel._sprites.Add(sprite);
             return _curRenderPanel;
@@ -106,8 +104,6 @@ namespace Drydock.Render{
             _curRenderPanel._buffers.Add(buffer);
             return _curRenderPanel;
         }
-
-        #endregion
 
         #endregion
     }

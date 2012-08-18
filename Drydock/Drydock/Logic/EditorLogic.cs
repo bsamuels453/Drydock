@@ -9,7 +9,7 @@ namespace Drydock.Logic{
     internal class EditorLogic{
         private readonly HullEditor _e;
 
-        public EditorLogic(Renderer renderer){
+        public EditorLogic(){
             _e = new HullEditor();
         }
 

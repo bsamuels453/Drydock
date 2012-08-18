@@ -225,6 +225,14 @@ namespace Drydock.Logic{
                 }
             }
             _geometryBuffer.Vertexbuffer.SetData(_verticies);
+
+            var p = new Vector3();
+            p += -_mesh[0, 0];
+            p += -_mesh[_meshVertexWidth-1, 0];
+            p += -_mesh[0, _meshVertexWidth - 1];
+            p += -_mesh[_meshVertexWidth - 1, _meshVertexWidth - 1];
+            p /= 4;
+            Renderer.CameraTarget = p;
         }
     }
 }
