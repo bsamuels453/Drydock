@@ -77,6 +77,7 @@ namespace Drydock.UI{
             get { return _boundingBox; }
         }
 
+        public bool ContainsMouse { get; set;  }
         public float Opacity { get; set; }
         public float Depth { get; set; }
         public UIElementCollection Owner { get; set; }

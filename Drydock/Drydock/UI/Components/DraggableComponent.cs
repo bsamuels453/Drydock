@@ -80,10 +80,8 @@ namespace Drydock.UI.Components{
 
         private InterruptState OnLeftButtonUp(MouseState state){
             if (_isMoving){
-                if (state.LeftButton == ButtonState.Released){
-                    _isMoving = false;
-                    _owner.Owner.DisableEntryHandlers = false;
-                }
+                _isMoving = false;
+                _owner.Owner.DisableEntryHandlers = false;
             }
             return InterruptState.AllowOtherEvents;
         }
@@ -97,6 +95,15 @@ namespace Drydock.UI.Components{
                 if (DragMovementClamp != null){
                     DragMovementClamp(_owner, ref x, ref y, oldX, oldY);
                 }
+
+                //this block checks if a drag clamp is preventing the owner from moving, if thats the case then kill the drag
+                var tempRect = new Rectangle(x, y,(int) _owner.BoundingBox.Width, (int)_owner.BoundingBox.Height);
+                if (!tempRect.Contains(state.X, state.Y)) {
+                    _isMoving = false;
+                    _owner.Owner.DisableEntryHandlers = false;
+                    return InterruptState.AllowOtherEvents;
+                }
+
                 _owner.X = x;
                 _owner.Y = y;
 

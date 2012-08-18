@@ -7,6 +7,8 @@ using Drydock.Control;
 
 namespace Drydock.UI{
     internal interface IUIInteractiveElement : IUIElement{
+        bool ContainsMouse { get; set; }
+
         #region event dispatch lists
 
         List<OnMouseEvent> OnLeftButtonClick { get; } //procs when left mouse button is pressed and released within a time interval (global)

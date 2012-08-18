@@ -32,7 +32,7 @@ namespace Drydock.UI.Components{
         #endregion
 
         public const FadeTrigger DefaultTrigger = FadeTrigger.None;
-        public const float DefaultFadeoutOpacity = 0.20f;
+        public const float DefaultFadeoutOpacity = 0.10f;
         public const float DefaultFadeDuration = 250;
         private readonly FadeState _defaultState;
         private readonly float _fadeDuration;
@@ -103,6 +103,7 @@ namespace Drydock.UI.Components{
 
                     ((IUIInteractiveElement) _owner).OnMouseEntry.Add(ForceFadein);
                     ((IUIInteractiveElement) _owner).OnMouseExit.Add(ForceFadeout);
+                    ((IUIInteractiveElement)_owner).OnLeftButtonRelease.Add(ConfirmFadeoutProc);
                     break;
 
                 case FadeTrigger.None:
@@ -111,6 +112,12 @@ namespace Drydock.UI.Components{
         }
 
         #endregion
+
+        private InterruptState ConfirmFadeoutProc(MouseState state){
+
+
+            return InterruptState.AllowOtherEvents;
+        }
 
         #region IUIComponent Members
 

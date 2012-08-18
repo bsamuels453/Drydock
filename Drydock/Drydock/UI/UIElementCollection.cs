@@ -86,7 +86,6 @@ namespace Drydock.UI{
         #region event dispatchers
 
         //i'll rip your balls off if you LINQ these foreach loops
-
         public InterruptState OnMouseMovement(MouseState state){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var mouseEvent in _layerSortedIElements[i].OnMouseMovement){
@@ -96,11 +95,12 @@ namespace Drydock.UI{
                 }
 
                 if (_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y)
-                    && !_layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
+                    && !_layerSortedIElements[i].ContainsMouse) {
                     //dispatch event for mouse entering the bounding box of the element
-                    if (!DisableEntryHandlers){
-                        foreach (var mouseEvent in _layerSortedIElements[i].OnMouseEntry){
-                            if (mouseEvent(state) == InterruptState.InterruptEventDispatch){
+                    if (!DisableEntryHandlers) {
+                        _layerSortedIElements[i].ContainsMouse = true;
+                        foreach (var mouseEvent in _layerSortedIElements[i].OnMouseEntry) {
+                            if (mouseEvent(state) == InterruptState.InterruptEventDispatch) {
                                 return InterruptState.InterruptEventDispatch;
                             }
                         }
@@ -109,8 +109,10 @@ namespace Drydock.UI{
 
                 else{
                     if (!_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y)
-                        && _layerSortedIElements[i].BoundingBox.Contains(_prevMouseState.X, _prevMouseState.Y)){
+                        && _layerSortedIElements[i].ContainsMouse) {
+                        
                         //dispatch event for mouse exiting the bounding box of the element
+                        _layerSortedIElements[i].ContainsMouse = false;
                         foreach (var mouseEvent in _layerSortedIElements[i].OnMouseExit){
                             if (mouseEvent(state) == InterruptState.InterruptEventDispatch){
                                 return InterruptState.InterruptEventDispatch;
