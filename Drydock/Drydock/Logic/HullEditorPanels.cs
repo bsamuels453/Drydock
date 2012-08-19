@@ -122,13 +122,13 @@ namespace Drydock.Logic{
 
             switch (handle){
                 case HandleAlias.First:
-                    Curves[0].TranslateControllerPos(dxi, dyi);
+                    Curves[0].CenterHandle.RawTranslate(dxi, dyi);
                     break;
                 case HandleAlias.Middle:
-                    Curves[Curves.Count/2].TranslateControllerPos(dxi, dyi);
+                    Curves[Curves.Count / 2].CenterHandle.RawTranslate(dxi, dyi);
                     break;
                 case HandleAlias.Last:
-                    Curves[Curves.Count - 1].TranslateControllerPos(dxi, dyi);
+                    Curves[Curves.Count - 1].CenterHandle.RawTranslate(dxi, dyi);
                     break;
                 case HandleAlias.ExtremaY:
                     var extremaController = Curves[0];
@@ -137,7 +137,7 @@ namespace Drydock.Logic{
                             extremaController = curve;
                         }
                     }
-                    extremaController.TranslateControllerPos(dxi, dyi);
+                    extremaController.CenterHandle.RawTranslate(dxi, dyi);
                     break;
             }
         }
@@ -168,7 +168,7 @@ namespace Drydock.Logic{
 
             //Curves[0] is the frontmost controller that represents the limit of the bow
             if (controller == Curves[0]){
-                Curves[Curves.Count - 1].TranslateControllerPos(0, dy);
+                Curves[Curves.Count - 1].CenterHandle.RawTranslate(0, dy);
 
                 if (TopPanelModifier != null){
                     TopPanelModifier(HandleAlias.Middle, dxf, 0);
@@ -181,7 +181,7 @@ namespace Drydock.Logic{
 
             //Curves[Curves.Count-1] is the hindmost controller that represents the limit of the stern
             if (controller == Curves[Curves.Count - 1]){
-                Curves[0].TranslateControllerPos(0, dy);
+                Curves[0].CenterHandle.RawTranslate(0, dy);
 
                 if (TopPanelModifier != null){
                     TopPanelModifier(HandleAlias.Last, dxf, 0);
@@ -230,7 +230,7 @@ namespace Drydock.Logic{
 
             var controller = (BezierCurve) caller;
             if (controller == Curves[0]){
-                Curves[Curves.Count - 1].TranslateControllerPos(dx, -dy);
+                Curves[Curves.Count - 1].CenterHandle.RawTranslate(dx, -dy);
 
                 if (SidePanelModifier != null){
                     SidePanelModifier(HandleAlias.Last, dxf, 0);
@@ -241,7 +241,7 @@ namespace Drydock.Logic{
                 }
             }
             if (controller == Curves[Curves.Count - 1]){
-                Curves[0].TranslateControllerPos(dx, -dy);
+                Curves[0].CenterHandle.RawTranslate(dx, -dy);
 
                 if (SidePanelModifier != null){
                     SidePanelModifier(HandleAlias.Last, dxf, 0);
@@ -281,7 +281,7 @@ namespace Drydock.Logic{
 
             var controller = (BezierCurve) caller;
             if (controller == Curves[0]){
-                Curves[Curves.Count - 1].TranslateControllerPos(-dx, dy);
+                Curves[Curves.Count - 1].CenterHandle.RawTranslate(-dx, dy);
 
                 if (SidePanelModifier != null){
                     SidePanelModifier(HandleAlias.First, 0, dyf);
@@ -293,7 +293,7 @@ namespace Drydock.Logic{
                 }
             }
             if (controller == Curves[Curves.Count - 1]){
-                Curves[0].TranslateControllerPos(-dx, dy);
+                Curves[0].CenterHandle.RawTranslate(-dx, dy);
 
                 if (SidePanelModifier != null){
                     SidePanelModifier(HandleAlias.First, 0, dyf);

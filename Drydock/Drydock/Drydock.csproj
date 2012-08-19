@@ -165,6 +165,7 @@
     <Compile Include="DebugTimer.cs" />
     <Compile Include="Logic\BezierCurve.cs" />
     <Compile Include="Logic\BezierCurveCollection.cs" />
+    <Compile Include="Logic\CurveHandle.cs" />
     <Compile Include="Logic\HullEditor.cs" />
     <Compile Include="Logic\HullEditorPanels.cs" />
     <Compile Include="Logic\PreviewRenderer.cs" />

@@ -39,28 +39,11 @@ namespace Drydock.Logic{
         private readonly int _xReflect;
         private readonly int _yReflect;
 
-        #endregion
+        #endregion 
 
         public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, UIElementCollection parentCollection, SymmetryType symmetry){
             InputEventDispatcher.EventSubscribers.Add((float)DepthLevel.Medium /10f, this);
             ElementCollection = parentCollection; //.Add(new UIElementCollection(DepthLevel.Medium));
-
-            _symmetry = symmetry;
-            switch (symmetry){
-                case SymmetryType.Vertical:
-                    _xReflect = -1;
-                    _yReflect = 1;
-                    break;
-                case SymmetryType.Horizontal:
-                   _xReflect = 1;
-                    _yReflect = -1;
-                    break;
-
-                case SymmetryType.None:
-                   _xReflect =0;
-                   _yReflect = 0;
-                    break;
-            }
 
             var reader = XmlReader.Create(defaultConfig);
             reader.ReadToFollowing("NumControllers");
@@ -108,6 +91,86 @@ namespace Drydock.Logic{
                 _curveList[i].SetPrevCurve(_curveList[i - 1]);
                 _curveList[i].SetNextCurve(_curveList[i + 1]);
             }
+
+            //set curve symmetry
+            _symmetry = symmetry;
+            switch (symmetry) {
+                case SymmetryType.Vertical:
+                    LinkHandlesBySymmetry(LinkType.RDxDy);
+                    break;
+                case SymmetryType.Horizontal:
+                    LinkHandlesBySymmetry(LinkType.DxRDy);
+                    break;
+
+                case SymmetryType.None://this only happens in the case of side 
+                    _curveList[0].CenterHandle.AddLinkedHandle(
+                        LinkType.Dy,
+                        _curveList[_curveList.Count - 1].CenterHandle,
+                        _curveList[_curveList.Count - 1].CenterHandle.Translate,
+                        true
+                        );
+                    _curveList[_curveList.Count - 1].CenterHandle.AddLinkedHandle(
+                        LinkType.Dy, 
+                        _curveList[0].CenterHandle,
+                        _curveList[0].CenterHandle.Translate,
+                        true
+                        );
+                    break;
+            }
+
+
+        }
+        private void LinkHandlesBySymmetry(LinkType type){
+            for (int i = 0; i < _curveList.Count/2; i++){
+                _curveList[i].CenterHandle.AddLinkedHandle(
+                    type,
+                    _curveList[(_curveList.Count - 1) - i].CenterHandle,
+                    _curveList[(_curveList.Count - 1) - i].CenterHandle.Translate,
+                    true
+                    );
+                _curveList[(_curveList.Count - 1) - i].CenterHandle.AddLinkedHandle(
+                    type,
+                    _curveList[i].CenterHandle,
+                    _curveList[i].CenterHandle.Translate,
+                    true
+                    );
+                _curveList[i].PrevHandle.AddLinkedHandle(
+                    type,
+                    _curveList[(_curveList.Count - 1) - i].NextHandle,
+                    _curveList[(_curveList.Count - 1) - i].NextHandle.Translate,
+                    true
+                    );
+                _curveList[(_curveList.Count - 1) - i].PrevHandle.AddLinkedHandle(
+                    type,
+                    _curveList[i].NextHandle,
+                    _curveList[i].NextHandle.Translate,
+                    true
+                    );
+                _curveList[i].NextHandle.AddLinkedHandle(
+                    type,
+                    _curveList[(_curveList.Count - 1) - i].PrevHandle,
+                    _curveList[(_curveList.Count - 1) - i].PrevHandle.Translate,
+                    true
+                    );
+                _curveList[(_curveList.Count - 1) - i].NextHandle.AddLinkedHandle(
+                    type,
+                    _curveList[i].PrevHandle,
+                    _curveList[i].PrevHandle.Translate,
+                    true
+                    );
+            }
+            _curveList[_curveList.Count/2].PrevHandle.AddLinkedHandle(
+                type,
+                _curveList[_curveList.Count/2].NextHandle,
+                _curveList[_curveList.Count/2].NextHandle.RawTranslate,
+                true
+                );
+            _curveList[_curveList.Count/2].NextHandle.AddLinkedHandle(
+                type,
+                _curveList[_curveList.Count/2].PrevHandle,
+                _curveList[_curveList.Count/2].PrevHandle.RawTranslate,
+                true
+                );
         }
 
         #region curve information retrieval methods
@@ -191,37 +254,6 @@ namespace Drydock.Logic{
 
         #endregion
 
-        #region ICanReceiveInputEvents Members
-
-        public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null) {
-            //this is broken right now
-            /*if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
-                Vector2 pos;
-                float t;
-                for (int i = 1; i < CurveList.Count; i++){
-                    if ((pos = CurveList[i].PrevContains(state, out t)) != Vector2.Zero){
-                        CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection));
-                        CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
-                        return InterruptState.InterruptEventDispatch;
-                    }
-                }
-                for (int i = 0; i < CurveList.Count - 1; i++){
-
-
-                    if ((pos = CurveList[i].NextContains(state, out t)) != Vector2.Zero){
-                        i += 1;
-                        CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection ));
-                        CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
-                        return InterruptState.InterruptEventDispatch;
-                    }
-                }
-            }*/
-
-            return InterruptState.AllowOtherEvents;
-        }
-
-        #endregion
-
         public void Update(){
             foreach (var curve in _curveList){
                 curve.Update();
@@ -262,7 +294,7 @@ namespace Drydock.Logic{
             return li;
         }
 
-        public void ProcReflection(int dx, int dy, int id, BezierCurve curve){
+        /*public void ProcReflection(int dx, int dy, int id, BezierCurve curve){
             if(_symmetry == SymmetryType.None){
                 return;
             }
@@ -280,41 +312,72 @@ namespace Drydock.Logic{
             switch (id){
                 case 0:
                     if (i != 0 && i != _curveList.Count - 1 && i!=_curveList.Count/2){
-                        _curveList[_curveList.Count/2 + offset].TranslateControllerPos(dx*_xReflect, dy*_yReflect);
+                        _curveList[_curveList.Count / 2 + offset].CenterHandle.RawTranslate(dx * _xReflect, dy * _yReflect);
                     }
                     break;
                 case 1:
                     if (i != _curveList.Count / 2) {
-                        _curveList[_curveList.Count / 2 + offset].TranslateNextHandle(dx * _xReflect, dy * _yReflect);
+                        _curveList[_curveList.Count / 2 + offset].NextHandle.RawTranslate(dx * _xReflect, dy * _yReflect);
                     }
                     else{
                         switch (_symmetry){
                             case SymmetryType.Horizontal:
-                                _curveList[_curveList.Count / 2 + offset].TranslateNextHandle(0, dy * _yReflect);
+                                _curveList[_curveList.Count / 2 + offset].NextHandle.RawTranslate(0, dy * _yReflect);
                                 break;
                             case SymmetryType.Vertical:
-                                _curveList[_curveList.Count / 2 + offset].TranslateNextHandle(dx * _xReflect,0);
+                                _curveList[_curveList.Count / 2 + offset].NextHandle.RawTranslate(dx * _xReflect, 0);
                                 break;
                         }
                     }
                     break;
                 case 2:
                     if (i != _curveList.Count / 2) {
-                        _curveList[_curveList.Count / 2 + offset].TranslatePrevHandle(dx * _xReflect, dy * _yReflect);
+                        _curveList[_curveList.Count / 2 + offset].PrevHandle.RawTranslate(dx * _xReflect, dy * _yReflect);
                     }
                     else {
                         switch (_symmetry) {
                             case SymmetryType.Horizontal:
-                                _curveList[_curveList.Count / 2 + offset].TranslatePrevHandle(0, dy * _yReflect);
+                                _curveList[_curveList.Count / 2 + offset].PrevHandle.RawTranslate(0, dy * _yReflect);
                                 break;
                             case SymmetryType.Vertical:
-                                _curveList[_curveList.Count / 2 + offset].TranslatePrevHandle(dx * _xReflect, 0);
+                                _curveList[_curveList.Count / 2 + offset].PrevHandle.RawTranslate(dx * _xReflect, 0);
                                 break;
                         }
                     }
                     break;
             }
+        }*/
+
+        #region ICanReceiveInputEvents Members
+
+        public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null) {
+            //this is broken right now
+            /*if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
+                Vector2 pos;
+                float t;
+                for (int i = 1; i < CurveList.Count; i++){
+                    if ((pos = CurveList[i].PrevContains(state, out t)) != Vector2.Zero){
+                        CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection));
+                        CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
+                        return InterruptState.InterruptEventDispatch;
+                    }
+                }
+                for (int i = 0; i < CurveList.Count - 1; i++){
+
+
+                    if ((pos = CurveList[i].NextContains(state, out t)) != Vector2.Zero){
+                        i += 1;
+                        CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection ));
+                        CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
+                        return InterruptState.InterruptEventDispatch;
+                    }
+                }
+            }*/
+
+            return InterruptState.AllowOtherEvents;
         }
+
+        #endregion
 
         #region ienumerable members + accessors
 
