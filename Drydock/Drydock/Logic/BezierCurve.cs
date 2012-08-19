@@ -20,7 +20,7 @@ namespace Drydock.Logic{
 
         private const int _linesPerSide = 50;
         private readonly Button _centerHandle;
-        private readonly UIElementCollection _elementCollection;
+        private readonly UIElementCollection _elementElement;
         private readonly Button _handle1;
         private readonly Button _handle2;
         private readonly Line _line1;
@@ -30,6 +30,7 @@ namespace Drydock.Logic{
         private List<Line> _nextLines;
         private BezierCurve _prevCurve;
         private List<Line> _prevLines;
+        private readonly BezierCurveCollection _parentCollection;
 
         #endregion
 
@@ -41,7 +42,7 @@ namespace Drydock.Logic{
                 if (_prevLines == null){
                     _prevLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++){
-                        _prevLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                        _prevLines.Add(_elementElement.Add<Line>(_lineTemplate.GenerateLine()));
                     }
                 }
             }
@@ -53,7 +54,7 @@ namespace Drydock.Logic{
                 if (_nextLines == null){
                     _nextLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++){
-                        _nextLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                        _nextLines.Add(_elementElement.Add<Line>(_lineTemplate.GenerateLine()));
                     }
                 }
             }
@@ -83,26 +84,26 @@ namespace Drydock.Logic{
                 _prevLines = new List<Line>(_linesPerSide);
 
                 for (int i = 0; i < _linesPerSide; i++){
-                    _prevLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                    _prevLines.Add(_elementElement.Add<Line>(_lineTemplate.GenerateLine()));
                 }
             }
             else{
                 for (int i = 0; i < _linesPerSide; i++){
                     _prevLines[i].Dispose();
-                    _prevLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
+                    _prevLines[i] = _elementElement.Add<Line>(_lineTemplate.GenerateLine());
                 }
             }
 
             if (_nextLines == null){
                 _nextLines = new List<Line>(_linesPerSide);
                 for (int i = 0; i < _linesPerSide; i++){
-                    _nextLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                    _nextLines.Add(_elementElement.Add<Line>(_lineTemplate.GenerateLine()));
                 }
             }
             else{
                 for (int i = 0; i < _linesPerSide; i++){
                     _nextLines[i].Dispose();
-                    _nextLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
+                    _nextLines[i] = _elementElement.Add<Line>(_lineTemplate.GenerateLine());
                 }
             }
 
@@ -116,13 +117,13 @@ namespace Drydock.Logic{
                 _prevLines = new List<Line>(_linesPerSide);
 
                 for (int i = 0; i < _linesPerSide; i++){
-                    _prevLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                    _prevLines.Add(_elementElement.Add<Line>(_lineTemplate.GenerateLine()));
                 }
             }
             else{
                 for (int i = 0; i < _linesPerSide; i++){
                     _prevLines[i].Dispose();
-                    _prevLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
+                    _prevLines[i] = _elementElement.Add<Line>(_lineTemplate.GenerateLine());
                 }
             }
             Update();
@@ -134,13 +135,13 @@ namespace Drydock.Logic{
             if (_nextLines == null){
                 _nextLines = new List<Line>(_linesPerSide);
                 for (int i = 0; i < _linesPerSide; i++){
-                    _nextLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                    _nextLines.Add(_elementElement.Add<Line>(_lineTemplate.GenerateLine()));
                 }
             }
             else{
                 for (int i = 0; i < _linesPerSide; i++){
                     _nextLines[i].Dispose();
-                    _nextLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
+                    _nextLines[i] = _elementElement.Add<Line>(_lineTemplate.GenerateLine());
                 }
             }
             Update();
@@ -253,7 +254,25 @@ namespace Drydock.Logic{
             _centerHandle.X += dx;
             _centerHandle.Y += dy;
         }
+        public void TranslatePrevHandle(int dx, int dy) {
+            _handle1.X += dx;
+            _handle1.Y += dy;
+            _line1.TranslateDestination(dx, dy);
+            _line2.Angle = (float)(_line1.Angle + Math.PI);
 
+            _handle2.X = (int)_line2.DestPoint.X - _handle2.BoundingBox.Width / 2;
+            _handle2.Y = (int)_line2.DestPoint.Y - _handle2.BoundingBox.Height / 2;
+        }
+
+        public void TranslateNextHandle(int dx, int dy) {
+            _handle2.X += dx;
+            _handle2.Y += dy;
+            _line2.TranslateDestination(dx, dy);
+            _line1.Angle = (float)(_line2.Angle + Math.PI);
+
+            _handle1.X = (int)_line1.DestPoint.X - _handle1.BoundingBox.Width / 2;
+            _handle1.Y = (int)_line1.DestPoint.Y - _handle1.BoundingBox.Height / 2;
+        }
         #endregion
 
         #region ctor and disposal
@@ -261,12 +280,12 @@ namespace Drydock.Logic{
         /// <summary>
         ///   usually used to add new curves between two points
         /// </summary>
-        public BezierCurve(float offsetX, float offsetY, UIElementCollection parentCollection, CurveInitalizeData initData){
+        public BezierCurve(float offsetX, float offsetY, UIElementCollection parentElement, CurveInitalizeData initData, BezierCurveCollection parent){
             float initX = initData.HandlePosX + offsetX;
             float initY = initData.HandlePosY + offsetY;
 
-
-            _elementCollection = parentCollection;
+            _parentCollection = parent;
+            _elementElement = parentElement;
             _nextLines = null;
             _nextCurve = null;
             _prevCurve = null;
@@ -277,7 +296,7 @@ namespace Drydock.Logic{
             _lineTemplate.V2 = Vector2.Zero;
             _lineTemplate.Color = Color.White;
             _lineTemplate.Depth = DepthLevel.Low;
-            _lineTemplate.Owner = _elementCollection;
+            _lineTemplate.Owner = _elementElement;
 
 
             Vector2 component1 = Common.GetComponentFromAngle(initData.Angle, initData.Length1);
@@ -289,7 +308,7 @@ namespace Drydock.Logic{
             buttonTemplate.Width = 9;
             buttonTemplate.Height = 9;
             buttonTemplate.Depth = DepthLevel.High;
-            buttonTemplate.Owner = _elementCollection;
+            buttonTemplate.Owner = _elementElement;
             buttonTemplate.TextureName = "whitebox";
             buttonTemplate.Components = new Dictionary<string, object[]>{
                 {"DraggableComponent", null},
@@ -299,7 +318,7 @@ namespace Drydock.Logic{
 
             var lineTemplate = new LineGenerator();
             lineTemplate.Depth = DepthLevel.Medium;
-            lineTemplate.Owner = _elementCollection;
+            lineTemplate.Owner = _elementElement;
             lineTemplate.Color = Color.Black;
             lineTemplate.Components = new Dictionary<string, object[]>{
                 {"FadeComponent", new object[]{FadeComponent.FadeState.Faded}}
@@ -308,27 +327,27 @@ namespace Drydock.Logic{
             buttonTemplate.Identifier = 1;
             buttonTemplate.X = component1.X + initX;
             buttonTemplate.Y = component1.Y + initY;
-            _handle1 = _elementCollection.Add<Button>(buttonTemplate.GenerateButton());
+            _handle1 = _elementElement.Add<Button>(buttonTemplate.GenerateButton());
             _handle1.GetComponent<DraggableComponent>().DragMovementDispatcher += ReactToDragMovement;
 
             buttonTemplate.Identifier = 2;
             buttonTemplate.X = component2.X + initX;
             buttonTemplate.Y = component2.Y + initY;
-            _handle2 = _elementCollection.Add<Button>(buttonTemplate.GenerateButton());
+            _handle2 = _elementElement.Add<Button>(buttonTemplate.GenerateButton());
             _handle2.GetComponent<DraggableComponent>().DragMovementDispatcher += ReactToDragMovement;
 
             buttonTemplate.Identifier = 0;
             buttonTemplate.X = initX;
             buttonTemplate.Y = initY;
-            _centerHandle = _elementCollection.Add<Button>(buttonTemplate.GenerateButton());
+            _centerHandle = _elementElement.Add<Button>(buttonTemplate.GenerateButton());
             _centerHandle.GetComponent<DraggableComponent>().DragMovementDispatcher += ReactToDragMovement;
 
             lineTemplate.V1 = _centerHandle.CentPosition;
             lineTemplate.V2 = _handle1.CentPosition;
-            _line1 = _elementCollection.Add<Line>(lineTemplate.GenerateLine());
+            _line1 = _elementElement.Add<Line>(lineTemplate.GenerateLine());
 
             lineTemplate.V2 = _handle2.CentPosition;
-            _line2 = _elementCollection.Add<Line>(lineTemplate.GenerateLine());
+            _line2 = _elementElement.Add<Line>(lineTemplate.GenerateLine());
 
             #endregion
 
@@ -383,6 +402,7 @@ namespace Drydock.Logic{
                     _handle1.Y = (int) _line1.DestPoint.Y - _handle1.BoundingBox.Height/2;
                     break;
             }
+            _parentCollection.ProcReflection(dx, dy, calle.Identifier, this);
         }
 
         private void ClampHandleMovement(IUIInteractiveElement owner, ref int x, ref int y, int oldX, int oldY){

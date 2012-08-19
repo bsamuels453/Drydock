@@ -34,7 +34,7 @@ namespace Drydock.Logic{
         protected readonly UIElementCollection ElementCollection;
         protected readonly RenderPanel PanelRenderTarget;
 
-        protected HullEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration){
+        protected HullEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration, SymmetryType symmetry){
             BoundingBox = new FloatingRectangle(x, y, width, height);
             PanelRenderTarget = new RenderPanel(x, y, width, height, DepthLevel.Medium);
             RenderPanel.SetRenderPanel(PanelRenderTarget);
@@ -48,7 +48,8 @@ namespace Drydock.Logic{
                     width - width*0.2f,
                     height - height*0.2f
                     ),
-                parentCollection: ElementCollection
+                parentCollection: ElementCollection,
+                symmetry: symmetry
                 );
             Curves.ElementCollection.AddDragConstraintCallback(ClampChildElements);
             Background = ElementCollection.Add<Button>(
@@ -141,7 +142,7 @@ namespace Drydock.Logic{
             }
         }
 
-        protected abstract void OnCurveDrag(object caller, int dx, int dy);
+        protected abstract void OnHardpointDrag(object caller, int dx, int dy);
     }
 
     #endregion
@@ -153,13 +154,13 @@ namespace Drydock.Logic{
         public ModifyHandlePosition TopPanelModifier;
 
         public SideEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration)
-            : base(x, y, width, height, defaultCurveConfiguration){
+            : base(x, y, width, height, defaultCurveConfiguration, SymmetryType.None){
             foreach (var curve in Curves){
-                curve.ReactToControllerMovement += OnCurveDrag;
+                curve.ReactToControllerMovement += OnHardpointDrag;
             }
         }
 
-        protected override void OnCurveDrag(object caller, int dx, int dy){
+        protected override void OnHardpointDrag(object caller, int dx, int dy){
             float dxf = dx/Curves.PixelsPerMeter;
             float dyf = dy/Curves.PixelsPerMeter;
 
@@ -209,13 +210,21 @@ namespace Drydock.Logic{
         public ModifyHandlePosition SidePanelModifier;
 
         public TopEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration)
-            : base(x, y, width, height, defaultCurveConfiguration){
-            Curves[0].ReactToControllerMovement += OnCurveDrag;
-            Curves[Curves.Count - 1].ReactToControllerMovement += OnCurveDrag;
-            Curves[Curves.Count/2].ReactToControllerMovement += OnCurveDrag;
+            : base(x, y, width, height, defaultCurveConfiguration, SymmetryType.Horizontal){
+            Curves[0].ReactToControllerMovement += OnHardpointDrag;
+            Curves[Curves.Count - 1].ReactToControllerMovement += OnHardpointDrag;
+            Curves[Curves.Count/2].ReactToControllerMovement += OnHardpointDrag;
+
+            for (int i = 1; i < Curves.Count-1; i++){
+                if( i == Curves.Count/2){
+                    continue;
+                }
+                //Curves[i].ReactToControllerMovement
+
+            }
         }
 
-        protected override void OnCurveDrag(object caller, int dx, int dy){
+        protected override void OnHardpointDrag(object caller, int dx, int dy) {
             float dxf = dx/Curves.PixelsPerMeter;
             float dyf = dy/Curves.PixelsPerMeter;
 
@@ -248,6 +257,7 @@ namespace Drydock.Logic{
                 }
             }
         }
+
     }
 
     #endregion
@@ -259,13 +269,13 @@ namespace Drydock.Logic{
         public ModifyHandlePosition TopPanelModifier;
 
         public BackEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration)
-            : base(x, y, width, height, defaultCurveConfiguration){
-            Curves[0].ReactToControllerMovement += OnCurveDrag;
-            Curves[Curves.Count - 1].ReactToControllerMovement += OnCurveDrag;
-            Curves[Curves.Count/2].ReactToControllerMovement += OnCurveDrag;
+            : base(x, y, width, height, defaultCurveConfiguration, SymmetryType.Vertical){
+            Curves[0].ReactToControllerMovement += OnHardpointDrag;
+            Curves[Curves.Count - 1].ReactToControllerMovement += OnHardpointDrag;
+            Curves[Curves.Count/2].ReactToControllerMovement += OnHardpointDrag;
         }
 
-        protected override void OnCurveDrag(object caller, int dx, int dy){
+        protected override void OnHardpointDrag(object caller, int dx, int dy){
             float dxf = dx/Curves.PixelsPerMeter;
             float dyf = dy/Curves.PixelsPerMeter;
 

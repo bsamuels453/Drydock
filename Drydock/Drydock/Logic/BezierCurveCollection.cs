@@ -13,6 +13,12 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic{
+    internal enum SymmetryType{
+        Horizontal,
+        Vertical,
+        None
+    }
+
     internal class BezierCurveCollection : CanReceiveInputEvents, IEnumerable<BezierCurve>{
         #region fields
 
@@ -29,13 +35,33 @@ namespace Drydock.Logic{
         private double[] _lenList;
         private double _totalArcLen;
 
+        private readonly SymmetryType _symmetry;
+        private readonly int _xReflect;
+        private readonly int _yReflect;
+
+
         #endregion
 
-        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, UIElementCollection parentCollection){
+        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, UIElementCollection parentCollection, SymmetryType symmetry){
             InputEventDispatcher.EventSubscribers.Add((float)DepthLevel.Medium /10f, this);
-
             ElementCollection = parentCollection; //.Add(new UIElementCollection(DepthLevel.Medium));
 
+            _symmetry = symmetry;
+            switch (symmetry){
+                case SymmetryType.Vertical:
+                    _xReflect = -1;
+                    _yReflect = 1;
+                    break;
+                case SymmetryType.Horizontal:
+                   _xReflect = 1;
+                    _yReflect = -1;
+                    break;
+
+                case SymmetryType.None:
+                   _xReflect =0;
+                   _yReflect = 0;
+                    break;
+            }
 
             var reader = XmlReader.Create(defaultConfig);
             reader.ReadToFollowing("NumControllers");
@@ -77,7 +103,7 @@ namespace Drydock.Logic{
             }
 
             for (int i = 0; i < numControllers; i++){
-                _curveList.Add(new BezierCurve(0, 0, ElementCollection, curveInitData[i]));
+                _curveList.Add(new BezierCurve(0, 0, ElementCollection, curveInitData[i], this));
             }
             for (int i = 1; i < numControllers - 1; i++){
                 _curveList[i].SetPrevCurve(_curveList[i - 1]);
@@ -237,9 +263,40 @@ namespace Drydock.Logic{
             return li;
         }
 
+        public void ProcReflection(int dx, int dy, int id, BezierCurve curve){
+            if(_symmetry == SymmetryType.None){
+                return;
+            }
+            int i;
+            for (i = 0; i < _curveList.Count; i++){
+                if (_curveList[i] == curve){
+                    break;
+                }
+            }
+
+            int offset = (_curveList.Count / 2 - i);
+
+            //_curveList[_curveList.Count / 2-offset]
+
+            switch (id){
+                case 0:
+                    if (i != 0 && i != _curveList.Count - 1){
+                        _curveList[_curveList.Count/2 + offset].TranslateControllerPos(dx*_xReflect, dy*_yReflect);
+                    }
+                    break;
+                case 1:
+                    _curveList[_curveList.Count / 2 + offset].TranslateNextHandle(dx * _xReflect, dy * _yReflect);
+                    break;
+                case 2:
+                    
+                    _curveList[_curveList.Count / 2 + offset].TranslatePrevHandle(dx * _xReflect, dy * _yReflect);
+                    break;
+            }
+        }
+
         #region ienumerable members + accessors
 
-        public BezierCurve this[int index]{
+        public BezierCurve this[int index] {
             get { return _curveList[index]; }
         }
 
