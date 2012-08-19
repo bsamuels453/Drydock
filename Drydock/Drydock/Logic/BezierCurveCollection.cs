@@ -39,7 +39,6 @@ namespace Drydock.Logic{
         private readonly int _xReflect;
         private readonly int _yReflect;
 
-
         #endregion
 
         public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, UIElementCollection parentCollection, SymmetryType symmetry){
@@ -280,16 +279,39 @@ namespace Drydock.Logic{
 
             switch (id){
                 case 0:
-                    if (i != 0 && i != _curveList.Count - 1){
+                    if (i != 0 && i != _curveList.Count - 1 && i!=_curveList.Count/2){
                         _curveList[_curveList.Count/2 + offset].TranslateControllerPos(dx*_xReflect, dy*_yReflect);
                     }
                     break;
                 case 1:
-                    _curveList[_curveList.Count / 2 + offset].TranslateNextHandle(dx * _xReflect, dy * _yReflect);
+                    if (i != _curveList.Count / 2) {
+                        _curveList[_curveList.Count / 2 + offset].TranslateNextHandle(dx * _xReflect, dy * _yReflect);
+                    }
+                    else{
+                        switch (_symmetry){
+                            case SymmetryType.Horizontal:
+                                _curveList[_curveList.Count / 2 + offset].TranslateNextHandle(0, dy * _yReflect);
+                                break;
+                            case SymmetryType.Vertical:
+                                _curveList[_curveList.Count / 2 + offset].TranslateNextHandle(dx * _xReflect,0);
+                                break;
+                        }
+                    }
                     break;
                 case 2:
-                    
-                    _curveList[_curveList.Count / 2 + offset].TranslatePrevHandle(dx * _xReflect, dy * _yReflect);
+                    if (i != _curveList.Count / 2) {
+                        _curveList[_curveList.Count / 2 + offset].TranslatePrevHandle(dx * _xReflect, dy * _yReflect);
+                    }
+                    else {
+                        switch (_symmetry) {
+                            case SymmetryType.Horizontal:
+                                _curveList[_curveList.Count / 2 + offset].TranslatePrevHandle(0, dy * _yReflect);
+                                break;
+                            case SymmetryType.Vertical:
+                                _curveList[_curveList.Count / 2 + offset].TranslatePrevHandle(dx * _xReflect, 0);
+                                break;
+                        }
+                    }
                     break;
             }
         }
