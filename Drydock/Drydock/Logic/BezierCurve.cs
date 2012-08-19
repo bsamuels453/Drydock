@@ -343,7 +343,7 @@ namespace Drydock.Logic{
 
         #region event stuff
 
-        public OnDragMovement ReactToControllerMovement;
+        public OnComponentDrag ReactToControllerMovement;
 
         /// <summary>
         ///   this function balances handle movement so that they stay in a straight line and their movements translate to other handles

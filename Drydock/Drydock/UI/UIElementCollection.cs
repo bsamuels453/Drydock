@@ -300,7 +300,7 @@ namespace Drydock.UI{
             }
         }
 
-        public void AddDragCallback(OnDragMovement deleg){
+        public void AddDragCallback(OnComponentDrag deleg){
             foreach (var element in _elements){
                 if (element.DoesComponentExist<DraggableComponent>()){
                     element.GetComponent<DraggableComponent>().DragMovementDispatcher += deleg;
