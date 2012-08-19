@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic{
-    internal class HullEditor : ICanReceiveInputEvents{
+    internal class HullEditor : CanReceiveInputEvents{
         private readonly BackEditorPanel _backpanel;
 
         private readonly PreviewRenderer _previewRenderer;
@@ -37,27 +37,7 @@ namespace Drydock.Logic{
 
         #region ICanReceiveInputEvents Members
 
-        public InterruptState OnMouseMovement(MouseState state){
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnLeftButtonClick(MouseState state){
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnLeftButtonPress(MouseState state){
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnLeftButtonRelease(MouseState state){
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnMouseScroll(MouseState state){
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnKeyboardEvent(KeyboardState state){
+        public override InterruptState OnKeyboardEvent(KeyboardState state) {
             if (state.IsKeyDown(Keys.LeftControl) && state.IsKeyDown(Keys.S)){
                 _sidepanel.SaveCurves("side.xml");
                 _toppanel.SaveCurves("top.xml");

@@ -37,7 +37,7 @@ namespace Drydock.UI.Components {
             _owner.OnMouseScroll.Add(OnMouseButtonAction);
         }
 
-        private InterruptState OnMouseButtonAction(MouseState state){
+        private InterruptState OnMouseButtonAction(MouseState state, MouseState? prevState = null){
             if (_owner.BoundingBox.Contains(state.X, state.Y)){
                 return InterruptState.InterruptEventDispatch;
             }

@@ -66,7 +66,7 @@ namespace Drydock.UI.Components{
 
         #region event handlers
 
-        private InterruptState OnLeftButtonDown(MouseState state){
+        private InterruptState OnLeftButtonDown(MouseState state, MouseState? prevState = null){
             if (!_isMoving){
                 if (_owner.BoundingBox.Contains(state.X, state.Y)){
                     _isMoving = true;
@@ -78,7 +78,7 @@ namespace Drydock.UI.Components{
             return InterruptState.AllowOtherEvents;
         }
 
-        private InterruptState OnLeftButtonUp(MouseState state){
+        private InterruptState OnLeftButtonUp(MouseState state, MouseState? prevState = null){
             if (_isMoving){
                 _isMoving = false;
                 _owner.Owner.DisableEntryHandlers = false;
@@ -86,7 +86,7 @@ namespace Drydock.UI.Components{
             return InterruptState.AllowOtherEvents;
         }
 
-        private InterruptState OnMouseMovement(MouseState state){
+        private InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
             if (_isMoving){
                 var oldX = (int) _owner.X;
                 var oldY = (int) _owner.Y;

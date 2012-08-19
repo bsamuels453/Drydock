@@ -160,7 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
-    <Compile Include="Control\ICanReceiveInputEvents.cs" />
+    <Compile Include="Control\CanReceiveInputEvents.cs" />
     <Compile Include="Control\InputEventDispatcher.cs" />
     <Compile Include="DebugTimer.cs" />
     <Compile Include="Logic\BezierCurve.cs" />

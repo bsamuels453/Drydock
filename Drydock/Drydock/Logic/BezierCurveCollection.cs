@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic{
-    internal class BezierCurveCollection : ICanReceiveInputEvents, IEnumerable<BezierCurve>{
+    internal class BezierCurveCollection : CanReceiveInputEvents, IEnumerable<BezierCurve>{
         #region fields
 
         public readonly UIElementCollection ElementCollection;
@@ -168,7 +168,7 @@ namespace Drydock.Logic{
 
         #region ICanReceiveInputEvents Members
 
-        public InterruptState OnLeftButtonClick(MouseState state){
+        public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null) {
             //this is broken right now
             /*if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
                 Vector2 pos;
@@ -192,30 +192,6 @@ namespace Drydock.Logic{
                 }
             }*/
 
-            return InterruptState.AllowOtherEvents;
-        }
-
-        #endregion
-
-        #region unused input events
-
-        public InterruptState OnMouseMovement(MouseState state){
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnLeftButtonPress(MouseState state){
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnLeftButtonRelease(MouseState state){
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnMouseScroll(MouseState state){
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState OnKeyboardEvent(KeyboardState state){
             return InterruptState.AllowOtherEvents;
         }
 

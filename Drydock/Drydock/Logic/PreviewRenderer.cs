@@ -3,25 +3,30 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Drydock.Control;
 using Drydock.Render;
 using Drydock.UI;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 #endregion
 
 namespace Drydock.Logic{
-    internal class PreviewRenderer{
+    internal class PreviewRenderer : CanReceiveInputEvents{
         private const int _meshVertexWidth = 64; //this is in primitives
         private readonly BezierCurveCollection _backCurves;
+        private readonly BezierCurveCollection _sideCurves;
+        private readonly BezierCurveCollection _topCurves;
         private readonly ShipGeometryBuffer _geometryBuffer;
         private readonly int[] _indicies;
         private readonly Vector3[,] _mesh;
         private readonly RenderPanel _renderTarget;
-        private readonly BezierCurveCollection _sideCurves;
-        private readonly BezierCurveCollection _topCurves;
         private readonly VertexPositionNormalTexture[] _verticies;
+        private float _cameraPhi;
+        private float _cameraTheta;
+        private float _cameraDistance;
 
         public PreviewRenderer(BezierCurveCollection sideCurves, BezierCurveCollection topCurves, BezierCurveCollection backCurves){
             _verticies = new VertexPositionNormalTexture[_meshVertexWidth*_meshVertexWidth*4];
@@ -34,6 +39,11 @@ namespace Drydock.Logic{
                 DepthLevel.Medium
                 );
             RenderPanel.SetRenderPanel(_renderTarget);
+
+            _cameraPhi = 0.32f;
+            _cameraTheta = 0.63f;
+            _cameraDistance = 300;
+            InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10f, this);
 
             _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth)*(_meshVertexWidth)*2, "whiteborder");
 
@@ -71,85 +81,18 @@ namespace Drydock.Logic{
             for (int i = 0; i < _verticies.Count(); i++){
                 _verticies[i] = new VertexPositionNormalTexture();
             }
-
-            //i sure hope you dont have to maintain this any time soon
-            _topCurves.GetParameterizedPoint(0, true);
-
-            var topPts = new Vector2[_meshVertexWidth];
-            for (double i = 0; i < _meshVertexWidth; i++){
-                double t = i/((_meshVertexWidth - 1)*2);
-                topPts[(int) i] = _topCurves.GetParameterizedPoint(t);
-            }
-
-
-            topPts = topPts.Reverse().ToArray();
-            float reflectionPoint = topPts[0].Y;
-            var yDelta = new float[_meshVertexWidth];
-
-            for (int i = 0; i < _meshVertexWidth; i++){
-                yDelta[i] = Math.Abs(topPts[i].Y - reflectionPoint)*2/_meshVertexWidth;
-            }
-
-
-            sideCurves.GetParameterizedPoint(0, true); //this refreshes internal fields
-            //orient controllers correctly for the bezierintersect
-            var li = _sideCurves.Select(bezierCurve => new BezierInfo(
-                                                           _sideCurves.Normalize(bezierCurve.CenterHandlePos),
-                                                           _sideCurves.Normalize(bezierCurve.PrevHandlePos),
-                                                           _sideCurves.Normalize(bezierCurve.NextHandlePos))).ToList();
-
-
-            var sideIntersectGenerator = new BezierIntersect(li);
-
-            var sideIntersectionCache = new float[_meshVertexWidth];
-
-            for (int x = 0; x < _meshVertexWidth; x++){
-                sideIntersectionCache[x] = sideIntersectGenerator.GetIntersectionFromX(topPts[x].X).Y;
-            }
-
-            var maxY = (float) _backCurves.NormalizeY(_backCurves.MaxY);
-            var backCurvesMaxWidth = (float) (_backCurves.NormalizeX(_backCurves[_backCurves.Count - 1].CenterHandlePos.X) - _backCurves.NormalizeX(_backCurves[0].CenterHandlePos.X));
-
-            for (int x = 0; x < _meshVertexWidth; x++){
-                float scaleX = Math.Abs((reflectionPoint - topPts[x].Y)*2)/backCurvesMaxWidth;
-                float scaleY = sideIntersectionCache[x]/maxY;
-
-                var bezierInfo = _backCurves.GetControllerInfo(scaleX, scaleY);
-                var crossIntersectGenerator = new BezierIntersect(bezierInfo);
-
-                for (int z = 0; z < _meshVertexWidth/2; z++){
-                    Vector2 pos = crossIntersectGenerator.GetIntersectionFromX(yDelta[x]*(z));
-                    _mesh[x, z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x]*(z));
-                    _mesh[x, _meshVertexWidth - 1 - z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x]*(_meshVertexWidth - 1 - z));
-                }
-            }
-
-
-            //convert from 2d array to 1d
             int index = 0;
             for (int x = 0; x < _meshVertexWidth - 1; x++){
                 for (int z = 0; z < _meshVertexWidth - 1; z++){
-                    _verticies[index].Normal = Vector3.Zero;
-                    _verticies[index].Position = -_mesh[x, z];
-                    _verticies[index].TextureCoordinate = new Vector2(0, 0); //make  this assigned during init
-
-                    _verticies[index + 1].Normal = Vector3.Zero;
-                    _verticies[index + 1].Position = -_mesh[x, z + 1];
+                    _verticies[index].TextureCoordinate = new Vector2(0, 0);
                     _verticies[index + 1].TextureCoordinate = new Vector2(0, 1);
-
-                    _verticies[index + 2].Normal = Vector3.Zero;
-                    _verticies[index + 2].Position = -_mesh[x + 1, z + 1];
                     _verticies[index + 2].TextureCoordinate = new Vector2(1, 1);
-
-                    _verticies[index + 3].Normal = Vector3.Zero;
-                    _verticies[index + 3].Position = -_mesh[x + 1, z];
                     _verticies[index + 3].TextureCoordinate = new Vector2(1, 0);
-
                     index += 4;
                 }
             }
             _geometryBuffer.Indexbuffer.SetData(_indicies);
-            _geometryBuffer.Vertexbuffer.SetData(_verticies);
+            Update();
         }
 
         public void Update(){
@@ -203,10 +146,10 @@ namespace Drydock.Logic{
                     _mesh[x, _meshVertexWidth - 1 - z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x]*(_meshVertexWidth - 1 - z));
                 }
             }
-            var normals = new Vector3[_meshVertexWidth, _meshVertexWidth];
+            var normals = new Vector3[_meshVertexWidth,_meshVertexWidth];
 
-            for (int vertX = 0; vertX < _meshVertexWidth-1; vertX++){
-                for (int vertZ = 0; vertZ < _meshVertexWidth-1; vertZ++){
+            for (int vertX = 0; vertX < _meshVertexWidth - 1; vertX++){
+                for (int vertZ = 0; vertZ < _meshVertexWidth - 1; vertZ++){
                     var crossSum = new Vector3();
 
                     var s1 = _mesh[vertX + 1, vertZ] - _mesh[vertX, vertZ];
@@ -220,8 +163,8 @@ namespace Drydock.Logic{
                 }
             }
 
-            for (int vertX = 1; vertX < _meshVertexWidth; vertX++) {
-                for (int vertZ = 1; vertZ < _meshVertexWidth; vertZ++) {
+            for (int vertX = 1; vertX < _meshVertexWidth; vertX++){
+                for (int vertZ = 1; vertZ < _meshVertexWidth; vertZ++){
                     var crossSum = new Vector3();
 
                     var s1 = _mesh[vertX - 1, vertZ] - _mesh[vertX, vertZ];
@@ -236,25 +179,20 @@ namespace Drydock.Logic{
             }
 
             //convert from 2d array to 1d
-            var v = new Vector3(0, -1, 0);
             int index = 0;
             for (int x = 0; x < _meshVertexWidth - 1; x++){
                 for (int z = 0; z < _meshVertexWidth - 1; z++){
                     _verticies[index].Position = -_mesh[x, z];
                     _verticies[index].Normal = normals[x, z];
-                    //_verticies[index].Normal = v;
 
                     _verticies[index + 1].Position = -_mesh[x, z + 1];
                     _verticies[index + 1].Normal = normals[x, z + 1];
-                    //_verticies[index + 1].Normal = v;
 
                     _verticies[index + 2].Position = -_mesh[x + 1, z + 1];
                     _verticies[index + 2].Normal = normals[x + 1, z + 1];
-                    //_verticies[index + 2].Normal = v;
 
                     _verticies[index + 3].Position = -_mesh[x + 1, z];
                     _verticies[index + 3].Normal = normals[x + 1, z];
-                   // _verticies[index + 3].Normal = v;
 
                     index += 4;
                 }
@@ -263,11 +201,78 @@ namespace Drydock.Logic{
 
             var p = new Vector3();
             p += -_mesh[0, 0];
-            p += -_mesh[_meshVertexWidth-1, 0];
+            p += -_mesh[_meshVertexWidth - 1, 0];
             p += -_mesh[0, _meshVertexWidth - 1];
             p += -_mesh[_meshVertexWidth - 1, _meshVertexWidth - 1];
             p /= 4;
             Renderer.CameraTarget = p;
+            Renderer.CameraPosition.X = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Sin(_cameraTheta)) + Renderer.CameraTarget.X;
+            Renderer.CameraPosition.Z = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
+            Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
         }
+
+        #region event handlers
+
+        public override InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
+            if (prevState != null){
+                if (_renderTarget.BoundingBox.Contains(state.X, state.Y)){
+                    if (state.LeftButton == ButtonState.Pressed){
+                        int dx = state.X - ((MouseState) prevState).X;
+                        int dy = state.Y - ((MouseState) prevState).Y;
+
+                        if (state.LeftButton == ButtonState.Pressed){
+                            _cameraPhi += dy*0.01f;
+                            _cameraTheta -= dx*0.01f;
+
+                            if (_cameraPhi > 1.56f){
+                                _cameraPhi = 1.56f;
+                            }
+                            if (_cameraPhi < -1.56f){
+                                _cameraPhi = -1.56f;
+                            }
+                            Renderer.CameraPosition.X = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Sin(_cameraTheta)) + Renderer.CameraTarget.X;
+                            Renderer.CameraPosition.Z = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
+                            Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
+                        }
+
+
+                        return InterruptState.InterruptEventDispatch;
+                    }
+                    /*if (state.RightButton == ButtonState.Pressed) {
+                        int dx = state.X - ((MouseState)prevState).X;
+                        int dy = state.Y - ((MouseState)prevState).Y;
+
+                        _cameraPhi += dy * 0.01f;
+                        _cameraTheta += dx * 0.01f;
+
+                        if (_cameraPhi > 1.56f) {
+                            _cameraPhi = 1.56f;
+                        }
+                        if (_cameraPhi < -1.56f) {
+                            _cameraPhi = -1.56f;
+                        }
+
+                        Renderer.CameraTarget.X = (float)(_cameraDistance * Math.Cos(_cameraPhi + Math.PI) * Math.Sin(_cameraTheta + Math.PI)) - Renderer.CameraPosition.X;
+                        Renderer.CameraTarget.Z = (float)(_cameraDistance * Math.Cos(_cameraPhi + Math.PI) * Math.Cos(_cameraTheta + Math.PI)) - Renderer.CameraPosition.Z;
+                        Renderer.CameraTarget.Y = (float)(_cameraDistance * Math.Sin(_cameraPhi + Math.PI)) + Renderer.CameraPosition.Y;
+                        return InterruptState.InterruptEventDispatch;
+                    }*/
+                    return InterruptState.InterruptEventDispatch;
+                }
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public override InterruptState OnMouseScroll(MouseState state, MouseState? prevState = null){
+            if (prevState != null){
+                _cameraDistance += (((MouseState) prevState).ScrollWheelValue - state.ScrollWheelValue)/5f;
+                if (_cameraDistance < 50){
+                    _cameraDistance = 50;
+                }
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        #endregion
     }
 }

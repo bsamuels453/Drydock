@@ -17,6 +17,7 @@ namespace Drydock.Render{
         private readonly RenderTarget2D _renderTarget;
         private readonly List<IDrawableSprite> _sprites;
         private Texture2D _renderedPanel;
+        public readonly Rectangle BoundingBox;
 
         public RenderPanel(int x, int y, int width, int height, DepthLevel depth){
             _panelSpriteBatch = new SpriteBatch(Singleton.Device);
@@ -30,6 +31,7 @@ namespace Drydock.Render{
             _renderTarget = new RenderTarget2D(Singleton.Device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
 
             _position = new Vector2(x, y);
+            BoundingBox = new Rectangle(x, y, width, height);
         }
 
         public void Dispose(){

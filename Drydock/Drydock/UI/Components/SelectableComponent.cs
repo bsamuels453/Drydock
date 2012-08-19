@@ -73,7 +73,7 @@ namespace Drydock.UI.Components{
             _positionDy = _heightDx/2;
         }
 
-        private InterruptState OnMouseClick(MouseState state){
+        private InterruptState OnMouseClick(MouseState state, MouseState? prevState = null){
             if (IsEnabled){
                 if (_isSelected){
                     DeselectThis();

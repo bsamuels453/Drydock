@@ -15,12 +15,12 @@ namespace Drydock.Control{
         InterruptEventDispatch
     }
 
-    internal delegate InterruptState OnMouseEvent(MouseState state);
+    internal delegate InterruptState OnMouseEvent(MouseState state, MouseState? prevState = null);
 
     internal delegate InterruptState OnKeyboardEvent(KeyboardState state);
 
     //these two delegates are to be used in literal(?) events
-    internal delegate void EOnMouseEvent(MouseState state);
+    internal delegate void EOnMouseEvent(MouseState state, MouseState? prevState = null);
 
     internal delegate void EOnKeyboardEvent(KeyboardState state);
 
@@ -29,7 +29,6 @@ namespace Drydock.Control{
         private static KeyboardState _prevKeyboardState;
         private static MouseState _prevMouseState;
         private static readonly Stopwatch _clickTimer;
-        private static readonly ScreenText _mousePos;
 
         static InputEventDispatcher(){
             EventSubscribers = new DepthSortedList();
@@ -37,7 +36,6 @@ namespace Drydock.Control{
             _prevKeyboardState = Keyboard.GetState();
             _prevMouseState = Mouse.GetState();
             _clickTimer = new Stopwatch();
-            _mousePos = new ScreenText(0, 0, "not init");
         }
 
         public static void Update(){
@@ -52,8 +50,8 @@ namespace Drydock.Control{
                 newState.MiddleButton != _prevMouseState.MiddleButton){
                 if (newState.LeftButton == ButtonState.Released){
                     //dispatch onbuttonreleased
-                    foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
-                        if (subscriber.OnLeftButtonRelease(newState) == InterruptState.InterruptEventDispatch){
+                    foreach (CanReceiveInputEvents subscriber in EventSubscribers) {
+                        if (subscriber.OnLeftButtonRelease(newState, _prevMouseState) == InterruptState.InterruptEventDispatch){
                             PrematureMouseExit(newState);
                             return;
                         }
@@ -62,8 +60,8 @@ namespace Drydock.Control{
 
                     if (_clickTimer.ElapsedMilliseconds < 200){
                         //dispatch onclick
-                        foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
-                            if (subscriber.OnLeftButtonClick(newState) == InterruptState.InterruptEventDispatch){
+                        foreach (CanReceiveInputEvents subscriber in EventSubscribers) {
+                            if (subscriber.OnLeftButtonClick(newState, _prevMouseState) == InterruptState.InterruptEventDispatch) {
                                 PrematureMouseExit(newState);
                                 return;
                             }
@@ -75,8 +73,8 @@ namespace Drydock.Control{
                 if (newState.LeftButton == ButtonState.Pressed){
                     _clickTimer.Start();
                     //dispatch onbuttonpressed
-                    foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
-                        if (subscriber.OnLeftButtonPress(newState) == InterruptState.InterruptEventDispatch){
+                    foreach (CanReceiveInputEvents subscriber in EventSubscribers) {
+                        if (subscriber.OnLeftButtonPress(newState, _prevMouseState) == InterruptState.InterruptEventDispatch) {
                             PrematureMouseExit(newState);
                             return;
                         }
@@ -86,40 +84,18 @@ namespace Drydock.Control{
 
             if (newState.X != _prevMouseState.X ||
                 newState.Y != _prevMouseState.Y){
-                bool interrupt = false;
                 //dispatch onmovement
-                foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
-                    if (subscriber.OnMouseMovement(newState) == InterruptState.InterruptEventDispatch){
-                        interrupt = true;
-                        //PrematureMouseExit(newState);
-                        //return;
+                foreach (CanReceiveInputEvents subscriber in EventSubscribers) {
+                    if (subscriber.OnMouseMovement(newState, _prevMouseState) == InterruptState.InterruptEventDispatch) {
+                        PrematureMouseExit(newState);
+                        return;
                     }
                 }
-                int dx = newState.X - _prevMouseState.X;
-                int dy = newState.Y - _prevMouseState.Y;
-
-                if (!interrupt){
-                    if (newState.LeftButton == ButtonState.Pressed){
-                        Renderer.CameraPhi += dy*0.01f;
-                        Renderer.CameraTheta -= dx*0.01f;
-
-                        if (Renderer.CameraPhi > 1.56f){
-                            Renderer.CameraPhi = 1.56f;
-                        }
-                        if (Renderer.CameraPhi < -1.56f) {
-                            Renderer.CameraPhi = -1.56f;
-                        }
-                    }
-                }
-                _mousePos.EditText("phi:" + Renderer.CameraPhi + "  theta:" + Renderer.CameraTheta);
             }
             if (newState.ScrollWheelValue != _prevMouseState.ScrollWheelValue) {
-                Renderer.CameraDistance += (_prevMouseState.ScrollWheelValue-newState.ScrollWheelValue)/5f;
-                if (Renderer.CameraDistance < 50){
-                    Renderer.CameraDistance = 50;
-                }
-                foreach (ICanReceiveInputEvents subscriber in EventSubscribers) {
-                    if (subscriber.OnMouseScroll(newState) == InterruptState.InterruptEventDispatch) {
+
+                foreach (CanReceiveInputEvents subscriber in EventSubscribers) {
+                    if (subscriber.OnMouseScroll(newState, _prevMouseState) == InterruptState.InterruptEventDispatch) {
                         PrematureMouseExit(newState);
                         return;
                     }
@@ -129,7 +105,7 @@ namespace Drydock.Control{
             _prevMouseState = newState;
         }
 
-        private static void PrematureMouseExit(MouseState state){
+        private static void PrematureMouseExit(MouseState state, MouseState? prevState = null){
             _prevMouseState = state;
         }
 
@@ -137,7 +113,7 @@ namespace Drydock.Control{
             var state = Keyboard.GetState();
 
             if (state != _prevKeyboardState){
-                foreach (ICanReceiveInputEvents subscriber in EventSubscribers){
+                foreach (CanReceiveInputEvents subscriber in EventSubscribers){
                     if (subscriber.OnKeyboardEvent(state) == InterruptState.InterruptEventDispatch) {
                         break;
                     }
@@ -164,22 +140,22 @@ namespace Drydock.Control{
 
     internal class DepthSortedList : IEnumerable {
         private readonly List<float> _depthList;
-        private readonly List<ICanReceiveInputEvents> _objList;
+        private readonly List<CanReceiveInputEvents> _objList;
 
         public DepthSortedList() {
             _depthList = new List<float>();
-            _objList = new List<ICanReceiveInputEvents>();
+            _objList = new List<CanReceiveInputEvents>();
         }
 
         public int Count {
             get { return _depthList.Count; }
         }
 
-        public ICanReceiveInputEvents this[int index] {
+        public CanReceiveInputEvents this[int index] {
             get { return _objList[index]; }
         }
 
-        public void Add(float depth, ICanReceiveInputEvents element) {
+        public void Add(float depth, CanReceiveInputEvents element) {
             _depthList.Add(depth);
             _objList.Add(element);
 
@@ -206,7 +182,7 @@ namespace Drydock.Control{
             _objList.RemoveAt(index);
         }
 
-        public void Remove(ICanReceiveInputEvents element) {
+        public void Remove(CanReceiveInputEvents element) {
             int i = 0;
             while (_objList[i] == element) {
                 i++;

@@ -113,7 +113,7 @@ namespace Drydock.UI.Components{
 
         #endregion
 
-        private InterruptState ConfirmFadeoutProc(MouseState state){
+        private InterruptState ConfirmFadeoutProc(MouseState state, MouseState? prevState = null){
 
 
             return InterruptState.AllowOtherEvents;
@@ -149,7 +149,7 @@ namespace Drydock.UI.Components{
 
         #region modification methods
 
-        public InterruptState ForceFadeout(MouseState state){
+        public InterruptState ForceFadeout(MouseState state, MouseState? prevState = null){
             _owner.Owner.DisableEntryHandlers = false;
             if (IsEnabled){
                 _isInTransition = true;
@@ -161,7 +161,7 @@ namespace Drydock.UI.Components{
             return InterruptState.AllowOtherEvents;
         }
 
-        public InterruptState ForceFadein(MouseState state){
+        public InterruptState ForceFadein(MouseState state, MouseState? prevState = null){
             _owner.Owner.DisableEntryHandlers = true;
             //UIElementCollection.ForceExitHandlers(_owner);
             if (IsEnabled){
