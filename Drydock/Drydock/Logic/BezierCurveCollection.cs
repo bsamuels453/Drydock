@@ -35,14 +35,10 @@ namespace Drydock.Logic{
         private double[] _lenList;
         private double _totalArcLen;
 
-        private readonly SymmetryType _symmetry;
-        private readonly int _xReflect;
-        private readonly int _yReflect;
-
-        #endregion 
+        #endregion
 
         public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, UIElementCollection parentCollection, SymmetryType symmetry){
-            InputEventDispatcher.EventSubscribers.Add((float)DepthLevel.Medium /10f, this);
+            InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10f, this);
             ElementCollection = parentCollection; //.Add(new UIElementCollection(DepthLevel.Medium));
 
             var reader = XmlReader.Create(defaultConfig);
@@ -93,8 +89,7 @@ namespace Drydock.Logic{
             }
 
             //set curve symmetry
-            _symmetry = symmetry;
-            switch (symmetry) {
+            switch (symmetry){
                 case SymmetryType.Vertical:
                     LinkHandlesBySymmetry(LinkType.RDxDy);
                     break;
@@ -102,7 +97,7 @@ namespace Drydock.Logic{
                     LinkHandlesBySymmetry(LinkType.DxRDy);
                     break;
 
-                case SymmetryType.None://this only happens in the case of side 
+                case SymmetryType.None: //this only happens in the case of side 
                     _curveList[0].CenterHandle.AddLinkedHandle(
                         LinkType.Dy,
                         _curveList[_curveList.Count - 1].CenterHandle,
@@ -110,16 +105,15 @@ namespace Drydock.Logic{
                         true
                         );
                     _curveList[_curveList.Count - 1].CenterHandle.AddLinkedHandle(
-                        LinkType.Dy, 
+                        LinkType.Dy,
                         _curveList[0].CenterHandle,
                         _curveList[0].CenterHandle.Translate,
                         true
                         );
                     break;
             }
-
-
         }
+
         private void LinkHandlesBySymmetry(LinkType type){
             for (int i = 0; i < _curveList.Count/2; i++){
                 _curveList[i].CenterHandle.AddLinkedHandle(
@@ -172,87 +166,6 @@ namespace Drydock.Logic{
                 true
                 );
         }
-
-        #region curve information retrieval methods
-
-        /// <summary>
-        ///   Returns the point on the curve associated with the parameter t
-        /// </summary>
-        /// <param name="t"> range from 0-1f </param>
-        /// <param name="regenerateMethodCache"> </param>
-        /// <returns> </returns>
-        public Vector2 GetParameterizedPoint(double t, bool regenerateMethodCache = false){
-            if (regenerateMethodCache){
-                _lenList = new double[_curveList.Count - 1];
-                _totalArcLen = 0;
-                for (int i = 0; i < _lenList.Count(); i++){
-                    _lenList[i] = _curveList[i].GetNextArcLength() + _curveList[i + 1].GetPrevArcLength();
-                    _totalArcLen += _lenList[i];
-                }
-            }
-
-            double pointArcLen = _totalArcLen*t;
-            double tempLen = pointArcLen;
-
-            //figure out which curve is going to contain point t
-            int segmentIndex;
-            for (segmentIndex = 0; segmentIndex < _lenList.Count(); segmentIndex++){
-                tempLen -= _lenList[segmentIndex];
-                if (tempLen < 0){
-                    tempLen += _lenList[segmentIndex];
-                    tempLen /= _lenList[segmentIndex]; //this turns tempLen into a t(0-1)
-                    break;
-                }
-            }
-
-            if (segmentIndex == _curveList.Count - 1){ //clamp it 
-                segmentIndex--;
-                tempLen = 1;
-            }
-            Vector2 point = GetBezierValue(_curveList[segmentIndex], _curveList[segmentIndex + 1], tempLen);
-
-            //now we need to normalize the point to meters
-            point.X = (float) (point.X - MinX)/PixelsPerMeter;
-            point.Y = (float) (point.Y - MinY)/PixelsPerMeter;
-
-            return point;
-        }
-
-        public Vector2 GetBezierValue(BezierCurve prevCurve, BezierCurve nextCurve, double t){
-            Vector2 retVal;
-
-            Bezier.GetBezierValue(
-                out retVal,
-                prevCurve.CenterHandlePos,
-                prevCurve.NextHandlePos,
-                nextCurve.PrevHandlePos,
-                nextCurve.CenterHandlePos,
-                t
-                );
-
-            return retVal;
-        }
-
-        /// <summary>
-        ///   converts a point from screen pixels to meters.
-        /// </summary>
-        /// <param name="point"> </param>
-        /// <returns> </returns>
-        public Vector2 Normalize(Vector2 point){
-            point.X = (float) (point.X - MinX)/PixelsPerMeter;
-            point.Y = (float) (point.Y - MinY)/PixelsPerMeter;
-            return point;
-        }
-
-        public double NormalizeY(double y){
-            return (y - MinY)/PixelsPerMeter;
-        }
-
-        public double NormalizeX(double x){
-            return (x - MinX)/PixelsPerMeter;
-        }
-
-        #endregion
 
         public void Update(){
             foreach (var curve in _curveList){
@@ -348,9 +261,7 @@ namespace Drydock.Logic{
             }
         }*/
 
-        #region ICanReceiveInputEvents Members
-
-        public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null) {
+        public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null){
             //this is broken right now
             /*if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
                 Vector2 pos;
@@ -377,11 +288,9 @@ namespace Drydock.Logic{
             return InterruptState.AllowOtherEvents;
         }
 
-        #endregion
-
         #region ienumerable members + accessors
 
-        public BezierCurve this[int index] {
+        public BezierCurve this[int index]{
             get { return _curveList[index]; }
         }
 
@@ -395,6 +304,87 @@ namespace Drydock.Logic{
 
         IEnumerator IEnumerable.GetEnumerator(){
             return _curveList.GetEnumerator();
+        }
+
+        #endregion
+
+        #region curve information retrieval methods
+
+        /// <summary>
+        ///   Returns the point on the curve associated with the parameter t
+        /// </summary>
+        /// <param name="t"> range from 0-1f </param>
+        /// <param name="regenerateMethodCache"> </param>
+        /// <returns> </returns>
+        public Vector2 GetParameterizedPoint(double t, bool regenerateMethodCache = false){
+            if (regenerateMethodCache){
+                _lenList = new double[_curveList.Count - 1];
+                _totalArcLen = 0;
+                for (int i = 0; i < _lenList.Count(); i++){
+                    _lenList[i] = _curveList[i].GetNextArcLength() + _curveList[i + 1].GetPrevArcLength();
+                    _totalArcLen += _lenList[i];
+                }
+            }
+
+            double pointArcLen = _totalArcLen*t;
+            double tempLen = pointArcLen;
+
+            //figure out which curve is going to contain point t
+            int segmentIndex;
+            for (segmentIndex = 0; segmentIndex < _lenList.Count(); segmentIndex++){
+                tempLen -= _lenList[segmentIndex];
+                if (tempLen < 0){
+                    tempLen += _lenList[segmentIndex];
+                    tempLen /= _lenList[segmentIndex]; //this turns tempLen into a t(0-1)
+                    break;
+                }
+            }
+
+            if (segmentIndex == _curveList.Count - 1){ //clamp it 
+                segmentIndex--;
+                tempLen = 1;
+            }
+            Vector2 point = GetBezierValue(_curveList[segmentIndex], _curveList[segmentIndex + 1], tempLen);
+
+            //now we need to normalize the point to meters
+            point.X = (float) (point.X - MinX)/PixelsPerMeter;
+            point.Y = (float) (point.Y - MinY)/PixelsPerMeter;
+
+            return point;
+        }
+
+        public Vector2 GetBezierValue(BezierCurve prevCurve, BezierCurve nextCurve, double t){
+            Vector2 retVal;
+
+            Bezier.GetBezierValue(
+                out retVal,
+                prevCurve.CenterHandlePos,
+                prevCurve.NextHandlePos,
+                nextCurve.PrevHandlePos,
+                nextCurve.CenterHandlePos,
+                t
+                );
+
+            return retVal;
+        }
+
+        /// <summary>
+        ///   converts a point from screen pixels to meters.
+        /// </summary>
+        /// <param name="point"> </param>
+        /// <returns> </returns>
+        public Vector2 Normalize(Vector2 point){
+            point.X = (float) (point.X - MinX)/PixelsPerMeter;
+            point.Y = (float) (point.Y - MinY)/PixelsPerMeter;
+            return point;
+        }
+
+        public double NormalizeY(double y){
+            return (y - MinY)/PixelsPerMeter;
+        }
+
+        public double NormalizeX(double x){
+            return (x - MinX)/PixelsPerMeter;
         }
 
         #endregion

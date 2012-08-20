@@ -1,7 +1,6 @@
 ﻿#region
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using Drydock.Control;
 using Drydock.Render;
@@ -17,16 +16,16 @@ namespace Drydock.Logic{
     internal class PreviewRenderer : CanReceiveInputEvents{
         private const int _meshVertexWidth = 64; //this is in primitives
         private readonly BezierCurveCollection _backCurves;
-        private readonly BezierCurveCollection _sideCurves;
-        private readonly BezierCurveCollection _topCurves;
         private readonly ShipGeometryBuffer _geometryBuffer;
         private readonly int[] _indicies;
         private readonly Vector3[,] _mesh;
         private readonly RenderPanel _renderTarget;
+        private readonly BezierCurveCollection _sideCurves;
+        private readonly BezierCurveCollection _topCurves;
         private readonly VertexPositionNormalTexture[] _verticies;
+        private float _cameraDistance;
         private float _cameraPhi;
         private float _cameraTheta;
-        private float _cameraDistance;
 
         public PreviewRenderer(BezierCurveCollection sideCurves, BezierCurveCollection topCurves, BezierCurveCollection backCurves){
             _verticies = new VertexPositionNormalTexture[_meshVertexWidth*_meshVertexWidth*4];

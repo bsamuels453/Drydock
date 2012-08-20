@@ -19,22 +19,21 @@ namespace Drydock.Logic{
         #region private fields
 
         private const int _linesPerSide = 50;
-       // private readonly Button _centerHandle;
+        public readonly CurveHandle CenterHandle;
+        public readonly CurveHandle NextHandle;
+        public readonly CurveHandle PrevHandle;
+        // private readonly Button _centerHandle;
         private readonly UIElementCollection _elementCollection;
         //private readonly Button _handle1;
         //private readonly Button _handle2;
         private readonly Line _line1;
         private readonly Line _line2;
         private readonly LineGenerator _lineTemplate;
+        private readonly BezierCurveCollection _parentCollection;
         private BezierCurve _nextCurve;
         private List<Line> _nextLines;
         private BezierCurve _prevCurve;
         private List<Line> _prevLines;
-        private readonly BezierCurveCollection _parentCollection;
-
-        public readonly CurveHandle PrevHandle;
-        public readonly CurveHandle NextHandle;
-        public readonly CurveHandle CenterHandle;
 
         #endregion
 
@@ -239,11 +238,6 @@ namespace Drydock.Logic{
 
         #region curve modification
 
-        /// <summary>
-        ///   this method will move the entire controller by the defined dx and dy
-        /// </summary>
-        /// <param name="dx"> </param>
-        /// <param name="dy"> </param>
         /*public void TranslateControllerPos(int dx, int dy){
             _line1.TranslateOrigin(dx, dy);
             _line1.TranslateDestination(dx, dy);
@@ -277,10 +271,16 @@ namespace Drydock.Logic{
             PrevHandle.HandleButton.X = (int)_line1.DestPoint.X - PrevHandle.HandleButton.BoundingBox.Width / 2;
             PrevHandle.HandleButton.Y = (int)_line1.DestPoint.Y - PrevHandle.HandleButton.BoundingBox.Height / 2;
         }*/
+
         #endregion
 
         #region ctor and disposal
 
+        /// <summary>
+        ///   this method will move the entire controller by the defined dx and dy
+        /// </summary>
+        /// <param name="dx"> </param>
+        /// <param name="dy"> </param>
         /// <summary>
         ///   usually used to add new curves between two points
         /// </summary>
@@ -383,8 +383,6 @@ namespace Drydock.Logic{
 
         #region event stuff
 
-        public OnComponentDrag ReactToControllerMovement;
-
         /// <summary>
         ///   this function balances handle movement so that they stay in a straight line and their movements translate to other handles
         /// </summary>
@@ -427,7 +425,6 @@ namespace Drydock.Logic{
         }*/
 
         #endregion
-
         public void Update(){
             float t, dt;
             Vector2 firstPos, secondPos;

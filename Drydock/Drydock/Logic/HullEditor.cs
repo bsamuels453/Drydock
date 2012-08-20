@@ -32,12 +32,10 @@ namespace Drydock.Logic{
 
             _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves, _backpanel.Curves);
 
-            InputEventDispatcher.EventSubscribers.Add((float)DepthLevel.Medium/10,  this);
+            InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10, this);
         }
 
-        #region ICanReceiveInputEvents Members
-
-        public override InterruptState OnKeyboardEvent(KeyboardState state) {
+        public override InterruptState OnKeyboardEvent(KeyboardState state){
             if (state.IsKeyDown(Keys.LeftControl) && state.IsKeyDown(Keys.S)){
                 _sidepanel.SaveCurves("side.xml");
                 _toppanel.SaveCurves("top.xml");
@@ -47,8 +45,6 @@ namespace Drydock.Logic{
 
             return InterruptState.AllowOtherEvents;
         }
-
-        #endregion
 
         public void TranslateLinkedHandleMovement(HullEditorPanel caller, float dx, float dy){
         }
