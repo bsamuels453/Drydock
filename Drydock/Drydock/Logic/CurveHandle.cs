@@ -17,6 +17,14 @@ namespace Drydock.Logic{
         Dy,
     }
 
+    internal enum LinkRestriction{
+        GreaterthanX,
+        GreaterthanY,
+        LessthanX,
+        LessthanY
+
+    }
+
     internal delegate void HandleTranslator(int dx, int dy);
 
     // ReSharper restore InconsistentNaming
@@ -42,6 +50,10 @@ namespace Drydock.Logic{
             _originLine1 = originLine1;
             _originLine2 = originLine2;
             _destLine = destLine;
+        }
+
+        public bool VerifyNewPosition(int dx, int dy){
+            return false;
         }
 
         /// <summary>

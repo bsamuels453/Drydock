@@ -21,14 +21,14 @@ namespace Drydock.Logic{
             _toppanel = new TopEditorPanel(0, ScreenData.GetScreenValueY(0.5f), ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "top.xml");
             _backpanel = new BackEditorPanel(ScreenData.GetScreenValueX(0.5f), 0, ScreenData.GetScreenValueX(0.25f), ScreenData.GetScreenValueY(0.5f), "back.xml");
 
-            _sidepanel.BackPanelModifier = _backpanel.ModifyHandlePosition;
-            _sidepanel.TopPanelModifier = _toppanel.ModifyHandlePosition;
+            _sidepanel.BackPanel = _backpanel;
+            _sidepanel.TopPanel = _toppanel;
 
-            _toppanel.BackPanelModifier = _backpanel.ModifyHandlePosition;
-            _toppanel.SidePanelModifier = _sidepanel.ModifyHandlePosition;
+            _toppanel.BackPanel = _backpanel;
+            _toppanel.SidePanel = _sidepanel;
 
-            _backpanel.TopPanelModifier = _toppanel.ModifyHandlePosition;
-            _backpanel.SidePanelModifier = _sidepanel.ModifyHandlePosition;
+            _backpanel.TopPanel = _toppanel;
+            _backpanel.SidePanel = _sidepanel;
 
             _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves, _backpanel.Curves);
 
