@@ -127,9 +127,6 @@ namespace Drydock.Logic{
 
         public void TranslatePosition(int dx, int dy){
             RawCenterTranslate(dx, dy);
-            if (SymmetricHandle != null){
-                SymmetricHandle.RawCenterTranslate(dx*_reflectionX, dy*_reflectionY);
-            }
         }
 
         private void RawCenterTranslate(int dx, int dy){
