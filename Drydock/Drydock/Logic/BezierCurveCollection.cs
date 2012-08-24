@@ -13,11 +13,6 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic{
-    internal enum SymmetryType{
-        Horizontal,
-        Vertical,
-        None
-    }
 
     internal class BezierCurveCollection : CanReceiveInputEvents, IEnumerable<BezierCurve>{
         #region fields
@@ -37,7 +32,7 @@ namespace Drydock.Logic{
 
         #endregion
 
-        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, UIElementCollection parentCollection, SymmetryType symmetry){
+        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, UIElementCollection parentCollection, PanelAlias panelType){
             InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10f, this);
             ElementCollection = parentCollection; //.Add(new UIElementCollection(DepthLevel.Medium));
 
@@ -81,7 +76,7 @@ namespace Drydock.Logic{
             }
 
             for (int i = 0; i < numControllers; i++){
-                _curveList.Add(new BezierCurve(0, 0, ElementCollection, curveInitData[i], this));
+                _curveList.Add(new BezierCurve(0, 0, ElementCollection, curveInitData[i]));
             }
             for (int i = 1; i < numControllers - 1; i++){
                 _curveList[i].SetPrevCurve(_curveList[i - 1]);
@@ -89,82 +84,35 @@ namespace Drydock.Logic{
             }
 
             //set curve symmetry
-            switch (symmetry){
-                case SymmetryType.Vertical:
-                    LinkHandlesBySymmetry(LinkType.RDxDy);
+            switch (panelType){
+                case PanelAlias.Side:
+                    _curveList[0].Handle.SymmetricHandle = _curveList[_curveList.Count - 1].Handle;
+                    _curveList[_curveList.Count - 1].Handle.SymmetricHandle = _curveList[0].Handle;
+
+                    _curveList[0].Handle.SetReflectionType(PanelAlias.Side);
+                    _curveList[_curveList.Count - 1].Handle.SetReflectionType(PanelAlias.Side);
+
                     break;
-                case SymmetryType.Horizontal:
-                    LinkHandlesBySymmetry(LinkType.DxRDy);
+                case PanelAlias.Top:
+                    for (int i = 0; i < _curveList.Count/2; i++){
+                        _curveList[i].Handle.SymmetricHandle = _curveList[_curveList.Count- 1 - i].Handle;
+                        _curveList[_curveList.Count - 1 - i].Handle.SymmetricHandle = _curveList[i].Handle;
+
+                        _curveList[i].Handle.SetReflectionType(PanelAlias.Top);
+                        _curveList[_curveList.Count - 1 - i].Handle.SetReflectionType(PanelAlias.Top);
+                    }
                     break;
 
-                case SymmetryType.None: //this only happens in the case of side 
-                    _curveList[0].CenterHandle.AddLinkedHandle(
-                        LinkType.Dy,
-                        _curveList[_curveList.Count - 1].CenterHandle,
-                        _curveList[_curveList.Count - 1].CenterHandle.Translate,
-                        true
-                        );
-                    _curveList[_curveList.Count - 1].CenterHandle.AddLinkedHandle(
-                        LinkType.Dy,
-                        _curveList[0].CenterHandle,
-                        _curveList[0].CenterHandle.Translate,
-                        true
-                        );
+                case PanelAlias.Back:
+                    for (int i = 0; i < _curveList.Count / 2; i++) {
+                        _curveList[i].Handle.SymmetricHandle = _curveList[_curveList.Count - 1 - i].Handle;
+                        _curveList[_curveList.Count - 1 - i].Handle.SymmetricHandle = _curveList[i].Handle;
+
+                        _curveList[i].Handle.SetReflectionType(PanelAlias.Back);
+                        _curveList[_curveList.Count - 1 - i].Handle.SetReflectionType(PanelAlias.Back);
+                    }
                     break;
             }
-        }
-
-        private void LinkHandlesBySymmetry(LinkType type){
-            for (int i = 0; i < _curveList.Count/2; i++){
-                _curveList[i].CenterHandle.AddLinkedHandle(
-                    type,
-                    _curveList[(_curveList.Count - 1) - i].CenterHandle,
-                    _curveList[(_curveList.Count - 1) - i].CenterHandle.Translate,
-                    true
-                    );
-                _curveList[(_curveList.Count - 1) - i].CenterHandle.AddLinkedHandle(
-                    type,
-                    _curveList[i].CenterHandle,
-                    _curveList[i].CenterHandle.Translate,
-                    true
-                    );
-                _curveList[i].PrevHandle.AddLinkedHandle(
-                    type,
-                    _curveList[(_curveList.Count - 1) - i].NextHandle,
-                    _curveList[(_curveList.Count - 1) - i].NextHandle.Translate,
-                    true
-                    );
-                _curveList[(_curveList.Count - 1) - i].PrevHandle.AddLinkedHandle(
-                    type,
-                    _curveList[i].NextHandle,
-                    _curveList[i].NextHandle.Translate,
-                    true
-                    );
-                _curveList[i].NextHandle.AddLinkedHandle(
-                    type,
-                    _curveList[(_curveList.Count - 1) - i].PrevHandle,
-                    _curveList[(_curveList.Count - 1) - i].PrevHandle.Translate,
-                    true
-                    );
-                _curveList[(_curveList.Count - 1) - i].NextHandle.AddLinkedHandle(
-                    type,
-                    _curveList[i].PrevHandle,
-                    _curveList[i].PrevHandle.Translate,
-                    true
-                    );
-            }
-            _curveList[_curveList.Count/2].PrevHandle.AddLinkedHandle(
-                type,
-                _curveList[_curveList.Count/2].NextHandle,
-                _curveList[_curveList.Count/2].NextHandle.RawTranslate,
-                true
-                );
-            _curveList[_curveList.Count/2].NextHandle.AddLinkedHandle(
-                type,
-                _curveList[_curveList.Count/2].PrevHandle,
-                _curveList[_curveList.Count/2].PrevHandle.RawTranslate,
-                true
-                );
         }
 
         public void Update(){

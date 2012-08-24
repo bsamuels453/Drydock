@@ -19,17 +19,9 @@ namespace Drydock.Logic{
         #region private fields
 
         private const int _linesPerSide = 50;
-        public readonly CurveHandle CenterHandle;
-        public readonly CurveHandle NextHandle;
-        public readonly CurveHandle PrevHandle;
-        // private readonly Button _centerHandle;
+        public readonly CurveHandle Handle;
         private readonly UIElementCollection _elementCollection;
-        //private readonly Button _handle1;
-        //private readonly Button _handle2;
-        private readonly Line _line1;
-        private readonly Line _line2;
         private readonly LineGenerator _lineTemplate;
-        private readonly BezierCurveCollection _parentCollection;
         private BezierCurve _nextCurve;
         private List<Line> _nextLines;
         private BezierCurve _prevCurve;
@@ -82,7 +74,7 @@ namespace Drydock.Logic{
 
             Common.GetAngleFromComponents(out angle, out magnitude, pt3.X, pt3.Y);
 
-            Angle = angle;
+            Handle.Angle = angle;
             if (_prevLines == null){
                 _prevLines = new List<Line>(_linesPerSide);
 
@@ -155,34 +147,26 @@ namespace Drydock.Logic{
         #region curve information
 
         public Vector2 CenterHandlePos{
-            get { return CenterHandle.HandleButton.CentPosition; }
+            get { return Handle.CentPosition; }
         }
 
         public Vector2 PrevHandlePos{
-            get { return PrevHandle.HandleButton.CentPosition; }
+            get { return Handle.PrevPosition; }
         }
 
         public Vector2 NextHandlePos{
-            get { return NextHandle.HandleButton.CentPosition; }
+            get { return Handle.NextPosition; }
         }
 
         public float PrevHandleLength{
-            get { return _line1.Length; }
+            get { return Handle.PrevLength; }
         }
 
         public float NextHandleLength{
-            get { return _line2.Length; }
+            get { return Handle.NextLength; }
         }
 
-        public float Angle{
-            set{
-                _line1.Angle = value;
-                _line2.Angle = (float) (value + Math.PI);
-                PrevHandle.HandleButton.CentPosition = _line1.DestPoint;
-                NextHandle.HandleButton.CentPosition = _line2.DestPoint;
-            }
-            get { return _line1.Angle; }
-        }
+
 
         public float GetNextArcLength(){
             float len = 0;
@@ -276,19 +260,10 @@ namespace Drydock.Logic{
 
         #region ctor and disposal
 
-        /// <summary>
-        ///   this method will move the entire controller by the defined dx and dy
-        /// </summary>
-        /// <param name="dx"> </param>
-        /// <param name="dy"> </param>
-        /// <summary>
-        ///   usually used to add new curves between two points
-        /// </summary>
-        public BezierCurve(float offsetX, float offsetY, UIElementCollection parentElement, CurveInitalizeData initData, BezierCurveCollection parent){
+        public BezierCurve(float offsetX, float offsetY, UIElementCollection parentElement, CurveInitalizeData initData){
             float initX = initData.HandlePosX + offsetX;
             float initY = initData.HandlePosY + offsetY;
 
-            _parentCollection = parent;
             _elementCollection = parentElement;
             _nextLines = null;
             _nextCurve = null;
@@ -330,49 +305,10 @@ namespace Drydock.Logic{
                 {"FadeComponent", new object[]{FadeComponent.FadeState.Faded}}
             };
 
-            _line1 = _elementCollection.Add<Line>(lineTemplate.GenerateLine());
-            _line2 = _elementCollection.Add<Line>(lineTemplate.GenerateLine());
-
-            buttonTemplate.Identifier = 1;
-            buttonTemplate.X = component1.X + initX;
-            buttonTemplate.Y = component1.Y + initY;
-            PrevHandle = new CurveHandle(buttonTemplate, _elementCollection, null, null, _line1);
-
-            buttonTemplate.Identifier = 2;
-            buttonTemplate.X = component2.X + initX;
-            buttonTemplate.Y = component2.Y + initY;
-            NextHandle = new CurveHandle(buttonTemplate, _elementCollection, null, null, _line2);
-
-            buttonTemplate.Identifier = 0;
-            buttonTemplate.X = initX;
-            buttonTemplate.Y = initY;
-            CenterHandle = new CurveHandle(buttonTemplate, _elementCollection, _line1, _line2, null);
-
-            _line1.OriginPoint = CenterHandle.HandleButton.CentPosition;
-            _line1.DestPoint = PrevHandle.HandleButton.CentPosition;
-
-            _line2.OriginPoint = CenterHandle.HandleButton.CentPosition;
-            _line2.DestPoint = NextHandle.HandleButton.CentPosition;
-
-            PrevHandle.CounterHandle = NextHandle;
-            NextHandle.CounterHandle = PrevHandle;
-
-            CenterHandle.AddLinkedHandle(
-                LinkType.DxDy,
-                PrevHandle,
-                PrevHandle.RawTranslate,
-                false
-                );
-            CenterHandle.AddLinkedHandle(
-                LinkType.DxDy,
-                NextHandle,
-                NextHandle.RawTranslate,
-                false
-                );
+            Handle = new CurveHandle(buttonTemplate, lineTemplate, parentElement, new Vector2(initX, initY), component1, component2);
 
             #endregion
 
-            InterlinkButtonEvents();
         }
 
         public void Dispose(){
@@ -482,25 +418,7 @@ namespace Drydock.Logic{
             }
         }
 
-        private void InterlinkButtonEvents(){
-            FadeComponent.LinkFadeComponentTriggers(PrevHandle.HandleButton, NextHandle.HandleButton, FadeComponent.FadeTrigger.EntryExit);
-            FadeComponent.LinkFadeComponentTriggers(PrevHandle.HandleButton, CenterHandle.HandleButton, FadeComponent.FadeTrigger.EntryExit);
-            FadeComponent.LinkFadeComponentTriggers(NextHandle.HandleButton, CenterHandle.HandleButton, FadeComponent.FadeTrigger.EntryExit);
 
-
-            FadeComponent.LinkOnewayFadeComponentTriggers(
-                eventProcElements: new IUIElement[]{
-                    PrevHandle.HandleButton,
-                    NextHandle.HandleButton,
-                    CenterHandle.HandleButton
-                },
-                eventRecieveElements: new IUIElement[]{
-                    _line1,
-                    _line2,
-                },
-                state: FadeComponent.FadeTrigger.EntryExit
-                );
-        }
 
         /* //this might be useful someday
         private Vector2 GetPerpendicularBisector(Vector2 originPoint, Vector2 destPoint, Vector2 perpendicularPoint) {

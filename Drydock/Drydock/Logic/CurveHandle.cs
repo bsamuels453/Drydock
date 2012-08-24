@@ -4,31 +4,241 @@ using System;
 using System.Collections.Generic;
 using Drydock.UI;
 using Drydock.UI.Components;
+using Microsoft.Xna.Framework;
 
 #endregion
 
 namespace Drydock.Logic{
-    // ReSharper disable InconsistentNaming
-    internal enum LinkType{
-        DxDy,
-        RDxDy,
-        DxRDy,
-        RDxRDy,
-        Dy,
-    }
-
-    internal enum LinkRestriction{
-        GreaterthanX,
-        GreaterthanY,
-        LessthanX,
-        LessthanY
-
-    }
-
-    internal delegate void HandleTranslator(int dx, int dy);
-
-    // ReSharper restore InconsistentNaming
     internal class CurveHandle{
+        private enum HandleType{
+            Center,
+            Prev,
+            Next
+        }
+
+        readonly Button _prevHandle;
+        readonly Button _centerHandle;
+        readonly Button _nextHandle;
+        readonly Line _prevLine;
+        readonly Line _nextLine;
+        float _restrictionAngle;
+        int _reflectionX;
+        int _reflectionY;
+        bool _dontTranslateHandles;
+        
+
+        public TranslateDragToExtern TranslateToExtern;
+        public CurveHandle SymmetricHandle;
+
+        public Vector2 CentPosition{
+            get { return _centerHandle.CentPosition; }
+        }
+
+        public Vector2 NextPosition{
+            get { return _nextHandle.CentPosition; }
+        }
+
+        public Vector2 PrevPosition{
+            get { return _prevHandle.CentPosition; }
+        }
+
+        public float PrevLength{
+            get { return _prevLine.Length; }
+        }
+
+        public float NextLength{
+            get { return _nextLine.Length; }
+        }
+
+        public float Angle {
+            set {
+                _prevLine.Angle = value;
+                _nextLine.Angle = (float)(value + Math.PI);
+                _prevHandle.CentPosition = _prevLine.DestPoint;
+                _nextHandle.CentPosition = _nextLine.DestPoint;
+            }
+            get { return _prevLine.Angle; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buttonTemplate"></param>
+        /// <param name="lineTemplate"></param>
+        /// <param name="panelType"></param>
+        /// <param name="uicollection"></param>
+        /// <param name="pos"></param>
+        /// <param name="prevComponent"></param>
+        /// <param name="nextComponent"></param>
+        public CurveHandle(ButtonGenerator buttonTemplate,LineGenerator lineTemplate, UIElementCollection uicollection, Vector2 pos, Vector2 prevComponent, Vector2 nextComponent) {
+
+            buttonTemplate.Identifier = (int)HandleType.Center;
+            buttonTemplate.X = pos.X;
+            buttonTemplate.Y = pos.Y;
+            _centerHandle = uicollection.Add<Button>(buttonTemplate.GenerateButton());
+            _centerHandle.GetComponent<DraggableComponent>().DragMovementDispatcher += TranslateToLinks;
+
+            buttonTemplate.Identifier = (int)HandleType.Prev;
+            buttonTemplate.X = prevComponent.X + pos.X;
+            buttonTemplate.Y = prevComponent.Y + pos.Y;
+            _prevHandle = uicollection.Add<Button>(buttonTemplate.GenerateButton());
+            _prevHandle.GetComponent<DraggableComponent>().DragMovementDispatcher += TranslateToLinks;
+
+            buttonTemplate.Identifier = (int)HandleType.Next;
+            buttonTemplate.X = nextComponent.X + pos.X;
+            buttonTemplate.Y = nextComponent.Y + pos.Y;
+            _nextHandle = uicollection.Add<Button>(buttonTemplate.GenerateButton());
+            _nextHandle.GetComponent<DraggableComponent>().DragMovementDispatcher += TranslateToLinks;
+
+            _prevLine = uicollection.Add<Line>(lineTemplate.GenerateLine());
+            _nextLine = uicollection.Add<Line>(lineTemplate.GenerateLine());
+
+            _prevLine.OriginPoint = _centerHandle.CentPosition;
+            _prevLine.DestPoint = _prevHandle.CentPosition;
+
+            _nextLine.OriginPoint = _centerHandle.CentPosition;
+            _nextLine.DestPoint = _nextHandle.CentPosition;
+
+            InterlinkButtonEvents();
+        }
+
+        public void SetReflectionType(PanelAlias panelType){
+            switch (panelType) {
+                case PanelAlias.Side:
+                    _restrictionAngle = (float)Math.PI / 2;
+                    _reflectionX = 0;
+                    _reflectionY = 1;
+                    _dontTranslateHandles = true;
+                    break;
+                case PanelAlias.Top:
+                    _restrictionAngle = (float)Math.PI / 2;
+                    _reflectionX = 1;
+                    _reflectionY = -1;
+                    _dontTranslateHandles = false;
+                    break;
+                case PanelAlias.Back:
+                    _restrictionAngle = 0;
+                    _reflectionX = -1;
+                    _reflectionY = 1;
+                    _dontTranslateHandles = false;
+                    break;
+            }
+        }
+
+        public void TranslatePosition(int dx, int dy){
+            RawCenterTranslate(dx, dy);
+            if (SymmetricHandle != null){
+                SymmetricHandle.RawCenterTranslate(dx*_reflectionX, dy*_reflectionY);
+            }
+        }
+
+        private void RawCenterTranslate(int dx, int dy){
+            _centerHandle.X += dx;
+            _centerHandle.Y += dy;
+            _prevHandle.X += dx;
+            _prevHandle.Y += dy;
+
+            _nextHandle.X += dx;
+            _nextHandle.Y += dy;
+
+            _prevLine.TranslateDestination(dx, dy);
+            _prevLine.TranslateOrigin(dx, dy);
+            _nextLine.TranslateDestination(dx, dy);
+            _nextLine.TranslateOrigin(dx, dy);
+        }
+
+        private void RawPrevTranslate(int dx, int dy){
+            _prevHandle.X += dx;
+            _prevHandle.Y += dy;
+
+            _prevLine.TranslateDestination(dx, dy);
+            _nextLine.Angle = (float)(_prevLine.Angle + Math.PI);
+
+            _nextHandle.X = _nextLine.DestPoint.X - _nextHandle.BoundingBox.Width / 2;
+            _nextHandle.Y = _nextLine.DestPoint.Y - _nextHandle.BoundingBox.Height / 2;
+        }
+
+        private void RawNextTranslate(int dx, int dy) {
+            _nextHandle.X += dx;
+            _nextHandle.Y += dy;
+            _nextLine.TranslateDestination(dx, dy);
+            _prevLine.Angle = (float)(_nextLine.Angle + Math.PI);
+
+            _prevHandle.X = _prevLine.DestPoint.X - _prevHandle.BoundingBox.Width / 2;
+            _prevHandle.Y = _prevLine.DestPoint.Y - _prevHandle.BoundingBox.Height / 2;
+        }
+
+        private void TranslateToLinks(object caller, int dx, int dy){
+            var obj = (Button) caller;
+            switch ((HandleType) obj.Identifier){
+                case HandleType.Center:
+                    _prevHandle.X += dx;
+                    _prevHandle.Y += dy;
+
+                    _nextHandle.X += dx;
+                    _nextHandle.Y += dy;
+
+                    _prevLine.TranslateDestination(dx, dy);
+                    _prevLine.TranslateOrigin(dx, dy);
+                    _nextLine.TranslateDestination(dx, dy);
+                    _nextLine.TranslateOrigin(dx, dy);
+                    if (SymmetricHandle != null){
+                        SymmetricHandle.RawCenterTranslate(_reflectionX*dx, _reflectionY*dy);
+                    }
+                    break;
+                case HandleType.Prev:
+                    _prevLine.TranslateDestination(dx, dy);
+                    _nextLine.Angle = (float) (_prevLine.Angle + Math.PI);
+
+                    _nextHandle.X = _nextLine.DestPoint.X - _nextHandle.BoundingBox.Width/2;
+                    _nextHandle.Y = _nextLine.DestPoint.Y - _nextHandle.BoundingBox.Height/2;
+
+                    if (SymmetricHandle != null && !_dontTranslateHandles){
+                        SymmetricHandle.RawNextTranslate(_reflectionX*dx, _reflectionY*dy);
+                    }
+                    break;
+                case HandleType.Next:
+                    _nextLine.TranslateDestination(dx, dy);
+                    _prevLine.Angle = (float) (_nextLine.Angle + Math.PI);
+
+                    _prevHandle.X = _prevLine.DestPoint.X - _prevHandle.BoundingBox.Width/2;
+                    _prevHandle.Y = _prevLine.DestPoint.Y - _prevHandle.BoundingBox.Height/2;
+                    if (SymmetricHandle != null && !_dontTranslateHandles){
+                        SymmetricHandle.RawPrevTranslate(_reflectionX*dx, _reflectionY*dy);
+                    }
+                    break;
+            }
+
+            if (TranslateToExtern != null){
+                float dxf = dx;
+                float dyf = dy;
+
+                TranslateToExtern(this,ref dxf, ref dyf, true);
+            }
+        }
+
+        private void InterlinkButtonEvents() {
+            FadeComponent.LinkFadeComponentTriggers(_prevHandle, _nextHandle, FadeComponent.FadeTrigger.EntryExit);
+            FadeComponent.LinkFadeComponentTriggers(_prevHandle, _centerHandle, FadeComponent.FadeTrigger.EntryExit);
+            FadeComponent.LinkFadeComponentTriggers(_nextHandle, _centerHandle, FadeComponent.FadeTrigger.EntryExit);
+
+
+            FadeComponent.LinkOnewayFadeComponentTriggers(
+                eventProcElements: new IUIElement[]{
+                    _prevHandle,
+                    _nextHandle,
+                    _centerHandle
+                },
+                eventRecieveElements: new IUIElement[]{
+                    _prevLine,
+                    _nextLine
+                },
+                state: FadeComponent.FadeTrigger.EntryExit
+                );
+        }
+    }
+
+    /*internal class CurveHandle{
         public readonly Button HandleButton;
         private readonly Line _destLine;
 
@@ -260,5 +470,5 @@ namespace Drydock.Logic{
         }
 
         #endregion
-    }
+    }*/
 }
