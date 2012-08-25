@@ -416,7 +416,6 @@ namespace Drydock.Logic{
             }
         }
 
-
         /* //this might be useful someday
         private Vector2 GetPerpendicularBisector(Vector2 originPoint, Vector2 destPoint, Vector2 perpendicularPoint) {
 

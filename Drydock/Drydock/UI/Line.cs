@@ -90,13 +90,13 @@ namespace Drydock.UI{
             get { throw new NotImplementedException(); }
         }
 
-        public void TranslateOrigin(int dx, int dy){
+        public void TranslateOrigin(float dx, float dy){
             _point1.X += dx;
             _point1.Y += dy;
             CalculateInfoFromPoints();
         }
 
-        public void TranslateDestination(int dx, int dy){
+        public void TranslateDestination(float dx, float dy){
             _point2.X += dx;
             _point2.Y += dy;
             CalculateInfoFromPoints();

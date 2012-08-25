@@ -11,13 +11,12 @@ using Drydock.Utilities;
 #endregion
 
 namespace Drydock.Logic{
-    //this class and its subordinates make me want to kill myself, never reuse it anywhere and schedule a rewrite
 
     #region namespace panel stuff
 
-    internal delegate void TranslateDragToExtern(object caller, ref float dx, ref float dy, bool doApplyChange);
+    internal delegate void TranslateDragToExtern(object caller, ref float dx, ref float dy, bool doClampCheck);
 
-    internal delegate void RecieveDragFromExtern(HandleAlias handleAlias, ref float dx, ref float dy, bool doApplyChange);
+    //internal delegate void RecieveDragFromExtern(HandleAlias handleAlias, ref float dx, ref float dy, bool doApplyChange);
 
     internal enum HandleAlias{
         First,
@@ -123,61 +122,40 @@ namespace Drydock.Logic{
         /// <param name="handle"> </param>
         /// <param name="dx"> </param>
         /// <param name="dy"> </param>
-        public void ModifyHandlePosition(HandleAlias handle, float dx, float dy){
-            dx *= Curves.PixelsPerMeter;
-            dy *= Curves.PixelsPerMeter;
-            var dxi = (int) Math.Round(dx);
-            var dyi = (int) Math.Round(dy);
+        /// <param name="doClampCheck"> </param>
+        public void ModifyHandlePosition(HandleAlias handle, ref float dx, ref float dy, bool doClampCheck){
+            var dxi = (dx * Curves.PixelsPerMeter);
+            var dyi = (dy * Curves.PixelsPerMeter);
 
-            switch (handle){
-                case HandleAlias.First:
-                    Curves[0].Handle.TranslatePosition(dxi, dyi);
-                    break;
-                case HandleAlias.Middle:
-                    Curves[Curves.Count/2].Handle.TranslatePosition(dxi, dyi);
-                    break;
-                case HandleAlias.Last:
-                    Curves[Curves.Count - 1].Handle.TranslatePosition(dxi, dyi);
-                    break;
-                case HandleAlias.ExtremaY:
-                    var extremaController = Curves[0];
-                    foreach (var curve in Curves){
-                        if (curve.CenterHandlePos.Y > extremaController.CenterHandlePos.Y){
-                            extremaController = curve;
+            if (!doClampCheck) {
+                switch (handle) {
+                    case HandleAlias.First:
+                        Curves[0].Handle.TranslatePosition(dxi, dyi);
+                        break;
+                    case HandleAlias.Middle:
+                        Curves[Curves.Count / 2].Handle.TranslatePosition(dxi, dyi);
+                        break;
+                    case HandleAlias.Last:
+                        Curves[Curves.Count - 1].Handle.TranslatePosition(dxi, dyi);
+                        break;
+                    case HandleAlias.ExtremaY:
+                        var extremaController = Curves[0];
+                        foreach (var curve in Curves) {
+                            if (curve.CenterHandlePos.Y > extremaController.CenterHandlePos.Y) {
+                                extremaController = curve;
+                            }
                         }
-                    }
-                    extremaController.Handle.TranslatePosition(dxi, dyi);
-                    break;
+                        extremaController.Handle.TranslatePosition(dxi, dyi);
+                        break;
+                }
+            }
+            else{
+
+
             }
         }
 
-        public bool VerifyNewHandlePosition(HandleAlias handle, float dx, float dy){
-            dx *= Curves.PixelsPerMeter;
-            dy *= Curves.PixelsPerMeter;
-            var dxi = (int) Math.Round(dx);
-            var dyi = (int) Math.Round(dy);
-
-            /*switch (handle) {
-                case HandleAlias.First:
-                    return Curves[0].CenterHandle.VerifyNewPosition(dxi, dyi);
-                case HandleAlias.Middle:
-                    return Curves[Curves.Count / 2].CenterHandle.VerifyNewPosition(dxi, dyi);
-                case HandleAlias.Last:
-                    return Curves[Curves.Count - 1].CenterHandle.VerifyNewPosition(dxi, dyi);
-                case HandleAlias.ExtremaY:
-                    var extremaController = Curves[0];
-                    foreach (var curve in Curves) {
-                        if (curve.CenterHandlePos.Y > extremaController.CenterHandlePos.Y) {
-                            extremaController = curve;
-                        }
-                    }
-                    return extremaController.CenterHandle.VerifyNewPosition(dxi, dyi);
-            }*/
-            return false;
-        }
-
         protected abstract void ProcExternalDrag(object caller, ref float dx, ref float dy, bool doApplyChange);
-        protected abstract bool VerifyExternalDrag(object caller, int dx, int dy);
     }
 
     #endregion
@@ -195,94 +173,41 @@ namespace Drydock.Logic{
             }
         }
 
-        protected override void ProcExternalDrag(object caller, ref float dx, ref float dy, bool doApplyChange){
+        protected override void ProcExternalDrag(object caller, ref float dx, ref float dy, bool applyClampCheck){
             float dxf = dx/Curves.PixelsPerMeter;
             float dyf = dy/Curves.PixelsPerMeter;
 
             var controller = (CurveHandle) caller;
+            float _null = 0;
 
             //Curves[0] is the frontmost controller that represents the limit of the bow
             if (controller == Curves[0].Handle){
                 if (TopPanel != null){
-                    TopPanel.ModifyHandlePosition(HandleAlias.Middle, dxf, 0);
+                    TopPanel.ModifyHandlePosition(HandleAlias.Middle, ref dxf, ref _null, applyClampCheck);
                 }
                 if (BackPanel != null){
-                    BackPanel.ModifyHandlePosition(HandleAlias.First, 0, dyf);
-                    BackPanel.ModifyHandlePosition(HandleAlias.Last, 0, dyf);
+                    BackPanel.ModifyHandlePosition(HandleAlias.First, ref _null, ref dyf, applyClampCheck);
+                    BackPanel.ModifyHandlePosition(HandleAlias.Last, ref _null, ref dyf, applyClampCheck);
                 }
             }
 
             //Curves[Curves.Count-1] is the hindmost controller that represents the limit of the stern
             if (controller == Curves[Curves.Count - 1].Handle){
                 if (TopPanel != null){
-                    TopPanel.ModifyHandlePosition(HandleAlias.Last, dxf, 0);
-                    TopPanel.ModifyHandlePosition(HandleAlias.First, dxf, 0);
+                    TopPanel.ModifyHandlePosition(HandleAlias.Last, ref dxf, ref _null, applyClampCheck);
+                    TopPanel.ModifyHandlePosition(HandleAlias.First, ref dxf, ref _null, applyClampCheck);
                 }
                 if (BackPanel != null){
-                    BackPanel.ModifyHandlePosition(HandleAlias.First, 0, dyf);
-                    BackPanel.ModifyHandlePosition(HandleAlias.Last, 0, dyf);
+                    BackPanel.ModifyHandlePosition(HandleAlias.First, ref _null, ref dyf, applyClampCheck);
+                    BackPanel.ModifyHandlePosition(HandleAlias.Last, ref _null, ref dyf, applyClampCheck);
                 }
             }
 
             if (controller == Curves.MaxYCurve.Handle){
                 if (BackPanel != null){
-                    BackPanel.ModifyHandlePosition(HandleAlias.Middle, 0, dyf);
+                    BackPanel.ModifyHandlePosition(HandleAlias.Middle, ref _null, ref dyf, applyClampCheck);
                 }
             }
-        }
-
-        protected override bool VerifyExternalDrag(object caller, int dx, int dy){
-            float dxf = dx/Curves.PixelsPerMeter;
-            float dyf = dy/Curves.PixelsPerMeter;
-
-            var controller = (CurveHandle) caller;
-
-            //Curves[0] is the frontmost controller that represents the limit of the bow
-            if (controller == Curves[0].Handle){
-                if (TopPanel != null){
-                    if (!TopPanel.VerifyNewHandlePosition(HandleAlias.Middle, dxf, 0)){
-                        return false;
-                    }
-                }
-                if (BackPanel != null){
-                    if (!BackPanel.VerifyNewHandlePosition(HandleAlias.First, 0, dyf)){
-                        return false;
-                    }
-
-                    if (BackPanel.VerifyNewHandlePosition(HandleAlias.Last, 0, dyf)){
-                        return false;
-                    }
-                }
-            }
-
-            //Curves[Curves.Count-1] is the hindmost controller that represents the limit of the stern
-            if (controller == Curves[Curves.Count - 1].Handle){
-                if (TopPanel != null){
-                    if (!TopPanel.VerifyNewHandlePosition(HandleAlias.Last, dxf, 0)){
-                        return false;
-                    }
-                    if (!TopPanel.VerifyNewHandlePosition(HandleAlias.First, dxf, 0)){
-                        return false;
-                    }
-                }
-                if (BackPanel != null){
-                    if (!BackPanel.VerifyNewHandlePosition(HandleAlias.First, 0, dyf)){
-                        return false;
-                    }
-                    if (!BackPanel.VerifyNewHandlePosition(HandleAlias.Last, 0, dyf)){
-                        return false;
-                    }
-                }
-            }
-
-            if (controller == Curves.MaxYCurve.Handle){
-                if (BackPanel != null){
-                    if (!BackPanel.VerifyNewHandlePosition(HandleAlias.Middle, 0, dyf)){
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
     }
 
@@ -301,85 +226,40 @@ namespace Drydock.Logic{
             Curves[Curves.Count/2].Handle.TranslateToExtern = ProcExternalDrag;
         }
 
-        protected override void ProcExternalDrag(object caller, ref float dx, ref float dy, bool doApplyChange){
+        protected override void ProcExternalDrag(object caller, ref float dx, ref float dy, bool applyClampCheck){
             float dxf = dx/Curves.PixelsPerMeter;
             float dyf = dy/Curves.PixelsPerMeter;
+
+            float _null = 0;
 
             var controller = (CurveHandle) caller;
             if (controller == Curves[0].Handle){
                 if (SidePanel != null){
-                    SidePanel.ModifyHandlePosition(HandleAlias.Last, dxf, 0);
+                    SidePanel.ModifyHandlePosition(HandleAlias.Last, ref dxf, ref _null, applyClampCheck);
                 }
                 if (BackPanel != null){
-                    BackPanel.ModifyHandlePosition(HandleAlias.Last, -dyf, 0);
-                    BackPanel.ModifyHandlePosition(HandleAlias.First, dyf, 0);
+                    dyf *= -1;
+                    BackPanel.ModifyHandlePosition(HandleAlias.Last, ref dyf, ref _null, applyClampCheck);
+                    dyf *= -1;
+                    BackPanel.ModifyHandlePosition(HandleAlias.First, ref dyf, ref _null, applyClampCheck);
                 }
             }
             if (controller == Curves[Curves.Count - 1].Handle){
                 if (SidePanel != null){
-                    SidePanel.ModifyHandlePosition(HandleAlias.Last, dxf, 0);
+                    SidePanel.ModifyHandlePosition(HandleAlias.Last, ref dxf, ref _null, applyClampCheck);
                 }
                 if (BackPanel != null){
-                    BackPanel.ModifyHandlePosition(HandleAlias.Last, dyf, 0);
-                    BackPanel.ModifyHandlePosition(HandleAlias.First, -dyf, 0);
+                    BackPanel.ModifyHandlePosition(HandleAlias.Last, ref dyf, ref _null, applyClampCheck);
+                    dyf *= -1;
+                    BackPanel.ModifyHandlePosition(HandleAlias.First, ref dyf, ref _null, applyClampCheck);
+                    dyf *= -1;
                 }
             }
             if (controller == Curves[Curves.Count/2].Handle){
                 if (SidePanel != null){
-                    SidePanel.ModifyHandlePosition(HandleAlias.First, dxf, 0);
+                    SidePanel.ModifyHandlePosition(HandleAlias.First, ref dxf, ref _null, applyClampCheck);
                 }
             }
-        }
-
-        protected override bool VerifyExternalDrag(object caller, int dx, int dy){
-            float dxf = dx/Curves.PixelsPerMeter;
-            float dyf = dy/Curves.PixelsPerMeter;
-
-            var controller = (CurveHandle) caller;
-
-            //Curves[0] is the frontmost controller that represents the limit of the bow
-            if (controller == Curves[0].Handle){
-                if (SidePanel != null){
-                    if (!SidePanel.VerifyNewHandlePosition(HandleAlias.Last, dxf, 0)){
-                        return false;
-                    }
-                }
-                if (BackPanel != null){
-                    if (!BackPanel.VerifyNewHandlePosition(HandleAlias.Last, -dyf, 0)){
-                        return false;
-                    }
-
-                    if (BackPanel.VerifyNewHandlePosition(HandleAlias.First, dyf, 0)){
-                        return false;
-                    }
-                }
-            }
-
-            //Curves[Curves.Count-1] is the hindmost controller that represents the limit of the stern
-            if (controller == Curves[Curves.Count - 1].Handle){
-                if (SidePanel != null){
-                    if (!SidePanel.VerifyNewHandlePosition(HandleAlias.Last, dxf, 0)){
-                        return false;
-                    }
-                }
-                if (BackPanel != null){
-                    if (!BackPanel.VerifyNewHandlePosition(HandleAlias.Last, dyf, 0)){
-                        return false;
-                    }
-                    if (!BackPanel.VerifyNewHandlePosition(HandleAlias.First, -dyf, 0)){
-                        return false;
-                    }
-                }
-            }
-
-            if (controller == Curves.MaxYCurve.Handle){
-                if (SidePanel != null){
-                    if (!SidePanel.VerifyNewHandlePosition(HandleAlias.First, dxf, 0)){
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
     }
 
@@ -398,93 +278,41 @@ namespace Drydock.Logic{
             Curves[Curves.Count/2].Handle.TranslateToExtern = ProcExternalDrag;
         }
 
-        protected override void ProcExternalDrag(object caller, ref float dx, ref float dy, bool doApplyChange){
+        protected override void ProcExternalDrag(object caller, ref float dx, ref float dy, bool applyClampCheck){
             float dxf = dx/Curves.PixelsPerMeter;
             float dyf = dy/Curves.PixelsPerMeter;
 
+            float _null = 0;
             var controller = (CurveHandle) caller;
             if (controller == Curves[0].Handle){
                 if (SidePanel != null){
-                    SidePanel.ModifyHandlePosition(HandleAlias.First, 0, dyf);
-                    SidePanel.ModifyHandlePosition(HandleAlias.Last, 0, dyf);
+                    SidePanel.ModifyHandlePosition(HandleAlias.First, ref _null, ref dyf, applyClampCheck);
+                    SidePanel.ModifyHandlePosition(HandleAlias.Last, ref _null, ref dyf, applyClampCheck);
                 }
                 if (TopPanel != null){
-                    TopPanel.ModifyHandlePosition(HandleAlias.First, 0, dxf);
-                    TopPanel.ModifyHandlePosition(HandleAlias.Last, 0, -dxf);
+                    TopPanel.ModifyHandlePosition(HandleAlias.First, ref _null, ref dxf, applyClampCheck);
+                    dxf *= -1;
+                    TopPanel.ModifyHandlePosition(HandleAlias.Last, ref _null, ref dxf, applyClampCheck);
+                    dxf *= -1;
                 }
             }
             if (controller == Curves[Curves.Count - 1].Handle){
                 if (SidePanel != null){
-                    SidePanel.ModifyHandlePosition(HandleAlias.First, 0, dyf);
-                    SidePanel.ModifyHandlePosition(HandleAlias.Last, 0, dyf);
+                    SidePanel.ModifyHandlePosition(HandleAlias.First, ref _null, ref dyf, applyClampCheck);
+                    SidePanel.ModifyHandlePosition(HandleAlias.Last, ref _null, ref dyf, applyClampCheck);
                 }
                 if (TopPanel != null){
-                    TopPanel.ModifyHandlePosition(HandleAlias.First, 0, -dxf);
-                    TopPanel.ModifyHandlePosition(HandleAlias.Last, 0, dxf);
+                    dxf *= -1;
+                    TopPanel.ModifyHandlePosition(HandleAlias.First, ref _null, ref dxf, applyClampCheck);
+                    dxf *= -1;
+                    TopPanel.ModifyHandlePosition(HandleAlias.Last, ref _null, ref dxf, applyClampCheck);
                 }
             }
             if (controller == Curves[Curves.Count/2].Handle){
                 if (SidePanel != null){
-                    SidePanel.ModifyHandlePosition(HandleAlias.ExtremaY, 0, dyf);
+                    SidePanel.ModifyHandlePosition(HandleAlias.ExtremaY, ref _null, ref dyf, applyClampCheck);
                 }
             }
-        }
-
-        protected override bool VerifyExternalDrag(object caller, int dx, int dy){
-            float dxf = dx/Curves.PixelsPerMeter;
-            float dyf = dy/Curves.PixelsPerMeter;
-
-            var controller = (CurveHandle) caller;
-
-            //Curves[0] is the frontmost controller that represents the limit of the bow
-            if (controller == Curves[0].Handle){
-                if (SidePanel != null){
-                    if (!SidePanel.VerifyNewHandlePosition(HandleAlias.First, 0, dyf)){
-                        return false;
-                    }
-                    if (!SidePanel.VerifyNewHandlePosition(HandleAlias.Last, 0, dyf)){
-                        return false;
-                    }
-                }
-                if (TopPanel != null){
-                    if (!TopPanel.VerifyNewHandlePosition(HandleAlias.First, 0, dxf)){
-                        return false;
-                    }
-
-                    if (TopPanel.VerifyNewHandlePosition(HandleAlias.Last, 0, -dxf)){
-                        return false;
-                    }
-                }
-            }
-
-            //Curves[Curves.Count-1] is the hindmost controller that represents the limit of the stern
-            if (controller == Curves[Curves.Count - 1].Handle){
-                if (SidePanel != null){
-                    if (!SidePanel.VerifyNewHandlePosition(HandleAlias.First, 0, dyf)){
-                        return false;
-                    }
-                    if (!SidePanel.VerifyNewHandlePosition(HandleAlias.Last, 0, dyf)){
-                        return false;
-                    }
-                }
-                if (TopPanel != null){
-                    if (!TopPanel.VerifyNewHandlePosition(HandleAlias.First, 0, -dxf)){
-                        return false;
-                    }
-                    if (!TopPanel.VerifyNewHandlePosition(HandleAlias.Last, 0, dxf)){
-                        return false;
-                    }
-                }
-            }
-
-            if (controller == Curves.MaxYCurve.Handle){
-                if (SidePanel != null){
-                    if (!SidePanel.VerifyNewHandlePosition(HandleAlias.ExtremaY, 0, dyf)){
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
     }
 

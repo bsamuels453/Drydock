@@ -94,6 +94,14 @@ namespace Drydock.Logic{
                             CurveHandle.HandleMovementRestriction.Vertical
                             );
                     }
+                    _curveList[0].Handle.SetReflectionType(
+                        PanelAlias.Side,
+                        CurveHandle.HandleMovementRestriction.Quadrant
+                        );
+                    _curveList[_curveList.Count - 1].Handle.SetReflectionType(
+                        PanelAlias.Side,
+                        CurveHandle.HandleMovementRestriction.Quadrant
+                        );
 
                     break;
                 case PanelAlias.Top:
@@ -136,6 +144,15 @@ namespace Drydock.Logic{
                         CurveHandle.HandleMovementRestriction.NoRotationOnY,
                         true
                         );
+                    _curveList[0].Handle.SetReflectionType(
+                        PanelAlias.Back,
+                        CurveHandle.HandleMovementRestriction.Quadrant
+                        );
+                    _curveList[_curveList.Count - 1].Handle.SetReflectionType(
+                        PanelAlias.Back,
+                        CurveHandle.HandleMovementRestriction.Quadrant
+                        );
+
                     break;
             }
         }

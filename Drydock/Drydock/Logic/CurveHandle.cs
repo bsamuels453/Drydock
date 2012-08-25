@@ -15,7 +15,8 @@ namespace Drydock.Logic{
             NoRotationOnX,
             NoRotationOnY,
             Vertical,
-            Horizontal
+            Horizontal,
+            Quadrant
         }
 
         #endregion
@@ -28,7 +29,7 @@ namespace Drydock.Logic{
         public CurveHandle SymmetricHandle;
         public TranslateDragToExtern TranslateToExtern;
         bool _dontTranslateHandles;
-        bool _handleSymmetry;
+        bool _internalSymmetry;
         int _reflectionX;
         int _reflectionY;
         HandleMovementRestriction _rotRestriction;
@@ -106,7 +107,7 @@ namespace Drydock.Logic{
         }
 
         public void SetReflectionType(PanelAlias panelType, HandleMovementRestriction restrictionType, bool hasInternalSymmetry = false){
-            _handleSymmetry = hasInternalSymmetry;
+            _internalSymmetry = hasInternalSymmetry;
             switch (panelType){
                 case PanelAlias.Side:
                     _rotRestriction = restrictionType; //vert
@@ -129,7 +130,7 @@ namespace Drydock.Logic{
             }
         }
 
-        public void TranslatePosition(int dx, int dy){
+        public void TranslatePosition(float dx, float dy){
             RawCenterTranslate(dx, dy);
         }
 
@@ -146,60 +147,58 @@ namespace Drydock.Logic{
                     y = oldY + dy;
                 }
             }
-            switch (_rotRestriction){
-                case HandleMovementRestriction.Vertical:
-                    if ((HandleType) button.Identifier != HandleType.Center){
-                        Button handle = (HandleType) button.Identifier == HandleType.Prev ? _prevHandle : _nextHandle;
-                        bool isHandleOnLeftSide = handle.CentPosition.X < _centerHandle.CentPosition.X;
-                        if (isHandleOnLeftSide){
-                            if (handle.CentPosition.X + dx >= _centerHandle.CentPosition.X){
-                                x = (int) _centerHandle.X - 1;
-                            }
-                        }
-                        else{
-                            if (handle.CentPosition.X + dx <= _centerHandle.CentPosition.X){
-                                x = (int) _centerHandle.X + 1;
-                            }
+            if(_rotRestriction == HandleMovementRestriction.Vertical || _rotRestriction == HandleMovementRestriction.Quadrant ){
+                if ((HandleType) button.Identifier != HandleType.Center){
+                    Button handle = (HandleType) button.Identifier == HandleType.Prev ? _prevHandle : _nextHandle;
+                    bool isHandleOnLeftSide = handle.CentPosition.X < _centerHandle.CentPosition.X;
+                    if (isHandleOnLeftSide){
+                        if (handle.CentPosition.X + dx >= _centerHandle.CentPosition.X){
+                            x = (int) _centerHandle.X - 1;
                         }
                     }
-                    break;
-                case HandleMovementRestriction.Horizontal:
-                    if ((HandleType) button.Identifier != HandleType.Center){
-                        Button handle = (HandleType) button.Identifier == HandleType.Prev ? _prevHandle : _nextHandle;
-                        bool isHandleOnLeftSide = handle.CentPosition.Y < _centerHandle.CentPosition.Y;
-                        if (isHandleOnLeftSide){
-                            if (handle.CentPosition.Y + dy >= _centerHandle.CentPosition.Y){
-                                y = (int) _centerHandle.Y - 1;
-                            }
-                        }
-                        else{
-                            if (handle.CentPosition.Y + dy <= _centerHandle.CentPosition.Y){
-                                y = (int) _centerHandle.Y + 1;
-                            }
+                    else{
+                        if (handle.CentPosition.X + dx <= _centerHandle.CentPosition.X){
+                            x = (int) _centerHandle.X + 1;
                         }
                     }
-                    break;
+                }
+            }
+            if (_rotRestriction == HandleMovementRestriction.Horizontal || _rotRestriction == HandleMovementRestriction.Quadrant) {
+                if ((HandleType) button.Identifier != HandleType.Center){
+                    Button handle = (HandleType) button.Identifier == HandleType.Prev ? _prevHandle : _nextHandle;
+                    bool isHandleOnLeftSide = handle.CentPosition.Y < _centerHandle.CentPosition.Y;
+                    if (isHandleOnLeftSide){
+                        if (handle.CentPosition.Y + dy >= _centerHandle.CentPosition.Y){
+                            y = (int) _centerHandle.Y - 1;
+                        }
+                    }
+                    else{
+                        if (handle.CentPosition.Y + dy <= _centerHandle.CentPosition.Y){
+                            y = (int) _centerHandle.Y + 1;
+                        }
+                    }
+                }
+            }
 
-                case HandleMovementRestriction.NoRotationOnX:
-                    if ((HandleType) button.Identifier == HandleType.Center){
-                        y = oldY;
-                    }
-                    else{
-                        x = oldX;
-                    }
-                    break;
-                case HandleMovementRestriction.NoRotationOnY:
-                    if ((HandleType) button.Identifier == HandleType.Center){
-                        x = oldX;
-                    }
-                    else{
-                        y = oldY;
-                    }
-                    break;
+            if(_rotRestriction == HandleMovementRestriction.NoRotationOnX){
+                if ((HandleType) button.Identifier == HandleType.Center){
+                    y = oldY;
+                }
+                else{
+                    x = oldX;
+                }
+            }
+            if(_rotRestriction == HandleMovementRestriction.NoRotationOnY){
+                if ((HandleType) button.Identifier == HandleType.Center){
+                    x = oldX;
+                }
+                else{
+                    y = oldY;
+                }
             }
         }
 
-        void RawCenterTranslate(int dx, int dy){
+        void RawCenterTranslate(float dx, float dy) {
             _centerHandle.X += dx;
             _centerHandle.Y += dy;
             _prevHandle.X += dx;
@@ -256,7 +255,7 @@ namespace Drydock.Logic{
                         float dxf = dx;
                         float dyf = dy;
 
-                        TranslateToExtern(this, ref dxf, ref dyf, true);
+                        TranslateToExtern(this, ref dxf, ref dyf, false);
                     }
                     break;
                 case HandleType.Prev:
@@ -269,7 +268,7 @@ namespace Drydock.Logic{
                     if (SymmetricHandle != null && !_dontTranslateHandles){
                         SymmetricHandle.RawNextTranslate(_reflectionX*dx, _reflectionY*dy);
                     }
-                    if (_handleSymmetry){
+                    if (_internalSymmetry){
                         RawNextTranslate(dx*_reflectionX, dy*_reflectionY);
                     }
                     break;
@@ -282,7 +281,7 @@ namespace Drydock.Logic{
                     if (SymmetricHandle != null && !_dontTranslateHandles){
                         SymmetricHandle.RawPrevTranslate(_reflectionX*dx, _reflectionY*dy);
                     }
-                    if (_handleSymmetry){
+                    if (_internalSymmetry){
                         RawPrevTranslate(dx*_reflectionX, dy*_reflectionY);
                     }
                     break;

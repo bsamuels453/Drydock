@@ -12,7 +12,7 @@ namespace Drydock.Render{
     internal class Line2D : IDrawableSprite{
         readonly Line _parent;
         readonly RenderPanel _renderPanel;
-        Color _color;
+        //Color _color;
         bool _isDisposed;
         Texture2D _texture;
 
