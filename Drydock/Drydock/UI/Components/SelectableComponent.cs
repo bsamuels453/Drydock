@@ -18,18 +18,18 @@ namespace Drydock.UI.Components{
     ///   allows a UI element to be selected. Required element to be IUIInteractiveComponent
     /// </summary>
     internal class SelectableComponent : IUIComponent{
-        private readonly int _selectedHeight;
-        private readonly String _selectedTexture;
-        private readonly int _selectedWidth;
-        private int _heightDx;
-        private bool _isSelected;
+        readonly int _selectedHeight;
+        readonly String _selectedTexture;
+        readonly int _selectedWidth;
+        int _heightDx;
+        bool _isSelected;
 
         //these fields contain the "differences" in bounding boxes between the owner's selected texture/bbox and normal texture/bbox
-        private string _originalTexture;
-        private IUIInteractiveElement _owner;
-        private int _positionDx;
-        private int _positionDy;
-        private int _widthDx;
+        string _originalTexture;
+        IUIInteractiveElement _owner;
+        int _positionDx;
+        int _positionDy;
+        int _widthDx;
 
         public SelectableComponent(string selectedTexture, int width, int height){
             _selectedTexture = selectedTexture;
@@ -62,7 +62,7 @@ namespace Drydock.UI.Components{
 
         public event ReactToSelection ReactToSelectionDispatcher;
 
-        private void ComponentCtor(){
+        void ComponentCtor(){
             IsEnabled = true;
             _owner.OnLeftButtonClick.Add(OnMouseClick);
 
@@ -73,7 +73,7 @@ namespace Drydock.UI.Components{
             _positionDy = _heightDx/2;
         }
 
-        private InterruptState OnMouseClick(MouseState state, MouseState? prevState = null){
+        InterruptState OnMouseClick(MouseState state, MouseState? prevState = null){
             if (IsEnabled){
                 if (_isSelected){
                     DeselectThis();

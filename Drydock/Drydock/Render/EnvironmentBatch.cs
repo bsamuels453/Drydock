@@ -8,8 +8,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal class EnvironmentBatch{
-        private const int _environmentScale = 16;
-        private readonly Effect _environmentEffect;
+        const int _environmentScale = 16;
+        readonly Effect _environmentEffect;
 
         public EnvironmentBatch(GraphicsDevice device, ContentManager content, Matrix projection){
             _environmentEffect = content.Load<Effect>("AmbientEffect");

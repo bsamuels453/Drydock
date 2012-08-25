@@ -9,12 +9,12 @@ namespace Drydock.Utilities{
     ///   floating point-based rectangle. This exists to fix many of the quantization problems experienced in the ui namespace caused by screen coordinates being expressed as integers. This class also provides a bit of utility in the .Position and ToRectangle methods, reducing some heap overhead.
     /// </summary>
     internal class FloatingRectangle{
-        private float _height;
-        private Rectangle _intRect; //integer based rectangle
-        private Vector2 _position;
-        private float _width;
-        private float _x;
-        private float _y;
+        float _height;
+        Rectangle _intRect; //integer based rectangle
+        Vector2 _position;
+        float _width;
+        float _x;
+        float _y;
 
         public FloatingRectangle(){
             _intRect = new Rectangle();

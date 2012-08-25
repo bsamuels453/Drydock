@@ -6,27 +6,27 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Control{
     internal abstract class CanReceiveInputEvents{
-        virtual public InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
+        public virtual InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
             return InterruptState.AllowOtherEvents;
         }
 
-        virtual public InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null) {
+        public virtual InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null){
             return InterruptState.AllowOtherEvents;
         }
 
-        virtual public InterruptState OnLeftButtonPress(MouseState state, MouseState? prevState = null) {
+        public virtual InterruptState OnLeftButtonPress(MouseState state, MouseState? prevState = null){
             return InterruptState.AllowOtherEvents;
         }
 
-        virtual public InterruptState OnLeftButtonRelease(MouseState state, MouseState? prevState = null) {
+        public virtual InterruptState OnLeftButtonRelease(MouseState state, MouseState? prevState = null){
             return InterruptState.AllowOtherEvents;
         }
 
-        virtual public InterruptState OnMouseScroll(MouseState state, MouseState? prevState = null) {
+        public virtual InterruptState OnMouseScroll(MouseState state, MouseState? prevState = null){
             return InterruptState.AllowOtherEvents;
         }
 
-        virtual public InterruptState OnKeyboardEvent(KeyboardState state) {
+        public virtual InterruptState OnKeyboardEvent(KeyboardState state){
             return InterruptState.AllowOtherEvents;
         }
     }

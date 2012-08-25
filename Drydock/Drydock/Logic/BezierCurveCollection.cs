@@ -13,13 +13,12 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic{
-
     internal class BezierCurveCollection : CanReceiveInputEvents, IEnumerable<BezierCurve>{
         #region fields
 
         public readonly UIElementCollection ElementCollection;
         public readonly float PixelsPerMeter;
-        private readonly List<BezierCurve> _curveList;
+        readonly List<BezierCurve> _curveList;
 
         public double MaxX;
         public double MaxY;
@@ -27,8 +26,8 @@ namespace Drydock.Logic{
         public BezierCurve MaxYCurve;
         public double MinX;
         public double MinY;
-        private double[] _lenList;
-        private double _totalArcLen;
+        double[] _lenList;
+        double _totalArcLen;
 
         #endregion
 
@@ -90,30 +89,53 @@ namespace Drydock.Logic{
                     _curveList[_curveList.Count - 1].Handle.SymmetricHandle = _curveList[0].Handle;
 
                     foreach (BezierCurve t in _curveList){
-                        t.Handle.SetReflectionType(PanelAlias.Side, CurveHandle.HandleMovementRestriction.Vertical);
+                        t.Handle.SetReflectionType(
+                            PanelAlias.Side,
+                            CurveHandle.HandleMovementRestriction.Vertical
+                            );
                     }
 
                     break;
                 case PanelAlias.Top:
                     for (int i = 0; i < _curveList.Count/2; i++){
-                        _curveList[i].Handle.SymmetricHandle = _curveList[_curveList.Count- 1 - i].Handle;
-                        _curveList[_curveList.Count - 1 - i].Handle.SymmetricHandle = _curveList[i].Handle;
-
-                        _curveList[i].Handle.SetReflectionType(PanelAlias.Top, CurveHandle.HandleMovementRestriction.Vertical);
-                        _curveList[_curveList.Count - 1 - i].Handle.SetReflectionType(PanelAlias.Top, CurveHandle.HandleMovementRestriction.Vertical);
-                    }
-                    _curveList[_curveList.Count / 2].Handle.SetReflectionType(PanelAlias.Top, CurveHandle.HandleMovementRestriction.NoRotationOnX, true);
-                    break;
-
-                case PanelAlias.Back:
-                    for (int i = 0; i < _curveList.Count / 2; i++) {
                         _curveList[i].Handle.SymmetricHandle = _curveList[_curveList.Count - 1 - i].Handle;
                         _curveList[_curveList.Count - 1 - i].Handle.SymmetricHandle = _curveList[i].Handle;
 
-                        _curveList[i].Handle.SetReflectionType(PanelAlias.Back, CurveHandle.HandleMovementRestriction.Vertical);
-                        _curveList[_curveList.Count - 1 - i].Handle.SetReflectionType(PanelAlias.Back, CurveHandle.HandleMovementRestriction.Vertical);
+                        _curveList[i].Handle.SetReflectionType(
+                            PanelAlias.Top,
+                            CurveHandle.HandleMovementRestriction.Vertical
+                            );
+                        _curveList[_curveList.Count - 1 - i].Handle.SetReflectionType(
+                            PanelAlias.Top,
+                            CurveHandle.HandleMovementRestriction.Vertical
+                            );
                     }
-                    _curveList[_curveList.Count / 2].Handle.SetReflectionType(PanelAlias.Back, CurveHandle.HandleMovementRestriction.NoRotationOnY, true);
+                    _curveList[_curveList.Count/2].Handle.SetReflectionType(
+                        PanelAlias.Top,
+                        CurveHandle.HandleMovementRestriction.NoRotationOnX,
+                        true
+                        );
+                    break;
+
+                case PanelAlias.Back:
+                    for (int i = 0; i < _curveList.Count/2; i++){
+                        _curveList[i].Handle.SymmetricHandle = _curveList[_curveList.Count - 1 - i].Handle;
+                        _curveList[_curveList.Count - 1 - i].Handle.SymmetricHandle = _curveList[i].Handle;
+
+                        _curveList[i].Handle.SetReflectionType(
+                            PanelAlias.Back,
+                            CurveHandle.HandleMovementRestriction.Vertical
+                            );
+                        _curveList[_curveList.Count - 1 - i].Handle.SetReflectionType(
+                            PanelAlias.Back,
+                            CurveHandle.HandleMovementRestriction.Vertical
+                            );
+                    }
+                    _curveList[_curveList.Count/2].Handle.SetReflectionType(
+                        PanelAlias.Back,
+                        CurveHandle.HandleMovementRestriction.NoRotationOnY,
+                        true
+                        );
                     break;
             }
         }

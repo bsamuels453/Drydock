@@ -25,7 +25,7 @@ namespace Drydock.Render{
     internal class ScreenText{
         #region class methods and fields
 
-        private readonly int _id;
+        readonly int _id;
 
         public ScreenText(int x, int y, string str){
             _id = -1;
@@ -48,10 +48,10 @@ namespace Drydock.Render{
 
         #region static methods and fields
 
-        private const int _maxStringsDisplayable = 100;
-        private static bool[] _isStringSlotAvail;
-        private static StringData[] _stringTable;
-        private static SpriteFont _font;
+        const int _maxStringsDisplayable = 100;
+        static bool[] _isStringSlotAvail;
+        static StringData[] _stringTable;
+        static SpriteFont _font;
 
         public static void Init(ContentManager content){
             _isStringSlotAvail = new bool[_maxStringsDisplayable];
@@ -79,7 +79,7 @@ namespace Drydock.Render{
             spriteBatch.End();
         }
 
-        private static int AddString(string str, int x, int y){
+        static int AddString(string str, int x, int y){
             int i = 0;
             //get next avail string slot
             while (!_isStringSlotAvail[i]){
@@ -90,11 +90,11 @@ namespace Drydock.Render{
             return i;
         }
 
-        private static void RemoveString(int id){
+        static void RemoveString(int id){
             _isStringSlotAvail[id] = true;
         }
 
-        private static void EditString(int id, string newstr){
+        static void EditString(int id, string newstr){
             int tempX = _stringTable[id].X;
             int tempY = _stringTable[id].Y;
 

@@ -1,48 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#region
+
 using Drydock.Control;
 using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.UI.Components {
+#endregion
+
+namespace Drydock.UI.Components{
     /// <summary>
-    /// prevents mouse interactions from falling through the owner's bounding box
+    ///   prevents mouse interactions from falling through the owner's bounding box
     /// </summary>
-    class PanelComponent : IUIComponent {
+    internal class PanelComponent : IUIComponent{
         IUIInteractiveElement _owner;
-        bool _isEnabled;
+
+        public PanelComponent(){
+            IsEnabled = true;
+        }
+
+        #region IUIComponent Members
 
         public IUIElement Owner{
-            set {
-                _owner = (IUIInteractiveElement)value;
+            set{
+                _owner = (IUIInteractiveElement) value;
                 ComponentCtor();
             }
         }
 
-        public bool IsEnabled{
-            get { return _isEnabled; }
-            set { _isEnabled = value; }
+        public bool IsEnabled { get; set; }
+
+        public void Update(){
         }
 
-        public void Update(){}
+        #endregion
 
-        public PanelComponent(){
-            _isEnabled = true;
-        }
-
-        private void ComponentCtor(){
+        void ComponentCtor(){
             _owner.OnLeftButtonPress.Add(OnMouseButtonAction);
             _owner.OnLeftButtonRelease.Add(OnMouseButtonAction);
             _owner.OnMouseScroll.Add(OnMouseButtonAction);
         }
 
-        private InterruptState OnMouseButtonAction(MouseState state, MouseState? prevState = null){
+        InterruptState OnMouseButtonAction(MouseState state, MouseState? prevState = null){
             if (_owner.BoundingBox.Contains(state.X, state.Y)){
                 return InterruptState.InterruptEventDispatch;
             }
             return InterruptState.AllowOtherEvents;
         }
-
     }
 }

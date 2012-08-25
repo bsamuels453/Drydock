@@ -10,11 +10,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal class Line2D : IDrawableSprite{
-        private readonly Line _parent;
-        private readonly RenderPanel _renderPanel;
-        private Color _color;
-        private bool _isDisposed;
-        private Texture2D _texture;
+        readonly Line _parent;
+        readonly RenderPanel _renderPanel;
+        Color _color;
+        bool _isDisposed;
+        Texture2D _texture;
 
 
         public Line2D(Line parent, Color color){

@@ -8,12 +8,12 @@ namespace Drydock.Utilities{
     internal static class Bezier{
         #region generation methods
 
-        private static void Lerp(ref Vector2 dest, Vector2 a, Vector2 b, float t){
+        static void Lerp(ref Vector2 dest, Vector2 a, Vector2 b, float t){
             dest.X = a.X + (b.X - a.X)*t;
             dest.Y = a.Y + (b.Y - a.Y)*t;
         }
 
-        private static void DLerp(ref DVector2 dest, DVector2 a, DVector2 b, double t){
+        static void DLerp(ref DVector2 dest, DVector2 a, DVector2 b, double t){
             dest.X = a.X + (b.X - a.X)*t;
             dest.Y = a.Y + (b.Y - a.Y)*t;
         }
@@ -80,7 +80,7 @@ namespace Drydock.Utilities{
 
         #region Nested type: DVector2
 
-        private class DVector2{
+        class DVector2{
             public double X;
             public double Y;
 

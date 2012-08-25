@@ -11,10 +11,10 @@ namespace Drydock.Utilities{
     ///   REMEMEBER TO THROW AWAY THIS CLASS'S INSTANCES EVERY TIME THE RELEVANT CURVE CHANGES!
     /// </summary>
     internal class BezierIntersect{
-        private readonly List<BoundCache> _boundCache;
-        private readonly List<BezierInfo> _curveinfo;
-        private readonly float _largestX;
-        private readonly int _resolution; //represents the number of halfing operations required to get a result with an accuracy of less than one pixel in the worst case
+        readonly List<BoundCache> _boundCache;
+        readonly List<BezierInfo> _curveinfo;
+        readonly float _largestX;
+        readonly int _resolution; //represents the number of halfing operations required to get a result with an accuracy of less than one pixel in the worst case
 
         public BezierIntersect(List<BezierInfo> curveinfo){
             _curveinfo = curveinfo;
@@ -130,7 +130,7 @@ namespace Drydock.Utilities{
         }
 
 
-        private float GenerateBoundValueX(float t, int curvesToUse){
+        float GenerateBoundValueX(float t, int curvesToUse){
             Vector2 v;
             Bezier.GetBezierValue(
                 out v,
@@ -143,7 +143,7 @@ namespace Drydock.Utilities{
             return v.X;
         }
 
-        private Vector2 GenerateBoundValue(float t, int curvesToUse){
+        Vector2 GenerateBoundValue(float t, int curvesToUse){
             Vector2 v;
             Bezier.GetBezierValue(
                 out v,
@@ -158,7 +158,7 @@ namespace Drydock.Utilities{
 
         #region Nested type: BoundCache
 
-        private class BoundCache{
+        class BoundCache{
             public readonly int Depth;
             public readonly float LeftT;
 

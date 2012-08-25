@@ -34,15 +34,15 @@ namespace Drydock.UI.Components{
         public const FadeTrigger DefaultTrigger = FadeTrigger.None;
         public const float DefaultFadeoutOpacity = 0.10f;
         public const float DefaultFadeDuration = 250;
-        private readonly FadeState _defaultState;
-        private readonly float _fadeDuration;
-        private readonly FadeTrigger _fadeTrigger;
-        private readonly float _fadeoutOpacity;
-        private bool _isEnabled;
-        private bool _isFadingOut;
-        private bool _isInTransition;
-        private IUIElement _owner;
-        private long _prevUpdateTimeIndex;
+        readonly FadeState _defaultState;
+        readonly float _fadeDuration;
+        readonly FadeTrigger _fadeTrigger;
+        readonly float _fadeoutOpacity;
+        bool _isEnabled;
+        bool _isFadingOut;
+        bool _isInTransition;
+        IUIElement _owner;
+        long _prevUpdateTimeIndex;
 
         #region properties
 
@@ -89,7 +89,7 @@ namespace Drydock.UI.Components{
             _isEnabled = true;
         }
 
-        private void ComponentCtor(){
+        void ComponentCtor(){
             if (_defaultState == FadeState.Faded){
                 _owner.Opacity = _fadeoutOpacity;
             }
@@ -103,7 +103,7 @@ namespace Drydock.UI.Components{
 
                     ((IUIInteractiveElement) _owner).OnMouseEntry.Add(ForceFadein);
                     ((IUIInteractiveElement) _owner).OnMouseExit.Add(ForceFadeout);
-                    ((IUIInteractiveElement)_owner).OnLeftButtonRelease.Add(ConfirmFadeoutProc);
+                    ((IUIInteractiveElement) _owner).OnLeftButtonRelease.Add(ConfirmFadeoutProc);
                     break;
 
                 case FadeTrigger.None:
@@ -112,12 +112,6 @@ namespace Drydock.UI.Components{
         }
 
         #endregion
-
-        private InterruptState ConfirmFadeoutProc(MouseState state, MouseState? prevState = null){
-
-
-            return InterruptState.AllowOtherEvents;
-        }
 
         #region IUIComponent Members
 
@@ -257,6 +251,10 @@ namespace Drydock.UI.Components{
         }
 
         #endregion
+
+        InterruptState ConfirmFadeoutProc(MouseState state, MouseState? prevState = null){
+            return InterruptState.AllowOtherEvents;
+        }
 
         public event FadeStateChange FadeStateChangeDispatcher;
     }

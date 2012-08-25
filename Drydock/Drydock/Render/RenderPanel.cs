@@ -10,21 +10,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal class RenderPanel{
-        private readonly List<IDrawableBuffer> _buffers;
-        private readonly float _depth;
-        private readonly SpriteBatch _panelSpriteBatch;
-        private readonly Vector2 _position;
-        private readonly RenderTarget2D _renderTarget;
-        private readonly List<IDrawableSprite> _sprites;
-        private Texture2D _renderedPanel;
         public readonly Rectangle BoundingBox;
+        readonly List<IDrawableBuffer> _buffers;
+        readonly float _depth;
+        readonly SpriteBatch _panelSpriteBatch;
+        readonly Vector2 _position;
+        readonly RenderTarget2D _renderTarget;
+        readonly List<IDrawableSprite> _sprites;
+        Texture2D _renderedPanel;
 
         public RenderPanel(int x, int y, int width, int height, DepthLevel depth){
             _panelSpriteBatch = new SpriteBatch(Singleton.Device);
             _sprites = new List<IDrawableSprite>();
             _buffers = new List<IDrawableBuffer>();
 
-            _depth = (float)depth / 10;
+            _depth = (float) depth/10;
 
             _renderPanels.Add(this);
 
@@ -42,7 +42,7 @@ namespace Drydock.Render{
             _renderPanels.Remove(this);
         }
 
-        private void DrawToTarget(Matrix viewMatrix){
+        void DrawToTarget(Matrix viewMatrix){
             Singleton.Device.SetRenderTarget(_renderTarget);
             Singleton.Device.Clear(Color.CornflowerBlue);
             _panelSpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
@@ -69,10 +69,10 @@ namespace Drydock.Render{
 
         #region static stuff
 
-        private static List<RenderPanel> _renderPanels;
-        private static RenderPanel _curRenderPanel;
-        private static SpriteBatch _spriteBatch;
-        private static DepthStencilState _universalDepthStencil;
+        static List<RenderPanel> _renderPanels;
+        static RenderPanel _curRenderPanel;
+        static SpriteBatch _spriteBatch;
+        static DepthStencilState _universalDepthStencil;
 
         public static void SetRenderPanel(RenderPanel panel){
             _curRenderPanel = panel;

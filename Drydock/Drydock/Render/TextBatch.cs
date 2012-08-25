@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal class TextBatch{
-        private readonly SpriteBatch _spriteBatch;
+        readonly SpriteBatch _spriteBatch;
 
         public TextBatch(GraphicsDevice device, ContentManager content){
             _spriteBatch = new SpriteBatch(device);

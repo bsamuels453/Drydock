@@ -9,11 +9,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal class Sprite2D : IDrawableSprite{
-        private readonly IUIElement _parent;
-        private readonly RenderPanel _renderPanel;
-        private readonly FloatingRectangle _srcRect;
-        private bool _isDisposed;
-        private Texture2D _texture;
+        readonly IUIElement _parent;
+        readonly RenderPanel _renderPanel;
+        readonly FloatingRectangle _srcRect;
+        bool _isDisposed;
+        Texture2D _texture;
 
         /// <summary>
         ///   constructor for a normal sprite

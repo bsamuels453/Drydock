@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Project_Forge.utilities{
     internal static class DebugTimer{
-        private static readonly Stopwatch _timer = new Stopwatch();
+        static readonly Stopwatch _timer = new Stopwatch();
 
         public static void Start(){
             _timer.Start();

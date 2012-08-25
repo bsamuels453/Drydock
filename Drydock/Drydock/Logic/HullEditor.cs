@@ -9,11 +9,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic{
     internal class HullEditor : CanReceiveInputEvents{
-        private readonly BackEditorPanel _backpanel;
+        readonly BackEditorPanel _backpanel;
 
-        private readonly PreviewRenderer _previewRenderer;
-        private readonly SideEditorPanel _sidepanel;
-        private readonly TopEditorPanel _toppanel;
+        readonly PreviewRenderer _previewRenderer;
+        readonly SideEditorPanel _sidepanel;
+        readonly TopEditorPanel _toppanel;
 
 
         public HullEditor(){

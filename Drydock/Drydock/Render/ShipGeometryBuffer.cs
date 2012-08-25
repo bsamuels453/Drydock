@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal class ShipGeometryBuffer : BufferObject<VertexPositionNormalTexture>{
-        private readonly Effect _effect;
-        private readonly RasterizerState _rasterizerState;
-        private readonly Texture2D _texture;
+        readonly Effect _effect;
+        readonly RasterizerState _rasterizerState;
+        readonly Texture2D _texture;
 
         public ShipGeometryBuffer(int numIndicies, int numVerticies, int numPrimitives, string textureName)
             : base(numIndicies, numVerticies, numPrimitives){

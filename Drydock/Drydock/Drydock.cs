@@ -1,7 +1,5 @@
 #region
 
-using System;
-using System.Diagnostics;
 using Drydock.Control;
 using Drydock.Logic;
 using Drydock.Render;
@@ -13,10 +11,10 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Drydock{
     public class Drydock : Game{
-        private readonly GraphicsDeviceManager _graphics;
+        readonly GraphicsDeviceManager _graphics;
         public ContentManager ContentManager;
         // private EditorLogic _editorLogic;
-        private EditorLogic _editorLogic;
+        EditorLogic _editorLogic;
 
         public Drydock(){
             Content.RootDirectory = "Content";

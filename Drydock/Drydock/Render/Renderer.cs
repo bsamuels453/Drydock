@@ -1,6 +1,5 @@
 ﻿#region
 
-using System;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -10,15 +9,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     public static class Renderer{
-        static private EnvironmentBatch _environmentBatch;
-        static private Matrix _projectionMatrix;
-        static private SpriteBatch _batch;
-        static public float AspectRatio;
-        static public GraphicsDevice Device;
-        static public Vector3 CameraPosition;
-        static public Vector3 CameraTarget;
+        static EnvironmentBatch _environmentBatch;
+        static Matrix _projectionMatrix;
+        static SpriteBatch _batch;
+        public static float AspectRatio;
+        public static GraphicsDevice Device;
+        public static Vector3 CameraPosition;
+        public static Vector3 CameraTarget;
 
-        static public void Init(GraphicsDevice device, ContentManager content) {
+        public static void Init(GraphicsDevice device, ContentManager content){
             ScreenText.Init(content);
             Device = device;
             Singleton.Device = device;
@@ -42,10 +41,9 @@ namespace Drydock.Render{
             //BufferObject.Init(device, _projectionMatrix);
         }
 
-        static public void Draw(){
-
+        public static void Draw(){
             var viewMatrix = Matrix.CreateLookAt(CameraPosition, CameraTarget, Vector3.Up);
-            
+
 
             RenderPanel.Draw(viewMatrix);
             ScreenText.Draw(_batch);

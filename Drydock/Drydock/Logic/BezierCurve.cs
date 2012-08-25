@@ -18,14 +18,14 @@ namespace Drydock.Logic{
     internal class BezierCurve{
         #region private fields
 
-        private const int _linesPerSide = 50;
+        const int _linesPerSide = 50;
         public readonly CurveHandle Handle;
-        private readonly UIElementCollection _elementCollection;
-        private readonly LineGenerator _lineTemplate;
-        private BezierCurve _nextCurve;
-        private List<Line> _nextLines;
-        private BezierCurve _prevCurve;
-        private List<Line> _prevLines;
+        readonly UIElementCollection _elementCollection;
+        readonly LineGenerator _lineTemplate;
+        BezierCurve _nextCurve;
+        List<Line> _nextLines;
+        BezierCurve _prevCurve;
+        List<Line> _prevLines;
 
         #endregion
 
@@ -165,7 +165,6 @@ namespace Drydock.Logic{
         public float NextHandleLength{
             get { return Handle.NextLength; }
         }
-
 
 
         public float GetNextArcLength(){
@@ -308,7 +307,6 @@ namespace Drydock.Logic{
             Handle = new CurveHandle(buttonTemplate, lineTemplate, parentElement, new Vector2(initX, initY), component1, component2);
 
             #endregion
-
         }
 
         public void Dispose(){
@@ -417,7 +415,6 @@ namespace Drydock.Logic{
                 }
             }
         }
-
 
 
         /* //this might be useful someday

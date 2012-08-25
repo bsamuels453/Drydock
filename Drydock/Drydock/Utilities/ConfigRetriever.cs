@@ -6,8 +6,8 @@ using System.Xml;
 
 namespace Drydock.Utilities{
     internal class ConfigRetriever{
-        private readonly string _configFile;
-        private XmlReader _reader;
+        readonly string _configFile;
+        XmlReader _reader;
 
         public ConfigRetriever(string configFile){
             _configFile = configFile;

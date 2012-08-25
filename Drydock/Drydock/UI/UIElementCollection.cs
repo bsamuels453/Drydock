@@ -12,9 +12,9 @@ namespace Drydock.UI{
     ///   This class serves as a container for UI elements. Its purpose is to update said elements through the UIContext, and to provide collection-wide modification methods for use by external classes.
     /// </summary>
     internal class UIElementCollection : CanReceiveInputEvents{
-        private readonly List<UIElementCollection> _childCollections;
-        private readonly List<IUIElement> _elements;
-        private readonly UISortedList _layerSortedIElements;
+        readonly List<UIElementCollection> _childCollections;
+        readonly List<IUIElement> _elements;
+        readonly UISortedList _layerSortedIElements;
         public bool DisableEntryHandlers;
 
         #region ctor
@@ -26,7 +26,7 @@ namespace Drydock.UI{
             UIContext.Add(this);
             DisableEntryHandlers = false;
 
-            InputEventDispatcher.EventSubscribers.Add((float)depth/10, this);
+            InputEventDispatcher.EventSubscribers.Add((float) depth/10, this);
         }
 
         #endregion
@@ -84,7 +84,7 @@ namespace Drydock.UI{
         #region event dispatchers
 
         //i'll rip your balls off if you LINQ these foreach loops
-        public override InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null) {
+        public override InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var mouseEvent in _layerSortedIElements[i].OnMouseMovement){
                     if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
@@ -93,12 +93,12 @@ namespace Drydock.UI{
                 }
 
                 if (_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y)
-                    && !_layerSortedIElements[i].ContainsMouse) {
+                    && !_layerSortedIElements[i].ContainsMouse){
                     //dispatch event for mouse entering the bounding box of the element
-                    if (!DisableEntryHandlers) {
+                    if (!DisableEntryHandlers){
                         _layerSortedIElements[i].ContainsMouse = true;
-                        foreach (var mouseEvent in _layerSortedIElements[i].OnMouseEntry) {
-                            if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch) {
+                        foreach (var mouseEvent in _layerSortedIElements[i].OnMouseEntry){
+                            if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
                                 return InterruptState.InterruptEventDispatch;
                             }
                         }
@@ -107,8 +107,7 @@ namespace Drydock.UI{
 
                 else{
                     if (!_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y)
-                        && _layerSortedIElements[i].ContainsMouse) {
-                        
+                        && _layerSortedIElements[i].ContainsMouse){
                         //dispatch event for mouse exiting the bounding box of the element
                         _layerSortedIElements[i].ContainsMouse = false;
                         foreach (var mouseEvent in _layerSortedIElements[i].OnMouseExit){
@@ -131,7 +130,7 @@ namespace Drydock.UI{
             return InterruptState.AllowOtherEvents;
         }
 
-        public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null) {
+        public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonClick){
                     if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
@@ -140,62 +139,62 @@ namespace Drydock.UI{
                 }
             }
             foreach (var collection in _childCollections){
-                if (collection.OnLeftButtonClick(state, prevState) == InterruptState.InterruptEventDispatch) {
+                if (collection.OnLeftButtonClick(state, prevState) == InterruptState.InterruptEventDispatch){
                     return InterruptState.InterruptEventDispatch;
                 }
             }
             return InterruptState.AllowOtherEvents;
         }
 
-        public override InterruptState OnLeftButtonPress(MouseState state, MouseState? prevState = null) {
+        public override InterruptState OnLeftButtonPress(MouseState state, MouseState? prevState = null){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonPress){
-                    if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch) {
+                    if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
                         return InterruptState.InterruptEventDispatch;
                     }
                 }
             }
             foreach (var collection in _childCollections){
-                if (collection.OnLeftButtonPress(state, prevState) == InterruptState.InterruptEventDispatch) {
+                if (collection.OnLeftButtonPress(state, prevState) == InterruptState.InterruptEventDispatch){
                     return InterruptState.InterruptEventDispatch;
                 }
             }
             return InterruptState.AllowOtherEvents;
         }
 
-        public override InterruptState OnLeftButtonRelease(MouseState state, MouseState? prevState = null) {
+        public override InterruptState OnLeftButtonRelease(MouseState state, MouseState? prevState = null){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonRelease){
-                    if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch) {
+                    if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
                         return InterruptState.InterruptEventDispatch;
                     }
                 }
             }
             foreach (var collection in _childCollections){
-                if (collection.OnLeftButtonRelease(state, prevState) == InterruptState.InterruptEventDispatch) {
+                if (collection.OnLeftButtonRelease(state, prevState) == InterruptState.InterruptEventDispatch){
                     return InterruptState.InterruptEventDispatch;
                 }
             }
             return InterruptState.AllowOtherEvents;
         }
 
-        public override InterruptState OnMouseScroll(MouseState state, MouseState? prevState = null) {
-            for (int i = 0; i < _layerSortedIElements.Count; i++) {
-                foreach (var mouseEvent in _layerSortedIElements[i].OnMouseScroll) {
-                    if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch) {
+        public override InterruptState OnMouseScroll(MouseState state, MouseState? prevState = null){
+            for (int i = 0; i < _layerSortedIElements.Count; i++){
+                foreach (var mouseEvent in _layerSortedIElements[i].OnMouseScroll){
+                    if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
                         return InterruptState.InterruptEventDispatch;
                     }
                 }
             }
-            foreach (var collection in _childCollections) {
-                if (collection.OnMouseScroll(state, prevState) == InterruptState.InterruptEventDispatch) {
+            foreach (var collection in _childCollections){
+                if (collection.OnMouseScroll(state, prevState) == InterruptState.InterruptEventDispatch){
                     return InterruptState.InterruptEventDispatch;
                 }
             }
             return InterruptState.AllowOtherEvents;
         }
 
-        public override InterruptState OnKeyboardEvent(KeyboardState state) {
+        public override InterruptState OnKeyboardEvent(KeyboardState state){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var keyboardEvent in _layerSortedIElements[i].OnKeyboardEvent){
                     keyboardEvent(state);
@@ -328,8 +327,8 @@ namespace Drydock.UI{
     #region uisortedlist
 
     internal class UISortedList{
-        private readonly List<float> _depthList;
-        private readonly List<IUIInteractiveElement> _objList;
+        readonly List<float> _depthList;
+        readonly List<IUIInteractiveElement> _objList;
 
         public UISortedList(){
             _depthList = new List<float>();

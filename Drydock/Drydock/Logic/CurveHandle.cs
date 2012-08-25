@@ -105,8 +105,8 @@ namespace Drydock.Logic{
             get { return _prevLine.Angle; }
         }
 
-        public void SetReflectionType(PanelAlias panelType, HandleMovementRestriction restrictionType, bool hasSymmetry=false){
-            _handleSymmetry = hasSymmetry;
+        public void SetReflectionType(PanelAlias panelType, HandleMovementRestriction restrictionType, bool hasInternalSymmetry = false){
+            _handleSymmetry = hasInternalSymmetry;
             switch (panelType){
                 case PanelAlias.Side:
                     _rotRestriction = restrictionType; //vert
@@ -137,11 +137,11 @@ namespace Drydock.Logic{
             var button = (Button) owner;
             int dx = x - oldX;
             int dy = y - oldY;
-            if (button == _prevHandle || button == _nextHandle) {
-                if (Common.GetDist(x, y, (int)_centerHandle.X, (int)_centerHandle.Y) < 20) {
-                    float scale = Common.GetDist(x, y , (int)_centerHandle.X, (int)_centerHandle.Y) / 20;
-                    dx = 0;//(int)(scale *dx);
-                    dy = 0;//(int)(scale * dy);
+            if (button == _prevHandle || button == _nextHandle){
+                if (Common.GetDist(x, y, (int) _centerHandle.X, (int) _centerHandle.Y) < 20){
+                    float scale = Common.GetDist(x, y, (int) _centerHandle.X, (int) _centerHandle.Y)/20;
+                    dx = 0; //(int)(scale *dx);
+                    dy = 0; //(int)(scale * dy);
                     x = oldX + dx;
                     y = oldY + dy;
                 }
@@ -181,7 +181,7 @@ namespace Drydock.Logic{
                     break;
 
                 case HandleMovementRestriction.NoRotationOnX:
-                    if ((HandleType)button.Identifier == HandleType.Center){
+                    if ((HandleType) button.Identifier == HandleType.Center){
                         y = oldY;
                     }
                     else{
@@ -189,10 +189,10 @@ namespace Drydock.Logic{
                     }
                     break;
                 case HandleMovementRestriction.NoRotationOnY:
-                    if ((HandleType)button.Identifier == HandleType.Center) {
+                    if ((HandleType) button.Identifier == HandleType.Center){
                         x = oldX;
                     }
-                    else {
+                    else{
                         y = oldY;
                     }
                     break;
@@ -282,8 +282,8 @@ namespace Drydock.Logic{
                     if (SymmetricHandle != null && !_dontTranslateHandles){
                         SymmetricHandle.RawPrevTranslate(_reflectionX*dx, _reflectionY*dy);
                     }
-                    if (_handleSymmetry) {
-                        RawPrevTranslate(dx * _reflectionX, dy * _reflectionY);
+                    if (_handleSymmetry){
+                        RawPrevTranslate(dx*_reflectionX, dy*_reflectionY);
                     }
                     break;
             }

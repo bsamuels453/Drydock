@@ -16,13 +16,13 @@ namespace Drydock.UI{
 
         public const int DefaultTexRepeat = 1;
         public const int DefaultIdentifier = 1;
-        private const float f = 5f;
+        const float f = 5f;
 
-        private readonly FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
-        private readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
-        private readonly Sprite2D _sprite; //the button's sprite
-        private Vector2 _centPosition; //represents the approximate center of the button
-        private string _texture;
+        readonly FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
+        readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
+        readonly Sprite2D _sprite; //the button's sprite
+        Vector2 _centPosition; //represents the approximate center of the button
+        string _texture;
 
         public Vector2 CentPosition{
             get { return _centPosition; }
@@ -77,7 +77,7 @@ namespace Drydock.UI{
             get { return _boundingBox; }
         }
 
-        public bool ContainsMouse { get; set;  }
+        public bool ContainsMouse { get; set; }
         public float Opacity { get; set; }
         public float Depth { get; set; }
         public UIElementCollection Owner { get; set; }
@@ -97,7 +97,7 @@ namespace Drydock.UI{
         public Button(float x, float y, float width, float height, DepthLevel depth, UIElementCollection owner, string textureName, float spriteTexRepeatX = DefaultTexRepeat, float spriteTexRepeatY = DefaultTexRepeat, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _identifier = identifier;
             Owner = owner;
-            Depth = (float)depth/10;
+            Depth = (float) depth/10;
 
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);

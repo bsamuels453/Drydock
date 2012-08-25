@@ -10,10 +10,10 @@ namespace Drydock.Render{
     internal abstract class BufferObject<T> : IDrawableBuffer{
         public readonly IndexBuffer Indexbuffer;
         public readonly VertexBuffer Vertexbuffer;
-        private readonly int _numIndicies;
-        private readonly int _numPrimitives;
-        private RenderPanel _bufferRenderTarget;
-        private bool _isDisposed;
+        readonly int _numIndicies;
+        readonly int _numPrimitives;
+        RenderPanel _bufferRenderTarget;
+        bool _isDisposed;
 
         protected BufferObject(int numIndicies, int numVerticies, int numPrimitives){
             _numPrimitives = numPrimitives;

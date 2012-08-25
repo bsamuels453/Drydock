@@ -14,12 +14,12 @@ namespace Drydock.UI{
         #region fields and properties, and element modification methods
 
         public const int DefaultIdentifier = 1;
-        private readonly Line2D _lineSprite;
+        readonly Line2D _lineSprite;
         public float Length;
-        private float _angle;
-        private Vector2 _point1;
-        private Vector2 _point2;
-        private Vector2 _uvVectors;
+        float _angle;
+        Vector2 _point1;
+        Vector2 _point2;
+        Vector2 _uvVectors;
 
         public float Angle{
             get { return _angle; }
@@ -110,7 +110,7 @@ namespace Drydock.UI{
             _lineSprite = new Line2D(this, color);
             _point1 = v1;
             _point2 = v2;
-            Depth = (float)depth/10;
+            Depth = (float) depth/10;
             Opacity = 1;
             LineWidth = 1;
             Identifier = identifier;
@@ -131,7 +131,7 @@ namespace Drydock.UI{
         /// <summary>
         ///   calculates the line's destination point from the line's unit vector and length
         /// </summary>
-        private void CalculateDestFromUnitVector(){
+        void CalculateDestFromUnitVector(){
             _point2.X = _uvVectors.X*Length + _point1.X;
             _point2.Y = _uvVectors.Y*Length + _point1.Y;
         }
@@ -139,7 +139,7 @@ namespace Drydock.UI{
         /// <summary>
         ///   calculates the line's blit location, angle, length, and unit vector based on the origin point and destination point
         /// </summary>
-        private void CalculateInfoFromPoints(){
+        void CalculateInfoFromPoints(){
             _angle = (float) Math.Atan2(_point2.Y - _point1.Y, _point2.X - _point1.X);
             _uvVectors = Common.GetComponentFromAngle(_angle, 1);
             Length = Vector2.Distance(_point1, _point2);

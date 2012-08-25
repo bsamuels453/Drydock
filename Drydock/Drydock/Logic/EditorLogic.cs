@@ -6,7 +6,7 @@ using Drydock.UI;
 
 namespace Drydock.Logic{
     internal class EditorLogic{
-        private readonly HullEditor _e;
+        readonly HullEditor _e;
 
         public EditorLogic(){
             _e = new HullEditor();
