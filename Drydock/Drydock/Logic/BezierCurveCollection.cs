@@ -89,8 +89,9 @@ namespace Drydock.Logic{
                     _curveList[0].Handle.SymmetricHandle = _curveList[_curveList.Count - 1].Handle;
                     _curveList[_curveList.Count - 1].Handle.SymmetricHandle = _curveList[0].Handle;
 
-                    _curveList[0].Handle.SetReflectionType(PanelAlias.Side);
-                    _curveList[_curveList.Count - 1].Handle.SetReflectionType(PanelAlias.Side);
+                    foreach (BezierCurve t in _curveList){
+                        t.Handle.SetReflectionType(PanelAlias.Side, CurveHandle.HandleMovementRestriction.Vertical);
+                    }
 
                     break;
                 case PanelAlias.Top:
@@ -98,9 +99,10 @@ namespace Drydock.Logic{
                         _curveList[i].Handle.SymmetricHandle = _curveList[_curveList.Count- 1 - i].Handle;
                         _curveList[_curveList.Count - 1 - i].Handle.SymmetricHandle = _curveList[i].Handle;
 
-                        _curveList[i].Handle.SetReflectionType(PanelAlias.Top);
-                        _curveList[_curveList.Count - 1 - i].Handle.SetReflectionType(PanelAlias.Top);
+                        _curveList[i].Handle.SetReflectionType(PanelAlias.Top, CurveHandle.HandleMovementRestriction.Vertical);
+                        _curveList[_curveList.Count - 1 - i].Handle.SetReflectionType(PanelAlias.Top, CurveHandle.HandleMovementRestriction.Vertical);
                     }
+                    _curveList[_curveList.Count / 2].Handle.SetReflectionType(PanelAlias.Top, CurveHandle.HandleMovementRestriction.NoRotationOnX, true);
                     break;
 
                 case PanelAlias.Back:
@@ -108,9 +110,10 @@ namespace Drydock.Logic{
                         _curveList[i].Handle.SymmetricHandle = _curveList[_curveList.Count - 1 - i].Handle;
                         _curveList[_curveList.Count - 1 - i].Handle.SymmetricHandle = _curveList[i].Handle;
 
-                        _curveList[i].Handle.SetReflectionType(PanelAlias.Back);
-                        _curveList[_curveList.Count - 1 - i].Handle.SetReflectionType(PanelAlias.Back);
+                        _curveList[i].Handle.SetReflectionType(PanelAlias.Back, CurveHandle.HandleMovementRestriction.Vertical);
+                        _curveList[_curveList.Count - 1 - i].Handle.SetReflectionType(PanelAlias.Back, CurveHandle.HandleMovementRestriction.Vertical);
                     }
+                    _curveList[_curveList.Count / 2].Handle.SetReflectionType(PanelAlias.Back, CurveHandle.HandleMovementRestriction.NoRotationOnY, true);
                     break;
             }
         }
@@ -154,60 +157,6 @@ namespace Drydock.Logic{
             }
             return li;
         }
-
-        /*public void ProcReflection(int dx, int dy, int id, BezierCurve curve){
-            if(_symmetry == SymmetryType.None){
-                return;
-            }
-            int i;
-            for (i = 0; i < _curveList.Count; i++){
-                if (_curveList[i] == curve){
-                    break;
-                }
-            }
-
-            int offset = (_curveList.Count / 2 - i);
-
-            //_curveList[_curveList.Count / 2-offset]
-
-            switch (id){
-                case 0:
-                    if (i != 0 && i != _curveList.Count - 1 && i!=_curveList.Count/2){
-                        _curveList[_curveList.Count / 2 + offset].CenterHandle.RawTranslate(dx * _xReflect, dy * _yReflect);
-                    }
-                    break;
-                case 1:
-                    if (i != _curveList.Count / 2) {
-                        _curveList[_curveList.Count / 2 + offset].NextHandle.RawTranslate(dx * _xReflect, dy * _yReflect);
-                    }
-                    else{
-                        switch (_symmetry){
-                            case SymmetryType.Horizontal:
-                                _curveList[_curveList.Count / 2 + offset].NextHandle.RawTranslate(0, dy * _yReflect);
-                                break;
-                            case SymmetryType.Vertical:
-                                _curveList[_curveList.Count / 2 + offset].NextHandle.RawTranslate(dx * _xReflect, 0);
-                                break;
-                        }
-                    }
-                    break;
-                case 2:
-                    if (i != _curveList.Count / 2) {
-                        _curveList[_curveList.Count / 2 + offset].PrevHandle.RawTranslate(dx * _xReflect, dy * _yReflect);
-                    }
-                    else {
-                        switch (_symmetry) {
-                            case SymmetryType.Horizontal:
-                                _curveList[_curveList.Count / 2 + offset].PrevHandle.RawTranslate(0, dy * _yReflect);
-                                break;
-                            case SymmetryType.Vertical:
-                                _curveList[_curveList.Count / 2 + offset].PrevHandle.RawTranslate(dx * _xReflect, 0);
-                                break;
-                        }
-                    }
-                    break;
-            }
-        }*/
 
         public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null){
             //this is broken right now

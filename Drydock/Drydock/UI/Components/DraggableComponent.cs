@@ -67,7 +67,7 @@ namespace Drydock.UI.Components{
         #region event handlers
 
         private InterruptState OnLeftButtonDown(MouseState state, MouseState? prevState = null){
-            if (!_isMoving){
+            if (!_isMoving && _isEnabled){
                 if (_owner.BoundingBox.Contains(state.X, state.Y)){
                     _isMoving = true;
                     _owner.Owner.DisableEntryHandlers = true;
@@ -86,18 +86,19 @@ namespace Drydock.UI.Components{
             return InterruptState.AllowOtherEvents;
         }
 
-        private InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
-            if (_isMoving){
-                var oldX = (int) _owner.X;
-                var oldY = (int) _owner.Y;
-                var x = (int) (state.X + _mouseOffset.X);
-                var y = (int) (state.Y + _mouseOffset.Y);
-                if (DragMovementClamp != null){
+        private InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null) {
+            if (_isMoving && _isEnabled) {
+                var oldX = (int)_owner.X;
+                var oldY = (int)_owner.Y;
+                var x = (int)(state.X + _mouseOffset.X);
+                var y = (int)(state.Y + _mouseOffset.Y);
+
+                if (DragMovementClamp != null) {
                     DragMovementClamp(_owner, ref x, ref y, oldX, oldY);
                 }
 
                 //this block checks if a drag clamp is preventing the owner from moving, if thats the case then kill the drag
-                var tempRect = new Rectangle(x, y,(int) _owner.BoundingBox.Width, (int)_owner.BoundingBox.Height);
+                var tempRect = new Rectangle(x - (int)_owner.BoundingBox.Width*2, y - (int)_owner.BoundingBox.Height*2, (int)_owner.BoundingBox.Width*6, (int)_owner.BoundingBox.Height*6);
                 if (!tempRect.Contains(state.X, state.Y)) {
                     _isMoving = false;
                     _owner.Owner.DisableEntryHandlers = false;
@@ -107,7 +108,7 @@ namespace Drydock.UI.Components{
                 _owner.X = x;
                 _owner.Y = y;
 
-                if (DragMovementDispatcher != null){
+                if (DragMovementDispatcher != null) {
                     DragMovementDispatcher(_owner, x - oldX, y - oldY);
                 }
                 return InterruptState.InterruptEventDispatch;
