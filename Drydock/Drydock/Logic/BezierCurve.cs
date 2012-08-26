@@ -34,6 +34,7 @@ namespace Drydock.Logic{
         public BezierCurve PrevCurveReference{
             set{
                 _prevCurve = value;
+                Handle.PrevHandle = value.Handle;
                 if (_prevLines == null){
                     _prevLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++){
@@ -46,6 +47,7 @@ namespace Drydock.Logic{
         public BezierCurve NextCurveReference{
             set{
                 _nextCurve = value;
+                Handle.NextHandle = value.Handle;
                 if (_nextLines == null){
                     _nextLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++){
@@ -108,6 +110,7 @@ namespace Drydock.Logic{
         public void SetPrevCurve(BezierCurve val){
             _prevCurve = val;
             _prevCurve.NextCurveReference = this;
+            Handle.PrevHandle = val.Handle;
             if (_prevLines == null){
                 _prevLines = new List<Line>(_linesPerSide);
 
@@ -127,6 +130,7 @@ namespace Drydock.Logic{
         public void SetNextCurve(BezierCurve val){
             _nextCurve = val;
             _nextCurve.PrevCurveReference = this;
+            Handle.NextHandle = val.Handle;
             if (_nextLines == null){
                 _nextLines = new List<Line>(_linesPerSide);
                 for (int i = 0; i < _linesPerSide; i++){
@@ -147,15 +151,15 @@ namespace Drydock.Logic{
         #region curve information
 
         public Vector2 CenterHandlePos{
-            get { return Handle.CentPosition; }
+            get { return Handle.CentButtonPos; }
         }
 
         public Vector2 PrevHandlePos{
-            get { return Handle.PrevPosition; }
+            get { return Handle.PrevButtonPos; }
         }
 
         public Vector2 NextHandlePos{
-            get { return Handle.NextPosition; }
+            get { return Handle.NextButtonPos; }
         }
 
         public float PrevHandleLength{
@@ -165,7 +169,6 @@ namespace Drydock.Logic{
         public float NextHandleLength{
             get { return Handle.NextLength; }
         }
-
 
         public float GetNextArcLength(){
             float len = 0;
@@ -219,44 +222,6 @@ namespace Drydock.Logic{
 
         #endregion
 
-        #region curve modification
-
-        /*public void TranslateControllerPos(int dx, int dy){
-            _line1.TranslateOrigin(dx, dy);
-            _line1.TranslateDestination(dx, dy);
-            _line2.TranslateOrigin(dx, dy);
-            _line2.TranslateDestination(dx, dy);
-            PrevHandle.HandleButton.X += dx;
-            PrevHandle.HandleButton.Y += dy;
-
-            NextHandle.HandleButton.X += dx;
-            NextHandle.HandleButton.Y += dy;
-
-            CenterHandle.HandleButton.X += dx;
-            CenterHandle.HandleButton.Y += dy;
-        }
-        public void TranslatePrevHandle(int dx, int dy) {
-            PrevHandle.HandleButton.X += dx;
-            PrevHandle.HandleButton.Y += dy;
-            _line1.TranslateDestination(dx, dy);
-            _line2.Angle = (float)(_line1.Angle + Math.PI);
-
-            NextHandle.HandleButton.X = (int)_line2.DestPoint.X - NextHandle.HandleButton.BoundingBox.Width / 2;
-            NextHandle.HandleButton.Y = (int)_line2.DestPoint.Y - NextHandle.HandleButton.BoundingBox.Height / 2;
-        }
-
-        public void TranslateNextHandle(int dx, int dy) {
-            NextHandle.HandleButton.X += dx;
-            NextHandle.HandleButton.Y += dy;
-            _line2.TranslateDestination(dx, dy);
-            _line1.Angle = (float)(_line2.Angle + Math.PI);
-
-            PrevHandle.HandleButton.X = (int)_line1.DestPoint.X - PrevHandle.HandleButton.BoundingBox.Width / 2;
-            PrevHandle.HandleButton.Y = (int)_line1.DestPoint.Y - PrevHandle.HandleButton.BoundingBox.Height / 2;
-        }*/
-
-        #endregion
-
         #region ctor and disposal
 
         public BezierCurve(float offsetX, float offsetY, UIElementCollection parentElement, CurveInitalizeData initData){
@@ -290,7 +255,7 @@ namespace Drydock.Logic{
             buttonTemplate.TextureName = "whitebox";
             buttonTemplate.Components = new Dictionary<string, object[]>{
                 {"DraggableComponent", null},
-                {"FadeComponent", new object[]{FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit}},
+                {"FadeComponent", new object[]{FadeComponent.FadeState.Visible, FadeComponent.FadeTrigger.EntryExit}},
                 //{"SelectableComponent", new object[]{"bigbox", 15, 15}}
             };
 
@@ -301,7 +266,7 @@ namespace Drydock.Logic{
             lineTemplate.Owner = _elementCollection;
             lineTemplate.Color = Color.Black;
             lineTemplate.Components = new Dictionary<string, object[]>{
-                {"FadeComponent", new object[]{FadeComponent.FadeState.Faded}}
+                {"FadeComponent", new object[]{FadeComponent.FadeState.Visible}}
             };
 
             Handle = new CurveHandle(buttonTemplate, lineTemplate, parentElement, new Vector2(initX, initY), component1, component2);
@@ -315,50 +280,6 @@ namespace Drydock.Logic{
 
         #endregion
 
-        #region event stuff
-
-        /// <summary>
-        ///   this function balances handle movement so that they stay in a straight line and their movements translate to other handles
-        /// </summary>
-        /*public void ReactToDragMovement(object caller, int dx, int dy){
-            var calle = (Button) caller;
-            switch (calle.Identifier){
-                case 0:
-                    _line1.TranslateOrigin(dx, dy);
-                    _line1.TranslateDestination(dx, dy);
-                    _line2.TranslateOrigin(dx, dy);
-                    _line2.TranslateDestination(dx, dy);
-                    PrevHandle.HandleButton.X += dx;
-                    PrevHandle.HandleButton.Y += dy;
-
-                    NextHandle.HandleButton.X += dx;
-                    NextHandle.HandleButton.Y += dy;
-
-                    if (ReactToControllerMovement != null){
-                        ReactToControllerMovement(this, dx, dy);
-                    }
-
-                    break;
-                case 1:
-                    _line1.TranslateDestination(dx, dy);
-                    _line2.Angle = (float) (_line1.Angle + Math.PI);
-
-                    NextHandle.HandleButton.X = (int)_line2.DestPoint.X - NextHandle.HandleButton.BoundingBox.Width / 2;
-                    NextHandle.HandleButton.Y = (int)_line2.DestPoint.Y - NextHandle.HandleButton.BoundingBox.Height / 2;
-
-                    break;
-                case 2:
-                    _line2.TranslateDestination(dx, dy);
-                    _line1.Angle = (float) (_line2.Angle + Math.PI);
-
-                    PrevHandle.HandleButton.X = (int)_line1.DestPoint.X - PrevHandle.HandleButton.BoundingBox.Width / 2;
-                    PrevHandle.HandleButton.Y = (int)_line1.DestPoint.Y - PrevHandle.HandleButton.BoundingBox.Height / 2;
-                    break;
-            }
-            _parentCollection.ProcReflection(dx, dy, calle.Identifier, this);
-        }*/
-
-        #endregion
         public void Update(){
             float t, dt;
             Vector2 firstPos, secondPos;

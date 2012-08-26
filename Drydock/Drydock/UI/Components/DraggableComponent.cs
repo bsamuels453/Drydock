@@ -88,10 +88,15 @@ namespace Drydock.UI.Components{
 
         InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
             if (_isMoving && _isEnabled){
+                var nprevState = (MouseState)prevState;
                 var oldX = (int) _owner.X;
                 var oldY = (int) _owner.Y;
                 var x = (int) (state.X + _mouseOffset.X);
                 var y = (int) (state.Y + _mouseOffset.Y);
+
+                //var x = (int)(state.X - nprevState.X +_owner.X);
+                //var y = (int)(state.Y - nprevState.Y +_owner.Y);
+
 
                 if (DragMovementClamp != null){
                     DragMovementClamp(_owner, ref x, ref y, oldX, oldY);
@@ -100,9 +105,10 @@ namespace Drydock.UI.Components{
                 //this block checks if a drag clamp is preventing the owner from moving, if thats the case then kill the drag
                 var tempRect = new Rectangle(x - (int) _owner.BoundingBox.Width*2, y - (int) _owner.BoundingBox.Height*2, (int) _owner.BoundingBox.Width*6, (int) _owner.BoundingBox.Height*6);
                 if (!tempRect.Contains(state.X, state.Y)){
-                    _isMoving = false;
-                    _owner.Owner.DisableEntryHandlers = false;
-                    return InterruptState.AllowOtherEvents;
+                    //_isMoving = false;
+                    //_owner.Owner.DisableEntryHandlers = false;
+                    //return InterruptState.AllowOtherEvents;
+                    //int f = 5;
                 }
 
                 _owner.X = x;

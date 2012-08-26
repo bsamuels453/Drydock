@@ -19,13 +19,13 @@ namespace Drydock.UI{
         float _angle;
         Vector2 _point1;
         Vector2 _point2;
-        Vector2 _uvVectors;
+        public Vector2 UnitVector;
 
         public float Angle{
             get { return _angle; }
             set{
                 _angle = value;
-                _uvVectors = Common.GetComponentFromAngle(value, 1);
+                UnitVector = Common.GetComponentFromAngle(value, 1);
                 CalculateDestFromUnitVector();
             }
         }
@@ -132,8 +132,8 @@ namespace Drydock.UI{
         ///   calculates the line's destination point from the line's unit vector and length
         /// </summary>
         void CalculateDestFromUnitVector(){
-            _point2.X = _uvVectors.X*Length + _point1.X;
-            _point2.Y = _uvVectors.Y*Length + _point1.Y;
+            _point2.X = UnitVector.X*Length + _point1.X;
+            _point2.Y = UnitVector.Y*Length + _point1.Y;
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Drydock.UI{
         /// </summary>
         void CalculateInfoFromPoints(){
             _angle = (float) Math.Atan2(_point2.Y - _point1.Y, _point2.X - _point1.X);
-            _uvVectors = Common.GetComponentFromAngle(_angle, 1);
+            UnitVector = Common.GetComponentFromAngle(_angle, 1);
             Length = Vector2.Distance(_point1, _point2);
         }
 

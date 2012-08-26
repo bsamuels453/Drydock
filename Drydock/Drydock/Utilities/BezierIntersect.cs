@@ -73,7 +73,8 @@ namespace Drydock.Utilities{
                 }
             }
             if (curvesToUse == -1){
-                throw new Exception("Supplied X value is not contained within the bezier curve collection");
+                //throw new Exception("Supplied X value is not contained within the bezier curve collection");
+                return Vector2.Zero;
             }
             //now we traverse the cache
             BoundCache curCache = _boundCache[curvesToUse];

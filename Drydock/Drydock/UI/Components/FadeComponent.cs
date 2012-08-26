@@ -35,9 +35,9 @@ namespace Drydock.UI.Components{
         public const float DefaultFadeoutOpacity = 0.10f;
         public const float DefaultFadeDuration = 250;
         readonly FadeState _defaultState;
-        readonly float _fadeDuration;
         readonly FadeTrigger _fadeTrigger;
         readonly float _fadeoutOpacity;
+        float _fadeDuration;
         bool _isEnabled;
         bool _isFadingOut;
         bool _isInTransition;
@@ -50,6 +50,15 @@ namespace Drydock.UI.Components{
             set{
                 _owner = value;
                 ComponentCtor();
+            }
+        }
+
+        public float FadeDuration{
+            set {
+                if (_isInTransition){
+                    throw new Exception("cannot set duration while a fade is in progress");
+                }
+                _fadeDuration = value;
             }
         }
 
@@ -162,6 +171,31 @@ namespace Drydock.UI.Components{
                 _isInTransition = true;
                 _isFadingOut = false;
                 if (FadeStateChangeDispatcher != null){
+                    FadeStateChangeDispatcher(FadeState.Visible);
+                }
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState ForceFadeout() {
+            _owner.Owner.DisableEntryHandlers = false;
+            if (IsEnabled) {
+                _isInTransition = true;
+                _isFadingOut = true;
+                if (FadeStateChangeDispatcher != null) {
+                    FadeStateChangeDispatcher(FadeState.Faded);
+                }
+            }
+            return InterruptState.AllowOtherEvents;
+        }
+
+        public InterruptState ForceFadein() {
+            _owner.Owner.DisableEntryHandlers = true;
+            //UIElementCollection.ForceExitHandlers(_owner);
+            if (IsEnabled) {
+                _isInTransition = true;
+                _isFadingOut = false;
+                if (FadeStateChangeDispatcher != null) {
                     FadeStateChangeDispatcher(FadeState.Visible);
                 }
             }
