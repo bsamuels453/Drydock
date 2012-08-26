@@ -371,7 +371,7 @@ namespace Drydock.Logic{
                     }
                 }
                 if ((HandleType)button.Identifier == HandleType.Next) {
-                    if (button.CentPosition.X + dx < NextHandle.CentButtonCenter.X) {
+                    if (button.CentPosition.X + dx > NextHandle.CentButtonCenter.X) {
                         dx = NextHandle.CentButtonCenter.X - button.CentPosition.X;
                     }
                 }
