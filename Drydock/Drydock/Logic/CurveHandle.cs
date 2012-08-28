@@ -383,42 +383,81 @@ namespace Drydock.Logic{
         }
 
         void SideNeighborClamp(ref float dx, ref float dy, Button button) {
-            //prevents bounding handle center buttons from passing the middle handle's satellite buttons (x/y)
-            //prevents bounding satellites from crossing the center handle center button (x)
-            if (NextHandle != null && PrevHandle == null){//assume this is prev bounding handle
+            //prevent symmetric buttons from crossing each other
+            if (PrevHandle != null && NextHandle == null) {
+                if (button.CentPosition.X + dx < PrevHandle.CentButtonCenter.X) {
+                    dx = PrevHandle.CentButtonCenter.X - button.CentPosition.X;
+                }
+            }
+            if (PrevHandle == null && NextHandle != null) {
+                if (button.CentPosition.X + dx > NextHandle.CentButtonCenter.X) {
+                    dx = NextHandle.CentButtonCenter.X - button.CentPosition.X;
+                }
+            }
 
-                if (button == _centerButton){
-                    if (button.CentPosition.Y +dy> NextHandle.PrevButtonCenter.Y){
-                        dy = NextHandle.PrevButtonCenter.Y - button.CentPosition.Y;
+            //prevent buttons from crossing the middle handle's center position
+            //also prevents center handle from crossing the two bounding handle's satellite buttons
+            CurveHandle handleToUse = NextHandle ?? PrevHandle;
+            switch ((HandleType)button.Identifier) {
+                case HandleType.Prev:
+                    if (NextHandle == null || PrevHandle == null) { //assume  this is a bounding handle
+                        if (button.CentPosition.Y + dy > handleToUse.PrevButtonCenter.Y) {
+                            dy = handleToUse.PrevButtonCenter.Y - _prevButton.CentPosition.Y;
+                        }
                     }
-                    if (button.CentPosition.X + dx > NextHandle.PrevButtonCenter.X) {
-                        dx = NextHandle.PrevButtonCenter.X - button.CentPosition.X;
+
+                    break;
+                case HandleType.Center:
+                    if (NextHandle != null && PrevHandle != null) { //assume this is the center curve handle
+                        if (button.CentPosition.Y + dy < NextHandle.PrevButtonCenter.Y) {
+                            dy = NextHandle.PrevButtonCenter.Y - _centerButton.CentPosition.Y;
+                        }
+                    }
+                    break;
+                case HandleType.Next:
+                    if (NextHandle == null || PrevHandle == null) { //assume  this is a bounding handle
+                        if (button.CentPosition.Y + dy > handleToUse.PrevButtonCenter.Y) {
+                            dy = handleToUse.PrevButtonCenter.Y - _nextButton.CentPosition.Y;
+                        }
+                    }
+                    break;
+            }
+
+            //prevents bounding handles from crossing center handle's satellite buttons (x+y direction)
+            switch ((HandleType)button.Identifier) {
+                case HandleType.Center:
+                    if (NextHandle == null && PrevHandle != null) {//assume this is a next bounding handle
+                        if (button.CentPosition.X + dx < PrevHandle.NextButtonCenter.X) {
+                            dx = PrevHandle.NextButtonCenter.X - button.CentPosition.X;
+                        }
+                        if (_prevButton.CentPosition.Y + dy > PrevHandle.NextButtonCenter.Y) {
+                            dy = PrevHandle.NextButtonCenter.Y - _prevButton.CentPosition.Y;
+                        }
+                    }
+                    if (NextHandle != null && PrevHandle == null) {//assume this is a prev bounding handle
+                        if (button.CentPosition.X + dx > NextHandle.PrevButtonCenter.X) {
+                            dx = NextHandle.PrevButtonCenter.X - button.CentPosition.X;
+                        }
+                        if (_nextButton.CentPosition.Y + dy > NextHandle.NextButtonCenter.Y) {
+                            dy = NextHandle.NextButtonCenter.Y - _nextButton.CentPosition.Y;
+                        }
+                    }
+                    break;
+            }
+
+            //prevents the center button's satellite buttons from crossing the bounding handle centers
+            if (NextHandle != null && PrevHandle != null) {
+                if ((HandleType)button.Identifier == HandleType.Prev) {
+                    if (button.CentPosition.X + dx < PrevHandle.CentButtonCenter.X) {
+                        dx = PrevHandle.CentButtonCenter.X - button.CentPosition.X;
                     }
                 }
-                if (button == _nextButton){
+                if ((HandleType)button.Identifier == HandleType.Next) {
                     if (button.CentPosition.X + dx > NextHandle.CentButtonCenter.X) {
                         dx = NextHandle.CentButtonCenter.X - button.CentPosition.X;
                     }
                 }
             }
-            if (NextHandle == null && PrevHandle != null){ //assume this is next bounding handle
-                if (button == _centerButton){
-                    if (button.CentPosition.Y + dy > PrevHandle.NextButtonCenter.Y) {
-                        dy = PrevHandle.NextButtonCenter.Y - button.CentPosition.Y;
-                    }
-                    if (button.CentPosition.X + dx < PrevHandle.NextButtonCenter.X) {
-                        dx = PrevHandle.NextButtonCenter.X - button.CentPosition.X;
-                    }
-                }
-                if (button == _prevButton) {
-                    if (button.CentPosition.X + dx < PrevHandle.CentButtonCenter.X) {
-                        dx = PrevHandle.CentButtonCenter.X - button.CentPosition.X;
-                    }
-                }
-            }
-
-            
-
         }
 
         void BalancedCenterTranslate(float dx, float dy) {
