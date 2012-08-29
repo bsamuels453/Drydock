@@ -48,7 +48,7 @@ namespace Drydock.Utilities{
             }
         }
 
-        public Vector2 GetIntersectionFromX(float x){
+        public Vector2 GetValueFromIndependent(float x){
             //we run on the assumption that t=0 is on the left, and t=1 is on the right
             //we also run on the assumption that the given controllers form a curve that passes the vertical line test
 
@@ -73,8 +73,8 @@ namespace Drydock.Utilities{
                 }
             }
             if (curvesToUse == -1){
-                //throw new Exception("Supplied X value is not contained within the bezier curve collection");
-                return Vector2.Zero;
+                throw new Exception("Supplied X value is not contained within the bezier curve collection");
+                //return Vector2.Zero;
             }
             //now we traverse the cache
             BoundCache curCache = _boundCache[curvesToUse];

@@ -116,9 +116,9 @@ namespace Drydock.Logic{
             _sideCurves.GetParameterizedPoint(0, true); //this refreshes internal fields
             //orient controllers correctly for the bezierintersect
             var li = _sideCurves.Select(bezierCurve => new BezierInfo(
-                                                           _sideCurves.Normalize(bezierCurve.CenterHandlePos),
-                                                           _sideCurves.Normalize(bezierCurve.PrevHandlePos),
-                                                           _sideCurves.Normalize(bezierCurve.NextHandlePos))).ToList();
+                                                           _sideCurves.ToMeters(bezierCurve.CenterHandlePos),
+                                                           _sideCurves.ToMeters(bezierCurve.PrevHandlePos),
+                                                           _sideCurves.ToMeters(bezierCurve.NextHandlePos))).ToList();
 
 
             var sideIntersectGenerator = new BezierIntersect(li);
@@ -126,11 +126,11 @@ namespace Drydock.Logic{
             var sideIntersectionCache = new float[_meshVertexWidth];
 
             for (int x = 0; x < _meshVertexWidth; x++){
-                sideIntersectionCache[x] = sideIntersectGenerator.GetIntersectionFromX(topPts[x].X).Y;
+                sideIntersectionCache[x] = sideIntersectGenerator.GetValueFromIndependent(topPts[x].X).Y;
             }
 
-            var maxY = (float) _backCurves.NormalizeY(_backCurves.MaxY);
-            var backCurvesMaxWidth = (float) (_backCurves.NormalizeX(_backCurves[_backCurves.Count - 1].CenterHandlePos.X) - _backCurves.NormalizeX(_backCurves[0].CenterHandlePos.X));
+            var maxY = (float) _backCurves.ToMetersY(_backCurves.MaxY);
+            var backCurvesMaxWidth = (float) (_backCurves.ToMetersX(_backCurves[_backCurves.Count - 1].CenterHandlePos.X) - _backCurves.ToMetersX(_backCurves[0].CenterHandlePos.X));
 
             for (int x = 0; x < _meshVertexWidth; x++){
                 float scaleX = Math.Abs((reflectionPoint - topPts[x].Y)*2)/backCurvesMaxWidth;
@@ -140,7 +140,7 @@ namespace Drydock.Logic{
                 var crossIntersectGenerator = new BezierIntersect(bezierInfo);
 
                 for (int z = 0; z < _meshVertexWidth/2; z++){
-                    Vector2 pos = crossIntersectGenerator.GetIntersectionFromX(yDelta[x]*(z));
+                    Vector2 pos = crossIntersectGenerator.GetValueFromIndependent(yDelta[x]*(z));
                     _mesh[x, z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x]*(z));
                     _mesh[x, _meshVertexWidth - 1 - z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x]*(_meshVertexWidth - 1 - z));
                 }

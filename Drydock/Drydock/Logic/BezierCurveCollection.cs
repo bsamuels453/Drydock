@@ -188,9 +188,9 @@ namespace Drydock.Logic{
             for (int i = 0; i < _curveList.Count; i++){
                 li.Add(
                     new BezierInfo(
-                        pos: new Vector2((float) NormalizeX(_curveList[i].CenterHandlePos.X)*scaleX, (float) NormalizeY(_curveList[i].CenterHandlePos.Y)*scaleY),
-                        prev: new Vector2((float) NormalizeX(_curveList[i].PrevHandlePos.X)*scaleX, (float) NormalizeY(_curveList[i].PrevHandlePos.Y)*scaleY),
-                        next: new Vector2((float) NormalizeX(_curveList[i].NextHandlePos.X)*scaleX, (float) NormalizeY(_curveList[i].NextHandlePos.Y)*scaleY)
+                        pos: new Vector2((float) ToMetersX(_curveList[i].CenterHandlePos.X)*scaleX, (float) ToMetersY(_curveList[i].CenterHandlePos.Y)*scaleY),
+                        prev: new Vector2((float) ToMetersX(_curveList[i].PrevHandlePos.X)*scaleX, (float) ToMetersY(_curveList[i].PrevHandlePos.Y)*scaleY),
+                        next: new Vector2((float) ToMetersX(_curveList[i].NextHandlePos.X)*scaleX, (float) ToMetersY(_curveList[i].NextHandlePos.Y)*scaleY)
                         )
                     );
             }
@@ -309,17 +309,24 @@ namespace Drydock.Logic{
         /// </summary>
         /// <param name="point"> </param>
         /// <returns> </returns>
-        public Vector2 Normalize(Vector2 point){
+        public Vector2 ToMeters(Vector2 point){
             point.X = (float) (point.X - MinX)/PixelsPerMeter;
             point.Y = (float) (point.Y - MinY)/PixelsPerMeter;
             return point;
         }
 
-        public double NormalizeY(double y){
+        public Vector2 ToPixels(Vector2 point) {
+            point.X = (point.X * PixelsPerMeter) + (float)MinX;
+            point.Y = (point.Y * PixelsPerMeter) + (float)MinY;
+
+            return point;
+        }
+
+        public double ToMetersY(double y){
             return (y - MinY)/PixelsPerMeter;
         }
 
-        public double NormalizeX(double x){
+        public double ToMetersX(double x){
             return (x - MinX)/PixelsPerMeter;
         }
 

@@ -69,8 +69,8 @@ namespace Drydock.Logic{
                     depth: DepthLevel.Background,
                     owner: ElementCollection,
                     textureName: "panelBG",
-                    spriteTexRepeatX: width/(Curves.PixelsPerMeter*10),
-                    spriteTexRepeatY: height/(Curves.PixelsPerMeter*10),
+                    spriteTexRepeatX: width/(Curves.PixelsPerMeter*1),
+                    spriteTexRepeatY: height/(Curves.PixelsPerMeter*1),
                     components: new IUIComponent[]{new PanelComponent()}
                     )
                 );

@@ -152,6 +152,7 @@ namespace Drydock.Logic{
 
         public Vector2 CenterHandlePos{
             get { return Handle.CentButtonPos; }
+            set { Handle.CentButtonPos = value; }
         }
 
         public Vector2 PrevHandlePos{

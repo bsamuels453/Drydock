@@ -111,6 +111,7 @@ namespace Drydock.Logic{
 
         public Vector2 CentButtonPos{
             get { return _centerButton.CentPosition; }
+            set { _centerButton.CentPosition = value; }
         }
 
         public Vector2 NextButtonPos{
