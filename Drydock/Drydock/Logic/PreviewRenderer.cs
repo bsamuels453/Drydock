@@ -41,7 +41,7 @@ namespace Drydock.Logic{
 
             _cameraPhi = 0.32f;
             _cameraTheta = 0.63f;
-            _cameraDistance = 300;
+            _cameraDistance = 50;
             InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10f, this);
 
             _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth)*(_meshVertexWidth)*2, "whiteborder");
@@ -174,6 +174,7 @@ namespace Drydock.Logic{
                     crossSum += Vector3.Cross(s3, s2);
 
                     normals[vertX, vertZ] += crossSum;
+                    normals[vertX, vertZ].Normalize();
                 }
             }
 
@@ -181,6 +182,7 @@ namespace Drydock.Logic{
             int index = 0;
             for (int x = 0; x < _meshVertexWidth - 1; x++){
                 for (int z = 0; z < _meshVertexWidth - 1; z++){
+
                     _verticies[index].Position = -_mesh[x, z];
                     _verticies[index].Normal = normals[x, z];
 
@@ -264,9 +266,9 @@ namespace Drydock.Logic{
 
         public override InterruptState OnMouseScroll(MouseState state, MouseState? prevState = null){
             if (prevState != null){
-                _cameraDistance += (((MouseState) prevState).ScrollWheelValue - state.ScrollWheelValue)/5f;
-                if (_cameraDistance < 50){
-                    _cameraDistance = 50;
+                _cameraDistance += (((MouseState) prevState).ScrollWheelValue - state.ScrollWheelValue)/20f;
+                if (_cameraDistance < 5){
+                    _cameraDistance = 5;
                 }
             }
             return InterruptState.AllowOtherEvents;

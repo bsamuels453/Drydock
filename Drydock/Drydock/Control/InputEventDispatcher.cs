@@ -118,19 +118,6 @@ namespace Drydock.Control{
                 }
             }
 
-            if (state.IsKeyDown(Keys.W)){
-                Renderer.CameraTarget.X += 5f;
-            }
-            if (state.IsKeyDown(Keys.A)){
-                Renderer.CameraTarget.Y += 5f;
-            }
-            if (state.IsKeyDown(Keys.S)){
-                Renderer.CameraTarget.X -= 5f;
-            }
-            if (state.IsKeyDown(Keys.D)){
-                Renderer.CameraTarget.Y -= 5f;
-            }
-
             _prevKeyboardState = state;
         }
     }

@@ -21,7 +21,7 @@ namespace Drydock.Render{
             _effect = Singleton.ContentManager.Load<Effect>("StandardEffect");
             _effect.Parameters["Projection"].SetValue(Singleton.ProjectionMatrix);
             _effect.Parameters["World"].SetValue(Matrix.Identity);
-            _effect.Parameters["AmbientIntensity"].SetValue(0.5f);
+            _effect.Parameters["AmbientIntensity"].SetValue(1.25f);
             _effect.Parameters["AmbientColor"].SetValue(new Vector4(1, 1, 1, 1));
             _effect.Parameters["Texture"].SetValue(_texture);
         }
