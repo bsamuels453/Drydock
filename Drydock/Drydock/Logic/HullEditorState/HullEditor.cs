@@ -11,8 +11,8 @@ using Microsoft.Xna.Framework.Input;
 
 #endregion
 
-namespace Drydock.Logic{
-    internal class HullEditor : CanReceiveInputEvents{
+namespace Drydock.Logic.HullEditorState{
+    internal class HullEditor : CanReceiveInputEvents, IGameState{
         readonly BackEditorPanel _backpanel;
 
         readonly PreviewRenderer _previewRenderer;
@@ -39,6 +39,24 @@ namespace Drydock.Logic{
             InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10, this);
         }
 
+        #region IGameState Members
+
+        public void Update(){
+            _sidepanel.Update();
+            _toppanel.Update();
+            _backpanel.Update();
+            _previewRenderer.Update();
+        }
+
+        public void Dispose(){
+            _previewRenderer.Dispose();
+            _backpanel.Dispose();
+            _sidepanel.Dispose();
+            _toppanel.Dispose();
+        }
+
+        #endregion
+
         public override InterruptState OnKeyboardEvent(KeyboardState state){
             if (state.IsKeyDown(Keys.LeftControl) && state.IsKeyDown(Keys.S)){
                 ValidateCurveInformation();
@@ -51,39 +69,39 @@ namespace Drydock.Logic{
             return InterruptState.AllowOtherEvents;
         }
 
-        private void ValidateCurveInformation(){
+        void ValidateCurveInformation(){
             //dear mother of god why does this have to be hardcoded
             //top set
             var bowPointTop = _toppanel.Curves.ToMeters(_toppanel.Curves[1].CenterHandlePos);
-            float bowNLengthTop = _toppanel.Curves[1].NextHandleLength / _toppanel.Curves.PixelsPerMeter;
+            float bowNLengthTop = _toppanel.Curves[1].NextHandleLength/_toppanel.Curves.PixelsPerMeter;
             float bowAngleTop = -MathHelper.Pi/2;
 
             var starboardPointTop = _toppanel.Curves.ToMeters(_toppanel.Curves[0].CenterHandlePos);
-            float starboardNLengthTop = _toppanel.Curves[0].NextHandleLength / _toppanel.Curves.PixelsPerMeter;
+            float starboardNLengthTop = _toppanel.Curves[0].NextHandleLength/_toppanel.Curves.PixelsPerMeter;
             float starboardAngleTop = _toppanel.Curves[0].Handle.Angle;
 
             //side set
             var bowPointSide = _sidepanel.Curves.ToMeters(_sidepanel.Curves[0].CenterHandlePos);
-            float bowNLengthSide = (_sidepanel.Curves[0].NextHandleLength) / _sidepanel.Curves.PixelsPerMeter;
+            float bowNLengthSide = (_sidepanel.Curves[0].NextHandleLength)/_sidepanel.Curves.PixelsPerMeter;
             float bowAngleSide = (_sidepanel.Curves[0].Handle.Angle);
 
             var sternPointSide = _sidepanel.Curves.ToMeters(_sidepanel.Curves[2].CenterHandlePos);
-            float sternPLengthSide = _sidepanel.Curves[2].PrevHandleLength / _sidepanel.Curves.PixelsPerMeter;
+            float sternPLengthSide = _sidepanel.Curves[2].PrevHandleLength/_sidepanel.Curves.PixelsPerMeter;
             float sternAngleSide = _sidepanel.Curves[2].Handle.Angle;
 
             var hullPointSide = _sidepanel.Curves.ToMeters(_sidepanel.Curves[1].CenterHandlePos);
-            float hullPLengthSide = _sidepanel.Curves[1].PrevHandleLength / _sidepanel.Curves.PixelsPerMeter;
-            float hullNLengthSide = _sidepanel.Curves[1].NextHandleLength / _sidepanel.Curves.PixelsPerMeter;
+            float hullPLengthSide = _sidepanel.Curves[1].PrevHandleLength/_sidepanel.Curves.PixelsPerMeter;
+            float hullNLengthSide = _sidepanel.Curves[1].NextHandleLength/_sidepanel.Curves.PixelsPerMeter;
             float hullAngleSide = _sidepanel.Curves[1].Handle.Angle;
 
             //back set
             var starboardPointBack = _backpanel.Curves.ToMeters(_backpanel.Curves[2].CenterHandlePos);
-            float starboardPLengthBack = _backpanel.Curves[2].PrevHandleLength / _backpanel.Curves.PixelsPerMeter;
+            float starboardPLengthBack = _backpanel.Curves[2].PrevHandleLength/_backpanel.Curves.PixelsPerMeter;
             float starboardAngleBack = _backpanel.Curves[2].Handle.Angle;
 
             var hullPointBack = _backpanel.Curves.ToMeters(_backpanel.Curves[1].CenterHandlePos);
-            float hullPLengthBack = _backpanel.Curves[1].PrevHandleLength / _backpanel.Curves.PixelsPerMeter;
-            float hullNLengthBack = _backpanel.Curves[1].NextHandleLength / _backpanel.Curves.PixelsPerMeter;
+            float hullPLengthBack = _backpanel.Curves[1].PrevHandleLength/_backpanel.Curves.PixelsPerMeter;
+            float hullNLengthBack = _backpanel.Curves[1].NextHandleLength/_backpanel.Curves.PixelsPerMeter;
             float hullAngleBack = -MathHelper.Pi;
 
             //now force validate the points
@@ -93,7 +111,7 @@ namespace Drydock.Logic{
             starboardPointTop.Y = 0;
             sternPointSide.Y = 0;
 
-            starboardPointBack.X = bowPointTop.Y * 2;
+            starboardPointBack.X = bowPointTop.Y*2;
             starboardPointBack.Y = 0;
             hullPointBack.Y = hullPointSide.Y;
             hullPointBack.X = bowPointTop.Y;
@@ -153,23 +171,14 @@ namespace Drydock.Logic{
             topData[1].PrevHandleLength = bowNLengthTop;
 
             topData.Add(new CurveData());
-            topData[2].CenterHandlePos = new Vector2(starboardPointTop.X, bowPointTop.Y * 2);
-            topData[2].Angle = ( MathHelper.Pi - starboardAngleTop);
+            topData[2].CenterHandlePos = new Vector2(starboardPointTop.X, bowPointTop.Y*2);
+            topData[2].Angle = (MathHelper.Pi - starboardAngleTop);
             topData[2].NextHandleLength = 5;
             topData[2].PrevHandleLength = starboardNLengthTop;
 
             SaveCurve("back.xml", backData);
             SaveCurve("top.xml", topData);
             SaveCurve("side.xml", sideData);
-
-
-        }
-
-        class CurveData{
-            public Vector2 CenterHandlePos { get; set; }
-            public float Angle { get; set; }
-            public float PrevHandleLength { get; set; }
-            public float NextHandleLength { get; set; }
         }
 
         void SaveCurve(string filename, List<CurveData> curveData){
@@ -183,7 +192,7 @@ namespace Drydock.Logic{
             writer.WriteStartElement("Data");
             writer.WriteElementString("NumControllers", null, curveData.Count.ToString());
 
-            for (int i = 0; i < curveData.Count; i++) {
+            for (int i = 0; i < curveData.Count; i++){
                 writer.WriteStartElement("Handle" + i, null);
                 writer.WriteElementString("PosX", null, curveData[i].CenterHandlePos.X.ToString());
                 writer.WriteElementString("PosY", null, curveData[i].CenterHandlePos.Y.ToString());
@@ -198,11 +207,15 @@ namespace Drydock.Logic{
             outputStream.Close();
         }
 
-        public void Update(){
-            _sidepanel.Update();
-            _toppanel.Update();
-            _backpanel.Update();
-            _previewRenderer.Update();
+        #region Nested type: CurveData
+
+        class CurveData{
+            public Vector2 CenterHandlePos { get; set; }
+            public float Angle { get; set; }
+            public float PrevHandleLength { get; set; }
+            public float NextHandleLength { get; set; }
         }
+
+        #endregion
     }
 }

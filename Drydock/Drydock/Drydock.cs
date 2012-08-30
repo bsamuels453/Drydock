@@ -2,6 +2,7 @@
 
 using Drydock.Control;
 using Drydock.Logic;
+using Drydock.Logic.HullEditorState;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
@@ -14,7 +15,6 @@ namespace Drydock{
         readonly GraphicsDeviceManager _graphics;
         public ContentManager ContentManager;
         // private EditorLogic _editorLogic;
-        EditorLogic _editorLogic;
 
         public Drydock(){
             Content.RootDirectory = "Content";
@@ -26,17 +26,14 @@ namespace Drydock{
         }
 
         protected override void Initialize(){
-            //   _editorLogic = new EditorLogic();
             ContentManager = Content;
             Singleton.ContentManager = ContentManager;
             Renderer.Init(_graphics.GraphicsDevice, Content);
-            _editorLogic = new EditorLogic();
+            GamestateManager.Init();
+            GamestateManager.SetGameState(new HullEditor());
+
             IsMouseVisible = true;
-            //var cur = new Bitmap("D:/Projects/assets/untitled-4.png", true);
-            //Graphics g = Graphics.FromImage(cur);
-            // IntPtr ptr = cur.GetHicon();
-            // var c = new Cursor(ptr);
-            //  System.Windows.Forms.Control.FromHandle(this.Window.Handle).Cursor = c;
+
             base.Initialize();
         }
 
@@ -48,8 +45,8 @@ namespace Drydock{
 
 
         protected override void Update(GameTime gameTime){
-            _editorLogic.Update();
             InputEventDispatcher.Update();
+            GamestateManager.Update();
             //Thread.Sleep(10);
             base.Update(gameTime);
         }

@@ -66,8 +66,9 @@ namespace Drydock{
         public static float GetDist(int x0, int y0, int x1, int y1){
             return (float) Math.Sqrt((x0 - x1)*(x0 - x1) + (y0 - y1)*(y0 - y1));
         }
-        public static float GetDist(float x0, float y0, float x1, float y1) {
-            return (float)Math.Sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
+
+        public static float GetDist(float x0, float y0, float x1, float y1){
+            return (float) Math.Sqrt((x0 - x1)*(x0 - x1) + (y0 - y1)*(y0 - y1));
         }
 
         public static List<Vector2> Bresenham(Vector2 p1, Vector2 p2){

@@ -16,10 +16,10 @@ namespace Drydock.UI{
         public const int DefaultIdentifier = 1;
         readonly Line2D _lineSprite;
         public float Length;
+        public Vector2 UnitVector;
         float _angle;
         Vector2 _point1;
         Vector2 _point2;
-        public Vector2 UnitVector;
 
         public float Angle{
             get { return _angle; }

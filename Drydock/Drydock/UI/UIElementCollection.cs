@@ -70,6 +70,16 @@ namespace Drydock.UI{
             _childCollections.Remove(collection);
         }
 
+        public void Dispose(){
+            for(int i=0; i<_elements.Count; i++){
+                _elements[i].Dispose();
+            }
+            for (int i = 0; i < _layerSortedIElements.Count; i++){
+                _layerSortedIElements[i].Dispose();
+            }
+            InputEventDispatcher.EventSubscribers.Remove(this);
+        }
+
         #endregion
 
         public void Update(){

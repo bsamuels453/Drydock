@@ -3,7 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Drydock.Render;
+using Drydock.Logic;
 using Microsoft.Xna.Framework.Input;
 
 #endregion
@@ -28,6 +28,7 @@ namespace Drydock.Control{
         static KeyboardState _prevKeyboardState;
         static MouseState _prevMouseState;
         static readonly Stopwatch _clickTimer;
+        public static SpecialKeyboardRec SpecialKeyboardDispatcher;
 
         static InputEventDispatcher(){
             EventSubscribers = new DepthSortedList();
@@ -116,6 +117,7 @@ namespace Drydock.Control{
                         break;
                     }
                 }
+                SpecialKeyboardDispatcher(state);
             }
 
             _prevKeyboardState = state;

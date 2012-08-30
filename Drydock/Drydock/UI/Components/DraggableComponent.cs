@@ -88,7 +88,7 @@ namespace Drydock.UI.Components{
 
         InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
             if (_isMoving && _isEnabled){
-                var nprevState = (MouseState)prevState;
+                var nprevState = (MouseState) prevState;
                 var oldX = (int) _owner.X;
                 var oldY = (int) _owner.Y;
                 var x = (int) (state.X + _mouseOffset.X);

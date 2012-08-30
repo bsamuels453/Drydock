@@ -46,19 +46,19 @@ namespace Drydock.UI.Components{
 
         #region properties
 
-        public IUIElement Owner{
-            set{
-                _owner = value;
-                ComponentCtor();
-            }
-        }
-
         public float FadeDuration{
-            set {
+            set{
                 if (_isInTransition){
                     throw new Exception("cannot set duration while a fade is in progress");
                 }
                 _fadeDuration = value;
+            }
+        }
+
+        public IUIElement Owner{
+            set{
+                _owner = value;
+                ComponentCtor();
             }
         }
 
@@ -177,25 +177,25 @@ namespace Drydock.UI.Components{
             return InterruptState.AllowOtherEvents;
         }
 
-        public InterruptState ForceFadeout() {
+        public InterruptState ForceFadeout(){
             _owner.Owner.DisableEntryHandlers = false;
-            if (IsEnabled) {
+            if (IsEnabled){
                 _isInTransition = true;
                 _isFadingOut = true;
-                if (FadeStateChangeDispatcher != null) {
+                if (FadeStateChangeDispatcher != null){
                     FadeStateChangeDispatcher(FadeState.Faded);
                 }
             }
             return InterruptState.AllowOtherEvents;
         }
 
-        public InterruptState ForceFadein() {
+        public InterruptState ForceFadein(){
             _owner.Owner.DisableEntryHandlers = true;
             //UIElementCollection.ForceExitHandlers(_owner);
-            if (IsEnabled) {
+            if (IsEnabled){
                 _isInTransition = true;
                 _isFadingOut = false;
-                if (FadeStateChangeDispatcher != null) {
+                if (FadeStateChangeDispatcher != null){
                     FadeStateChangeDispatcher(FadeState.Visible);
                 }
             }

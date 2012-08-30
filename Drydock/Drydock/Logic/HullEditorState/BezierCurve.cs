@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Input;
 
 #endregion
 
-namespace Drydock.Logic{
+namespace Drydock.Logic.HullEditorState{
     /// <summary>
     ///   this class is a fucking mess, here's to hoping it never has to be used again
     /// </summary>
@@ -256,7 +256,7 @@ namespace Drydock.Logic{
             buttonTemplate.TextureName = "whitebox";
             buttonTemplate.Components = new Dictionary<string, object[]>{
                 {"DraggableComponent", null},
-                {"FadeComponent", new object[]{FadeComponent.FadeState.Visible, FadeComponent.FadeTrigger.EntryExit}},
+                {"FadeComponent", new object[]{FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit}},
                 //{"SelectableComponent", new object[]{"bigbox", 15, 15}}
             };
 
@@ -267,16 +267,12 @@ namespace Drydock.Logic{
             lineTemplate.Owner = _elementCollection;
             lineTemplate.Color = Color.Black;
             lineTemplate.Components = new Dictionary<string, object[]>{
-                {"FadeComponent", new object[]{FadeComponent.FadeState.Visible}}
+                {"FadeComponent", new object[]{FadeComponent.FadeState.Faded}}
             };
 
             Handle = new CurveHandle(buttonTemplate, lineTemplate, parentElement, new Vector2(initX, initY), component1, component2);
 
             #endregion
-        }
-
-        public void Dispose(){
-            throw new NotImplementedException();
         }
 
         #endregion

@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 
 #endregion
 
-namespace Drydock.Logic{
+namespace Drydock.Logic.HullEditorState{
     internal class BezierCurveCollection : CanReceiveInputEvents, IEnumerable<BezierCurve>{
         #region fields
 
@@ -315,9 +315,9 @@ namespace Drydock.Logic{
             return point;
         }
 
-        public Vector2 ToPixels(Vector2 point) {
-            point.X = (point.X * PixelsPerMeter) + (float)MinX;
-            point.Y = (point.Y * PixelsPerMeter) + (float)MinY;
+        public Vector2 ToPixels(Vector2 point){
+            point.X = (point.X*PixelsPerMeter) + (float) MinX;
+            point.Y = (point.Y*PixelsPerMeter) + (float) MinY;
 
             return point;
         }

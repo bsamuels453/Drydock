@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 
 #endregion
 
-namespace Drydock.Logic{
+namespace Drydock.Logic.HullEditorState{
     internal class PreviewRenderer : CanReceiveInputEvents{
         const int _meshVertexWidth = 64; //this is in primitives
         readonly BezierCurveCollection _backCurves;
@@ -182,7 +182,6 @@ namespace Drydock.Logic{
             int index = 0;
             for (int x = 0; x < _meshVertexWidth - 1; x++){
                 for (int z = 0; z < _meshVertexWidth - 1; z++){
-
                     _verticies[index].Position = -_mesh[x, z];
                     _verticies[index].Normal = normals[x, z];
 
@@ -210,6 +209,10 @@ namespace Drydock.Logic{
             Renderer.CameraPosition.X = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Sin(_cameraTheta)) + Renderer.CameraTarget.X;
             Renderer.CameraPosition.Z = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
             Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
+        }
+
+        public void Dispose(){
+            _renderTarget.Dispose();
         }
 
         #region event handlers

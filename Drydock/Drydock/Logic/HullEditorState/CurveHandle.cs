@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 #endregion
 
-namespace Drydock.Logic{
+namespace Drydock.Logic.HullEditorState{
     internal class CurveHandle{
         #region HandleMovementRestriction enum
 
@@ -20,23 +20,23 @@ namespace Drydock.Logic{
         }
 
         #endregion
-        private delegate void ClampByNeighbors(ref float dx, ref float dy, Button button);
+
         const int _handleMinDist = 20;
         readonly Button _centerButton;
         readonly Button _nextButton;
         readonly Line _nextLine;
         readonly Button _prevButton;
         readonly Line _prevLine;
-        public CurveHandle SymmetricHandle;
         public CurveHandle NextHandle;
         public CurveHandle PrevHandle;
+        public CurveHandle SymmetricHandle;
         public TranslateDragToExtern TranslateToExtern;
+        ClampByNeighbors _clampByNeighbors;
         bool _dontTranslateHandles;
         bool _internalSymmetry;
         int _reflectionX;
         int _reflectionY;
         HandleMovementRestriction _rotRestriction;
-        ClampByNeighbors _clampByNeighbors;
 
         /// <summary>
         /// </summary>
@@ -76,7 +76,7 @@ namespace Drydock.Logic{
 
             _nextLine.OriginPoint = _centerButton.CentPosition;
             _nextLine.DestPoint = _nextButton.CentPosition;
-            
+
             _nextButton.GetComponent<FadeComponent>().ForceFadeout();
             _prevButton.GetComponent<FadeComponent>().ForceFadeout();
             _centerButton.GetComponent<FadeComponent>().ForceFadeout();
@@ -102,10 +102,10 @@ namespace Drydock.Logic{
         }
 
         public Vector2 PrevButtonCenter{
-            get { return _prevButton.CentPosition; } 
+            get { return _prevButton.CentPosition; }
         }
 
-        public Vector2 NextButtonCenter {
+        public Vector2 NextButtonCenter{
             get { return _nextButton.CentPosition; }
         }
 
@@ -139,6 +139,7 @@ namespace Drydock.Logic{
             }
             get { return _prevLine.Angle; }
         }
+
         #endregion
 
         public void SetReflectionType(PanelAlias panelType, HandleMovementRestriction restrictionType, bool hasInternalSymmetry = false){
@@ -157,7 +158,7 @@ namespace Drydock.Logic{
                     _reflectionY = -1;
                     _dontTranslateHandles = false;
                     _clampByNeighbors = TopNeighborClamp;
-                    if (hasInternalSymmetry) {
+                    if (hasInternalSymmetry){
                         _reflectionX = 0;
                     }
                     break;
@@ -167,7 +168,7 @@ namespace Drydock.Logic{
                     _reflectionY = 1;
                     _dontTranslateHandles = false;
                     _clampByNeighbors = BackNeighborClamp;
-                    if (hasInternalSymmetry) {
+                    if (hasInternalSymmetry){
                         _reflectionY = 0;
                     }
                     break;
@@ -179,98 +180,97 @@ namespace Drydock.Logic{
         }
 
         public void ClampPositionFromExternal(float dx, float dy){
-
         }
 
         void ClampHandleMovement(IUIInteractiveElement owner, ref int x, ref int y, int oldX, int oldY){
-            var button = (Button)owner;
+            var button = (Button) owner;
             float dx = x - oldX;
             float dy = y - oldY;
             InternalMovementClamp(ref dx, ref dy, button);
-            x = (int)dx + oldX;
-            y = (int)dy + oldY;
-
+            x = (int) dx + oldX;
+            y = (int) dy + oldY;
         }
 
-        void InternalMovementClamp(ref float dx, ref float dy, Button button) {
-            
+        void InternalMovementClamp(ref float dx, ref float dy, Button button){
             #region region clamp
-            if (_rotRestriction == HandleMovementRestriction.Vertical || _rotRestriction == HandleMovementRestriction.Quadrant) {
-                if ((HandleType)button.Identifier != HandleType.Center) {
-                    Button handle = (HandleType)button.Identifier == HandleType.Prev ? _prevButton : _nextButton;
+
+            if (_rotRestriction == HandleMovementRestriction.Vertical || _rotRestriction == HandleMovementRestriction.Quadrant){
+                if ((HandleType) button.Identifier != HandleType.Center){
+                    Button handle = (HandleType) button.Identifier == HandleType.Prev ? _prevButton : _nextButton;
                     bool isHandleOnLeftSide = handle.CentPosition.X < _centerButton.CentPosition.X;
-                    if (isHandleOnLeftSide) {
-                        if (handle.CentPosition.X + dx >= _centerButton.CentPosition.X) {
+                    if (isHandleOnLeftSide){
+                        if (handle.CentPosition.X + dx >= _centerButton.CentPosition.X){
                             dx = _centerButton.X - handle.X - 1;
                         }
                     }
-                    else {
-                        if (handle.CentPosition.X + dx <= _centerButton.CentPosition.X) {
+                    else{
+                        if (handle.CentPosition.X + dx <= _centerButton.CentPosition.X){
                             dx = _centerButton.X - handle.X + 1;
                         }
                     }
                 }
             }
-            if (_rotRestriction == HandleMovementRestriction.Horizontal || _rotRestriction == HandleMovementRestriction.Quadrant) {
-                if ((HandleType)button.Identifier != HandleType.Center) {
-                    Button handle = (HandleType)button.Identifier == HandleType.Prev ? _prevButton : _nextButton;
+            if (_rotRestriction == HandleMovementRestriction.Horizontal || _rotRestriction == HandleMovementRestriction.Quadrant){
+                if ((HandleType) button.Identifier != HandleType.Center){
+                    Button handle = (HandleType) button.Identifier == HandleType.Prev ? _prevButton : _nextButton;
                     bool isHandleOnLeftSide = handle.CentPosition.Y < _centerButton.CentPosition.Y;
-                    if (isHandleOnLeftSide) {
-                        if (handle.CentPosition.Y + dy >= _centerButton.CentPosition.Y) {
+                    if (isHandleOnLeftSide){
+                        if (handle.CentPosition.Y + dy >= _centerButton.CentPosition.Y){
                             dy = _centerButton.Y - handle.Y - 1;
                         }
                     }
-                    else {
-                        if (handle.CentPosition.Y + dy <= _centerButton.CentPosition.Y) {
+                    else{
+                        if (handle.CentPosition.Y + dy <= _centerButton.CentPosition.Y){
                             dy = _centerButton.Y - handle.Y + 1;
                         }
                     }
                 }
             }
-            if (_rotRestriction == HandleMovementRestriction.NoRotationOnX) {
-                if (button == _centerButton) {
+            if (_rotRestriction == HandleMovementRestriction.NoRotationOnX){
+                if (button == _centerButton){
                     dy = 0;
                 }
-                else {
+                else{
                     dx = 0;
                     //this next part prevents handles from "crossing over" the center to the other side
-                    if (button == _prevButton) {
-                        if (button.Y + dy >= _centerButton.Y-9){
-                            dy = _centerButton.X - button.Y-10;
+                    if (button == _prevButton){
+                        if (button.Y + dy >= _centerButton.Y - 9){
+                            dy = _centerButton.X - button.Y - 10;
                         }
                     }
                     else{
-                        if (button.Y + dy <= _centerButton.Y+9) {
-                            dy = _centerButton.Y - button.Y +10;
+                        if (button.Y + dy <= _centerButton.Y + 9){
+                            dy = _centerButton.Y - button.Y + 10;
                         }
                     }
                 }
             }
-            if (_rotRestriction == HandleMovementRestriction.NoRotationOnY) {
-                if (button == _centerButton) {
+            if (_rotRestriction == HandleMovementRestriction.NoRotationOnY){
+                if (button == _centerButton){
                     dx = 0;
                 }
-                else {
+                else{
                     dy = 0;
                     //this next part prevents handles from "crossing over" the center to the other side
-                    if (button == _prevButton) {
-                        if (button.X + dx >= _centerButton.X-9){
-                            dx = _centerButton.X - button.X-10;
+                    if (button == _prevButton){
+                        if (button.X + dx >= _centerButton.X - 9){
+                            dx = _centerButton.X - button.X - 10;
                         }
                     }
                     else{
-                        if (button.X + dx <= _centerButton.X+9) {
+                        if (button.X + dx <= _centerButton.X + 9){
                             dx = _centerButton.X - button.X + 10;
                         }
                     }
                 }
             }
+
             #endregion
 
             #region distance clamp
 
-            if (button == _prevButton) {
-                if (Common.GetDist((button.CentPosition.X + dx), (button.CentPosition.Y + dy), _centerButton.CentPosition.X, _centerButton.CentPosition.Y) < _handleMinDist) {
+            if (button == _prevButton){
+                if (Common.GetDist((button.CentPosition.X + dx), (button.CentPosition.Y + dy), _centerButton.CentPosition.X, _centerButton.CentPosition.Y) < _handleMinDist){
                     Vector2 tempDest = _prevLine.DestPoint - _prevLine.OriginPoint;
                     tempDest.X += dx;
                     tempDest.Y += dy;
@@ -282,8 +282,8 @@ namespace Drydock.Logic{
                     dy = tempDest.Y - _prevLine.DestPoint.Y;
                 }
             }
-            if(button == _nextButton){
-                if (Common.GetDist((button.CentPosition.X + dx), (button.CentPosition.Y + dy), _centerButton.CentPosition.X, _centerButton.CentPosition.Y) < _handleMinDist) {
+            if (button == _nextButton){
+                if (Common.GetDist((button.CentPosition.X + dx), (button.CentPosition.Y + dy), _centerButton.CentPosition.X, _centerButton.CentPosition.Y) < _handleMinDist){
                     Vector2 tempDest = _nextLine.DestPoint - _nextLine.OriginPoint;
                     tempDest.X += dx;
                     tempDest.Y += dy;
@@ -295,10 +295,10 @@ namespace Drydock.Logic{
                     dy = tempDest.Y - _nextLine.DestPoint.Y;
                 }
             }
-            
+
             #endregion
+
             _clampByNeighbors(ref dx, ref dy, button);
-            
         }
 
         void BackNeighborClamp(ref float dx, ref float dy, Button button){
@@ -308,7 +308,7 @@ namespace Drydock.Logic{
                     dx = PrevHandle.CentButtonCenter.X - button.CentPosition.X;
                 }
             }
-            if (PrevHandle == null && NextHandle != null) {
+            if (PrevHandle == null && NextHandle != null){
                 if (button.CentPosition.X + dx > NextHandle.CentButtonCenter.X){
                     dx = NextHandle.CentButtonCenter.X - button.CentPosition.X;
                 }
@@ -345,19 +345,19 @@ namespace Drydock.Logic{
             //prevents bounding handles from crossing center handle's satellite buttons (x+y direction)
             switch ((HandleType) button.Identifier){
                 case HandleType.Center:
-                    if (NextHandle == null && PrevHandle != null){//assume this is a next bounding handle
+                    if (NextHandle == null && PrevHandle != null){ //assume this is a next bounding handle
                         if (button.CentPosition.X + dx < PrevHandle.NextButtonCenter.X){
                             dx = PrevHandle.NextButtonCenter.X - button.CentPosition.X;
                         }
-                        if (_prevButton.CentPosition.Y + dy > PrevHandle.NextButtonCenter.Y) {
+                        if (_prevButton.CentPosition.Y + dy > PrevHandle.NextButtonCenter.Y){
                             dy = PrevHandle.NextButtonCenter.Y - _prevButton.CentPosition.Y;
                         }
                     }
-                    if (NextHandle != null && PrevHandle == null) {//assume this is a prev bounding handle
-                        if (button.CentPosition.X + dx > NextHandle.PrevButtonCenter.X) {
+                    if (NextHandle != null && PrevHandle == null){ //assume this is a prev bounding handle
+                        if (button.CentPosition.X + dx > NextHandle.PrevButtonCenter.X){
                             dx = NextHandle.PrevButtonCenter.X - button.CentPosition.X;
                         }
-                        if (_nextButton.CentPosition.Y + dy > NextHandle.NextButtonCenter.Y) {
+                        if (_nextButton.CentPosition.Y + dy > NextHandle.NextButtonCenter.Y){
                             dy = NextHandle.NextButtonCenter.Y - _nextButton.CentPosition.Y;
                         }
                     }
@@ -371,27 +371,26 @@ namespace Drydock.Logic{
                         dx = PrevHandle.CentButtonCenter.X - button.CentPosition.X;
                     }
                 }
-                if ((HandleType)button.Identifier == HandleType.Next) {
-                    if (button.CentPosition.X + dx > NextHandle.CentButtonCenter.X) {
+                if ((HandleType) button.Identifier == HandleType.Next){
+                    if (button.CentPosition.X + dx > NextHandle.CentButtonCenter.X){
                         dx = NextHandle.CentButtonCenter.X - button.CentPosition.X;
                     }
                 }
             }
         }
 
-        void TopNeighborClamp(ref float dx, ref float dy, Button button) {
-            
+        void TopNeighborClamp(ref float dx, ref float dy, Button button){
         }
 
-        void SideNeighborClamp(ref float dx, ref float dy, Button button) {
+        void SideNeighborClamp(ref float dx, ref float dy, Button button){
             //prevent symmetric buttons from crossing each other
-            if (PrevHandle != null && NextHandle == null) {
-                if (button.CentPosition.X + dx < PrevHandle.CentButtonCenter.X) {
+            if (PrevHandle != null && NextHandle == null){
+                if (button.CentPosition.X + dx < PrevHandle.CentButtonCenter.X){
                     dx = PrevHandle.CentButtonCenter.X - button.CentPosition.X;
                 }
             }
-            if (PrevHandle == null && NextHandle != null) {
-                if (button.CentPosition.X + dx > NextHandle.CentButtonCenter.X) {
+            if (PrevHandle == null && NextHandle != null){
+                if (button.CentPosition.X + dx > NextHandle.CentButtonCenter.X){
                     dx = NextHandle.CentButtonCenter.X - button.CentPosition.X;
                 }
             }
@@ -399,25 +398,25 @@ namespace Drydock.Logic{
             //prevent buttons from crossing the middle handle's center position
             //also prevents center handle from crossing the two bounding handle's satellite buttons
             CurveHandle handleToUse = NextHandle ?? PrevHandle;
-            switch ((HandleType)button.Identifier) {
+            switch ((HandleType) button.Identifier){
                 case HandleType.Prev:
-                    if (NextHandle == null || PrevHandle == null) { //assume  this is a bounding handle
-                        if (button.CentPosition.Y + dy > handleToUse.PrevButtonCenter.Y) {
+                    if (NextHandle == null || PrevHandle == null){ //assume  this is a bounding handle
+                        if (button.CentPosition.Y + dy > handleToUse.PrevButtonCenter.Y){
                             dy = handleToUse.PrevButtonCenter.Y - _prevButton.CentPosition.Y;
                         }
                     }
 
                     break;
                 case HandleType.Center:
-                    if (NextHandle != null && PrevHandle != null) { //assume this is the center curve handle
-                        if (button.CentPosition.Y + dy < NextHandle.PrevButtonCenter.Y) {
+                    if (NextHandle != null && PrevHandle != null){ //assume this is the center curve handle
+                        if (button.CentPosition.Y + dy < NextHandle.PrevButtonCenter.Y){
                             dy = NextHandle.PrevButtonCenter.Y - _centerButton.CentPosition.Y;
                         }
                     }
                     break;
                 case HandleType.Next:
-                    if (NextHandle == null || PrevHandle == null) { //assume  this is a bounding handle
-                        if (button.CentPosition.Y + dy > handleToUse.PrevButtonCenter.Y) {
+                    if (NextHandle == null || PrevHandle == null){ //assume  this is a bounding handle
+                        if (button.CentPosition.Y + dy > handleToUse.PrevButtonCenter.Y){
                             dy = handleToUse.PrevButtonCenter.Y - _nextButton.CentPosition.Y;
                         }
                     }
@@ -425,21 +424,21 @@ namespace Drydock.Logic{
             }
 
             //prevents bounding handles from crossing center handle's satellite buttons (x+y direction)
-            switch ((HandleType)button.Identifier) {
+            switch ((HandleType) button.Identifier){
                 case HandleType.Center:
-                    if (NextHandle == null && PrevHandle != null) {//assume this is a next bounding handle
-                        if (button.CentPosition.X + dx < PrevHandle.NextButtonCenter.X) {
+                    if (NextHandle == null && PrevHandle != null){ //assume this is a next bounding handle
+                        if (button.CentPosition.X + dx < PrevHandle.NextButtonCenter.X){
                             dx = PrevHandle.NextButtonCenter.X - button.CentPosition.X;
                         }
-                        if (_prevButton.CentPosition.Y + dy > PrevHandle.NextButtonCenter.Y) {
+                        if (_prevButton.CentPosition.Y + dy > PrevHandle.NextButtonCenter.Y){
                             dy = PrevHandle.NextButtonCenter.Y - _prevButton.CentPosition.Y;
                         }
                     }
-                    if (NextHandle != null && PrevHandle == null) {//assume this is a prev bounding handle
-                        if (button.CentPosition.X + dx > NextHandle.PrevButtonCenter.X) {
+                    if (NextHandle != null && PrevHandle == null){ //assume this is a prev bounding handle
+                        if (button.CentPosition.X + dx > NextHandle.PrevButtonCenter.X){
                             dx = NextHandle.PrevButtonCenter.X - button.CentPosition.X;
                         }
-                        if (_nextButton.CentPosition.Y + dy > NextHandle.NextButtonCenter.Y) {
+                        if (_nextButton.CentPosition.Y + dy > NextHandle.NextButtonCenter.Y){
                             dy = NextHandle.NextButtonCenter.Y - _nextButton.CentPosition.Y;
                         }
                     }
@@ -447,21 +446,21 @@ namespace Drydock.Logic{
             }
 
             //prevents the center button's satellite buttons from crossing the bounding handle centers
-            if (NextHandle != null && PrevHandle != null) {
-                if ((HandleType)button.Identifier == HandleType.Prev) {
-                    if (button.CentPosition.X + dx < PrevHandle.CentButtonCenter.X) {
+            if (NextHandle != null && PrevHandle != null){
+                if ((HandleType) button.Identifier == HandleType.Prev){
+                    if (button.CentPosition.X + dx < PrevHandle.CentButtonCenter.X){
                         dx = PrevHandle.CentButtonCenter.X - button.CentPosition.X;
                     }
                 }
-                if ((HandleType)button.Identifier == HandleType.Next) {
-                    if (button.CentPosition.X + dx > NextHandle.CentButtonCenter.X) {
+                if ((HandleType) button.Identifier == HandleType.Next){
+                    if (button.CentPosition.X + dx > NextHandle.CentButtonCenter.X){
                         dx = NextHandle.CentButtonCenter.X - button.CentPosition.X;
                     }
                 }
             }
         }
 
-        void BalancedCenterTranslate(float dx, float dy) {
+        void BalancedCenterTranslate(float dx, float dy){
             _centerButton.X += dx;
             _centerButton.Y += dy;
             _prevButton.X += dx;
@@ -530,14 +529,14 @@ namespace Drydock.Logic{
                     break;
                 case HandleType.Prev:
                     _prevLine.TranslateDestination(dx, dy);
-                    if (_internalSymmetry) {
-                        RawNextTranslate(dx * _reflectionX, dy * _reflectionY);
+                    if (_internalSymmetry){
+                        RawNextTranslate(dx*_reflectionX, dy*_reflectionY);
                     }
-                    else {
-                        _nextLine.Angle = (float)(_prevLine.Angle + Math.PI);
+                    else{
+                        _nextLine.Angle = (float) (_prevLine.Angle + Math.PI);
 
-                        _nextButton.X = _nextLine.DestPoint.X - _nextButton.BoundingBox.Width / 2;
-                        _nextButton.Y = _nextLine.DestPoint.Y - _nextButton.BoundingBox.Height / 2;
+                        _nextButton.X = _nextLine.DestPoint.X - _nextButton.BoundingBox.Width/2;
+                        _nextButton.Y = _nextLine.DestPoint.Y - _nextButton.BoundingBox.Height/2;
                     }
 
                     if (SymmetricHandle != null && !_dontTranslateHandles){
@@ -547,14 +546,14 @@ namespace Drydock.Logic{
                     break;
                 case HandleType.Next:
                     _nextLine.TranslateDestination(dx, dy);
-                    if (_internalSymmetry) {
-                        RawPrevTranslate(dx * _reflectionX, dy * _reflectionY);
+                    if (_internalSymmetry){
+                        RawPrevTranslate(dx*_reflectionX, dy*_reflectionY);
                     }
-                    else {
-                        _prevLine.Angle = (float)(_nextLine.Angle - Math.PI);
+                    else{
+                        _prevLine.Angle = (float) (_nextLine.Angle - Math.PI);
 
-                        _prevButton.X = _prevLine.DestPoint.X - _prevButton.BoundingBox.Width / 2;
-                        _prevButton.Y = _prevLine.DestPoint.Y - _prevButton.BoundingBox.Height / 2;
+                        _prevButton.X = _prevLine.DestPoint.X - _prevButton.BoundingBox.Width/2;
+                        _prevButton.Y = _prevLine.DestPoint.Y - _prevButton.BoundingBox.Height/2;
                     }
 
                     if (SymmetricHandle != null && !_dontTranslateHandles){
@@ -584,6 +583,12 @@ namespace Drydock.Logic{
                 state: FadeComponent.FadeTrigger.EntryExit
                 );
         }
+
+        #region Nested type: ClampByNeighbors
+
+        delegate void ClampByNeighbors(ref float dx, ref float dy, Button button);
+
+        #endregion
 
         #region Nested type: HandleType
 

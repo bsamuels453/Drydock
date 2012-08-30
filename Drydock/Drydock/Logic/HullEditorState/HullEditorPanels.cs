@@ -1,6 +1,5 @@
 ﻿#region
 
-using System;
 using System.IO;
 using System.Xml;
 using Drydock.Render;
@@ -10,7 +9,7 @@ using Drydock.Utilities;
 
 #endregion
 
-namespace Drydock.Logic{
+namespace Drydock.Logic.HullEditorState{
 
     #region namespace panel stuff
 
@@ -112,6 +111,11 @@ namespace Drydock.Logic{
             }
         }
 
+        public void Dispose(){
+            ElementCollection.Dispose();
+            PanelRenderTarget.Dispose();
+        }
+
         public void Update(){
             Curves.Update();
         }
@@ -124,24 +128,24 @@ namespace Drydock.Logic{
         /// <param name="dy"> </param>
         /// <param name="doClampCheck"> </param>
         public void ModifyHandlePosition(HandleAlias handle, ref float dx, ref float dy, bool doClampCheck){
-            var dxi = (dx * Curves.PixelsPerMeter);
-            var dyi = (dy * Curves.PixelsPerMeter);
+            var dxi = (dx*Curves.PixelsPerMeter);
+            var dyi = (dy*Curves.PixelsPerMeter);
 
-            if (!doClampCheck) {
-                switch (handle) {
+            if (!doClampCheck){
+                switch (handle){
                     case HandleAlias.First:
                         Curves[0].Handle.TranslatePosition(dxi, dyi);
                         break;
                     case HandleAlias.Middle:
-                        Curves[Curves.Count / 2].Handle.TranslatePosition(dxi, dyi);
+                        Curves[Curves.Count/2].Handle.TranslatePosition(dxi, dyi);
                         break;
                     case HandleAlias.Last:
                         Curves[Curves.Count - 1].Handle.TranslatePosition(dxi, dyi);
                         break;
                     case HandleAlias.ExtremaY:
                         var extremaController = Curves[0];
-                        foreach (var curve in Curves) {
-                            if (curve.CenterHandlePos.Y > extremaController.CenterHandlePos.Y) {
+                        foreach (var curve in Curves){
+                            if (curve.CenterHandlePos.Y > extremaController.CenterHandlePos.Y){
                                 extremaController = curve;
                             }
                         }
@@ -150,8 +154,6 @@ namespace Drydock.Logic{
                 }
             }
             else{
-
-
             }
         }
 
