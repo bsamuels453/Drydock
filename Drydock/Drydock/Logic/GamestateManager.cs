@@ -31,9 +31,7 @@ namespace Drydock.Logic{
         }
 
         public static void SpecialKeyboardRec(KeyboardState state){
-            if (state.IsKeyDown(Keys.P)){
-                _currentState.Dispose();
-            }
+
         }
     }
 

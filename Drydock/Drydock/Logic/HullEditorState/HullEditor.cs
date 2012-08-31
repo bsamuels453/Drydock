@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Drydock.Control;
+using Drydock.Logic.DoodadEditorState;
 using Drydock.Render;
 using Drydock.UI;
 using Microsoft.Xna.Framework;
@@ -21,9 +22,9 @@ namespace Drydock.Logic.HullEditorState{
 
 
         public HullEditor(){
-            _sidepanel = new SideEditorPanel(0, 0, ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "side.xml");
-            _toppanel = new TopEditorPanel(0, ScreenData.GetScreenValueY(0.5f), ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "top.xml");
-            _backpanel = new BackEditorPanel(ScreenData.GetScreenValueX(0.5f), 0, ScreenData.GetScreenValueX(0.25f), ScreenData.GetScreenValueY(0.5f), "back.xml");
+            _sidepanel = new SideEditorPanel(0, 0, ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "save/side.xml");
+            _toppanel = new TopEditorPanel(0, ScreenData.GetScreenValueY(0.5f), ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "save/top.xml");
+            _backpanel = new BackEditorPanel(ScreenData.GetScreenValueX(0.5f), 0, ScreenData.GetScreenValueX(0.25f), ScreenData.GetScreenValueY(0.5f), "save/back.xml");
 
             _sidepanel.BackPanel = _backpanel;
             _sidepanel.TopPanel = _toppanel;
@@ -49,6 +50,7 @@ namespace Drydock.Logic.HullEditorState{
         }
 
         public void Dispose(){
+            InputEventDispatcher.EventSubscribers.Remove(this);
             _previewRenderer.Dispose();
             _backpanel.Dispose();
             _sidepanel.Dispose();
@@ -59,17 +61,24 @@ namespace Drydock.Logic.HullEditorState{
 
         public override InterruptState OnKeyboardEvent(KeyboardState state){
             if (state.IsKeyDown(Keys.LeftControl) && state.IsKeyDown(Keys.S)){
-                ValidateCurveInformation();
-                //_sidepanel.SaveCurves("side.xml");
-                //_toppanel.SaveCurves("top.xml");
-                //_backpanel.SaveCurves("back.xml");
+                SaveCurves("save/");
+                return InterruptState.InterruptEventDispatch;
+            }
+
+            if (state.IsKeyDown(Keys.LeftControl) && state.IsKeyDown(Keys.N)) {
+                var sideInfo = _sidepanel.Curves.GetControllerInfo();
+                var backInfo = _backpanel.Curves.GetControllerInfo();
+                var topInfo = _toppanel.Curves.GetControllerInfo();
+
+                GamestateManager.SetGameState(new DoodadEditor(backInfo, sideInfo, topInfo));
+                Dispose();
                 return InterruptState.InterruptEventDispatch;
             }
 
             return InterruptState.AllowOtherEvents;
         }
 
-        void ValidateCurveInformation(){
+        public void SaveCurves(string directory){
             //dear mother of god why does this have to be hardcoded
             //top set
             var bowPointTop = _toppanel.Curves.ToMeters(_toppanel.Curves[1].CenterHandlePos);
@@ -176,9 +185,9 @@ namespace Drydock.Logic.HullEditorState{
             topData[2].NextHandleLength = 5;
             topData[2].PrevHandleLength = starboardNLengthTop;
 
-            SaveCurve("back.xml", backData);
-            SaveCurve("top.xml", topData);
-            SaveCurve("side.xml", sideData);
+            SaveCurve(directory+"back.xml", backData);
+            SaveCurve(directory+"top.xml", topData);
+            SaveCurve(directory+"side.xml", sideData);
         }
 
         void SaveCurve(string filename, List<CurveData> curveData){

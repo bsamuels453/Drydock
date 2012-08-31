@@ -121,7 +121,7 @@ namespace Drydock.Logic.HullEditorState{
                                                            _sideCurves.ToMeters(bezierCurve.NextHandlePos))).ToList();
 
 
-            var sideIntersectGenerator = new BezierIntersect(li);
+            var sideIntersectGenerator = new BezierDependentGenerator(li);
 
             var sideIntersectionCache = new float[_meshVertexWidth];
 
@@ -137,7 +137,7 @@ namespace Drydock.Logic.HullEditorState{
                 float scaleY = sideIntersectionCache[x]/maxY;
 
                 var bezierInfo = _backCurves.GetControllerInfo(scaleX, scaleY);
-                var crossIntersectGenerator = new BezierIntersect(bezierInfo);
+                var crossIntersectGenerator = new BezierDependentGenerator(bezierInfo);
 
                 for (int z = 0; z < _meshVertexWidth/2; z++){
                     Vector2 pos = crossIntersectGenerator.GetValueFromIndependent(yDelta[x]*(z));
@@ -213,6 +213,7 @@ namespace Drydock.Logic.HullEditorState{
 
         public void Dispose(){
             _renderTarget.Dispose();
+            _geometryBuffer.Dispose();
         }
 
         #region event handlers

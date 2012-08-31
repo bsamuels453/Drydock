@@ -163,12 +163,14 @@
     <Compile Include="Control\CanReceiveInputEvents.cs" />
     <Compile Include="Control\InputEventDispatcher.cs" />
     <Compile Include="DebugTimer.cs" />
+    <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
     <Compile Include="Logic\HullEditorState\BezierCurve.cs" />
     <Compile Include="Logic\HullEditorState\BezierCurveCollection.cs" />
     <Compile Include="Logic\HullEditorState\CurveHandle.cs" />
     <Compile Include="Logic\GamestateManager.cs" />
     <Compile Include="Logic\HullEditorState\HullEditor.cs" />
     <Compile Include="Logic\HullEditorState\HullEditorPanels.cs" />
+    <Compile Include="Logic\DoodadEditorState\HullGeometryGenerator.cs" />
     <Compile Include="Logic\HullEditorState\PreviewRenderer.cs" />
     <Compile Include="Render\BufferObject.cs" />
     <Compile Include="Render\IDrawable.cs" />

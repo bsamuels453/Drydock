@@ -8,15 +8,15 @@ using Microsoft.Xna.Framework;
 
 namespace Drydock.Utilities{
     /// <summary>
-    ///   REMEMEBER TO THROW AWAY THIS CLASS'S INSTANCES EVERY TIME THE RELEVANT CURVE CHANGES!
+    ///   generates bezier intersection point from an independent value
     /// </summary>
-    internal class BezierIntersect{
+    internal class BezierDependentGenerator{
         readonly List<BoundCache> _boundCache;
         readonly List<BezierInfo> _curveinfo;
         readonly float _largestX;
         readonly int _resolution; //represents the number of halfing operations required to get a result with an accuracy of less than one pixel in the worst case
 
-        public BezierIntersect(List<BezierInfo> curveinfo){
+        public BezierDependentGenerator(List<BezierInfo> curveinfo){
             _curveinfo = curveinfo;
             float dist = 0;
             for (int i = 0; i < _curveinfo.Count - 1; i++){
@@ -130,20 +130,6 @@ namespace Drydock.Utilities{
             return (curCache.LeftVal + curCache.RightVal)/2;
         }
 
-
-        float GenerateBoundValueX(float t, int curvesToUse){
-            Vector2 v;
-            Bezier.GetBezierValue(
-                out v,
-                _curveinfo[curvesToUse].Pos,
-                _curveinfo[curvesToUse].NextControl,
-                _curveinfo[curvesToUse + 1].PrevControl,
-                _curveinfo[curvesToUse + 1].Pos,
-                t
-                );
-            return v.X;
-        }
-
         Vector2 GenerateBoundValue(float t, int curvesToUse){
             Vector2 v;
             Bezier.GetBezierValue(
@@ -187,6 +173,48 @@ namespace Drydock.Utilities{
         }
 
         #endregion
+    }
+
+    /// <summary>
+    ///   generates bezier intersection point from a dependent value
+    /// </summary>
+    internal class BezierIndependentGenerator{
+        readonly List<Vector2> _pointCache; 
+
+        public BezierIndependentGenerator(List<BezierInfo> curveinfo) {
+            _pointCache = new List<Vector2>();
+
+            for (int curve = 0; curve < curveinfo.Count - 1; curve++){
+                float estArcLen = Vector2.Distance(curveinfo[curve].Pos, curveinfo[curve + 1].Pos);
+                float numPoints = estArcLen * 30;//eyeballing it to the max, this class's speed isnt important so feel free to increase this value
+
+                for (int point = 0; point <= numPoints; point++){
+                    float t = point / numPoints;
+                    Vector2 vec;
+
+                    Bezier.GetBezierValue(
+                        out vec,
+                        curveinfo[curve].Pos,
+                        curveinfo[curve].NextControl,
+                        curveinfo[curve + 1].PrevControl,
+                        curveinfo[curve + 1].Pos,
+                        t
+                        );
+
+                    _pointCache.Add(vec);
+
+                }
+            }
+
+            int f = 5;
+        }
+
+
+        public Vector2 GetValueFromDependent(float dependent) {
+
+            return Vector2.Zero;
+        }
+
     }
 
     public struct BezierInfo{
