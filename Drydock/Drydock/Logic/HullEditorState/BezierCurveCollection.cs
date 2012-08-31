@@ -298,7 +298,7 @@ namespace Drydock.Logic.HullEditorState{
                 prevCurve.NextHandlePos,
                 nextCurve.PrevHandlePos,
                 nextCurve.CenterHandlePos,
-                t
+                (float)t
                 );
 
             return retVal;
