@@ -252,7 +252,7 @@ namespace Drydock.Utilities{
             }
 
             var destPointIndex = FindClosestValue(distToPointList, distance);
-            return _pointCache[destPointIndex];
+            return _pointCache[originIndex+destPointIndex];
         }
 
         /// <summary>
@@ -276,6 +276,14 @@ namespace Drydock.Utilities{
 
 
             return retList;
+        }
+
+        public float GetArcLength(){
+            float total = 0;
+            for (int i = 0; i < _pointCache.Count - 1; i++){
+                total += Vector2.Distance(_pointCache[i], _pointCache[i + 1]);
+            }
+            return total;
         }
 
         List<int> FindLowestValue(float[] distList){
