@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Drydock.Logic.HullEditorState;
 using Microsoft.Xna.Framework;
 
 #endregion
@@ -185,14 +186,19 @@ namespace Drydock.Utilities{
     /// </summary>
     internal class BruteBezierGenerator{
         readonly List<Vector2> _pointCache;
+        readonly List<int> _curveStartIndexes;//contains a list of indexes that specify where a curve starts in the pointCache 
+        List<float> _curveSegmentLengths;
+        float _totalArcLen;
 
         public BruteBezierGenerator(List<BezierInfo> curveinfo){
             _pointCache = new List<Vector2>();
-
+            _curveStartIndexes = new List<int>(curveinfo.Count);
+            _curveStartIndexes.Add(0);
             for (int curve = 0; curve < curveinfo.Count - 1; curve++){
                 float estArcLen = Vector2.Distance(curveinfo[curve].Pos, curveinfo[curve + 1].Pos);
                 int numPoints = (int) estArcLen*200; //eyeballing it to the max, this class's speed isnt important so feel free to increase this value
                 //right now it causes a ~half-centimeter resolution in worst case scenario
+                _curveStartIndexes.Add(numPoints + _curveStartIndexes[_curveStartIndexes.Count-1]);
 
                 for (int point = 0; point <= numPoints; point++){
                     float t = point/(float) numPoints;
@@ -278,11 +284,47 @@ namespace Drydock.Utilities{
             return retList;
         }
 
-        public float GetArcLength(){
-            float total = 0;
-            for (int i = 0; i < _pointCache.Count - 1; i++){
-                total += Vector2.Distance(_pointCache[i], _pointCache[i + 1]);
+        public Vector2 GetParameterizedPoint(double t) {
+            double pointArcLen = GetArcLength() * t;
+            double tempLen = pointArcLen;
+
+            //figure out which curve is going to contain point t
+            int segmentIndex;
+            for (segmentIndex = 0; segmentIndex < _curveSegmentLengths.Count; segmentIndex++) {
+                tempLen -= _curveSegmentLengths[segmentIndex];
+                if (tempLen < 0) {
+                    tempLen += _curveSegmentLengths[segmentIndex];
+                    tempLen /= _curveSegmentLengths[segmentIndex]; //this turns tempLen into a t(0-1)
+                    break;
+                }
             }
+
+            if (segmentIndex == _curveSegmentLengths.Count) { //clamp it 
+                segmentIndex--;
+                tempLen = 1;
+            }
+
+            int offset = _curveStartIndexes[segmentIndex + 1] - _curveStartIndexes[segmentIndex] + 1;//where did this +1 come from? nobody knows.
+            offset = (int)(tempLen * offset);
+            return _pointCache[_curveStartIndexes[segmentIndex] + offset];
+        }
+
+        public float GetArcLength(){
+            if (_curveSegmentLengths != null){
+                return _totalArcLen;
+            }
+            _curveSegmentLengths = new List<float>();
+            float total = 0;
+
+           for(int i=0; i<_curveStartIndexes.Count-1; i++){
+                float len=0;
+                for (int p = _curveStartIndexes[i]; p < _curveStartIndexes[i + 1]-1; p++) {
+                    len += Vector2.Distance(_pointCache[p], _pointCache[p + 1]);
+                }
+                _curveSegmentLengths.Add(len);
+                total += len;
+            }
+           _totalArcLen = total;
             return total;
         }
 
