@@ -2,15 +2,13 @@
 
 using System;
 using System.Collections.Generic;
-using Drydock.Logic.HullEditorState;
 using Microsoft.Xna.Framework;
 
 #endregion
 
 namespace Drydock.Utilities{
     /// <summary>
-    ///   generates bezier intersection point from an independent value
-    ///   do note that x is treated as an independent v variable, and y is dependent
+    ///   generates bezier intersection point from an independent value do note that x is treated as an independent v variable, and y is dependent
     /// </summary>
     internal class BezierDependentGenerator{
         readonly List<BoundCache> _boundCache;
@@ -133,7 +131,7 @@ namespace Drydock.Utilities{
         }
 
         /// <summary>
-        /// just a function to get the bezier value from a parameterized point 
+        ///   just a function to get the bezier value from a parameterized point
         /// </summary>
         Vector2 GenerateBoundValue(float t, int curvesToUse){
             Vector2 v;
@@ -181,12 +179,11 @@ namespace Drydock.Utilities{
     }
 
     /// <summary>
-    ///   generates points from a set of bezier curves via brute force
-    ///   do note that x is treated as an independent v variable, and y is dependent
+    ///   generates points from a set of bezier curves via brute force do note that x is treated as an independent v variable, and y is dependent
     /// </summary>
     internal class BruteBezierGenerator{
+        readonly List<int> _curveStartIndexes; //contains a list of indexes that specify where a curve starts in the pointCache 
         readonly List<Vector2> _pointCache;
-        readonly List<int> _curveStartIndexes;//contains a list of indexes that specify where a curve starts in the pointCache 
         List<float> _curveSegmentLengths;
         float _totalArcLen;
 
@@ -198,7 +195,7 @@ namespace Drydock.Utilities{
                 float estArcLen = Vector2.Distance(curveinfo[curve].Pos, curveinfo[curve + 1].Pos);
                 int numPoints = (int) estArcLen*200; //eyeballing it to the max, this class's speed isnt important so feel free to increase this value
                 //right now it causes a ~half-centimeter resolution in worst case scenario
-                _curveStartIndexes.Add(numPoints + _curveStartIndexes[_curveStartIndexes.Count-1]);
+                _curveStartIndexes.Add(numPoints + _curveStartIndexes[_curveStartIndexes.Count - 1]);
 
                 for (int point = 0; point <= numPoints; point++){
                     float t = point/(float) numPoints;
@@ -219,9 +216,9 @@ namespace Drydock.Utilities{
         }
 
         /// <summary>
-        /// this method really doesn't belong in a class used to getting intersects, but it's still nifty
+        ///   this method really doesn't belong in a class used to getting intersects, but it's still nifty
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public float GetLargestDependentValue(){
             float largest = 0;
             foreach (var vector2 in _pointCache){
@@ -233,14 +230,13 @@ namespace Drydock.Utilities{
         }
 
         /// <summary>
-        /// this method takes an origin point which is assumed to be on the bezier curve, then travels down the curve until the distance between 
-        /// the origin point and current iterated point is  equal to distance.
+        ///   this method takes an origin point which is assumed to be on the bezier curve, then travels down the curve until the distance between the origin point and current iterated point is equal to distance.
         /// </summary>
         public Vector2 GetPointFromPointDist(Vector2 originPoint, float distance){
             var distList = new float[_pointCache.Count];
 
             //first we find where on our curve the origin point exists
-            for (int i = 0; i < _pointCache.Count; i++) {
+            for (int i = 0; i < _pointCache.Count; i++){
                 distList[i] = Math.Abs(_pointCache[i].X - originPoint.X);
             }
 
@@ -252,17 +248,17 @@ namespace Drydock.Utilities{
             int originIndex = xMatches[0];
 
             //now we build a list of distances between the origin point and other points on the curve
-            var distToPointList = new float[_pointCache.Count-originIndex];
-            for (int i = 0; i < _pointCache.Count - originIndex; i++) {
+            var distToPointList = new float[_pointCache.Count - originIndex];
+            for (int i = 0; i < _pointCache.Count - originIndex; i++){
                 distToPointList[i] = Vector2.Distance(originPoint, _pointCache[i + originIndex]);
             }
 
             var destPointIndex = FindClosestValue(distToPointList, distance);
-            return _pointCache[originIndex+destPointIndex];
+            return _pointCache[originIndex + destPointIndex];
         }
 
         /// <summary>
-        /// there can be multiple independent values for each supplied dependent value, so it returns a list.
+        ///   there can be multiple independent values for each supplied dependent value, so it returns a list.
         /// </summary>
         public List<Vector2> GetValuesFromDependent(float dependent){
             var distList = new float[_pointCache.Count];
@@ -284,28 +280,28 @@ namespace Drydock.Utilities{
             return retList;
         }
 
-        public Vector2 GetParameterizedPoint(double t) {
-            double pointArcLen = GetArcLength() * t;
+        public Vector2 GetParameterizedPoint(double t){
+            double pointArcLen = GetArcLength()*t;
             double tempLen = pointArcLen;
 
             //figure out which curve is going to contain point t
             int segmentIndex;
-            for (segmentIndex = 0; segmentIndex < _curveSegmentLengths.Count; segmentIndex++) {
+            for (segmentIndex = 0; segmentIndex < _curveSegmentLengths.Count; segmentIndex++){
                 tempLen -= _curveSegmentLengths[segmentIndex];
-                if (tempLen < 0) {
+                if (tempLen < 0){
                     tempLen += _curveSegmentLengths[segmentIndex];
                     tempLen /= _curveSegmentLengths[segmentIndex]; //this turns tempLen into a t(0-1)
                     break;
                 }
             }
 
-            if (segmentIndex == _curveSegmentLengths.Count) { //clamp it 
+            if (segmentIndex == _curveSegmentLengths.Count){ //clamp it 
                 segmentIndex--;
                 tempLen = 1;
             }
 
-            int offset = _curveStartIndexes[segmentIndex + 1] - _curveStartIndexes[segmentIndex] + 1;//where did this +1 come from? nobody knows.
-            offset = (int)(tempLen * offset);
+            int offset = _curveStartIndexes[segmentIndex + 1] - _curveStartIndexes[segmentIndex] + 1; //where did this +1 come from? nobody knows.
+            offset = (int) (tempLen*offset);
             return _pointCache[_curveStartIndexes[segmentIndex] + offset];
         }
 
@@ -316,15 +312,15 @@ namespace Drydock.Utilities{
             _curveSegmentLengths = new List<float>();
             float total = 0;
 
-           for(int i=0; i<_curveStartIndexes.Count-1; i++){
-                float len=0;
-                for (int p = _curveStartIndexes[i]; p < _curveStartIndexes[i + 1]-1; p++) {
+            for (int i = 0; i < _curveStartIndexes.Count - 1; i++){
+                float len = 0;
+                for (int p = _curveStartIndexes[i]; p < _curveStartIndexes[i + 1] - 1; p++){
                     len += Vector2.Distance(_pointCache[p], _pointCache[p + 1]);
                 }
                 _curveSegmentLengths.Add(len);
                 total += len;
             }
-           _totalArcLen = total;
+            _totalArcLen = total;
             return total;
         }
 
@@ -334,31 +330,31 @@ namespace Drydock.Utilities{
             bool isDecreasing;
 
             //special case for first point
-            if (distList[1] - distList[0] > 0) {
+            if (distList[1] - distList[0] > 0){
                 //in this case, the endpoint matches up with the dependent 
                 isDecreasing = false;
                 retList.Add(0);
             }
-            else {
+            else{
                 isDecreasing = true;
             }
 
-            for (int i = 1; i < _pointCache.Count - 1; i++) {
-                if (isDecreasing) {
-                    if (distList[i + 1] - distList[i] > 0) {
+            for (int i = 1; i < _pointCache.Count - 1; i++){
+                if (isDecreasing){
+                    if (distList[i + 1] - distList[i] > 0){
                         isDecreasing = false;
                         retList.Add(i);
                     }
                 }
-                else {
-                    if (distList[i + 1] - distList[i] < 0) {
+                else{
+                    if (distList[i + 1] - distList[i] < 0){
                         isDecreasing = true;
                     }
                 }
             }
 
             //special case for last point
-            if (distList[_pointCache.Count - 1] - distList[_pointCache.Count - 2] < 0) {
+            if (distList[_pointCache.Count - 1] - distList[_pointCache.Count - 2] < 0){
                 retList.Add(distList.GetLength(0) - 1);
             }
 
@@ -366,11 +362,10 @@ namespace Drydock.Utilities{
         }
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <returns>index of the valuelist that is closest to the value</returns>
+        /// <returns> index of the valuelist that is closest to the value </returns>
         int FindClosestValue(float[] valueList, float value){
-            for (int i = 0; i < valueList.GetLength(0)-1; i++){
+            for (int i = 0; i < valueList.GetLength(0) - 1; i++){
                 if (valueList[i] <= value && valueList[i + 1] > value){
                     float d1 = Math.Abs(valueList[i] - value);
                     float d2 = Math.Abs(valueList[i + 1] - value);
