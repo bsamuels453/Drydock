@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using Drydock.Control;
 using Drydock.UI;
 using Microsoft.Xna.Framework.Input;
@@ -19,6 +20,7 @@ namespace Drydock.Logic{
             if (_currentState != null){
                 _currentState.Dispose();
             }
+            GC.Collect();
             _currentState = newState;
         }
 

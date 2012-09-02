@@ -201,8 +201,10 @@
     <Compile Include="Render\ScreenData.cs" />
     <Compile Include="Render\ScreenText.cs" />
     <Compile Include="Render\TextBatch.cs" />
+    <Compile Include="Utilities\BezierCurveList.cs" />
     <Compile Include="Utilities\BezierIntersect.cs" />
     <Compile Include="Utilities\ConfigRetriever.cs" />
+    <Compile Include="Utilities\DVector2.cs" />
     <Compile Include="Utilities\FloatingRectangle.cs" />
     <Compile Include="Utilities\Pair.cs" />
     <Compile Include="Utilities\Singleton.cs" />

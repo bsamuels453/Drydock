@@ -31,7 +31,7 @@ namespace Drydock.Utilities{
                 pow++;
                 powResult = (int) Math.Pow(2, pow);
             }
-            _resolution = pow;
+            _resolution = pow*2;
 
             _boundCache = new List<BoundCache>(curveinfo.Count - 1);
             for (int i = 0; i < curveinfo.Count - 1; i++){
@@ -183,7 +183,7 @@ namespace Drydock.Utilities{
     /// </summary>
     internal class BruteBezierGenerator{
         readonly List<int> _curveStartIndexes; //contains a list of indexes that specify where a curve starts in the pointCache 
-        readonly List<Vector2> _pointCache;
+        readonly  List<Vector2> _pointCache;
         List<float> _curveSegmentLengths;
         float _totalArcLen;
 
@@ -275,9 +275,31 @@ namespace Drydock.Utilities{
             foreach (var index in dependentIndexList){
                 retList.Add(_pointCache[index]);
             }
-
+            if (retList.Count == 0){
+                retList.Add(new Vector2(0, 0));
+            }
 
             return retList;
+        }
+
+        public Vector2 GetValueFromIndependent(float independent){
+            var distList = new float[_pointCache.Count];
+
+            //y value is treated as the dependent value 
+            for (int i = 0; i < _pointCache.Count; i++) {
+                distList[i] = Math.Abs(_pointCache[i].X - independent);
+            }
+
+            var dependentIndexList = FindLowestValue(distList);
+
+            var retList = new List<Vector2>(dependentIndexList.Count);
+
+            foreach (var index in dependentIndexList) {
+                retList.Add(_pointCache[index]);
+            }
+
+
+            return retList[0];
         }
 
         public Vector2 GetParameterizedPoint(double t){
@@ -330,6 +352,10 @@ namespace Drydock.Utilities{
             bool isDecreasing;
 
             //special case for first point
+            if (distList.GetLength(0) < 2){
+                retList.Add(0);
+                return retList;
+            }
             if (distList[1] - distList[0] > 0){
                 //in this case, the endpoint matches up with the dependent 
                 isDecreasing = false;
@@ -338,6 +364,7 @@ namespace Drydock.Utilities{
             else{
                 isDecreasing = true;
             }
+            //end of special case
 
             for (int i = 1; i < _pointCache.Count - 1; i++){
                 if (isDecreasing){
@@ -388,6 +415,18 @@ namespace Drydock.Utilities{
             Pos = pos;
             PrevControl = prev;
             NextControl = next;
+        }
+
+        public BezierInfo CreateScaledCopy(float scaleX, float scaleY){
+            var scaledController = new BezierInfo();
+            scaledController.Pos = new Vector2();
+            scaledController.Pos.X = Pos.X * scaleX;
+            scaledController.Pos.Y = Pos.Y * scaleY;
+            scaledController.NextControl.X = NextControl.X * scaleX;
+            scaledController.NextControl.Y = NextControl.Y * scaleY;
+            scaledController.PrevControl.X = PrevControl.X * scaleX;
+            scaledController.PrevControl.Y = PrevControl.Y * scaleY;
+            return scaledController;
         }
     }
 }
