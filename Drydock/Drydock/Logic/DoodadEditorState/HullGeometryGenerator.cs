@@ -19,9 +19,10 @@ namespace Drydock.Logic.DoodadEditorState {
     /// </summary>
     class HullGeometryGenerator : CanReceiveInputEvents {
         const float _metersPerDeck = 2.13f;
-        const int _numHorizontalPrimitives = 16;//welp
+        const int _numHorizontalPrimitives = 128;//welp
         const int _primitiveHeightPerDeck = 2;
         readonly ShipGeometryBuffer _displayBuffer;
+        ScreenText scr;
 
         readonly int[] _indicies;
         readonly VertexPositionNormalTexture[] _verticies;
@@ -30,6 +31,7 @@ namespace Drydock.Logic.DoodadEditorState {
         float _cameraTheta;
          //note: less than 1 deck breaks prolly
         public HullGeometryGenerator(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo) {
+            scr = new ScreenText(0, 0, "udf");
             _cameraPhi = 0.32f;
             _cameraTheta = 0.63f;
             _cameraDistance = 100;
@@ -92,34 +94,31 @@ namespace Drydock.Logic.DoodadEditorState {
                     point.X = keelIntersect.X;
 
                     var topIntersect = topPtGen.GetValueFromIndependent(xPos);
-                    float profileXScale = topIntersect.X / berth;
+                    float profileXScale = topIntersect.Y / berth;
 
                     var scaledProfile = new List<BezierInfo>();
 
                     foreach (BezierInfo t in backCurveInfo){
                         scaledProfile.Add(t.CreateScaledCopy(profileXScale, profileYScale));
                     }
-                    if (x == _numHorizontalPrimitives - 1){
-                        int dg = 5;
-                    }
-
 
                     var pointGen = new BruteBezierGenerator(scaledProfile);
                     var profileIntersect = pointGen.GetValuesFromDependent(point.Y);
                     if (profileIntersect.Count != 1){
                         throw new Exception("curve does not pass the horizontal line test");
                     }
-                    point.Z = profileIntersect[0].X -scaledProfile[0].Pos.X;
-
-                    int f = 5;
+                    point.Z = profileIntersect[0].X - scaledProfile[0].Pos.X;
                     strip.Add(point);
-                   // keelIntersect.Y = geometryYvalues[y];
 
                 }
                 ySliceVerts.Add(strip);
             }
-            ySliceVerts[0][0] = new Vector3(ySliceVerts[0][0].X, ySliceVerts[0][0].Y, 0); //remove mystery NaN
 
+            foreach (List<Vector3> t in ySliceVerts){//remove mystery NaNs
+                if (float.IsNaN(t[0].Z)){
+                    throw new Exception("NaN Z coordinate in mesh");
+                }
+            }
             //treat the slices like a mesh
             //create mesh
             var mesh = new Vector3[ySliceVerts.Count, _numHorizontalPrimitives];
@@ -153,7 +152,7 @@ namespace Drydock.Logic.DoodadEditorState {
         
         public override InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null) {
             if (prevState != null) {
-
+                
                 if (state.LeftButton == ButtonState.Pressed){
                     int dx = state.X - ((MouseState) prevState).X;
                     int dy = state.Y - ((MouseState) prevState).Y;
@@ -173,7 +172,7 @@ namespace Drydock.Logic.DoodadEditorState {
                         Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
                     }
 
-
+                    scr.EditText("theta: " + _cameraTheta);
                     return InterruptState.InterruptEventDispatch;
 
                     /*if (state.RightButton == ButtonState.Pressed) {

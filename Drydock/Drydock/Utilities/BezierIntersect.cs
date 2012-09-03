@@ -276,7 +276,8 @@ namespace Drydock.Utilities{
                 retList.Add(_pointCache[index]);
             }
             if (retList.Count == 0){
-                retList.Add(_pointCache[0]);
+                retList.Add(_pointCache[_pointCache.Count-1]);
+                //retList.Add(new Vector2(0, 0));
             }
 
             return retList;
@@ -419,7 +420,6 @@ namespace Drydock.Utilities{
 
         public BezierInfo CreateScaledCopy(float scaleX, float scaleY){
             var scaledController = new BezierInfo();
-            scaledController.Pos = new Vector2();
             scaledController.Pos.X = Pos.X * scaleX;
             scaledController.Pos.Y = Pos.Y * scaleY;
             scaledController.NextControl.X = NextControl.X * scaleX;
