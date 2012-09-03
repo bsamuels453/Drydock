@@ -21,7 +21,7 @@ namespace Drydock.Logic.DoodadEditorState {
         }
 
         public void Update(){
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void Dispose(){

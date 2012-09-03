@@ -276,7 +276,7 @@ namespace Drydock.Utilities{
                 retList.Add(_pointCache[index]);
             }
             if (retList.Count == 0){
-                retList.Add(new Vector2(0, 0));
+                retList.Add(_pointCache[0]);
             }
 
             return retList;
