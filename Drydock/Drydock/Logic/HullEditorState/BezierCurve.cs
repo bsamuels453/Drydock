@@ -20,8 +20,8 @@ namespace Drydock.Logic.HullEditorState{
 
         const int _linesPerSide = 50;
         public readonly CurveHandle Handle;
-        readonly UIElementCollection _elementCollection;
-        readonly LineGenerator _lineTemplate;
+        UIElementCollection _elementCollection;
+        LineGenerator _lineTemplate;
         BezierCurve _nextCurve;
         List<Line> _nextLines;
         BezierCurve _prevCurve;
@@ -273,6 +273,23 @@ namespace Drydock.Logic.HullEditorState{
             Handle = new CurveHandle(buttonTemplate, lineTemplate, parentElement, new Vector2(initX, initY), component1, component2);
 
             #endregion
+        }
+
+        public void Dispose(){
+            Handle.Dispose();
+            _elementCollection = null;
+            _lineTemplate = null;
+            _nextCurve = null;
+            _prevCurve = null;
+            /*foreach (var line in _nextLines){
+                line.Dispose();
+            }
+            foreach (var line in _prevLines) {
+                line.Dispose();
+            }
+            _nextCurve.Dispose();
+            _prevCurve.Dispose();*/
+
         }
 
         #endregion

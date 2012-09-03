@@ -37,9 +37,9 @@ namespace Drydock.Logic.HullEditorState{
     internal abstract class HullEditorPanel{
         protected readonly Button Background;
         protected readonly FloatingRectangle BoundingBox;
-        public readonly BezierCurveCollection Curves;
-        protected readonly UIElementCollection ElementCollection;
-        protected readonly RenderPanel PanelRenderTarget;
+        public BezierCurveCollection Curves;
+        protected UIElementCollection ElementCollection;
+        protected RenderPanel PanelRenderTarget;
 
         protected HullEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration, PanelAlias panelType){
             BoundingBox = new FloatingRectangle(x, y, width, height);
@@ -76,6 +76,21 @@ namespace Drydock.Logic.HullEditorState{
             Update();
         }
 
+        ~HullEditorPanel(){
+            int f = 5;
+        }
+
+        public void Dispose(){
+            Background.Dispose();
+            ElementCollection.Dispose();
+            PanelRenderTarget.Dispose();
+            PanelRenderTarget = null;
+            Curves = null;
+            DisposeChild();
+        }
+
+        protected abstract void DisposeChild();
+
         public void SaveCurves(string fileName){
             var settings = new XmlWriterSettings();
             settings.Indent = true;
@@ -111,10 +126,10 @@ namespace Drydock.Logic.HullEditorState{
             }
         }
 
-        public void Dispose(){
-            ElementCollection.Dispose();
-            PanelRenderTarget.Dispose();
-        }
+        //public void Dispose(){
+            //ElementCollection.Dispose();
+            //PanelRenderTarget.Dispose();
+        //}
 
         public void Update(){
             Curves.Update();
@@ -175,6 +190,11 @@ namespace Drydock.Logic.HullEditorState{
             }
         }
 
+        protected override void DisposeChild(){
+            BackPanel = null;
+            TopPanel = null;
+        }
+
         protected override void ProcExternalDrag(object caller, ref float dx, ref float dy, bool applyClampCheck){
             float dxf = dx/Curves.PixelsPerMeter;
             float dyf = dy/Curves.PixelsPerMeter;
@@ -228,6 +248,11 @@ namespace Drydock.Logic.HullEditorState{
             Curves[Curves.Count/2].Handle.TranslateToExtern = ProcExternalDrag;
         }
 
+        protected override void DisposeChild(){
+            BackPanel = null;
+            SidePanel = null;
+        }
+
         protected override void ProcExternalDrag(object caller, ref float dx, ref float dy, bool applyClampCheck){
             float dxf = dx/Curves.PixelsPerMeter;
             float dyf = dy/Curves.PixelsPerMeter;
@@ -278,6 +303,11 @@ namespace Drydock.Logic.HullEditorState{
             Curves[0].Handle.TranslateToExtern = ProcExternalDrag;
             Curves[Curves.Count - 1].Handle.TranslateToExtern = ProcExternalDrag;
             Curves[Curves.Count/2].Handle.TranslateToExtern = ProcExternalDrag;
+        }
+
+        protected override void DisposeChild(){
+            SidePanel = null;
+            TopPanel = null;
         }
 
         protected override void ProcExternalDrag(object caller, ref float dx, ref float dy, bool applyClampCheck){

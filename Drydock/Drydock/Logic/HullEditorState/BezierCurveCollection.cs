@@ -16,7 +16,7 @@ namespace Drydock.Logic.HullEditorState{
     internal class BezierCurveCollection : CanReceiveInputEvents, IEnumerable<BezierCurve>{
         #region fields
 
-        public readonly UIElementCollection ElementCollection;
+        public UIElementCollection ElementCollection;
         public readonly float PixelsPerMeter;
         readonly List<BezierCurve> _curveList;
 
@@ -181,6 +181,15 @@ namespace Drydock.Logic.HullEditorState{
                     MaxYCurve = curve;
                 }
             }
+        }
+
+        public void Dispose(){
+            InputEventDispatcher.EventSubscribers.Remove(this);
+            foreach (var curve in _curveList){
+                curve.Dispose();
+            }
+            _curveList.Clear();
+            ElementCollection = null;
         }
 
         public List<BezierInfo> GetControllerInfo(float scaleX = 1, float scaleY = 1){

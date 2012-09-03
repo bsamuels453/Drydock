@@ -17,26 +17,19 @@ namespace Drydock.Logic.DoodadEditorState {
     /// boundaries between adjacent quads are parallel to the XZ plane. This class can also take a few seconds to do its thing because it isnt going to be updating
     /// every tick like previewrenderer does.
     /// </summary>
-    class HullGeometryGenerator : CanReceiveInputEvents {
+    class HullGeometryGenerator : ATargetingCamera, IDisposable {
         const float _metersPerDeck = 2.13f;
-        const int _numHorizontalPrimitives = 128;//welp
-        const int _primitiveHeightPerDeck = 2;
+        const int _numHorizontalPrimitives = 64;//welp
+        const int _primitiveHeightPerDeck = 3;
         readonly ShipGeometryBuffer _displayBuffer;
-        ScreenText scr;
 
         readonly int[] _indicies;
         readonly VertexPositionNormalTexture[] _verticies;
-        float _cameraDistance;
-        float _cameraPhi;
-        float _cameraTheta;
-         //note: less than 1 deck breaks prolly
+
+        //note: less than 1 deck breaks prolly
+        //note that this entire geometry generator runs on the standard curve assumptions
         public HullGeometryGenerator(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo) {
-            scr = new ScreenText(0, 0, "udf");
-            _cameraPhi = 0.32f;
-            _cameraTheta = 0.63f;
-            _cameraDistance = 100;
             const float metersPerPrimitive = _metersPerDeck / _primitiveHeightPerDeck;
-            InputEventDispatcher.EventSubscribers.Add(1.0f, this);
             var sidePtGen = new BruteBezierGenerator(sideCurveInfo);
 
             topCurveInfo.RemoveAt(0);//make this curve set pass vertical line test
@@ -47,35 +40,40 @@ namespace Drydock.Logic.DoodadEditorState {
 
             //get the draft and the berth
             float draft = sideCurveInfo[1].Pos.Y;
-            //float berth = (topCurveInfo[1].Pos.Y - topCurveInfo[0].Pos.Y) * 2;
             float berth = topCurveInfo[1].Pos.Y;
             float length = sideCurveInfo[2].Pos.X;
             var numDecks = (int)(draft / _metersPerDeck);
-            int numVerticalPrimitives = numDecks * _primitiveHeightPerDeck + _primitiveHeightPerDeck;
+            int numVerticalVertexes = numDecks * _primitiveHeightPerDeck + _primitiveHeightPerDeck+1;
 
             //get the y values for the hull
-            for (int i = 0; i < numVerticalPrimitives - _primitiveHeightPerDeck; i++) {
+            for (int i = 0; i < numVerticalVertexes - _primitiveHeightPerDeck; i++) {
                 geometryYvalues.Add(i * metersPerPrimitive);
             }
             float bottomDeck = geometryYvalues[geometryYvalues.Count - 1];
 
             //the bottom part of ship (false deck) will not have height of _metersPerDeck so we need to use a different value for metersPerPrimitive
             float bottomPrimHeight = (draft - bottomDeck) / _primitiveHeightPerDeck;
-            for (int i = 0; i < _primitiveHeightPerDeck; i++) {
+            for (int i = 1; i <= _primitiveHeightPerDeck; i++) {
                 geometryYvalues.Add(i * bottomPrimHeight + bottomDeck);
             }
 
             foreach (float t in geometryYvalues){
                 xzHullIntercepts.Add(sidePtGen.GetValuesFromDependent(t));
                 if (xzHullIntercepts[xzHullIntercepts.Count - 1].Count != 2){
-                    throw new Exception("more/less than two independent solutions found for a given dependent value");
+                    if (xzHullIntercepts[xzHullIntercepts.Count - 1].Count == 1) {//this happens at the very bottom of the ship
+                        xzHullIntercepts[xzHullIntercepts.Count - 1].Add(xzHullIntercepts[xzHullIntercepts.Count - 1][0]);
+                    }
+                    else{
+                        throw new Exception("more/less than two independent solutions found for a given dependent value");
+                    }
                 }
+                
             }
 
             var ySliceVerts = new List<List<Vector3>>(); //this list contains slices of the airship which contain all the vertexes for the specific layer of the airship
 
             //in the future we can parameterize x differently to comphensate for dramatic curves on the keel
-            for (int y = 0; y < numVerticalPrimitives; y++){
+            for (int y = 0; y < numVerticalVertexes; y++){
                 float xStart = xzHullIntercepts[y][0].X;
                 float xEnd = xzHullIntercepts[y][1].X;
                 float xDiff = xEnd - xStart;
@@ -83,18 +81,23 @@ namespace Drydock.Logic.DoodadEditorState {
                 var strip = new List<Vector3>(); 
 
                 for (int x = 0; x < _numHorizontalPrimitives; x++){
+
+
                     var point = new Vector3();
                     point.Y = geometryYvalues[y];
 
+                    //here is where x is parameterized, and converted into a relative x value
                     float tx = x / (float)(_numHorizontalPrimitives-1);
                     float xPos = tx * xDiff + xStart;
-
+                    //
+                    
                     var keelIntersect = sidePtGen.GetValueFromIndependent(xPos);
                     float profileYScale = keelIntersect.Y / draft;
                     point.X = keelIntersect.X;
 
                     var topIntersect = topPtGen.GetValueFromIndependent(xPos);
-                    float profileXScale = topIntersect.Y / berth;
+                    float profileXScale = (topIntersect.Y-topCurveInfo[0].Pos.Y) / (berth/2f);
+                    //float profileXScale = topIntersect.Y  / berth;
 
                     var scaledProfile = new List<BezierInfo>();
 
@@ -102,24 +105,39 @@ namespace Drydock.Logic.DoodadEditorState {
                         scaledProfile.Add(t.CreateScaledCopy(profileXScale, profileYScale));
                     }
 
+
+
                     var pointGen = new BruteBezierGenerator(scaledProfile);
                     var profileIntersect = pointGen.GetValuesFromDependent(point.Y);
                     if (profileIntersect.Count != 1){
                         throw new Exception("curve does not pass the horizontal line test");
                     }
-                    point.Z = profileIntersect[0].X - scaledProfile[0].Pos.X;
+
+                    float diff = scaledProfile[0].Pos.X;
+                    if (x == _numHorizontalPrimitives - 1) {
+                        diff = profileIntersect[0].X;
+                    }
+                    point.Z = profileIntersect[0].X - diff;
                     strip.Add(point);
 
                 }
                 ySliceVerts.Add(strip);
             }
 
-            foreach (List<Vector3> t in ySliceVerts){//remove mystery NaNs
+            foreach (List<Vector3> t in ySliceVerts){//mystery NaN detecter
                 if (float.IsNaN(t[0].Z)){
                     throw new Exception("NaN Z coordinate in mesh");
                 }
             }
-            //treat the slices like a mesh
+
+            /*foreach (List<Vector3> t in ySliceVerts){//remove mystery NaNs
+                for(int i=0; i<t.Count; i++){
+                    if (float.IsNaN(t[i].Z)){
+                        t[i] = new Vector3(t[i].X, t[i].Y, 0);
+                    }
+                }
+            }*/
+
             //create mesh
             var mesh = new Vector3[ySliceVerts.Count, _numHorizontalPrimitives];
             var normals = new Vector3[ySliceVerts.Count, _numHorizontalPrimitives];
@@ -142,78 +160,11 @@ namespace Drydock.Logic.DoodadEditorState {
             p += -mesh[0, _numHorizontalPrimitives - 1];
             p += -mesh[ySliceVerts.Count - 1, _numHorizontalPrimitives - 1];
             p /= 4;
-            Renderer.CameraTarget = p;
-            //Renderer.CameraTarget = new Vector3(0, 0, 0);
-            Renderer.CameraPosition.X = (float)(_cameraDistance * Math.Cos(_cameraPhi) * Math.Sin(_cameraTheta)) + Renderer.CameraTarget.X;
-            Renderer.CameraPosition.Z = (float)(_cameraDistance * Math.Cos(_cameraPhi) * Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
-            Renderer.CameraPosition.Y = (float)(_cameraDistance * Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
-
-        }
-        
-        public override InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null) {
-            if (prevState != null) {
-                
-                if (state.LeftButton == ButtonState.Pressed){
-                    int dx = state.X - ((MouseState) prevState).X;
-                    int dy = state.Y - ((MouseState) prevState).Y;
-
-                    if (state.LeftButton == ButtonState.Pressed){
-                        _cameraPhi += dy*0.01f;
-                        _cameraTheta -= dx*0.01f;
-
-                        if (_cameraPhi > 1.56f){
-                            _cameraPhi = 1.56f;
-                        }
-                        if (_cameraPhi < -1.56f){
-                            _cameraPhi = -1.56f;
-                        }
-                        Renderer.CameraPosition.X = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Sin(_cameraTheta)) + Renderer.CameraTarget.X;
-                        Renderer.CameraPosition.Z = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
-                        Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
-                    }
-
-                    scr.EditText("theta: " + _cameraTheta);
-                    return InterruptState.InterruptEventDispatch;
-
-                    /*if (state.RightButton == ButtonState.Pressed) {
-                        int dx = state.X - ((MouseState)prevState).X;
-                        int dy = state.Y - ((MouseState)prevState).Y;
-
-                        _cameraPhi += dy * 0.01f;
-                        _cameraTheta += dx * 0.01f;
-
-                        if (_cameraPhi > 1.56f) {
-                            _cameraPhi = 1.56f;
-                        }
-                        if (_cameraPhi < -1.56f) {
-                            _cameraPhi = -1.56f;
-                        }
-
-                        Renderer.CameraTarget.X = (float)(_cameraDistance * Math.Cos(_cameraPhi + Math.PI) * Math.Sin(_cameraTheta + Math.PI)) - Renderer.CameraPosition.X;
-                        Renderer.CameraTarget.Z = (float)(_cameraDistance * Math.Cos(_cameraPhi + Math.PI) * Math.Cos(_cameraTheta + Math.PI)) - Renderer.CameraPosition.Z;
-                        Renderer.CameraTarget.Y = (float)(_cameraDistance * Math.Sin(_cameraPhi + Math.PI)) + Renderer.CameraPosition.Y;
-                        return InterruptState.InterruptEventDispatch;
-                    }*/
-        
-                    return InterruptState.InterruptEventDispatch;
-                }
-            }
-            return InterruptState.AllowOtherEvents;
+            SetCameraTarget(p);
         }
 
-        public override InterruptState OnMouseScroll(MouseState state, MouseState? prevState = null) {
-            if (prevState != null) {
-                _cameraDistance += (((MouseState)prevState).ScrollWheelValue - state.ScrollWheelValue) / 20f;
-                if (_cameraDistance < 5) {
-                    _cameraDistance = 5;
-                }
-                Renderer.CameraPosition.X = (float)(_cameraDistance * Math.Cos(_cameraPhi) * Math.Sin(_cameraTheta)) + Renderer.CameraTarget.X;
-                Renderer.CameraPosition.Z = (float)(_cameraDistance * Math.Cos(_cameraPhi) * Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
-                Renderer.CameraPosition.Y = (float)(_cameraDistance * Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
-            }
-            return InterruptState.AllowOtherEvents;
+        public void Dispose(){
         }
-        
+
     }
-
 }

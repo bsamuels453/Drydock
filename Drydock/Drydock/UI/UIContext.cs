@@ -23,6 +23,10 @@ namespace Drydock.UI{
             _collections.Remove(coll);
         }
 
+        public static void Clear(){
+            _collections.Clear();
+        }
+
         public static void Update(){
             for (int i = 0; i < _collections.Count; i++){
                 if (_collections[i] != null){

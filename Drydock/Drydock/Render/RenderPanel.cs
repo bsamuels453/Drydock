@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using Drydock.UI;
 using Drydock.Utilities;
@@ -34,12 +35,16 @@ namespace Drydock.Render{
             BoundingBox = new Rectangle(x, y, width, height);
         }
 
-        public void Dispose(){
-            _renderPanels.Remove(this);
+        ~RenderPanel(){
+            if (_renderPanels.Contains(this)){
+                throw new Exception("render panel that is in use is being garbage collected");
+            }
         }
 
-        ~RenderPanel(){
+        public void Dispose(){
             _renderPanels.Remove(this);
+            _sprites.Clear();
+            _buffers.Clear();
         }
 
         void DrawToTarget(Matrix viewMatrix){
@@ -84,6 +89,11 @@ namespace Drydock.Render{
             _universalDepthStencil = new DepthStencilState();
             _universalDepthStencil.DepthBufferEnable = true;
             _universalDepthStencil.DepthBufferWriteEnable = true;
+        }
+
+        public static void Clear(){
+            _renderPanels.Clear();
+            _curRenderPanel = null;
         }
 
         public static void Draw(Matrix viewMatrix){

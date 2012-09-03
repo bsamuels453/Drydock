@@ -2,18 +2,16 @@
 
 using System;
 using System.Linq;
-using Drydock.Control;
 using Drydock.Render;
 using Drydock.UI;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 #endregion
 
 namespace Drydock.Logic.HullEditorState{
-    internal class PreviewRenderer : CanReceiveInputEvents{
+    internal class PreviewRenderer : ATargetingCamera{
         const int _meshVertexWidth = 64; //this is in primitives
         readonly BezierCurveCollection _backCurves;
         readonly ShipGeometryBuffer _geometryBuffer;
@@ -23,13 +21,15 @@ namespace Drydock.Logic.HullEditorState{
         readonly BezierCurveCollection _sideCurves;
         readonly BezierCurveCollection _topCurves;
         VertexPositionNormalTexture[] _verticies;
-        float _cameraDistance;
-        float _cameraPhi;
-        float _cameraTheta;
 
-        public PreviewRenderer(BezierCurveCollection sideCurves, BezierCurveCollection topCurves, BezierCurveCollection backCurves){
-            //_verticies = new VertexPositionNormalTexture[_meshVertexWidth*_meshVertexWidth*4];
-            //_indicies = new int[_meshVertexWidth*_meshVertexWidth*6]; // 6 indicies make up 2 triangles, can make this into triangle strip in future if have optimization boner
+        public PreviewRenderer(BezierCurveCollection sideCurves, BezierCurveCollection topCurves, BezierCurveCollection backCurves) :
+            base(new Rectangle(
+                     ScreenData.GetScreenValueX(0.5f),
+                     ScreenData.GetScreenValueY(0.5f),
+                     ScreenData.GetScreenValueX(0.5f),
+                     ScreenData.GetScreenValueY(0.5f)
+                     )){
+
             _renderTarget = new RenderPanel(
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f),
@@ -39,13 +39,8 @@ namespace Drydock.Logic.HullEditorState{
                 );
             RenderPanel.SetRenderPanel(_renderTarget);
 
-            _cameraPhi = 0.32f;
-            _cameraTheta = 0.63f;
-            _cameraDistance = 50;
-            InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10f, this);
-
-            _indicies = MeshHelper.CreateIndiceArray((_meshVertexWidth) * (_meshVertexWidth));
-            _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth) * (_meshVertexWidth));
+            _indicies = MeshHelper.CreateIndiceArray((_meshVertexWidth)*(_meshVertexWidth));
+            _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth)*(_meshVertexWidth));
 
             _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth)*(_meshVertexWidth)*2, "whiteborder");
 
@@ -114,7 +109,7 @@ namespace Drydock.Logic.HullEditorState{
 
             MeshHelper.GenerateMeshNormals(_mesh, ref normals);
             MeshHelper.ConvertMeshToVertList(_mesh, normals, ref _verticies);
-            
+
             _geometryBuffer.Vertexbuffer.SetData(_verticies);
 
             var p = new Vector3();
@@ -123,79 +118,11 @@ namespace Drydock.Logic.HullEditorState{
             p += -_mesh[0, _meshVertexWidth - 1];
             p += -_mesh[_meshVertexWidth - 1, _meshVertexWidth - 1];
             p /= 4;
-            Renderer.CameraTarget = p;
-            Renderer.CameraPosition.X = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Sin(_cameraTheta)) + Renderer.CameraTarget.X;
-            Renderer.CameraPosition.Z = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
-            Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
+            base.SetCameraTarget(p);
         }
 
-        public void Dispose(){
-            _renderTarget.Dispose();
-            _geometryBuffer.Dispose();
-        }
-
-        #region event handlers
-
-        public override InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
-            if (prevState != null){
-                if (_renderTarget.BoundingBox.Contains(state.X, state.Y)){
-                    if (state.LeftButton == ButtonState.Pressed){
-                        int dx = state.X - ((MouseState) prevState).X;
-                        int dy = state.Y - ((MouseState) prevState).Y;
-
-                        if (state.LeftButton == ButtonState.Pressed){
-                            _cameraPhi += dy*0.01f;
-                            _cameraTheta -= dx*0.01f;
-
-                            if (_cameraPhi > 1.56f){
-                                _cameraPhi = 1.56f;
-                            }
-                            if (_cameraPhi < -1.56f){
-                                _cameraPhi = -1.56f;
-                            }
-                            Renderer.CameraPosition.X = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Sin(_cameraTheta)) + Renderer.CameraTarget.X;
-                            Renderer.CameraPosition.Z = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
-                            Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
-                        }
-
-
-                        return InterruptState.InterruptEventDispatch;
-                    }
-                    /*if (state.RightButton == ButtonState.Pressed) {
-                        int dx = state.X - ((MouseState)prevState).X;
-                        int dy = state.Y - ((MouseState)prevState).Y;
-
-                        _cameraPhi += dy * 0.01f;
-                        _cameraTheta += dx * 0.01f;
-
-                        if (_cameraPhi > 1.56f) {
-                            _cameraPhi = 1.56f;
-                        }
-                        if (_cameraPhi < -1.56f) {
-                            _cameraPhi = -1.56f;
-                        }
-
-                        Renderer.CameraTarget.X = (float)(_cameraDistance * Math.Cos(_cameraPhi + Math.PI) * Math.Sin(_cameraTheta + Math.PI)) - Renderer.CameraPosition.X;
-                        Renderer.CameraTarget.Z = (float)(_cameraDistance * Math.Cos(_cameraPhi + Math.PI) * Math.Cos(_cameraTheta + Math.PI)) - Renderer.CameraPosition.Z;
-                        Renderer.CameraTarget.Y = (float)(_cameraDistance * Math.Sin(_cameraPhi + Math.PI)) + Renderer.CameraPosition.Y;
-                        return InterruptState.InterruptEventDispatch;
-                    }*/
-                    return InterruptState.InterruptEventDispatch;
-                }
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public override InterruptState OnMouseScroll(MouseState state, MouseState? prevState = null){
-            if (prevState != null){
-                _cameraDistance += (((MouseState) prevState).ScrollWheelValue - state.ScrollWheelValue)/20f;
-                if (_cameraDistance < 5){
-                    _cameraDistance = 5;
-                }
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        #endregion
+        //public void Dispose(){
+            //_geometryBuffer.Dispose();
+        //}
     }
 }

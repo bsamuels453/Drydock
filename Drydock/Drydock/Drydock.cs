@@ -41,6 +41,7 @@ namespace Drydock{
         }
 
         protected override void UnloadContent(){
+            GamestateManager.ClearGameState();
         }
 
 

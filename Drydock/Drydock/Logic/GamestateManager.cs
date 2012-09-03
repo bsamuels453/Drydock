@@ -2,6 +2,7 @@
 
 using System;
 using Drydock.Control;
+using Drydock.Render;
 using Drydock.UI;
 using Microsoft.Xna.Framework.Input;
 
@@ -11,17 +12,30 @@ namespace Drydock.Logic{
     delegate void SpecialKeyboardRec(KeyboardState state);
     internal static class GamestateManager{
         static IGameState _currentState;
+        static bool _isGStateCleared;
 
         public static void Init(){
             InputEventDispatcher.SpecialKeyboardDispatcher = SpecialKeyboardRec;
+            _isGStateCleared = true;
+        }
+        public static void ClearGameState(){
+            _isGStateCleared = true;
+            InputEventDispatcher.EventSubscribers.Clear();
+            RenderPanel.Clear();
+            UIContext.Clear();
+            _currentState = null;
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            int g = 5;
         }
 
         public static void SetGameState(IGameState newState){
-            if (_currentState != null){
-                _currentState.Dispose();
+            if (!_isGStateCleared){
+                throw new Exception("gamestate has to be cleared before setting a new state");
             }
-            GC.Collect();
+
             _currentState = newState;
+            _isGStateCleared = false;
         }
 
 

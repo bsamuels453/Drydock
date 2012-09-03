@@ -95,6 +95,19 @@ namespace Drydock.Logic.HullEditorState{
             InterlinkButtonEvents();
         }
 
+        public void Dispose(){
+            /*_centerButton.Dispose();
+            _nextButton.Dispose();
+            _nextLine.Dispose();
+            _prevButton.Dispose();
+            _prevLine.Dispose();*/
+            NextHandle = null;
+            PrevHandle = null;
+            SymmetricHandle = null;
+            TranslateToExtern = null;
+
+        }
+
         #region properties
 
         public Vector2 CentButtonCenter{

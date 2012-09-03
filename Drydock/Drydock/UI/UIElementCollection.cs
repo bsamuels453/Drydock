@@ -77,7 +77,9 @@ namespace Drydock.UI{
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 _layerSortedIElements[i].Dispose();
             }
-            InputEventDispatcher.EventSubscribers.Remove(this);
+            _elements.Clear();
+            _layerSortedIElements.Clear();
+            _childCollections.Clear();
         }
 
         #endregion

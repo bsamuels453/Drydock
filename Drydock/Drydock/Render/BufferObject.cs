@@ -13,7 +13,7 @@ namespace Drydock.Render{
         readonly int _numIndicies;
         readonly int _numPrimitives;
         RenderPanel _bufferRenderTarget;
-        bool _isDisposed;
+        //bool _isDisposed;
 
         protected BufferObject(int numIndicies, int numVerticies, int numPrimitives){
             _numPrimitives = numPrimitives;
@@ -34,7 +34,7 @@ namespace Drydock.Render{
                 );
 
             _bufferRenderTarget = RenderPanel.Add(this);
-            _isDisposed = false;
+            //_isDisposed = false;
         }
 
         protected abstract Effect BufferEffect { get; }
@@ -55,20 +55,20 @@ namespace Drydock.Render{
             Singleton.Device.SetVertexBuffer(null);
         }
 
-        public void Dispose(){
+        /*public void Dispose(){
             if (!_isDisposed){
                 _bufferRenderTarget.Remove(this);
                 _bufferRenderTarget = null;
                 _isDisposed = true;
             }
-        }
+        }*/
 
         #endregion
 
         protected abstract void UpdateEffectParams(Matrix viewMatrix);
 
         ~BufferObject(){
-            Dispose();
+            //Dispose();
         }
     }
 }

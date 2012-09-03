@@ -16,7 +16,6 @@ namespace Drydock.UI{
 
         public const int DefaultTexRepeat = 1;
         public const int DefaultIdentifier = 1;
-        const float f = 5f;
 
         readonly FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
         readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
@@ -124,6 +123,11 @@ namespace Drydock.UI{
             }
         }
 
+
+        ~Button(){
+            int f = 5;
+        }
+
         #endregion
 
         #region other IUIElement derived methods
@@ -155,8 +159,7 @@ namespace Drydock.UI{
         }
 
         public void Dispose(){
-            _sprite.Dispose();
-            Owner.DisposeElement(this);
+            throw new NotImplementedException();
         }
 
         #endregion

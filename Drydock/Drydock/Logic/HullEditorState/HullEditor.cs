@@ -50,11 +50,10 @@ namespace Drydock.Logic.HullEditorState{
         }
 
         public void Dispose(){
-            InputEventDispatcher.EventSubscribers.Remove(this);
-            _previewRenderer.Dispose();
             _backpanel.Dispose();
             _sidepanel.Dispose();
             _toppanel.Dispose();
+           // _previewRenderer.Dispose();
         }
 
         #endregion
@@ -70,8 +69,9 @@ namespace Drydock.Logic.HullEditorState{
                 var backInfo = _backpanel.Curves.GetControllerInfo();
                 var topInfo = _toppanel.Curves.GetControllerInfo();
 
+                GamestateManager.ClearGameState();
                 GamestateManager.SetGameState(new DoodadEditor(backInfo, sideInfo, topInfo));
-                Dispose();
+                //GamestateManager.SetGameState(new HullEditor());
                 return InterruptState.InterruptEventDispatch;
             }
 

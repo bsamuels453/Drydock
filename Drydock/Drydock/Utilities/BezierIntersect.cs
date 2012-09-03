@@ -193,7 +193,15 @@ namespace Drydock.Utilities{
             _curveStartIndexes.Add(0);
             for (int curve = 0; curve < curveinfo.Count - 1; curve++){
                 float estArcLen = Vector2.Distance(curveinfo[curve].Pos, curveinfo[curve + 1].Pos);
+                if (estArcLen == 0){
+                    _pointCache.Add(curveinfo[0].Pos);
+                    return;
+                }
+
                 int numPoints = (int) estArcLen*200; //eyeballing it to the max, this class's speed isnt important so feel free to increase this value
+                if (numPoints == 0){
+                    numPoints = 1;
+                }
                 //right now it causes a ~half-centimeter resolution in worst case scenario
                 _curveStartIndexes.Add(numPoints + _curveStartIndexes[_curveStartIndexes.Count - 1]);
 
@@ -297,6 +305,7 @@ namespace Drydock.Utilities{
 
             foreach (var index in dependentIndexList) {
                 retList.Add(_pointCache[index]);
+                //retList.Add(new Vector2(0, 0));
             }
 
 

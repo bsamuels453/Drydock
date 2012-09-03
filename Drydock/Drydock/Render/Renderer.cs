@@ -9,7 +9,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     public static class Renderer{
-        static EnvironmentBatch _environmentBatch;
         static Matrix _projectionMatrix;
         static SpriteBatch _batch;
         public static float AspectRatio;
@@ -34,7 +33,6 @@ namespace Drydock.Render{
                 );
             Singleton.ProjectionMatrix = _projectionMatrix;
 
-            _environmentBatch = new EnvironmentBatch(device, content, _projectionMatrix);
             ScreenData.Init(Device.Viewport.Bounds.Width, Device.Viewport.Bounds.Height);
             _batch = new SpriteBatch(device);
             RenderPanel.Init();

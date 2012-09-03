@@ -15,6 +15,6 @@ namespace Drydock.Render{
 
     internal interface IDrawableBuffer{
         void Draw(Matrix viewMatrix);
-        void Dispose();
+        //void Dispose();
     }
 }
