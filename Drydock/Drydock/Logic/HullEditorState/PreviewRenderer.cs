@@ -22,14 +22,14 @@ namespace Drydock.Logic.HullEditorState{
         readonly RenderPanel _renderTarget;
         readonly BezierCurveCollection _sideCurves;
         readonly BezierCurveCollection _topCurves;
-        readonly VertexPositionNormalTexture[] _verticies;
+        VertexPositionNormalTexture[] _verticies;
         float _cameraDistance;
         float _cameraPhi;
         float _cameraTheta;
 
         public PreviewRenderer(BezierCurveCollection sideCurves, BezierCurveCollection topCurves, BezierCurveCollection backCurves){
-            _verticies = new VertexPositionNormalTexture[_meshVertexWidth*_meshVertexWidth*4];
-            _indicies = new int[_meshVertexWidth*_meshVertexWidth*6]; // 6 indicies make up 2 triangles, can make this into triangle strip in future if have optimization boner
+            //_verticies = new VertexPositionNormalTexture[_meshVertexWidth*_meshVertexWidth*4];
+            //_indicies = new int[_meshVertexWidth*_meshVertexWidth*6]; // 6 indicies make up 2 triangles, can make this into triangle strip in future if have optimization boner
             _renderTarget = new RenderPanel(
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f),
@@ -44,6 +44,9 @@ namespace Drydock.Logic.HullEditorState{
             _cameraDistance = 50;
             InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10f, this);
 
+            _indicies = MeshHelper.CreateIndiceArray((_meshVertexWidth) * (_meshVertexWidth));
+            _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth) * (_meshVertexWidth));
+
             _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth)*(_meshVertexWidth)*2, "whiteborder");
 
             _mesh = new Vector3[_meshVertexWidth,_meshVertexWidth];
@@ -52,44 +55,6 @@ namespace Drydock.Logic.HullEditorState{
             _topCurves = topCurves;
             _backCurves = backCurves;
 
-            //construct indice list
-            //remember the clockwise-fu
-            //+1-----+2
-            //|     /
-            //|   /    
-            //| /     
-            //+0
-            //       +2
-            //      / |
-            //    /   | 
-            //  /     |
-            //+0-----+3
-            int curVertex = 0;
-            for (int i = 0; i < _indicies.Count(); i += 6){
-                _indicies[i] = curVertex;
-                _indicies[i + 1] = curVertex + 1;
-                _indicies[i + 2] = curVertex + 2;
-
-                _indicies[i + 3] = curVertex;
-                _indicies[i + 4] = curVertex + 2;
-                _indicies[i + 5] = curVertex + 3;
-
-                curVertex += 4;
-            }
-
-            for (int i = 0; i < _verticies.Count(); i++){
-                _verticies[i] = new VertexPositionNormalTexture();
-            }
-            int index = 0;
-            for (int x = 0; x < _meshVertexWidth - 1; x++){
-                for (int z = 0; z < _meshVertexWidth - 1; z++){
-                    _verticies[index].TextureCoordinate = new Vector2(0, 0);
-                    _verticies[index + 1].TextureCoordinate = new Vector2(0, 1);
-                    _verticies[index + 2].TextureCoordinate = new Vector2(1, 1);
-                    _verticies[index + 3].TextureCoordinate = new Vector2(1, 0);
-                    index += 4;
-                }
-            }
             _geometryBuffer.Indexbuffer.SetData(_indicies);
             Update();
         }
@@ -147,56 +112,9 @@ namespace Drydock.Logic.HullEditorState{
             }
             var normals = new Vector3[_meshVertexWidth,_meshVertexWidth];
 
-            for (int vertX = 0; vertX < _meshVertexWidth - 1; vertX++){
-                for (int vertZ = 0; vertZ < _meshVertexWidth - 1; vertZ++){
-                    var crossSum = new Vector3();
-
-                    var s1 = _mesh[vertX + 1, vertZ] - _mesh[vertX, vertZ];
-                    var s2 = _mesh[vertX, vertZ + 1] - _mesh[vertX, vertZ];
-                    var s3 = _mesh[vertX + 1, vertZ + 1] - _mesh[vertX, vertZ];
-
-                    crossSum += Vector3.Cross(s1, s3);
-                    crossSum += Vector3.Cross(s3, s2);
-
-                    normals[vertX, vertZ] += crossSum;
-                }
-            }
-
-            for (int vertX = 1; vertX < _meshVertexWidth; vertX++){
-                for (int vertZ = 1; vertZ < _meshVertexWidth; vertZ++){
-                    var crossSum = new Vector3();
-
-                    var s1 = _mesh[vertX - 1, vertZ] - _mesh[vertX, vertZ];
-                    var s2 = _mesh[vertX, vertZ - 1] - _mesh[vertX, vertZ];
-                    var s3 = _mesh[vertX - 1, vertZ - 1] - _mesh[vertX, vertZ];
-
-                    crossSum += Vector3.Cross(s1, s3);
-                    crossSum += Vector3.Cross(s3, s2);
-
-                    normals[vertX, vertZ] += crossSum;
-                    normals[vertX, vertZ].Normalize();
-                }
-            }
-
-            //convert from 2d array to 1d
-            int index = 0;
-            for (int x = 0; x < _meshVertexWidth - 1; x++){
-                for (int z = 0; z < _meshVertexWidth - 1; z++){
-                    _verticies[index].Position = -_mesh[x, z];
-                    _verticies[index].Normal = normals[x, z];
-
-                    _verticies[index + 1].Position = -_mesh[x, z + 1];
-                    _verticies[index + 1].Normal = normals[x, z + 1];
-
-                    _verticies[index + 2].Position = -_mesh[x + 1, z + 1];
-                    _verticies[index + 2].Normal = normals[x + 1, z + 1];
-
-                    _verticies[index + 3].Position = -_mesh[x + 1, z];
-                    _verticies[index + 3].Normal = normals[x + 1, z];
-
-                    index += 4;
-                }
-            }
+            MeshHelper.GenerateMeshNormals(_mesh, ref normals);
+            MeshHelper.ConvertMeshToVertList(_mesh, normals, ref _verticies);
+            
             _geometryBuffer.Vertexbuffer.SetData(_verticies);
 
             var p = new Vector3();
