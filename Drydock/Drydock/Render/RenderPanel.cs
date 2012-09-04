@@ -20,7 +20,7 @@ namespace Drydock.Render{
         readonly List<IDrawableSprite> _sprites;
         Texture2D _renderedPanel;
 
-        public RenderPanel(int x, int y, int width, int height, DepthLevel depth){
+        public RenderPanel(int x, int y, int width, int height, DepthLevel depth = DepthLevel.Medium){
             _panelSpriteBatch = new SpriteBatch(Singleton.Device);
             _sprites = new List<IDrawableSprite>();
             _buffers = new List<IDrawableBuffer>();

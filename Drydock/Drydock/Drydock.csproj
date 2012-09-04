@@ -165,6 +165,7 @@
     <Compile Include="DebugTimer.cs" />
     <Compile Include="Logic\ATargetingCamera.cs" />
     <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
+    <Compile Include="Logic\DoodadEditorState\ShipRenderer.cs" />
     <Compile Include="Logic\HullEditorState\BezierCurve.cs" />
     <Compile Include="Logic\HullEditorState\BezierCurveCollection.cs" />
     <Compile Include="Logic\HullEditorState\CurveHandle.cs" />

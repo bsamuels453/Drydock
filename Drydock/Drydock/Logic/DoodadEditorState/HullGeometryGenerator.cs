@@ -17,12 +17,12 @@ namespace Drydock.Logic.DoodadEditorState {
     /// boundaries between adjacent quads are parallel to the XZ plane. This class can also take a few seconds to do its thing because it isnt going to be updating
     /// every tick like previewrenderer does.
     /// </summary>
-    class HullGeometryGenerator : ATargetingCamera, IDisposable {
+    class HullGeometryGenerator{
         const float _metersPerDeck = 2.13f;
-        const int _numHorizontalPrimitives = 64;//welp
+        const int _numHorizontalPrimitives = 16;//welp
         const int _primitiveHeightPerDeck = 3;
         readonly ShipGeometryBuffer _displayBuffer;
-
+        readonly List<List<Vector3>> _geometry;
         readonly int[] _indicies;
         readonly VertexPositionNormalTexture[] _verticies;
 
@@ -114,10 +114,15 @@ namespace Drydock.Logic.DoodadEditorState {
                     }
 
                     float diff = scaledProfile[0].Pos.X;
-                    if (x == _numHorizontalPrimitives - 1) {
+                    if (x == _numHorizontalPrimitives - 1 || x == 0) {
                         diff = profileIntersect[0].X;
                     }
                     point.Z = profileIntersect[0].X - diff;
+
+                    if (y == numVerticalVertexes - 1) {
+                        point.Z = 0;
+                    }
+
                     strip.Add(point);
 
                 }
@@ -129,7 +134,6 @@ namespace Drydock.Logic.DoodadEditorState {
                     throw new Exception("NaN Z coordinate in mesh");
                 }
             }
-
             /*foreach (List<Vector3> t in ySliceVerts){//remove mystery NaNs
                 for(int i=0; i<t.Count; i++){
                     if (float.IsNaN(t[i].Z)){
@@ -138,32 +142,11 @@ namespace Drydock.Logic.DoodadEditorState {
                 }
             }*/
 
-            //create mesh
-            var mesh = new Vector3[ySliceVerts.Count, _numHorizontalPrimitives];
-            var normals = new Vector3[ySliceVerts.Count, _numHorizontalPrimitives];
-
-            MeshHelper.Encode2DListIntoMesh(ySliceVerts.Count, _numHorizontalPrimitives, ref mesh, ySliceVerts);
-
-            _indicies = MeshHelper.CreateIndiceArray(ySliceVerts.Count * _numHorizontalPrimitives);
-            _verticies = MeshHelper.CreateTexcoordedVertexList(ySliceVerts.Count * _numHorizontalPrimitives);
-
-            MeshHelper.GenerateMeshNormals(mesh, ref normals);
-            MeshHelper.ConvertMeshToVertList(mesh, normals, ref _verticies);
-
-            _displayBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), _verticies.Count()/2, "whiteborder");
-            _displayBuffer.Indexbuffer.SetData(_indicies);
-            _displayBuffer.Vertexbuffer.SetData(_verticies);
-
-            var p = new Vector3();
-            p += -mesh[0, 0];
-            p += -mesh[ySliceVerts.Count - 1, 0];
-            p += -mesh[0, _numHorizontalPrimitives - 1];
-            p += -mesh[ySliceVerts.Count - 1, _numHorizontalPrimitives - 1];
-            p /= 4;
-            SetCameraTarget(p);
+            _geometry = ySliceVerts;
         }
 
-        public void Dispose(){
+        public List<List<Vector3>> GetGeometrySlices(){
+            return _geometry;
         }
 
     }

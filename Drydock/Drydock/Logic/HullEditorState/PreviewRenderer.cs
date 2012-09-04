@@ -34,8 +34,7 @@ namespace Drydock.Logic.HullEditorState{
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f),
                 ScreenData.GetScreenValueX(0.5f),
-                ScreenData.GetScreenValueY(0.5f),
-                DepthLevel.Medium
+                ScreenData.GetScreenValueY(0.5f)
                 );
             RenderPanel.SetRenderPanel(_renderTarget);
 

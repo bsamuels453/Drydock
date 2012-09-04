@@ -193,7 +193,8 @@ namespace Drydock.Utilities{
             _curveStartIndexes.Add(0);
             for (int curve = 0; curve < curveinfo.Count - 1; curve++){
                 float estArcLen = Vector2.Distance(curveinfo[curve].Pos, curveinfo[curve + 1].Pos);
-                if (estArcLen == 0){
+
+                if (estArcLen == 0){//fix for one of the special cases
                     _pointCache.Add(curveinfo[0].Pos);
                     return;
                 }
