@@ -7,13 +7,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Logic.DoodadEditorState {
-    class ShipRenderer : ATargetingCamera {
+    class HullGeometryHandler : ATargetingCamera {
         readonly int[] _indicies;
         readonly VertexPositionNormalTexture[] _verticies;
         readonly ShipGeometryBuffer _displayBuffer;
         readonly List<List<Vector3>> _layerVerts; 
         
-        public ShipRenderer(List<List<Vector3>> geometry){
+        public HullGeometryHandler(List<List<Vector3>> geometry, int primsPerDeck){
             _layerVerts = new List<List<Vector3>>(geometry.Count);
             for (int i = 0; i < geometry.Count; i++){
                 _layerVerts.Add(new List<Vector3>(geometry[0].Count*2));
@@ -28,10 +28,21 @@ namespace Drydock.Logic.DoodadEditorState {
                 }
             }
 
+            foreach (var layerVert in _layerVerts){
+                for (int i = 0; i < layerVert.Count; i++){
+                    layerVert[i] = new Vector3(layerVert[i].X, -layerVert[i].Y, layerVert[i].Z);
+                }
+            }
+
 
             //create mesh
             var mesh = new Vector3[_layerVerts.Count, _layerVerts[0].Count];
             var normals = new Vector3[_layerVerts.Count, _layerVerts[0].Count];
+
+            //this fixes the ordering of the lists so that normals generate correctly
+            foreach (List<Vector3> t in _layerVerts){
+                t.Reverse();
+            }
 
 
             _indicies = MeshHelper.CreateIndiceArray(_layerVerts.Count * _layerVerts[0].Count);
@@ -40,12 +51,7 @@ namespace Drydock.Logic.DoodadEditorState {
             MeshHelper.Encode2DListIntoMesh(_layerVerts.Count, _layerVerts[0].Count, ref mesh, _layerVerts);
             MeshHelper.GenerateMeshNormals(mesh, ref normals);
 
-            for (int i = 0; i < _layerVerts.Count; i++) {
-                for (int y = 0; y < _layerVerts[0].Count; y++) {
-                    normals[i, y] *= -1;
-                    //normals[i, y] = Vector3.Left;
-                }
-            }
+
 
             MeshHelper.ConvertMeshToVertList(mesh, normals, ref _verticies);
 
@@ -59,7 +65,6 @@ namespace Drydock.Logic.DoodadEditorState {
             p += mesh[0, 0];
             p += mesh[mesh.GetLength(0) - 1, mesh.GetLength(1) - 1];
             p /= 4;
-            p *= -1;
 
             SetCameraTarget(p);
         }

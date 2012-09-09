@@ -9,15 +9,16 @@ using Drydock.Utilities;
 
 namespace Drydock.Logic.DoodadEditorState{
     internal class DoodadEditor : IGameState{
+        const int _primsPerDeck = 3;
         readonly RenderPanel _renderTarget;
-        readonly ShipRenderer _shipRenderer;
+        readonly HullGeometryHandler _hullGeometryHandler;
 
         public DoodadEditor(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo){
             _renderTarget = new RenderPanel(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
             RenderPanel.SetRenderPanel(_renderTarget);
 
-            var geomGen = new HullGeometryGenerator(backCurveInfo, sideCurveInfo, topCurveInfo);
-            _shipRenderer = new ShipRenderer(geomGen.GetGeometrySlices());
+            var geomGen = new HullGeometryGenerator(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
+            _hullGeometryHandler = new HullGeometryHandler(geomGen.GetGeometrySlices(), _primsPerDeck);
             int f = 5;
         }
 

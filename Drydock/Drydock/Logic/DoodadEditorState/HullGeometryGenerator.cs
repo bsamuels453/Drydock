@@ -19,8 +19,7 @@ namespace Drydock.Logic.DoodadEditorState {
     /// </summary>
     class HullGeometryGenerator{
         const float _metersPerDeck = 2.13f;
-        const int _numHorizontalPrimitives = 16;//welp
-        const int _primitiveHeightPerDeck = 3;
+        const int _numHorizontalPrimitives = 32;//welp
         readonly ShipGeometryBuffer _displayBuffer;
         readonly List<List<Vector3>> _geometry;
         readonly int[] _indicies;
@@ -28,8 +27,8 @@ namespace Drydock.Logic.DoodadEditorState {
 
         //note: less than 1 deck breaks prolly
         //note that this entire geometry generator runs on the standard curve assumptions
-        public HullGeometryGenerator(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo) {
-            const float metersPerPrimitive = _metersPerDeck / _primitiveHeightPerDeck;
+        public HullGeometryGenerator(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo, int primHeightPerDeck) {
+            float metersPerPrimitive = _metersPerDeck / primHeightPerDeck;
             var sidePtGen = new BruteBezierGenerator(sideCurveInfo);
 
             topCurveInfo.RemoveAt(0);//make this curve set pass vertical line test
@@ -43,17 +42,17 @@ namespace Drydock.Logic.DoodadEditorState {
             float berth = topCurveInfo[1].Pos.Y;
             float length = sideCurveInfo[2].Pos.X;
             var numDecks = (int)(draft / _metersPerDeck);
-            int numVerticalVertexes = numDecks * _primitiveHeightPerDeck + _primitiveHeightPerDeck+1;
+            int numVerticalVertexes = numDecks * primHeightPerDeck + primHeightPerDeck+1;
 
             //get the y values for the hull
-            for (int i = 0; i < numVerticalVertexes - _primitiveHeightPerDeck; i++) {
+            for (int i = 0; i < numVerticalVertexes - primHeightPerDeck; i++) {
                 geometryYvalues.Add(i * metersPerPrimitive);
             }
             float bottomDeck = geometryYvalues[geometryYvalues.Count - 1];
 
             //the bottom part of ship (false deck) will not have height of _metersPerDeck so we need to use a different value for metersPerPrimitive
-            float bottomPrimHeight = (draft - bottomDeck) / _primitiveHeightPerDeck;
-            for (int i = 1; i <= _primitiveHeightPerDeck; i++) {
+            float bottomPrimHeight = (draft - bottomDeck) / primHeightPerDeck;
+            for (int i = 1; i <= primHeightPerDeck; i++) {
                 geometryYvalues.Add(i * bottomPrimHeight + bottomDeck);
             }
 

@@ -100,8 +100,8 @@ namespace Drydock.Logic.HullEditorState{
 
                 for (int z = 0; z < _meshVertexWidth/2; z++){
                     Vector2 pos = crossIntersectGenerator.GetValueFromIndependent(yDelta[x]*(z));
-                    _mesh[x, z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x]*(z));
-                    _mesh[x, _meshVertexWidth - 1 - z] = new Vector3(topPts[x].X, pos.Y, topPts[x].Y + yDelta[x]*(_meshVertexWidth - 1 - z));
+                    _mesh[x, z] = new Vector3(topPts[x].X, -pos.Y, topPts[x].Y + yDelta[x]*(z));
+                    _mesh[x, _meshVertexWidth - 1 - z] = new Vector3(topPts[x].X, -pos.Y, topPts[x].Y + yDelta[x]*(_meshVertexWidth - 1 - z));
                 }
             }
             var normals = new Vector3[_meshVertexWidth,_meshVertexWidth];
@@ -112,10 +112,10 @@ namespace Drydock.Logic.HullEditorState{
             _geometryBuffer.Vertexbuffer.SetData(_verticies);
 
             var p = new Vector3();
-            p += -_mesh[0, 0];
-            p += -_mesh[_meshVertexWidth - 1, 0];
-            p += -_mesh[0, _meshVertexWidth - 1];
-            p += -_mesh[_meshVertexWidth - 1, _meshVertexWidth - 1];
+            p += _mesh[0, 0];
+            p += _mesh[_meshVertexWidth - 1, 0];
+            p += _mesh[0, _meshVertexWidth - 1];
+            p += _mesh[_meshVertexWidth - 1, _meshVertexWidth - 1];
             p /= 4;
             base.SetCameraTarget(p);
         }
