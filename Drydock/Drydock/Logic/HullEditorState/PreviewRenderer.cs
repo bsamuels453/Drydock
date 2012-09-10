@@ -36,7 +36,7 @@ namespace Drydock.Logic.HullEditorState{
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f)
                 );
-            RenderPanel.SetRenderPanel(_renderTarget);
+            RenderPanel.BindRenderTarget(_renderTarget);
 
             _indicies = MeshHelper.CreateIndiceArray((_meshVertexWidth)*(_meshVertexWidth));
             _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth)*(_meshVertexWidth));

@@ -20,10 +20,8 @@ namespace Drydock.Logic.DoodadEditorState {
     class HullGeometryGenerator{
         const float _metersPerDeck = 2.13f;
         const int _numHorizontalPrimitives = 32;//welp
-        readonly ShipGeometryBuffer _displayBuffer;
         readonly List<List<Vector3>> _geometry;
-        readonly int[] _indicies;
-        readonly VertexPositionNormalTexture[] _verticies;
+        public int NumDecks;
 
         //note: less than 1 deck breaks prolly
         //note that this entire geometry generator runs on the standard curve assumptions
@@ -42,6 +40,7 @@ namespace Drydock.Logic.DoodadEditorState {
             float berth = topCurveInfo[1].Pos.Y;
             float length = sideCurveInfo[2].Pos.X;
             var numDecks = (int)(draft / _metersPerDeck);
+            NumDecks = numDecks;
             int numVerticalVertexes = numDecks * primHeightPerDeck + primHeightPerDeck+1;
 
             //get the y values for the hull
@@ -66,7 +65,6 @@ namespace Drydock.Logic.DoodadEditorState {
                         throw new Exception("more/less than two independent solutions found for a given dependent value");
                     }
                 }
-                
             }
 
             var ySliceVerts = new List<List<Vector3>>(); //this list contains slices of the airship which contain all the vertexes for the specific layer of the airship

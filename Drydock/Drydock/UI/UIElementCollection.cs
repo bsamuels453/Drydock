@@ -19,7 +19,7 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public UIElementCollection(DepthLevel depth){
+        public UIElementCollection(DepthLevel depth = DepthLevel.Medium){
             _elements = new List<IUIElement>();
             _layerSortedIElements = new UISortedList();
             _childCollections = new List<UIElementCollection>();

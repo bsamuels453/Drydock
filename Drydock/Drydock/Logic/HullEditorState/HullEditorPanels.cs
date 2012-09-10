@@ -44,7 +44,7 @@ namespace Drydock.Logic.HullEditorState{
         protected HullEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration, PanelAlias panelType){
             BoundingBox = new FloatingRectangle(x, y, width, height);
             PanelRenderTarget = new RenderPanel(x, y, width, height, DepthLevel.Medium);
-            RenderPanel.SetRenderPanel(PanelRenderTarget);
+            RenderPanel.BindRenderTarget(PanelRenderTarget);
 
             ElementCollection = new UIElementCollection(DepthLevel.Medium);
             Curves = new BezierCurveCollection(

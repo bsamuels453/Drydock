@@ -10,12 +10,14 @@ namespace Drydock.Render{
     internal abstract class BufferObject<T> : IDrawableBuffer{
         public readonly IndexBuffer Indexbuffer;
         public readonly VertexBuffer Vertexbuffer;
+        public bool IsEnabled;
         readonly int _numIndicies;
         readonly int _numPrimitives;
         RenderPanel _bufferRenderTarget;
         //bool _isDisposed;
 
         protected BufferObject(int numIndicies, int numVerticies, int numPrimitives){
+            IsEnabled = true;
             _numPrimitives = numPrimitives;
             _numIndicies = numIndicies;
 
@@ -43,16 +45,18 @@ namespace Drydock.Render{
         #region IDrawableBuffer Members
 
         public void Draw(Matrix viewMatrix){
-            UpdateEffectParams(viewMatrix);
-            Singleton.Device.RasterizerState = BufferRasterizer;
+            if (IsEnabled){
+                UpdateEffectParams(viewMatrix);
+                Singleton.Device.RasterizerState = BufferRasterizer;
 
-            foreach (EffectPass pass in BufferEffect.CurrentTechnique.Passes){
-                pass.Apply();
-                Singleton.Device.Indices = Indexbuffer;
-                Singleton.Device.SetVertexBuffer(Vertexbuffer);
-                Singleton.Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _numIndicies, 0, _numPrimitives);
+                foreach (EffectPass pass in BufferEffect.CurrentTechnique.Passes){
+                    pass.Apply();
+                    Singleton.Device.Indices = Indexbuffer;
+                    Singleton.Device.SetVertexBuffer(Vertexbuffer);
+                    Singleton.Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _numIndicies, 0, _numPrimitives);
+                }
+                Singleton.Device.SetVertexBuffer(null);
             }
-            Singleton.Device.SetVertexBuffer(null);
         }
 
         /*public void Dispose(){

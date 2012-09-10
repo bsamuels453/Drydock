@@ -79,8 +79,12 @@ namespace Drydock.Render{
         static SpriteBatch _spriteBatch;
         static DepthStencilState _universalDepthStencil;
 
-        public static void SetRenderPanel(RenderPanel panel){
+        public static void BindRenderTarget(RenderPanel panel){
             _curRenderPanel = panel;
+        }
+
+        public static void UnbindRenderTarget(){
+            _curRenderPanel = null;
         }
 
         public static void Init(){
@@ -108,12 +112,22 @@ namespace Drydock.Render{
         }
 
         public static RenderPanel Add(IDrawableSprite sprite){
-            _curRenderPanel._sprites.Add(sprite);
+            if (_curRenderPanel != null) {
+                _curRenderPanel._sprites.Add(sprite);
+            }
+            else{
+                throw new Exception("no render panel bound");
+            }
             return _curRenderPanel;
         }
 
         public static RenderPanel Add(IDrawableBuffer buffer){
-            _curRenderPanel._buffers.Add(buffer);
+            if (_curRenderPanel != null) {
+                _curRenderPanel._buffers.Add(buffer);
+            }
+            else{
+                throw new Exception("no render panel bound");
+            }
             return _curRenderPanel;
         }
 
