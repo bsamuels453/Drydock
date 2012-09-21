@@ -90,6 +90,7 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Unit Testing Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -174,6 +175,10 @@
     <Compile Include="Logic\HullEditorState\HullEditorPanels.cs" />
     <Compile Include="Logic\DoodadEditorState\HullGeometryGenerator.cs" />
     <Compile Include="Logic\HullEditorState\PreviewRenderer.cs" />
+    <Compile Include="Logic\TestState\Component.cs" />
+    <Compile Include="Logic\TestState\Entity.cs" />
+    <Compile Include="Logic\TestState\EntityData.cs" />
+    <Compile Include="Logic\TestState\TestState.cs" />
     <Compile Include="Render\BufferObject.cs" />
     <Compile Include="Render\IDrawable.cs" />
     <Compile Include="Render\MeshHelper.cs" />
