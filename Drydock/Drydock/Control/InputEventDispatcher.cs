@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Drydock.Logic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 #endregion
@@ -25,10 +26,13 @@ namespace Drydock.Control{
 
     internal static class InputEventDispatcher{
         public static DepthSortedList EventSubscribers;
-        static KeyboardState _prevKeyboardState;
-        static MouseState _prevMouseState;
-        static readonly Stopwatch _clickTimer;
         public static SpecialKeyboardRec SpecialKeyboardDispatcher;
+
+        static readonly Stopwatch _clickTimer;
+        static ControlState _prevState;
+        static MouseState _prevMouseState;
+        static KeyboardState _prevKeyboardState;
+        public static ControlState CurrentControlState;
 
         static InputEventDispatcher(){
             EventSubscribers = new DepthSortedList();
@@ -39,10 +43,44 @@ namespace Drydock.Control{
         }
 
         public static void Update(){
-            UpdateMouse();
-            UpdateKeyboard();
-        }
+            //UpdateMouse();
+            //UpdateKeyboard();
 
+            var curMouseState = Mouse.GetState();
+            var curKeyboardState = Keyboard.GetState();
+
+            var curControlState = new ControlState();
+
+            if (_prevMouseState.X != curMouseState.X || _prevMouseState.Y != curMouseState.Y) {
+                curControlState.AllowMouseMovementInterpretation = true;
+                curControlState.MousePosition = new Vector2();
+                curControlState.MousePosition.X = curMouseState.X;
+                curControlState.MousePosition.Y = curMouseState.Y;
+                curControlState.MouseChange = new Vector2();
+                curControlState.MouseChange.X = curMouseState.X - _prevMouseState.X;
+                curControlState.MouseChange.Y = curMouseState.Y - _prevMouseState.Y;
+            }
+            else{
+                curControlState.AllowMouseMovementInterpretation = false;
+            }
+
+            if (_prevMouseState.LeftButton != curMouseState.LeftButton) {
+                curControlState.LeftButtonChange = curMouseState.LeftButton;
+                curControlState.AllowLeftButtonInterpretation = true;
+            }
+            else
+                curControlState.AllowLeftButtonInterpretation = false;
+
+            if (_prevMouseState.RightButton != curMouseState.RightButton) {
+                curControlState.RightButtonChange = curMouseState.RightButton;
+                curControlState.AllowRightButtonInterpretation = true;
+            }
+            else
+                curControlState.AllowRightButtonInterpretation = false;
+
+            curControlState.KeyboardState = curKeyboardState;
+        }
+        /*
         static void UpdateMouse(){
             MouseState newState = Mouse.GetState();
             if (newState.LeftButton != _prevMouseState.LeftButton ||
@@ -104,10 +142,6 @@ namespace Drydock.Control{
             _prevMouseState = newState;
         }
 
-        static void PrematureMouseExit(MouseState state, MouseState? prevState = null){
-            _prevMouseState = state;
-        }
-
         static void UpdateKeyboard(){
             var state = Keyboard.GetState();
 
@@ -122,6 +156,25 @@ namespace Drydock.Control{
 
             _prevKeyboardState = state;
         }
+        */
+    }
+
+    internal class ControlState{
+        public bool AllowMouseMovementInterpretation;
+        public Vector2 MousePosition;
+        public Vector2 MouseChange;
+
+        public bool AllowLeftButtonInterpretation;
+        public bool AllowRightButtonInterpretation;
+        public ButtonState LeftButtonChange;
+        public ButtonState RightButtonChange;
+
+        public bool AllowMouseScrollInterpretation;
+        public int MouseScrollChange;
+
+        public bool AllowKeyboardInterpretation;
+        public KeyboardState KeyboardState;
+
     }
 
     #region depth sorted list

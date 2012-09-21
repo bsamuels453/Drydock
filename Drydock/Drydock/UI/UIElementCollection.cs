@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using Drydock.Control;
 using Drydock.UI.Components;
@@ -12,7 +13,6 @@ namespace Drydock.UI{
     ///   This class serves as a container for UI elements. Its purpose is to update said elements through the UIContext, and to provide collection-wide modification methods for use by external classes.
     /// </summary>
     internal class UIElementCollection : CanReceiveInputEvents{
-        readonly List<UIElementCollection> _childCollections;
         readonly List<IUIElement> _elements;
         readonly UISortedList _layerSortedIElements;
         public bool DisableEntryHandlers;
@@ -22,64 +22,21 @@ namespace Drydock.UI{
         public UIElementCollection(DepthLevel depth = DepthLevel.Medium){
             _elements = new List<IUIElement>();
             _layerSortedIElements = new UISortedList();
-            _childCollections = new List<UIElementCollection>();
-            UIContext.Add(this);
             DisableEntryHandlers = false;
-
             InputEventDispatcher.EventSubscribers.Add((float) depth/10, this);
+            Add(this);
         }
 
         #endregion
 
         #region ui element addition methods
 
-        public TElement Add<TElement>(IUIElement elementToAdd){
+        private void AddElementToCollection(IUIElement elementToAdd){
             _elements.Add(elementToAdd);
-            elementToAdd.Owner = this;
-
-            return (TElement) elementToAdd;
         }
 
-        public TElement Add<TElement>(IUIInteractiveElement elementToAdd){
-            _elements.Add(elementToAdd);
-
+        private void AddElementToCollection(IUIInteractiveElement elementToAdd) {
             _layerSortedIElements.Add(elementToAdd.Depth, elementToAdd);
-            elementToAdd.Owner = this;
-
-            return (TElement) elementToAdd;
-        }
-
-        public UIElementCollection Add(UIElementCollection collectionToAdd){
-            _childCollections.Add(collectionToAdd);
-            //collectionToAdd.DepthManager.Depth = DepthManager.Depth + 1;
-            return collectionToAdd;
-        }
-
-        #endregion
-
-        #region disposal methods
-
-        public void DisposeElement(IUIElement element){
-            if (element is IUIInteractiveElement){
-                _layerSortedIElements.Remove(element);
-            }
-            _elements.Remove(element);
-        }
-
-        public void DisposeCollection(UIElementCollection collection){
-            _childCollections.Remove(collection);
-        }
-
-        public void Dispose(){
-            for(int i=0; i<_elements.Count; i++){
-                _elements[i].Dispose();
-            }
-            for (int i = 0; i < _layerSortedIElements.Count; i++){
-                _layerSortedIElements[i].Dispose();
-            }
-            _elements.Clear();
-            _layerSortedIElements.Clear();
-            _childCollections.Clear();
         }
 
         #endregion
@@ -87,9 +44,6 @@ namespace Drydock.UI{
         public void Update(){
             foreach (IUIElement element in _elements){
                 element.Update();
-            }
-            foreach (var collection in _childCollections){
-                collection.Update();
             }
         }
 
@@ -130,15 +84,6 @@ namespace Drydock.UI{
                     }
                 }
             }
-
-            if (!DisableEntryHandlers){ //disabling entry handlers disables movement dispatch for child collections
-                foreach (var collection in _childCollections){
-                    if (collection.OnMouseMovement(state, prevState) == InterruptState.InterruptEventDispatch){
-                        return InterruptState.InterruptEventDispatch;
-                        ;
-                    }
-                }
-            }
             return InterruptState.AllowOtherEvents;
         }
 
@@ -150,12 +95,6 @@ namespace Drydock.UI{
                         if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
                             return InterruptState.InterruptEventDispatch;
                         }
-                    }
-                }
-
-                foreach (var collection in _childCollections){
-                    if (collection.OnLeftButtonClick(state, prevState) == InterruptState.InterruptEventDispatch){
-                        return InterruptState.InterruptEventDispatch;
                     }
                 }
                 return InterruptState.AllowOtherEvents;
@@ -171,11 +110,6 @@ namespace Drydock.UI{
                     }
                 }
             }
-            foreach (var collection in _childCollections){
-                if (collection.OnLeftButtonPress(state, prevState) == InterruptState.InterruptEventDispatch){
-                    return InterruptState.InterruptEventDispatch;
-                }
-            }
             return InterruptState.AllowOtherEvents;
         }
 
@@ -185,11 +119,6 @@ namespace Drydock.UI{
                     if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
                         return InterruptState.InterruptEventDispatch;
                     }
-                }
-            }
-            foreach (var collection in _childCollections){
-                if (collection.OnLeftButtonRelease(state, prevState) == InterruptState.InterruptEventDispatch){
-                    return InterruptState.InterruptEventDispatch;
                 }
             }
             return InterruptState.AllowOtherEvents;
@@ -203,11 +132,6 @@ namespace Drydock.UI{
                     }
                 }
             }
-            foreach (var collection in _childCollections){
-                if (collection.OnMouseScroll(state, prevState) == InterruptState.InterruptEventDispatch){
-                    return InterruptState.InterruptEventDispatch;
-                }
-            }
             return InterruptState.AllowOtherEvents;
         }
 
@@ -216,9 +140,6 @@ namespace Drydock.UI{
                 foreach (var keyboardEvent in _layerSortedIElements[i].OnKeyboardEvent){
                     keyboardEvent(state);
                 }
-            }
-            foreach (var collection in _childCollections){
-                collection.OnKeyboardEvent(state);
             }
             return InterruptState.AllowOtherEvents;
         }
@@ -233,10 +154,6 @@ namespace Drydock.UI{
                     ((IUIComponent) (element.GetComponent<TComponent>())).IsEnabled = true; //()()()()()((()))
                 }
             }
-            //propogate changes to children
-            foreach (var collection in _childCollections){
-                collection.EnableComponents<TComponent>();
-            }
         }
 
         public void DisableComponents<TComponent>(){
@@ -244,9 +161,6 @@ namespace Drydock.UI{
                 if (element.DoesComponentExist<TComponent>()){
                     ((IUIComponent) (element.GetComponent<TComponent>())).IsEnabled = false;
                 }
-            }
-            foreach (var collection in _childCollections){
-                collection.DisableComponents<TComponent>();
             }
         }
 
@@ -256,9 +170,6 @@ namespace Drydock.UI{
                     element.GetComponent<SelectableComponent>().SelectThis();
                 }
             }
-            foreach (var collection in _childCollections){
-                collection.SelectAllElements();
-            }
         }
 
         public void DeselectAllElements(){
@@ -266,9 +177,6 @@ namespace Drydock.UI{
                 if (element.DoesComponentExist<SelectableComponent>()){
                     element.GetComponent<SelectableComponent>().DeselectThis();
                 }
-            }
-            foreach (var collection in _childCollections){
-                collection.DeselectAllElements();
             }
         }
 
@@ -278,9 +186,6 @@ namespace Drydock.UI{
                     element.GetComponent<FadeComponent>().ForceFadein(Mouse.GetState());
                 }
             }
-            foreach (var collection in _childCollections){
-                collection.FadeInAllElements();
-            }
         }
 
         public void FadeOutAllElements(){
@@ -288,9 +193,6 @@ namespace Drydock.UI{
                 if (element.DoesComponentExist<FadeComponent>()){
                     element.GetComponent<FadeComponent>().ForceFadeout(Mouse.GetState());
                 }
-            }
-            foreach (var collection in _childCollections){
-                collection.FadeOutAllElements();
             }
         }
 
@@ -300,9 +202,6 @@ namespace Drydock.UI{
                     element.GetComponent<FadeComponent>().FadeStateChangeDispatcher += deleg;
                 }
             }
-            foreach (var collection in _childCollections){
-                collection.AddFadeCallback(deleg);
-            }
         }
 
         public void AddSelectionCallback(ReactToSelection deleg){
@@ -310,9 +209,6 @@ namespace Drydock.UI{
                 if (element.DoesComponentExist<SelectableComponent>()){
                     element.GetComponent<SelectableComponent>().ReactToSelectionDispatcher += deleg;
                 }
-            }
-            foreach (var collection in _childCollections){
-                collection.AddSelectionCallback(deleg);
             }
         }
 
@@ -322,9 +218,6 @@ namespace Drydock.UI{
                     element.GetComponent<DraggableComponent>().DragMovementDispatcher += deleg;
                 }
             }
-            foreach (var collection in _childCollections){
-                collection.AddDragCallback(deleg);
-            }
         }
 
         public void AddDragConstraintCallback(DraggableObjectClamp deleg){
@@ -333,9 +226,55 @@ namespace Drydock.UI{
                     element.GetComponent<DraggableComponent>().DragMovementClamp += deleg;
                 }
             }
-            foreach (var collection in _childCollections){
-                collection.AddDragConstraintCallback(deleg);
+        }
+
+        #endregion
+
+        #region static stuff
+        static readonly List<UIElementCollection> _uiElementCollections;
+        static UIElementCollection _curElementCollection;
+
+        static UIElementCollection(){
+            _uiElementCollections = new List<UIElementCollection>();
+            _curElementCollection = null;
+        }
+
+        private static void Add(UIElementCollection collection){
+            _uiElementCollections.Add(collection);
+        }
+
+        public static void Clear(){
+            _uiElementCollections.Clear();
+            _curElementCollection = null;
+        }
+
+        public static void AddElement(IUIElement elementToAdd) {
+            if (_curElementCollection != null) {
+                if (elementToAdd is IUIInteractiveElement) {
+                    _curElementCollection.AddElementToCollection(elementToAdd as IUIInteractiveElement);
+                }
+                else{
+                    _curElementCollection.AddElementToCollection(elementToAdd);
+                }
             }
+            else{
+                throw new Exception("no uielementcollection bound");
+            }
+        }
+
+        public static void BindCollection(UIElementCollection collection){
+            if (_curElementCollection != null) {
+                throw new Exception("the previous bound collection needs to be cleared before a new one is set");
+            }
+            _curElementCollection = collection;
+        }
+
+        public static void UnbindCollection(){
+            _curElementCollection = null;
+        }
+
+        public static UIElementCollection Collection{
+            get { return _curElementCollection; }
         }
 
         #endregion

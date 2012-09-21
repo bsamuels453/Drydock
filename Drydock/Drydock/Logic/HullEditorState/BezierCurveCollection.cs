@@ -15,8 +15,6 @@ using Microsoft.Xna.Framework.Input;
 namespace Drydock.Logic.HullEditorState{
     internal class BezierCurveCollection : CanReceiveInputEvents, IEnumerable<BezierCurve>{
         #region fields
-
-        public UIElementCollection ElementCollection;
         public readonly float PixelsPerMeter;
         readonly List<BezierCurve> _curveList;
 
@@ -31,9 +29,8 @@ namespace Drydock.Logic.HullEditorState{
 
         #endregion
 
-        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, UIElementCollection parentCollection, PanelAlias panelType){
+        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill,PanelAlias panelType){
             InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10f, this);
-            ElementCollection = parentCollection; //.Add(new UIElementCollection(DepthLevel.Medium));
 
             var reader = XmlReader.Create(defaultConfig);
             reader.ReadToFollowing("NumControllers");
@@ -75,7 +72,7 @@ namespace Drydock.Logic.HullEditorState{
             }
 
             for (int i = 0; i < numControllers; i++){
-                _curveList.Add(new BezierCurve(0, 0, ElementCollection, curveInitData[i]));
+                _curveList.Add(new BezierCurve(0, 0, curveInitData[i]));
             }
             for (int i = 1; i < numControllers - 1; i++){
                 _curveList[i].SetPrevCurve(_curveList[i - 1]);
@@ -181,15 +178,6 @@ namespace Drydock.Logic.HullEditorState{
                     MaxYCurve = curve;
                 }
             }
-        }
-
-        public void Dispose(){
-            InputEventDispatcher.EventSubscribers.Remove(this);
-            foreach (var curve in _curveList){
-                curve.Dispose();
-            }
-            _curveList.Clear();
-            ElementCollection = null;
         }
 
         public List<BezierInfo> GetControllerInfo(float scaleX = 1, float scaleY = 1){

@@ -22,7 +22,7 @@ namespace Drydock.Logic{
             _isGStateCleared = true;
             InputEventDispatcher.EventSubscribers.Clear();
             RenderPanel.Clear();
-            UIContext.Clear();
+            UIElementCollection.Clear();
             _currentState = null;
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -40,7 +40,6 @@ namespace Drydock.Logic{
 
 
         public static void Update(){
-            UIContext.Update();
             if (_currentState != null){
                 _currentState.Update();
             }
@@ -53,7 +52,5 @@ namespace Drydock.Logic{
 
     internal interface IGameState{
         void Update();
-        void Dispose();
-        //void Draw();
     }
 }

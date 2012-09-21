@@ -153,7 +153,7 @@ namespace Drydock.UI.Components{
         #region modification methods
 
         public InterruptState ForceFadeout(MouseState state, MouseState? prevState = null){
-            _owner.Owner.DisableEntryHandlers = false;
+            UIElementCollection.Collection.DisableEntryHandlers = false;
             if (IsEnabled){
                 _isInTransition = true;
                 _isFadingOut = true;
@@ -165,8 +165,7 @@ namespace Drydock.UI.Components{
         }
 
         public InterruptState ForceFadein(MouseState state, MouseState? prevState = null){
-            _owner.Owner.DisableEntryHandlers = true;
-            //UIElementCollection.ForceExitHandlers(_owner);
+            UIElementCollection.Collection.DisableEntryHandlers = true;
             if (IsEnabled){
                 _isInTransition = true;
                 _isFadingOut = false;
@@ -178,7 +177,7 @@ namespace Drydock.UI.Components{
         }
 
         public InterruptState ForceFadeout(){
-            _owner.Owner.DisableEntryHandlers = false;
+            UIElementCollection.Collection.DisableEntryHandlers = false;
             if (IsEnabled){
                 _isInTransition = true;
                 _isFadingOut = true;
@@ -190,8 +189,7 @@ namespace Drydock.UI.Components{
         }
 
         public InterruptState ForceFadein(){
-            _owner.Owner.DisableEntryHandlers = true;
-            //UIElementCollection.ForceExitHandlers(_owner);
+            UIElementCollection.Collection.DisableEntryHandlers = true;
             if (IsEnabled){
                 _isInTransition = true;
                 _isFadingOut = false;

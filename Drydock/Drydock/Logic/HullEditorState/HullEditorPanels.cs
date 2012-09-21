@@ -38,7 +38,6 @@ namespace Drydock.Logic.HullEditorState{
         protected readonly Button Background;
         protected readonly FloatingRectangle BoundingBox;
         public BezierCurveCollection Curves;
-        protected UIElementCollection ElementCollection;
         protected RenderPanel PanelRenderTarget;
 
         protected HullEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration, PanelAlias panelType){
@@ -46,7 +45,6 @@ namespace Drydock.Logic.HullEditorState{
             PanelRenderTarget = new RenderPanel(x, y, width, height, DepthLevel.Medium);
             RenderPanel.BindRenderTarget(PanelRenderTarget);
 
-            ElementCollection = new UIElementCollection(DepthLevel.Medium);
             Curves = new BezierCurveCollection(
                 defaultConfig: defaultCurveConfiguration,
                 areaToFill: new FloatingRectangle(
@@ -55,38 +53,23 @@ namespace Drydock.Logic.HullEditorState{
                     width - width*0.2f,
                     height - height*0.2f
                     ),
-                parentCollection: ElementCollection,
                 panelType: panelType
                 );
-            Curves.ElementCollection.AddDragConstraintCallback(ClampChildElements);
-            Background = ElementCollection.Add<Button>(
+            UIElementCollection.Collection.AddDragConstraintCallback(ClampChildElements);
+            Background = 
                 new Button(
                     x: x,
                     y: y,
                     width: width,
                     height: height,
                     depth: DepthLevel.Background,
-                    owner: ElementCollection,
                     textureName: "panelBG",
                     spriteTexRepeatX: width/(Curves.PixelsPerMeter*1),
                     spriteTexRepeatY: height/(Curves.PixelsPerMeter*1),
                     components: new IUIComponent[]{new PanelComponent()}
-                    )
+                    
                 );
             Update();
-        }
-
-        ~HullEditorPanel(){
-            int f = 5;
-        }
-
-        public void Dispose(){
-            Background.Dispose();
-            ElementCollection.Dispose();
-            PanelRenderTarget.Dispose();
-            PanelRenderTarget = null;
-            Curves = null;
-            DisposeChild();
         }
 
         protected abstract void DisposeChild();

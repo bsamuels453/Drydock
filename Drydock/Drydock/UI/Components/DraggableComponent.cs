@@ -70,7 +70,7 @@ namespace Drydock.UI.Components{
             if (!_isMoving && _isEnabled){
                 if (_owner.BoundingBox.Contains(state.X, state.Y)){
                     _isMoving = true;
-                    _owner.Owner.DisableEntryHandlers = true;
+                    UIElementCollection.Collection.DisableEntryHandlers = true;
                     _mouseOffset.X = _owner.X - state.X;
                     _mouseOffset.Y = _owner.Y - state.Y;
                 }
@@ -81,7 +81,7 @@ namespace Drydock.UI.Components{
         InterruptState OnLeftButtonUp(MouseState state, MouseState? prevState = null){
             if (_isMoving){
                 _isMoving = false;
-                _owner.Owner.DisableEntryHandlers = false;
+                UIElementCollection.Collection.DisableEntryHandlers = false;
             }
             return InterruptState.AllowOtherEvents;
         }

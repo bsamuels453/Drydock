@@ -79,7 +79,6 @@ namespace Drydock.UI{
         public bool ContainsMouse { get; set; }
         public float Opacity { get; set; }
         public float Depth { get; set; }
-        public UIElementCollection Owner { get; set; }
         public List<OnMouseEvent> OnLeftButtonClick { get; set; }
         public List<OnMouseEvent> OnLeftButtonPress { get; set; }
         public List<OnMouseEvent> OnLeftButtonRelease { get; set; }
@@ -93,10 +92,11 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Button(float x, float y, float width, float height, DepthLevel depth, UIElementCollection owner, string textureName, float spriteTexRepeatX = DefaultTexRepeat, float spriteTexRepeatY = DefaultTexRepeat, int identifier = DefaultIdentifier, IUIComponent[] components = null){
+        public Button(float x, float y, float width, float height, DepthLevel depth, string textureName, float spriteTexRepeatX = DefaultTexRepeat, float spriteTexRepeatY = DefaultTexRepeat, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _identifier = identifier;
-            Owner = owner;
             Depth = (float) depth/10;
+
+            UIElementCollection.AddElement(this);
 
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
@@ -121,11 +121,6 @@ namespace Drydock.UI{
                     component.Owner = this;
                 }
             }
-        }
-
-
-        ~Button(){
-            int f = 5;
         }
 
         #endregion
@@ -199,7 +194,6 @@ namespace Drydock.UI{
                 Width == null ||
                 Height == null ||
                 Depth == null ||
-                Owner == null ||
                 TextureName == null){
                 throw new Exception("Template did not contain all of the basic variables required to generate a button.");
             }
@@ -235,7 +229,6 @@ namespace Drydock.UI{
                 (float) Width,
                 (float) Height,
                 (DepthLevel) Depth,
-                Owner,
                 TextureName,
                 spriteTexRepeatX,
                 spriteTexRepeatY,

@@ -192,7 +192,6 @@
     <Compile Include="UI\Components\SelectableComponent.cs" />
     <Compile Include="UI\ComponentGenerator.cs" />
     <Compile Include="UI\DepthManager.cs" />
-    <Compile Include="UI\UIContext.cs" />
     <Compile Include="UI\IUIElement.cs" />
     <Compile Include="UI\IUIComponent.cs" />
     <Compile Include="UI\IUIInteractiveElement.cs" />

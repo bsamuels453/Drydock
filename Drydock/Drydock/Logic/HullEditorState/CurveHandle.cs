@@ -42,34 +42,33 @@ namespace Drydock.Logic.HullEditorState{
         /// </summary>
         /// <param name="buttonTemplate"> </param>
         /// <param name="lineTemplate"> </param>
-        /// <param name="uicollection"> </param>
         /// <param name="pos"> </param>
         /// <param name="prevComponent"> </param>
         /// <param name="nextComponent"> </param>
-        public CurveHandle(ButtonGenerator buttonTemplate, LineGenerator lineTemplate, UIElementCollection uicollection, Vector2 pos, Vector2 prevComponent, Vector2 nextComponent){
+        public CurveHandle(ButtonGenerator buttonTemplate, LineGenerator lineTemplate, Vector2 pos, Vector2 prevComponent, Vector2 nextComponent){
             buttonTemplate.Identifier = (int) HandleType.Center;
             buttonTemplate.X = pos.X;
             buttonTemplate.Y = pos.Y;
-            _centerButton = uicollection.Add<Button>(buttonTemplate.GenerateButton());
+            _centerButton = buttonTemplate.GenerateButton();
             _centerButton.GetComponent<DraggableComponent>().DragMovementDispatcher += TranslateToLinks;
             _centerButton.GetComponent<DraggableComponent>().DragMovementClamp += ClampHandleMovement;
 
             buttonTemplate.Identifier = (int) HandleType.Prev;
             buttonTemplate.X = prevComponent.X + pos.X;
             buttonTemplate.Y = prevComponent.Y + pos.Y;
-            _prevButton = uicollection.Add<Button>(buttonTemplate.GenerateButton());
+            _prevButton = buttonTemplate.GenerateButton();
             _prevButton.GetComponent<DraggableComponent>().DragMovementDispatcher += TranslateToLinks;
             _prevButton.GetComponent<DraggableComponent>().DragMovementClamp += ClampHandleMovement;
 
             buttonTemplate.Identifier = (int) HandleType.Next;
             buttonTemplate.X = nextComponent.X + pos.X;
             buttonTemplate.Y = nextComponent.Y + pos.Y;
-            _nextButton = uicollection.Add<Button>(buttonTemplate.GenerateButton());
+            _nextButton = buttonTemplate.GenerateButton();
             _nextButton.GetComponent<DraggableComponent>().DragMovementDispatcher += TranslateToLinks;
             _nextButton.GetComponent<DraggableComponent>().DragMovementClamp += ClampHandleMovement;
 
-            _prevLine = uicollection.Add<Line>(lineTemplate.GenerateLine());
-            _nextLine = uicollection.Add<Line>(lineTemplate.GenerateLine());
+            _prevLine = lineTemplate.GenerateLine();
+            _nextLine = lineTemplate.GenerateLine();
 
             _prevLine.OriginPoint = _centerButton.CentPosition;
             _prevLine.DestPoint = _prevButton.CentPosition;

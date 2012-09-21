@@ -20,8 +20,12 @@ namespace Drydock.Logic.HullEditorState{
         readonly SideEditorPanel _sidepanel;
         readonly TopEditorPanel _toppanel;
 
+        readonly UIElementCollection _elementCollection;
 
         public HullEditor(){
+            _elementCollection = new UIElementCollection();
+            UIElementCollection.BindCollection(_elementCollection);
+
             _sidepanel = new SideEditorPanel(0, 0, ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "save/side.xml");
             _toppanel = new TopEditorPanel(0, ScreenData.GetScreenValueY(0.5f), ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "save/top.xml");
             _backpanel = new BackEditorPanel(ScreenData.GetScreenValueX(0.5f), 0, ScreenData.GetScreenValueX(0.25f), ScreenData.GetScreenValueY(0.5f), "save/back.xml");
@@ -38,22 +42,20 @@ namespace Drydock.Logic.HullEditorState{
             _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves, _backpanel.Curves);
 
             InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10, this);
+
+            UIElementCollection.UnbindCollection();
         }
 
         #region IGameState Members
 
         public void Update(){
+            UIElementCollection.BindCollection(_elementCollection);
+            _elementCollection.Update();
             _sidepanel.Update();
             _toppanel.Update();
             _backpanel.Update();
             _previewRenderer.Update();
-        }
-
-        public void Dispose(){
-            _backpanel.Dispose();
-            _sidepanel.Dispose();
-            _toppanel.Dispose();
-           // _previewRenderer.Dispose();
+            UIElementCollection.UnbindCollection();
         }
 
         #endregion

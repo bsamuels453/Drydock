@@ -31,7 +31,7 @@ namespace Drydock{
             Singleton.ContentManager = ContentManager;
             Renderer.Init(_graphics.GraphicsDevice, Content);
             GamestateManager.Init();
-            GamestateManager.SetGameState(new TestState());
+            GamestateManager.SetGameState(new HullEditor());
 
             IsMouseVisible = true;
 

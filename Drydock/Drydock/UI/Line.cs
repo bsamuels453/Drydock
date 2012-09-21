@@ -54,8 +54,6 @@ namespace Drydock.UI{
             get { return _lineSprite; }
         }
 
-        public UIElementCollection Owner { get; set; }
-
         public float Opacity { get; set; }
         public float Depth { get; set; }
 
@@ -106,7 +104,7 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Line(Vector2 v1, Vector2 v2, Color color, DepthLevel depth, UIElementCollection owner, int identifier = DefaultIdentifier, IUIComponent[] components = null){
+        public Line(Vector2 v1, Vector2 v2, Color color, DepthLevel depth, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _lineSprite = new Line2D(this, color);
             _point1 = v1;
             _point2 = v2;
@@ -115,6 +113,7 @@ namespace Drydock.UI{
             LineWidth = 1;
             Identifier = identifier;
             CalculateInfoFromPoints();
+            UIElementCollection.AddElement(this);
 
             Components = components;
             if (Components != null){
@@ -177,7 +176,7 @@ namespace Drydock.UI{
 
         public void Dispose(){
             Sprite.Dispose();
-            Owner.DisposeElement(this);
+            _lineSprite.Dispose();
         }
 
         #endregion
@@ -188,14 +187,12 @@ namespace Drydock.UI{
         public Dictionary<string, object[]> Components;
         public DepthLevel? Depth;
         public int? Identifier;
-        public UIElementCollection Owner;
         public Vector2? V1;
         public Vector2? V2;
 
         public LineGenerator(){
             Components = null;
             Color = null;
-            Owner = null;
             Depth = null;
             V1 = null;
             V2 = null;
@@ -208,8 +205,7 @@ namespace Drydock.UI{
                 V1 == null ||
                 V2 == null ||
                 Color == null ||
-                Depth == null ||
-                Owner == null){
+                Depth == null){
                 throw new Exception("Template did not contain all of the basic variables required to generate a button.");
             }
             //generate component list
@@ -230,7 +226,6 @@ namespace Drydock.UI{
                 (Vector2) V2,
                 (Color) Color,
                 (DepthLevel) Depth,
-                Owner,
                 identifier,
                 components
                 );

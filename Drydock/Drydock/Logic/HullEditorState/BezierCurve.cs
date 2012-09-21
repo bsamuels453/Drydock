@@ -38,7 +38,7 @@ namespace Drydock.Logic.HullEditorState{
                 if (_prevLines == null){
                     _prevLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++){
-                        _prevLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                        _prevLines.Add(_lineTemplate.GenerateLine());
                     }
                 }
             }
@@ -51,7 +51,7 @@ namespace Drydock.Logic.HullEditorState{
                 if (_nextLines == null){
                     _nextLines = new List<Line>(_linesPerSide);
                     for (int i = 0; i < _linesPerSide; i++){
-                        _nextLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                        _nextLines.Add(_lineTemplate.GenerateLine());
                     }
                 }
             }
@@ -81,26 +81,26 @@ namespace Drydock.Logic.HullEditorState{
                 _prevLines = new List<Line>(_linesPerSide);
 
                 for (int i = 0; i < _linesPerSide; i++){
-                    _prevLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                    _prevLines.Add(_lineTemplate.GenerateLine());
                 }
             }
             else{
                 for (int i = 0; i < _linesPerSide; i++){
                     _prevLines[i].Dispose();
-                    _prevLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
+                    _prevLines[i] =_lineTemplate.GenerateLine();
                 }
             }
 
             if (_nextLines == null){
                 _nextLines = new List<Line>(_linesPerSide);
                 for (int i = 0; i < _linesPerSide; i++){
-                    _nextLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                    _nextLines.Add(_lineTemplate.GenerateLine());
                 }
             }
             else{
                 for (int i = 0; i < _linesPerSide; i++){
                     _nextLines[i].Dispose();
-                    _nextLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
+                    _nextLines[i] = _lineTemplate.GenerateLine();
                 }
             }
 
@@ -115,13 +115,13 @@ namespace Drydock.Logic.HullEditorState{
                 _prevLines = new List<Line>(_linesPerSide);
 
                 for (int i = 0; i < _linesPerSide; i++){
-                    _prevLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                    _prevLines.Add(_lineTemplate.GenerateLine());
                 }
             }
             else{
                 for (int i = 0; i < _linesPerSide; i++){
                     _prevLines[i].Dispose();
-                    _prevLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
+                    _prevLines[i] = _lineTemplate.GenerateLine();
                 }
             }
             Update();
@@ -134,13 +134,13 @@ namespace Drydock.Logic.HullEditorState{
             if (_nextLines == null){
                 _nextLines = new List<Line>(_linesPerSide);
                 for (int i = 0; i < _linesPerSide; i++){
-                    _nextLines.Add(_elementCollection.Add<Line>(_lineTemplate.GenerateLine()));
+                    _nextLines.Add(_lineTemplate.GenerateLine());
                 }
             }
             else{
                 for (int i = 0; i < _linesPerSide; i++){
                     _nextLines[i].Dispose();
-                    _nextLines[i] = _elementCollection.Add<Line>(_lineTemplate.GenerateLine());
+                    _nextLines[i] = _lineTemplate.GenerateLine();
                 }
             }
             Update();
@@ -225,11 +225,10 @@ namespace Drydock.Logic.HullEditorState{
 
         #region ctor and disposal
 
-        public BezierCurve(float offsetX, float offsetY, UIElementCollection parentElement, CurveInitalizeData initData){
+        public BezierCurve(float offsetX, float offsetY, CurveInitalizeData initData){
             float initX = initData.HandlePosX + offsetX;
             float initY = initData.HandlePosY + offsetY;
 
-            _elementCollection = parentElement;
             _nextLines = null;
             _nextCurve = null;
             _prevCurve = null;
@@ -240,8 +239,6 @@ namespace Drydock.Logic.HullEditorState{
             _lineTemplate.V2 = Vector2.Zero;
             _lineTemplate.Color = Color.White;
             _lineTemplate.Depth = DepthLevel.Low;
-            _lineTemplate.Owner = _elementCollection;
-
 
             Vector2 component1 = Common.GetComponentFromAngle(initData.Angle, initData.Length1);
             Vector2 component2 = Common.GetComponentFromAngle((float) (initData.Angle - Math.PI), initData.Length2); // minus math.pi to reverse direction
@@ -264,13 +261,12 @@ namespace Drydock.Logic.HullEditorState{
             lineTemplate.V1 = Vector2.Zero;
             lineTemplate.V2 = Vector2.Zero;
             lineTemplate.Depth = DepthLevel.Medium;
-            lineTemplate.Owner = _elementCollection;
             lineTemplate.Color = Color.Black;
             lineTemplate.Components = new Dictionary<string, object[]>{
                 {"FadeComponent", new object[]{FadeComponent.FadeState.Faded}}
             };
 
-            Handle = new CurveHandle(buttonTemplate, lineTemplate, parentElement, new Vector2(initX, initY), component1, component2);
+            Handle = new CurveHandle(buttonTemplate, lineTemplate, new Vector2(initX, initY), component1, component2);
 
             #endregion
         }
