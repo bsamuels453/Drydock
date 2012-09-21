@@ -144,16 +144,21 @@ namespace Drydock.UI{
 
         public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
-                foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonClick){
-                    if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
+                if (_layerSortedIElements[i].ContainsMouse){
+
+                    foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonClick){
+                        if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
+                            return InterruptState.InterruptEventDispatch;
+                        }
+                    }
+                }
+
+                foreach (var collection in _childCollections){
+                    if (collection.OnLeftButtonClick(state, prevState) == InterruptState.InterruptEventDispatch){
                         return InterruptState.InterruptEventDispatch;
                     }
                 }
-            }
-            foreach (var collection in _childCollections){
-                if (collection.OnLeftButtonClick(state, prevState) == InterruptState.InterruptEventDispatch){
-                    return InterruptState.InterruptEventDispatch;
-                }
+                return InterruptState.AllowOtherEvents;
             }
             return InterruptState.AllowOtherEvents;
         }

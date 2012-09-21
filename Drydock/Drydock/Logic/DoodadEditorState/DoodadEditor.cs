@@ -28,6 +28,7 @@ namespace Drydock.Logic.DoodadEditorState{
             _hullGeometryHandler = new HullGeometryHandler(geomGen.GetGeometrySlices(), _primsPerDeck, geomGen.NumDecks);
 
             _deckUpButton.OnLeftButtonClick.Add(_hullGeometryHandler.AddVisibleLevel);
+            _deckDownButton.OnLeftButtonClick.Add(_hullGeometryHandler.RemoveVisibleLevel);
 
             RenderPanel.UnbindRenderTarget();
         }
@@ -36,6 +37,8 @@ namespace Drydock.Logic.DoodadEditorState{
 
         public void Update(){
             //throw new NotImplementedException();
+            _deckUpButton.Update();
+            _deckDownButton.Update();
         }
 
         public void Dispose(){

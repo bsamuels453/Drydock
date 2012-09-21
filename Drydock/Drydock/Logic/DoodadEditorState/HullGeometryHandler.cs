@@ -109,11 +109,27 @@ namespace Drydock.Logic.DoodadEditorState {
 
 
         public InterruptState AddVisibleLevel(MouseState state, MouseState? prevState){
+            if (_visibleDecks != _numDecks){
+                foreach (var buffer in _deckBuffers.Where(buffer => buffer.IsEnabled == false)){
+                    buffer.IsEnabled = true;
+                    _visibleDecks++;
+                    break;
+                }
 
+            }
             return InterruptState.InterruptEventDispatch;
         }
 
         public InterruptState RemoveVisibleLevel(MouseState state, MouseState? prevState) {
+            if (_visibleDecks != 0){
+                foreach (var buffer in Enumerable.Reverse(_deckBuffers)) {
+                    if (buffer.IsEnabled == true) {
+                        buffer.IsEnabled = false;
+                        _visibleDecks--;
+                        break;
+                    }
+                }
+            }
 
 
             return InterruptState.InterruptEventDispatch;

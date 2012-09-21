@@ -32,7 +32,7 @@ namespace Drydock.Logic{
             else{
                 _boundingBox = new Rectangle(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
             }
-            InputEventDispatcher.EventSubscribers.Add(1.0f, this);
+            InputEventDispatcher.EventSubscribers.Add(0.1f, this);
         }
 
         protected void SetCameraTarget(Vector3 target){
