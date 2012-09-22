@@ -72,7 +72,6 @@ namespace Drydock.Logic.HullEditorState{
 
                 GamestateManager.ClearGameState();
                 GamestateManager.SetGameState(new DoodadEditor(backInfo, sideInfo, topInfo));
-                GamestateManager.SetGameState(new HullEditor());
             }
         }
 
