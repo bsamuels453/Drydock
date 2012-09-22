@@ -1,16 +1,17 @@
-﻿using System;
+﻿#region
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Drydock.Render {
-    /// <summary>
-    /// helper class for use with rectangular meshes
-    /// </summary>
-    static class MeshHelper {
+#endregion
 
+namespace Drydock.Render{
+    /// <summary>
+    ///   helper class for use with rectangular meshes
+    /// </summary>
+    internal static class MeshHelper{
         public static int[] CreateIndiceArray(int numQuads){
             //construct indice list
             //remember the clockwise-fu
@@ -24,9 +25,9 @@ namespace Drydock.Render {
             //    /   | 
             //  /     |
             //+0-----+3
-            var indicies = new int[numQuads * 6];
+            var indicies = new int[numQuads*6];
             int curVertex = 0;
-            for (int i = 0; i < indicies.Count(); i += 6) {
+            for (int i = 0; i < indicies.Count(); i += 6){
                 indicies[i] = curVertex;
                 indicies[i + 1] = curVertex + 1;
                 indicies[i + 2] = curVertex + 2;
@@ -41,9 +42,9 @@ namespace Drydock.Render {
         }
 
         public static VertexPositionNormalTexture[] CreateTexcoordedVertexList(int numQuads){
-            var verticies = new VertexPositionNormalTexture[numQuads * 4];
+            var verticies = new VertexPositionNormalTexture[numQuads*4];
 
-            for (int i = 0; i < verticies.Count(); i++) {
+            for (int i = 0; i < verticies.Count(); i++){
                 verticies[i] = new VertexPositionNormalTexture();
             }
 
@@ -58,16 +59,16 @@ namespace Drydock.Render {
         }
 
         public static void Encode2DListIntoMesh(int meshWidth, int meshHeight, ref Vector3[,] mesh, List<List<Vector3>> list){
-            for (int x = 0; x < meshWidth; x++) {
-                for (int y = 0; y < meshHeight; y++) {
+            for (int x = 0; x < meshWidth; x++){
+                for (int y = 0; y < meshHeight; y++){
                     mesh[x, y] = list[x][y];
                 }
             }
         }
 
         public static void GenerateMeshNormals(Vector3[,] mesh, ref Vector3[,] normals){
-            for (int vertX = 0; vertX < mesh.GetLength(0) - 1; vertX++) {
-                for (int vertZ = 0; vertZ < mesh.GetLength(1) - 1; vertZ++) {
+            for (int vertX = 0; vertX < mesh.GetLength(0) - 1; vertX++){
+                for (int vertZ = 0; vertZ < mesh.GetLength(1) - 1; vertZ++){
                     var crossSum = new Vector3();
 
                     var s1 = mesh[vertX + 1, vertZ] - mesh[vertX, vertZ];
@@ -82,8 +83,8 @@ namespace Drydock.Render {
                 }
             }
 
-            for (int vertX = 1; vertX < mesh.GetLength(0); vertX++) {
-                for (int vertZ = 1; vertZ < mesh.GetLength(1); vertZ++) {
+            for (int vertX = 1; vertX < mesh.GetLength(0); vertX++){
+                for (int vertZ = 1; vertZ < mesh.GetLength(1); vertZ++){
                     var crossSum = new Vector3();
 
                     var s1 = mesh[vertX - 1, vertZ] - mesh[vertX, vertZ];
@@ -102,8 +103,8 @@ namespace Drydock.Render {
         public static void ConvertMeshToVertList(Vector3[,] mesh, Vector3[,] normals, ref VertexPositionNormalTexture[] verticies){
             //convert from 2d array to 1d
             int index = 0;
-            for (int x = 0; x < mesh.GetLength(0) - 1; x++) {
-                for (int z = 0; z < mesh.GetLength(1) - 1; z++) {
+            for (int x = 0; x < mesh.GetLength(0) - 1; x++){
+                for (int z = 0; z < mesh.GetLength(1) - 1; z++){
                     verticies[index].Position = mesh[x, z];
                     verticies[index].Normal = normals[x, z];
 
@@ -120,6 +121,5 @@ namespace Drydock.Render {
                 }
             }
         }
-
     }
 }

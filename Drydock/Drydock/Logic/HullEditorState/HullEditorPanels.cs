@@ -56,7 +56,7 @@ namespace Drydock.Logic.HullEditorState{
                 panelType: panelType
                 );
             UIElementCollection.Collection.AddDragConstraintCallback(ClampChildElements);
-            Background = 
+            Background =
                 new Button(
                     x: x,
                     y: y,
@@ -67,8 +67,7 @@ namespace Drydock.Logic.HullEditorState{
                     spriteTexRepeatX: width/(Curves.PixelsPerMeter*1),
                     spriteTexRepeatY: height/(Curves.PixelsPerMeter*1),
                     components: new IUIComponent[]{new PanelComponent()}
-                    
-                );
+                    );
             Update();
         }
 
@@ -108,11 +107,6 @@ namespace Drydock.Logic.HullEditorState{
                 y = oldY;
             }
         }
-
-        //public void Dispose(){
-            //ElementCollection.Dispose();
-            //PanelRenderTarget.Dispose();
-        //}
 
         public void Update(){
             Curves.Update();

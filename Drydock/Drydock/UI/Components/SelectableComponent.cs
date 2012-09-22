@@ -1,11 +1,10 @@
 ﻿#region
 
-using System;
-using Drydock.Control;
-using Microsoft.Xna.Framework.Input;
+
 
 #endregion
 
+/*~eventually
 namespace Drydock.UI.Components{
     internal delegate void ReactToSelection(SelectState state);
 
@@ -101,7 +100,7 @@ namespace Drydock.UI.Components{
                 }
                     // ReSharper disable EmptyGeneralCatchClause
                 catch (Exception){ /*there is no fade component*/
-                }
+/*}
                 // ReSharper restore EmptyGeneralCatchClause
                 if (ReactToSelectionDispatcher != null){
                     ReactToSelectionDispatcher(SelectState.Selected);
@@ -122,7 +121,7 @@ namespace Drydock.UI.Components{
                 }
                     // ReSharper disable EmptyGeneralCatchClause
                 catch (Exception){ /*there is no fade component*/
-                }
+/* }
                 // ReSharper restore EmptyGeneralCatchClause
                 if (ReactToSelectionDispatcher != null){
                     ReactToSelectionDispatcher(SelectState.UnSelected);
@@ -131,3 +130,4 @@ namespace Drydock.UI.Components{
         }
     }
 }
+*/

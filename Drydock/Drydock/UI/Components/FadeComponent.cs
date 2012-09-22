@@ -1,7 +1,7 @@
 ﻿#region
 
 using System;
-using Drydock.Control;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 #endregion
@@ -12,7 +12,7 @@ namespace Drydock.UI.Components{
     /// <summary>
     ///   allows a UI element to be faded in and out. Required element to be IUIInteractiveComponent for certain settings.
     /// </summary>
-    internal class FadeComponent : IUIComponent{
+    internal class FadeComponent : IUIComponent, IAcceptMouseEntryEvent, IAcceptMouseExitEvent{
         #region FadeState enum
 
         public enum FadeState{
@@ -71,7 +71,7 @@ namespace Drydock.UI.Components{
                     _prevUpdateTimeIndex = DateTime.Now.Ticks;
                     //because the mouse may have left the bounding box while this component was disabled
                     if (!_owner.BoundingBox.Contains(state.X, state.Y)){
-                        ForceFadeout(state);
+                        ForceFadeout();
                     }
                 }
             }
@@ -110,13 +110,43 @@ namespace Drydock.UI.Components{
                         throw new Exception("Invalid fade trigger: Unable to set an interactive trigger to a non-interactive element.");
                     }
 
-                    ((IUIInteractiveElement) _owner).OnMouseEntry.Add(ForceFadein);
-                    ((IUIInteractiveElement) _owner).OnMouseExit.Add(ForceFadeout);
-                    ((IUIInteractiveElement) _owner).OnLeftButtonRelease.Add(ConfirmFadeoutProc);
+                    ((IUIInteractiveElement) _owner).OnMouseEntry.Add(this);
+                    ((IUIInteractiveElement) _owner).OnMouseExit.Add(this);
+                    //((IUIInteractiveElement) _owner).OnLeftButtonRelease.Add(ConfirmFadeoutProc);what the fuck was this for
                     break;
 
                 case FadeTrigger.None:
                     break;
+            }
+        }
+
+        #endregion
+
+        #region IAcceptMouseEntryEvent Members
+
+        public void OnMouseEntry(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
+            UIElementCollection.Collection.DisableEntryHandlers = true;
+            if (IsEnabled){
+                _isInTransition = true;
+                _isFadingOut = false;
+                if (FadeStateChangeDispatcher != null){
+                    FadeStateChangeDispatcher(FadeState.Visible);
+                }
+            }
+        }
+
+        #endregion
+
+        #region IAcceptMouseExitEvent Members
+
+        public void OnMouseExit(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
+            UIElementCollection.Collection.DisableEntryHandlers = false;
+            if (IsEnabled){
+                _isInTransition = true;
+                _isFadingOut = true;
+                if (FadeStateChangeDispatcher != null){
+                    FadeStateChangeDispatcher(FadeState.Faded);
+                }
             }
         }
 
@@ -152,7 +182,7 @@ namespace Drydock.UI.Components{
 
         #region modification methods
 
-        public InterruptState ForceFadeout(MouseState state, MouseState? prevState = null){
+        public void ForceFadeout(){
             UIElementCollection.Collection.DisableEntryHandlers = false;
             if (IsEnabled){
                 _isInTransition = true;
@@ -161,10 +191,9 @@ namespace Drydock.UI.Components{
                     FadeStateChangeDispatcher(FadeState.Faded);
                 }
             }
-            return InterruptState.AllowOtherEvents;
         }
 
-        public InterruptState ForceFadein(MouseState state, MouseState? prevState = null){
+        public void ForceFadein(){
             UIElementCollection.Collection.DisableEntryHandlers = true;
             if (IsEnabled){
                 _isInTransition = true;
@@ -173,31 +202,6 @@ namespace Drydock.UI.Components{
                     FadeStateChangeDispatcher(FadeState.Visible);
                 }
             }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState ForceFadeout(){
-            UIElementCollection.Collection.DisableEntryHandlers = false;
-            if (IsEnabled){
-                _isInTransition = true;
-                _isFadingOut = true;
-                if (FadeStateChangeDispatcher != null){
-                    FadeStateChangeDispatcher(FadeState.Faded);
-                }
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public InterruptState ForceFadein(){
-            UIElementCollection.Collection.DisableEntryHandlers = true;
-            if (IsEnabled){
-                _isInTransition = true;
-                _isFadingOut = false;
-                if (FadeStateChangeDispatcher != null){
-                    FadeStateChangeDispatcher(FadeState.Visible);
-                }
-            }
-            return InterruptState.AllowOtherEvents;
         }
 
         #endregion
@@ -221,11 +225,11 @@ namespace Drydock.UI.Components{
                     var e1 = (IUIInteractiveElement) element1;
                     var e2 = (IUIInteractiveElement) element2;
 
-                    e1.OnMouseEntry.Add(e2.GetComponent<FadeComponent>().ForceFadein);
-                    e2.OnMouseEntry.Add(e1.GetComponent<FadeComponent>().ForceFadein);
+                    e1.OnMouseEntry.Add(e2.GetComponent<FadeComponent>());
+                    e2.OnMouseEntry.Add(e1.GetComponent<FadeComponent>());
 
-                    e1.OnMouseExit.Add(e2.GetComponent<FadeComponent>().ForceFadeout);
-                    e2.OnMouseExit.Add(e1.GetComponent<FadeComponent>().ForceFadeout);
+                    e1.OnMouseExit.Add(e2.GetComponent<FadeComponent>());
+                    e2.OnMouseExit.Add(e1.GetComponent<FadeComponent>());
 
                     break;
             }
@@ -246,8 +250,8 @@ namespace Drydock.UI.Components{
                     //cast to interactive
                     var e1 = (IUIInteractiveElement) eventProcElement;
 
-                    e1.OnMouseEntry.Add(eventRecieveElement.GetComponent<FadeComponent>().ForceFadein);
-                    e1.OnMouseExit.Add(eventRecieveElement.GetComponent<FadeComponent>().ForceFadeout);
+                    e1.OnMouseEntry.Add(eventRecieveElement.GetComponent<FadeComponent>());
+                    e1.OnMouseExit.Add(eventRecieveElement.GetComponent<FadeComponent>());
 
                     break;
 
@@ -270,8 +274,8 @@ namespace Drydock.UI.Components{
                             throw new Exception("Unable to link interactive element fade triggers; the event proc element is not interactive.");
                         }
                         foreach (var eElement in eventRecieveElements){
-                            ((IUIInteractiveElement) pElement).OnMouseEntry.Add(eElement.GetComponent<FadeComponent>().ForceFadein);
-                            ((IUIInteractiveElement) pElement).OnMouseExit.Add(eElement.GetComponent<FadeComponent>().ForceFadeout);
+                            ((IUIInteractiveElement) pElement).OnMouseEntry.Add(eElement.GetComponent<FadeComponent>());
+                            ((IUIInteractiveElement) pElement).OnMouseExit.Add(eElement.GetComponent<FadeComponent>());
                         }
                     }
 
@@ -283,10 +287,6 @@ namespace Drydock.UI.Components{
         }
 
         #endregion
-
-        InterruptState ConfirmFadeoutProc(MouseState state, MouseState? prevState = null){
-            return InterruptState.AllowOtherEvents;
-        }
 
         public event FadeStateChange FadeStateChangeDispatcher;
     }

@@ -1,25 +1,25 @@
-﻿using System;
+﻿#region
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Drydock.Control;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.Logic.DoodadEditorState {
-    class HullGeometryHandler : ATargetingCamera {
-        readonly List<List<Vector3>> _layerVerts;
-        readonly List<List<List<Vector3>>> _deckVertexes; // deck->levels of deck vertexes->vertexes for each level 
+#endregion
+
+namespace Drydock.Logic.DoodadEditorState{
+    internal class HullGeometryHandler : ATargetingCamera{
+        readonly ShipGeometryBuffer _auxHullBuffer; //used for filling in around portholes
         readonly ShipGeometryBuffer[] _deckBuffers;
-        readonly ShipGeometryBuffer _auxHullBuffer;//used for filling in around portholes
+        readonly List<List<List<Vector3>>> _deckVertexes; // deck->levels of deck vertexes->vertexes for each level 
+        readonly List<List<Vector3>> _layerVerts;
 
-        int _visibleDecks;
         readonly int _numDecks;
-        
+        int _visibleDecks;
+
         public HullGeometryHandler(List<List<Vector3>> geometry, int deckPrimitiveHeight, int numDecks){
-            _deckBuffers = new ShipGeometryBuffer[numDecks+1];
+            _deckBuffers = new ShipGeometryBuffer[numDecks + 1];
             _visibleDecks = numDecks;
             _numDecks = numDecks;
 
@@ -46,44 +46,43 @@ namespace Drydock.Logic.DoodadEditorState {
             }
 
             //this fixes the ordering of the lists so that normals generate correctly
-            foreach (List<Vector3> t in _layerVerts) {
+            foreach (List<Vector3> t in _layerVerts){
                 t.Reverse();
             }
 
             //now enumerate the ships layer verts into levels for each deck
             _deckVertexes = new List<List<List<Vector3>>>(numDecks + 1);
-            for (int i = 0; i < numDecks; i++) {
-                _deckVertexes.Add( new List<List<Vector3>>(deckPrimitiveHeight));
+            for (int i = 0; i < numDecks; i++){
+                _deckVertexes.Add(new List<List<Vector3>>(deckPrimitiveHeight));
 
-                for (int level = 0; level < deckPrimitiveHeight+1; level++) {
-                    _deckVertexes[i].Add(_layerVerts[i * (deckPrimitiveHeight) + level]);
+                for (int level = 0; level < deckPrimitiveHeight + 1; level++){
+                    _deckVertexes[i].Add(_layerVerts[i*(deckPrimitiveHeight) + level]);
                 }
             }
             //edge case for the final deck, the "bottom"
             _deckVertexes.Add(new List<List<Vector3>>());
-            for (int level = numDecks * deckPrimitiveHeight; level < _layerVerts.Count; level++){
+            for (int level = numDecks*deckPrimitiveHeight; level < _layerVerts.Count; level++){
                 _deckVertexes[_deckVertexes.Count - 1].Add(_layerVerts[level]);
             }
 
             //generate a normals array for the entire ship, rather than per-deck
-            var totalMesh = new Vector3[_layerVerts.Count, _layerVerts[0].Count];
-            var totalNormals = new Vector3[_layerVerts.Count, _layerVerts[0].Count];
+            var totalMesh = new Vector3[_layerVerts.Count,_layerVerts[0].Count];
+            var totalNormals = new Vector3[_layerVerts.Count,_layerVerts[0].Count];
             MeshHelper.Encode2DListIntoMesh(_layerVerts.Count, _layerVerts[0].Count, ref totalMesh, _layerVerts);
             MeshHelper.GenerateMeshNormals(totalMesh, ref totalNormals);
 
 
             //now set up the display buffer for each deck
             for (int i = 0; i < _deckVertexes.Count; i++){
-                var mesh = new Vector3[deckPrimitiveHeight + 1, _deckVertexes[0][0].Count];
-                var normals = new Vector3[deckPrimitiveHeight + 1, _deckVertexes[0][0].Count];
-                int[] indicies = MeshHelper.CreateIndiceArray((deckPrimitiveHeight + 1) * _deckVertexes[0][0].Count);
-                VertexPositionNormalTexture[] verticies = MeshHelper.CreateTexcoordedVertexList((deckPrimitiveHeight + 1) * _deckVertexes[0][0].Count);
+                var mesh = new Vector3[deckPrimitiveHeight + 1,_deckVertexes[0][0].Count];
+                var normals = new Vector3[deckPrimitiveHeight + 1,_deckVertexes[0][0].Count];
+                int[] indicies = MeshHelper.CreateIndiceArray((deckPrimitiveHeight + 1)*_deckVertexes[0][0].Count);
+                VertexPositionNormalTexture[] verticies = MeshHelper.CreateTexcoordedVertexList((deckPrimitiveHeight + 1)*_deckVertexes[0][0].Count);
 
 
                 for (int x = 0; x < deckPrimitiveHeight + 1; x++){
                     for (int z = 0; z < _deckVertexes[0][0].Count; z++){
-                        normals[x, z] = totalNormals[i * deckPrimitiveHeight+x, z];
-
+                        normals[x, z] = totalNormals[i*deckPrimitiveHeight + x, z];
                     }
                 }
 
@@ -91,7 +90,7 @@ namespace Drydock.Logic.DoodadEditorState {
                 //MeshHelper.GenerateMeshNormals(mesh, ref normals);
                 MeshHelper.ConvertMeshToVertList(mesh, normals, ref verticies);
 
-                _deckBuffers[i] = new ShipGeometryBuffer(indicies.Count(), verticies.Count(), verticies.Count() / 2, "whiteborder");
+                _deckBuffers[i] = new ShipGeometryBuffer(indicies.Count(), verticies.Count(), verticies.Count()/2, "whiteborder");
                 _deckBuffers[i].Indexbuffer.SetData(indicies);
                 _deckBuffers[i].Vertexbuffer.SetData(verticies);
             }
@@ -104,11 +103,10 @@ namespace Drydock.Logic.DoodadEditorState {
             p /= 4;
 
             SetCameraTarget(p);
- 
         }
 
 
-        public InterruptState AddVisibleLevel(MouseState state, MouseState? prevState){
+        /*public InterruptState AddVisibleLevel(MouseState state, MouseState? prevState){
             if (_visibleDecks != _numDecks){
                 foreach (var buffer in _deckBuffers.Where(buffer => buffer.IsEnabled == false)){
                     buffer.IsEnabled = true;
@@ -133,6 +131,6 @@ namespace Drydock.Logic.DoodadEditorState {
 
 
             return InterruptState.InterruptEventDispatch;
-        }
+        }*/
     }
 }

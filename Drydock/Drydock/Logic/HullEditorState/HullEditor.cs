@@ -4,23 +4,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Drydock.Control;
-using Drydock.Logic.DoodadEditorState;
 using Drydock.Render;
 using Drydock.UI;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 #endregion
 
 namespace Drydock.Logic.HullEditorState{
     internal class HullEditor : IGameState{
         readonly BackEditorPanel _backpanel;
+        readonly UIElementCollection _elementCollection;
 
         readonly PreviewRenderer _previewRenderer;
         readonly SideEditorPanel _sidepanel;
         readonly TopEditorPanel _toppanel;
-
-        readonly UIElementCollection _elementCollection;
 
         public HullEditor(){
             _elementCollection = new UIElementCollection();
@@ -46,17 +43,15 @@ namespace Drydock.Logic.HullEditorState{
 
         #region IGameState Members
 
-        public void Update(){
+        public void Update(ref ControlState state, double timeDelta){
             UIElementCollection.BindCollection(_elementCollection);
             _sidepanel.Update();
             _toppanel.Update();
             _backpanel.Update();
             _previewRenderer.Update();
+            UIElementCollection.Collection.InputUpdate(ref state);
+            UIElementCollection.Collection.Update(timeDelta);
             UIElementCollection.UnbindCollection();
-        }
-
-        public void InputUpdate(ref ControlState state){
-            
         }
 
         #endregion
@@ -188,9 +183,9 @@ namespace Drydock.Logic.HullEditorState{
             topData[2].NextHandleLength = 5;
             topData[2].PrevHandleLength = starboardNLengthTop;
 
-            SaveCurve(directory+"back.xml", backData);
-            SaveCurve(directory+"top.xml", topData);
-            SaveCurve(directory+"side.xml", sideData);
+            SaveCurve(directory + "back.xml", backData);
+            SaveCurve(directory + "top.xml", topData);
+            SaveCurve(directory + "side.xml", sideData);
         }
 
         void SaveCurve(string filename, List<CurveData> curveData){

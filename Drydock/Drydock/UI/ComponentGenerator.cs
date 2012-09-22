@@ -58,11 +58,11 @@ namespace Drydock.UI{
 
                         #region selectablecomponent
 
-                    case "SelectableComponent":
+                        /*case "SelectableComponent":
                         if (component.Value.Count() < 3)
                             throw new Exception("not enough data to create a SelectableComponent from template");
                         components.Add(new SelectableComponent((string) component.Value[0], (int) component.Value[1], (int) component.Value[2]));
-                        break;
+                        break;*/
 
                         #endregion
 

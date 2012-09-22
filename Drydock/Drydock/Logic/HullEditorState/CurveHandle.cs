@@ -104,55 +104,7 @@ namespace Drydock.Logic.HullEditorState{
             PrevHandle = null;
             SymmetricHandle = null;
             TranslateToExtern = null;
-
         }
-
-        #region properties
-
-        public Vector2 CentButtonCenter{
-            get { return _centerButton.CentPosition; }
-        }
-
-        public Vector2 PrevButtonCenter{
-            get { return _prevButton.CentPosition; }
-        }
-
-        public Vector2 NextButtonCenter{
-            get { return _nextButton.CentPosition; }
-        }
-
-        public Vector2 CentButtonPos{
-            get { return _centerButton.CentPosition; }
-            set { _centerButton.CentPosition = value; }
-        }
-
-        public Vector2 NextButtonPos{
-            get { return _nextButton.CentPosition; }
-        }
-
-        public Vector2 PrevButtonPos{
-            get { return _prevButton.CentPosition; }
-        }
-
-        public float PrevLength{
-            get { return _prevLine.Length; }
-        }
-
-        public float NextLength{
-            get { return _nextLine.Length; }
-        }
-
-        public float Angle{
-            set{
-                _prevLine.Angle = value;
-                _nextLine.Angle = (float) (value + Math.PI);
-                _prevButton.CentPosition = _prevLine.DestPoint;
-                _nextButton.CentPosition = _nextLine.DestPoint;
-            }
-            get { return _prevLine.Angle; }
-        }
-
-        #endregion
 
         public void SetReflectionType(PanelAlias panelType, HandleMovementRestriction restrictionType, bool hasInternalSymmetry = false){
             _internalSymmetry = hasInternalSymmetry;
@@ -595,6 +547,53 @@ namespace Drydock.Logic.HullEditorState{
                 state: FadeComponent.FadeTrigger.EntryExit
                 );
         }
+
+        #region properties
+
+        public Vector2 CentButtonCenter{
+            get { return _centerButton.CentPosition; }
+        }
+
+        public Vector2 PrevButtonCenter{
+            get { return _prevButton.CentPosition; }
+        }
+
+        public Vector2 NextButtonCenter{
+            get { return _nextButton.CentPosition; }
+        }
+
+        public Vector2 CentButtonPos{
+            get { return _centerButton.CentPosition; }
+            set { _centerButton.CentPosition = value; }
+        }
+
+        public Vector2 NextButtonPos{
+            get { return _nextButton.CentPosition; }
+        }
+
+        public Vector2 PrevButtonPos{
+            get { return _prevButton.CentPosition; }
+        }
+
+        public float PrevLength{
+            get { return _prevLine.Length; }
+        }
+
+        public float NextLength{
+            get { return _nextLine.Length; }
+        }
+
+        public float Angle{
+            set{
+                _prevLine.Angle = value;
+                _nextLine.Angle = (float) (value + Math.PI);
+                _prevButton.CentPosition = _prevLine.DestPoint;
+                _nextButton.CentPosition = _nextLine.DestPoint;
+            }
+            get { return _prevLine.Angle; }
+        }
+
+        #endregion
 
         #region Nested type: ClampByNeighbors
 

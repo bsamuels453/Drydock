@@ -166,20 +166,20 @@ namespace Drydock.UI{
             return false;
         }
 
-        public void Dispose(){
-            Sprite.Dispose();
-            _lineSprite.Dispose();
-        }
-
         public void Update(double timeDelta){
-            if (Components != null) {
-                foreach (IUIComponent component in Components) {
+            if (Components != null){
+                foreach (IUIComponent component in Components){
                     component.Update();
                 }
             }
         }
 
         #endregion
+
+        public void Dispose(){
+            Sprite.Dispose();
+            _lineSprite.Dispose();
+        }
     }
 
     internal class LineGenerator : ComponentGenerator{

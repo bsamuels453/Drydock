@@ -183,7 +183,7 @@ namespace Drydock.Utilities{
     /// </summary>
     internal class BruteBezierGenerator{
         readonly List<int> _curveStartIndexes; //contains a list of indexes that specify where a curve starts in the pointCache 
-        readonly  List<Vector2> _pointCache;
+        readonly List<Vector2> _pointCache;
         List<float> _curveSegmentLengths;
         float _totalArcLen;
 
@@ -194,7 +194,7 @@ namespace Drydock.Utilities{
             for (int curve = 0; curve < curveinfo.Count - 1; curve++){
                 float estArcLen = Vector2.Distance(curveinfo[curve].Pos, curveinfo[curve + 1].Pos);
 
-                if (estArcLen == 0){//fix for one of the special cases
+                if (estArcLen == 0){ //fix for one of the special cases
                     _pointCache.Add(curveinfo[0].Pos);
                     return;
                 }
@@ -285,7 +285,7 @@ namespace Drydock.Utilities{
                 retList.Add(_pointCache[index]);
             }
             if (retList.Count == 0){
-                retList.Add(_pointCache[_pointCache.Count-1]);
+                retList.Add(_pointCache[_pointCache.Count - 1]);
                 //retList.Add(new Vector2(0, 0));
             }
 
@@ -296,7 +296,7 @@ namespace Drydock.Utilities{
             var distList = new float[_pointCache.Count];
 
             //y value is treated as the dependent value 
-            for (int i = 0; i < _pointCache.Count; i++) {
+            for (int i = 0; i < _pointCache.Count; i++){
                 distList[i] = Math.Abs(_pointCache[i].X - independent);
             }
 
@@ -304,7 +304,7 @@ namespace Drydock.Utilities{
 
             var retList = new List<Vector2>(dependentIndexList.Count);
 
-            foreach (var index in dependentIndexList) {
+            foreach (var index in dependentIndexList){
                 retList.Add(_pointCache[index]);
                 //retList.Add(new Vector2(0, 0));
             }
@@ -430,12 +430,12 @@ namespace Drydock.Utilities{
 
         public BezierInfo CreateScaledCopy(float scaleX, float scaleY){
             var scaledController = new BezierInfo();
-            scaledController.Pos.X = Pos.X * scaleX;
-            scaledController.Pos.Y = Pos.Y * scaleY;
-            scaledController.NextControl.X = NextControl.X * scaleX;
-            scaledController.NextControl.Y = NextControl.Y * scaleY;
-            scaledController.PrevControl.X = PrevControl.X * scaleX;
-            scaledController.PrevControl.Y = PrevControl.Y * scaleY;
+            scaledController.Pos.X = Pos.X*scaleX;
+            scaledController.Pos.Y = Pos.Y*scaleY;
+            scaledController.NextControl.X = NextControl.X*scaleX;
+            scaledController.NextControl.Y = NextControl.Y*scaleY;
+            scaledController.PrevControl.X = PrevControl.X*scaleX;
+            scaledController.PrevControl.Y = PrevControl.Y*scaleY;
             return scaledController;
         }
     }

@@ -7,6 +7,7 @@ using Drydock.Control;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 #endregion
 
@@ -76,17 +77,21 @@ namespace Drydock.UI{
             get { return _boundingBox; }
         }
 
+        public event OnBasicMouseEvent OnLeftClickDispatcher;
+        public event OnBasicMouseEvent OnLeftPressDispatcher;
+        public event OnBasicMouseEvent OnLeftReleaseDispatcher;
         public bool ContainsMouse { get; set; }
+        public List<IAcceptLeftButtonClickEvent> OnLeftButtonClick { get; set; }
+        public List<IAcceptLeftButtonPressEvent> OnLeftButtonPress { get; set; }
+        public List<IAcceptLeftButtonReleaseEvent> OnLeftButtonRelease { get; set; }
+        public List<IAcceptMouseEntryEvent> OnMouseEntry { get; set; }
+        public List<IAcceptMouseExitEvent> OnMouseExit { get; set; }
+        public List<IAcceptMouseMovementEvent> OnMouseMovement { get; set; }
+        public List<IAcceptMouseScrollEvent> OnMouseScroll { get; set; }
+        public List<IAcceptKeyboardEvent> OnKeyboardEvent { get; set; }
+
         public float Opacity { get; set; }
         public float Depth { get; set; }
-        public List<OnMouseEvent> OnLeftButtonClick { get; set; }
-        public List<OnMouseEvent> OnLeftButtonPress { get; set; }
-        public List<OnMouseEvent> OnLeftButtonRelease { get; set; }
-        public List<OnMouseEvent> OnMouseEntry { get; set; }
-        public List<OnMouseEvent> OnMouseExit { get; set; }
-        public List<OnMouseEvent> OnMouseMovement { get; set; }
-        public List<EOnKeyboardEvent> OnKeyboardEvent { get; set; }
-        public List<OnMouseEvent> OnMouseScroll { get; set; }
 
         #endregion
 
@@ -97,19 +102,18 @@ namespace Drydock.UI{
             Depth = (float) depth/10;
 
             UIElementCollection.AddElement(this);
+            OnLeftButtonClick = new List<IAcceptLeftButtonClickEvent>();
+            OnLeftButtonPress = new List<IAcceptLeftButtonPressEvent>();
+            OnLeftButtonRelease = new List<IAcceptLeftButtonReleaseEvent>();
+            OnMouseEntry = new List<IAcceptMouseEntryEvent>();
+            OnMouseExit = new List<IAcceptMouseExitEvent>();
+            OnMouseMovement = new List<IAcceptMouseMovementEvent>();
+            OnMouseScroll = new List<IAcceptMouseScrollEvent>();
+            OnKeyboardEvent = new List<IAcceptKeyboardEvent>();
 
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
             _sprite = new Sprite2D(textureName, this, spriteTexRepeatX, spriteTexRepeatY);
-
-            OnLeftButtonClick = new List<OnMouseEvent>();
-            OnLeftButtonPress = new List<OnMouseEvent>();
-            OnLeftButtonRelease = new List<OnMouseEvent>();
-            OnMouseEntry = new List<OnMouseEvent>();
-            OnMouseExit = new List<OnMouseEvent>();
-            OnMouseMovement = new List<OnMouseEvent>();
-            OnKeyboardEvent = new List<EOnKeyboardEvent>();
-            OnMouseScroll = new List<OnMouseEvent>();
 
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
@@ -145,20 +149,79 @@ namespace Drydock.UI{
             return false;
         }
 
-        public void Dispose(){
-            throw new NotImplementedException();
-        }
-
-
         public void Update(double timeDelta){
-            if (Components != null) {
-                foreach (IUIComponent component in Components) {
+            if (Components != null){
+                foreach (IUIComponent component in Components){
                     component.Update();
                 }
             }
         }
 
         public void InputUpdate(ref ControlState state){
+            if (state.AllowLeftButtonInterpretation){
+                if (state.LeftButtonClick){
+                    foreach (var @event in OnLeftButtonClick){
+                        @event.OnLeftButtonClick(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevMousePos);
+                        if (!state.AllowLeftButtonInterpretation)
+                            break;
+                    }
+                }
+            }
+            if (state.AllowLeftButtonInterpretation){
+                if (state.LeftButtonChange == ButtonState.Pressed){
+                    foreach (var @event in OnLeftButtonPress){
+                        @event.OnLeftButtonPress(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevMousePos);
+                        if (!state.AllowLeftButtonInterpretation)
+                            break;
+                    }
+                }
+            }
+            if (state.AllowLeftButtonInterpretation){
+                if (state.LeftButtonChange == ButtonState.Released){
+                    foreach (var @event in OnLeftButtonRelease){
+                        @event.OnLeftButtonRelease(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevMousePos);
+                        if (!state.AllowLeftButtonInterpretation)
+                            break;
+                    }
+                }
+            }
+            if (state.AllowMouseMovementInterpretation){
+                foreach (var @event in OnMouseMovement){
+                    @event.OnMouseMovement(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevMousePos);
+                    if (!state.AllowMouseMovementInterpretation)
+                        break;
+                }
+            }
+            if (state.AllowMouseMovementInterpretation){
+                if (BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && !ContainsMouse){
+                    ContainsMouse = true;
+                    foreach (var @event in OnMouseEntry){
+                        @event.OnMouseEntry(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevMousePos);
+                        if (!state.AllowMouseMovementInterpretation)
+                            break;
+                    }
+                }
+            }
+            if (state.AllowMouseMovementInterpretation){
+                if (!BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && ContainsMouse){
+                    ContainsMouse = false;
+                    foreach (var @event in OnMouseExit){
+                        @event.OnMouseExit(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevMousePos);
+                        if (!state.AllowMouseMovementInterpretation)
+                            break;
+                    }
+                }
+            }
+            if (state.AllowKeyboardInterpretation){
+                foreach (var @event in OnKeyboardEvent){
+                    @event.OnKeyboardEvent(ref state.AllowKeyboardInterpretation, state.KeyboardState);
+                    if (!state.AllowKeyboardInterpretation)
+                        break;
+                }
+            }
+        }
+
+        public void Dispose(){
             throw new NotImplementedException();
         }
 

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#region
+
 using Microsoft.Xna.Framework;
 
-namespace Drydock.Utilities {
-    struct DVector2 {
+#endregion
+
+namespace Drydock.Utilities{
+    internal struct DVector2{
         public double X;
         public double Y;
 
@@ -14,11 +14,11 @@ namespace Drydock.Utilities {
             Y = y;
         }
 
-        public static explicit operator Vector2?(DVector2 v) {
-            return new Vector2((float)v.X, (float)v.Y);
+        public static explicit operator Vector2?(DVector2 v){
+            return new Vector2((float) v.X, (float) v.Y);
         }
 
-        public static explicit operator DVector2?(Vector2 v) {
+        public static explicit operator DVector2?(Vector2 v){
             return new DVector2(v.X, v.Y);
         }
     }

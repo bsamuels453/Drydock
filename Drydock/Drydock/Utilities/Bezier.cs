@@ -73,7 +73,7 @@ namespace Drydock.Utilities{
             Lerp(ref bccd, bc, cd, t);
             Lerp(ref ddest, abbc, bccd, t);
 
-            dest = new Vector2((float) ddest.X, (float) ddest.Y);
+            dest = new Vector2(ddest.X, ddest.Y);
         }
 
         #endregion

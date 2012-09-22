@@ -1,64 +1,58 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Drydock.Control;
-using Drydock.Render;
-using Drydock.UI;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
-namespace Drydock.Logic.DoodadEditorState {
+#endregion
+
+namespace Drydock.Logic.DoodadEditorState{
     /// <summary>
-    /// Generates the geometry for airship hulls. This differs from PreviewRenderer in that this class generates the geometry so that things like windows, 
-    /// portholes, or other extremities can be added easily without modifying a lot of the geometry. In more mathematical terms, it means that the horizontal 
-    /// boundaries between adjacent quads are parallel to the XZ plane. This class can also take a few seconds to do its thing because it isnt going to be updating
-    /// every tick like previewrenderer does.
+    ///   Generates the geometry for airship hulls. This differs from PreviewRenderer in that this class generates the geometry so that things like windows, portholes, or other extremities can be added easily without modifying a lot of the geometry. In more mathematical terms, it means that the horizontal boundaries between adjacent quads are parallel to the XZ plane. This class can also take a few seconds to do its thing because it isnt going to be updating every tick like previewrenderer does.
     /// </summary>
-    class HullGeometryGenerator{
+    internal class HullGeometryGenerator{
         const float _metersPerDeck = 2.13f;
-        const int _numHorizontalPrimitives = 32;//welp
+        const int _numHorizontalPrimitives = 32; //welp
         readonly List<List<Vector3>> _geometry;
         public int NumDecks;
 
         //note: less than 1 deck breaks prolly
         //note that this entire geometry generator runs on the standard curve assumptions
-        public HullGeometryGenerator(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo, int primHeightPerDeck) {
-            float metersPerPrimitive = _metersPerDeck / primHeightPerDeck;
+        public HullGeometryGenerator(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo, int primHeightPerDeck){
+            float metersPerPrimitive = _metersPerDeck/primHeightPerDeck;
             var sidePtGen = new BruteBezierGenerator(sideCurveInfo);
 
-            topCurveInfo.RemoveAt(0);//make this curve set pass vertical line test
-            backCurveInfo.RemoveAt(0);//make this curve pass the horizontal line test
+            topCurveInfo.RemoveAt(0); //make this curve set pass vertical line test
+            backCurveInfo.RemoveAt(0); //make this curve pass the horizontal line test
             var topPtGen = new BruteBezierGenerator(topCurveInfo);
-            var geometryYvalues = new List<float>();//this list contains all the valid Y values for the airship's primitives
+            var geometryYvalues = new List<float>(); //this list contains all the valid Y values for the airship's primitives
             var xzHullIntercepts = new List<List<Vector2>>();
 
             //get the draft and the berth
             float draft = sideCurveInfo[1].Pos.Y;
             float berth = topCurveInfo[1].Pos.Y;
             float length = sideCurveInfo[2].Pos.X;
-            var numDecks = (int)(draft / _metersPerDeck);
+            var numDecks = (int) (draft/_metersPerDeck);
             NumDecks = numDecks;
-            int numVerticalVertexes = numDecks * primHeightPerDeck + primHeightPerDeck+1;
+            int numVerticalVertexes = numDecks*primHeightPerDeck + primHeightPerDeck + 1;
 
             //get the y values for the hull
-            for (int i = 0; i < numVerticalVertexes - primHeightPerDeck; i++) {
-                geometryYvalues.Add(i * metersPerPrimitive);
+            for (int i = 0; i < numVerticalVertexes - primHeightPerDeck; i++){
+                geometryYvalues.Add(i*metersPerPrimitive);
             }
             float bottomDeck = geometryYvalues[geometryYvalues.Count - 1];
 
             //the bottom part of ship (false deck) will not have height of _metersPerDeck so we need to use a different value for metersPerPrimitive
-            float bottomPrimHeight = (draft - bottomDeck) / primHeightPerDeck;
-            for (int i = 1; i <= primHeightPerDeck; i++) {
-                geometryYvalues.Add(i * bottomPrimHeight + bottomDeck);
+            float bottomPrimHeight = (draft - bottomDeck)/primHeightPerDeck;
+            for (int i = 1; i <= primHeightPerDeck; i++){
+                geometryYvalues.Add(i*bottomPrimHeight + bottomDeck);
             }
 
             foreach (float t in geometryYvalues){
                 xzHullIntercepts.Add(sidePtGen.GetValuesFromDependent(t));
                 if (xzHullIntercepts[xzHullIntercepts.Count - 1].Count != 2){
-                    if (xzHullIntercepts[xzHullIntercepts.Count - 1].Count == 1) {//this happens at the very bottom of the ship
+                    if (xzHullIntercepts[xzHullIntercepts.Count - 1].Count == 1){ //this happens at the very bottom of the ship
                         xzHullIntercepts[xzHullIntercepts.Count - 1].Add(xzHullIntercepts[xzHullIntercepts.Count - 1][0]);
                     }
                     else{
@@ -75,25 +69,23 @@ namespace Drydock.Logic.DoodadEditorState {
                 float xEnd = xzHullIntercepts[y][1].X;
                 float xDiff = xEnd - xStart;
 
-                var strip = new List<Vector3>(); 
+                var strip = new List<Vector3>();
 
                 for (int x = 0; x < _numHorizontalPrimitives; x++){
-
-
                     var point = new Vector3();
                     point.Y = geometryYvalues[y];
 
                     //here is where x is parameterized, and converted into a relative x value
-                    float tx = x / (float)(_numHorizontalPrimitives-1);
-                    float xPos = tx * xDiff + xStart;
+                    float tx = x/(float) (_numHorizontalPrimitives - 1);
+                    float xPos = tx*xDiff + xStart;
                     //
-                    
+
                     var keelIntersect = sidePtGen.GetValueFromIndependent(xPos);
-                    float profileYScale = keelIntersect.Y / draft;
+                    float profileYScale = keelIntersect.Y/draft;
                     point.X = keelIntersect.X;
 
                     var topIntersect = topPtGen.GetValueFromIndependent(xPos);
-                    float profileXScale = (topIntersect.Y-topCurveInfo[0].Pos.Y) / (berth/2f);
+                    float profileXScale = (topIntersect.Y - topCurveInfo[0].Pos.Y)/(berth/2f);
                     //float profileXScale = topIntersect.Y  / berth;
 
                     var scaledProfile = new List<BezierInfo>();
@@ -103,7 +95,6 @@ namespace Drydock.Logic.DoodadEditorState {
                     }
 
 
-
                     var pointGen = new BruteBezierGenerator(scaledProfile);
                     var profileIntersect = pointGen.GetValuesFromDependent(point.Y);
                     if (profileIntersect.Count != 1){
@@ -111,22 +102,21 @@ namespace Drydock.Logic.DoodadEditorState {
                     }
 
                     float diff = scaledProfile[0].Pos.X;
-                    if (x == _numHorizontalPrimitives - 1 || x == 0) {
+                    if (x == _numHorizontalPrimitives - 1 || x == 0){
                         diff = profileIntersect[0].X;
                     }
                     point.Z = profileIntersect[0].X - diff;
 
-                    if (y == numVerticalVertexes - 1) {
+                    if (y == numVerticalVertexes - 1){
                         point.Z = 0;
                     }
 
                     strip.Add(point);
-
                 }
                 ySliceVerts.Add(strip);
             }
 
-            foreach (List<Vector3> t in ySliceVerts){//mystery NaN detecter
+            foreach (List<Vector3> t in ySliceVerts){ //mystery NaN detecter
                 if (float.IsNaN(t[0].Z)){
                     throw new Exception("NaN Z coordinate in mesh");
                 }
@@ -145,6 +135,5 @@ namespace Drydock.Logic.DoodadEditorState {
         public List<List<Vector3>> GetGeometrySlices(){
             return _geometry;
         }
-
     }
 }

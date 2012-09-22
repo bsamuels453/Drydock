@@ -4,13 +4,12 @@ using System;
 using System.Collections.Generic;
 using Drydock.Control;
 using Drydock.UI.Components;
-using Microsoft.Xna.Framework.Input;
 
 #endregion
 
 namespace Drydock.UI{
     /// <summary>
-    ///   This class serves as a container for UI elements. Its purpose is to update said elements through the UIContext, and to provide collection-wide modification methods for use by external classes.
+    ///   This class serves as a container for UI elements. Its purpose is to update said elements, and to provide collection-wide modification methods for use by external classes.
     /// </summary>
     internal class UIElementCollection : IUpdatable, IInputUpdatable{
         readonly List<IUIElement> _elements;
@@ -23,7 +22,6 @@ namespace Drydock.UI{
             _elements = new List<IUIElement>();
             _layerSortedIElements = new UISortedList();
             DisableEntryHandlers = false;
-            //InputEventDispatcher.EventSubscribers.Add((float) depth/10, this);
             Add(this);
         }
 
@@ -31,125 +29,24 @@ namespace Drydock.UI{
 
         #region ui element addition methods
 
-        private void AddElementToCollection(IUIElement elementToAdd){
+        void AddElementToCollection(IUIElement elementToAdd){
             _elements.Add(elementToAdd);
         }
 
-        private void AddElementToCollection(IUIInteractiveElement elementToAdd) {
+        void AddElementToCollection(IUIInteractiveElement elementToAdd){
             _layerSortedIElements.Add(elementToAdd.Depth, elementToAdd);
         }
 
         #endregion
 
-        public void Update(double timeDelta){
-            foreach (IUIElement element in _elements){
-                element.Update(timeDelta);
-            }
-        }
+        #region IInputUpdatable Members
 
         public void InputUpdate(ref ControlState state){
-            foreach (IUIElement element in _elements) {
-                //element.InputUpdate(ref state);
-            }
-        }
-
-        #region event dispatchers
-
-        //i'll rip your balls off if you LINQ these foreach loops
-        /*public override InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
-                foreach (var mouseEvent in _layerSortedIElements[i].OnMouseMovement){
-                    if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
-                        return InterruptState.InterruptEventDispatch;
-                    }
-                }
-
-                if (_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y)
-                    && !_layerSortedIElements[i].ContainsMouse){
-                    //dispatch event for mouse entering the bounding box of the element
-                    if (!DisableEntryHandlers){
-                        _layerSortedIElements[i].ContainsMouse = true;
-                        foreach (var mouseEvent in _layerSortedIElements[i].OnMouseEntry){
-                            if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
-                                return InterruptState.InterruptEventDispatch;
-                            }
-                        }
-                    }
-                }
-
-                else{
-                    if (!_layerSortedIElements[i].BoundingBox.Contains(state.X, state.Y)
-                        && _layerSortedIElements[i].ContainsMouse){
-                        //dispatch event for mouse exiting the bounding box of the element
-                        _layerSortedIElements[i].ContainsMouse = false;
-                        foreach (var mouseEvent in _layerSortedIElements[i].OnMouseExit){
-                            if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
-                                return InterruptState.InterruptEventDispatch;
-                            }
-                        }
-                    }
-                }
+                _layerSortedIElements[i].InputUpdate(ref state);
             }
-            return InterruptState.AllowOtherEvents;
-        }
-        
-        public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null){
-            for (int i = 0; i < _layerSortedIElements.Count; i++){
-                if (_layerSortedIElements[i].ContainsMouse){
-
-                    foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonClick){
-                        if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
-                            return InterruptState.InterruptEventDispatch;
-                        }
-                    }
-                }
-                return InterruptState.AllowOtherEvents;
-            }
-            return InterruptState.AllowOtherEvents;
         }
 
-        public override InterruptState OnLeftButtonPress(MouseState state, MouseState? prevState = null){
-            for (int i = 0; i < _layerSortedIElements.Count; i++){
-                foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonPress){
-                    if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
-                        return InterruptState.InterruptEventDispatch;
-                    }
-                }
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public override InterruptState OnLeftButtonRelease(MouseState state, MouseState? prevState = null){
-            for (int i = 0; i < _layerSortedIElements.Count; i++){
-                foreach (var mouseEvent in _layerSortedIElements[i].OnLeftButtonRelease){
-                    if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
-                        return InterruptState.InterruptEventDispatch;
-                    }
-                }
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public override InterruptState OnMouseScroll(MouseState state, MouseState? prevState = null){
-            for (int i = 0; i < _layerSortedIElements.Count; i++){
-                foreach (var mouseEvent in _layerSortedIElements[i].OnMouseScroll){
-                    if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
-                        return InterruptState.InterruptEventDispatch;
-                    }
-                }
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public override InterruptState OnKeyboardEvent(KeyboardState state){
-            for (int i = 0; i < _layerSortedIElements.Count; i++){
-                foreach (var keyboardEvent in _layerSortedIElements[i].OnKeyboardEvent){
-                    keyboardEvent(state);
-                }
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-        */
         #endregion
 
         #region collection modification methods
@@ -157,7 +54,7 @@ namespace Drydock.UI{
         public void EnableComponents<TComponent>(){
             foreach (var element in _elements){
                 if (element.DoesComponentExist<TComponent>()){
-                    ((IUIComponent) (element.GetComponent<TComponent>())).IsEnabled = true; //()()()()()((()))
+                    ((IUIComponent) (element.GetComponent<TComponent>())).IsEnabled = true; //()()()()()((())())
                 }
             }
         }
@@ -170,26 +67,10 @@ namespace Drydock.UI{
             }
         }
 
-        public void SelectAllElements(){
-            foreach (var element in _elements){
-                if (element.DoesComponentExist<SelectableComponent>()){
-                    element.GetComponent<SelectableComponent>().SelectThis();
-                }
-            }
-        }
-
-        public void DeselectAllElements(){
-            foreach (var element in _elements){
-                if (element.DoesComponentExist<SelectableComponent>()){
-                    element.GetComponent<SelectableComponent>().DeselectThis();
-                }
-            }
-        }
-
         public void FadeInAllElements(){
             foreach (var element in _elements){
                 if (element.DoesComponentExist<FadeComponent>()){
-                    element.GetComponent<FadeComponent>().ForceFadein(Mouse.GetState());
+                    element.GetComponent<FadeComponent>().ForceFadein();
                 }
             }
         }
@@ -197,7 +78,7 @@ namespace Drydock.UI{
         public void FadeOutAllElements(){
             foreach (var element in _elements){
                 if (element.DoesComponentExist<FadeComponent>()){
-                    element.GetComponent<FadeComponent>().ForceFadeout(Mouse.GetState());
+                    element.GetComponent<FadeComponent>().ForceFadeout();
                 }
             }
         }
@@ -206,14 +87,6 @@ namespace Drydock.UI{
             foreach (var element in _elements){
                 if (element.DoesComponentExist<FadeComponent>()){
                     element.GetComponent<FadeComponent>().FadeStateChangeDispatcher += deleg;
-                }
-            }
-        }
-
-        public void AddSelectionCallback(ReactToSelection deleg){
-            foreach (var element in _elements){
-                if (element.DoesComponentExist<SelectableComponent>()){
-                    element.GetComponent<SelectableComponent>().ReactToSelectionDispatcher += deleg;
                 }
             }
         }
@@ -237,6 +110,7 @@ namespace Drydock.UI{
         #endregion
 
         #region static stuff
+
         static readonly List<UIElementCollection> _uiElementCollections;
         static UIElementCollection _curElementCollection;
 
@@ -245,7 +119,11 @@ namespace Drydock.UI{
             _curElementCollection = null;
         }
 
-        private static void Add(UIElementCollection collection){
+        public static UIElementCollection Collection{
+            get { return _curElementCollection; }
+        }
+
+        static void Add(UIElementCollection collection){
             _uiElementCollections.Add(collection);
         }
 
@@ -254,9 +132,9 @@ namespace Drydock.UI{
             _curElementCollection = null;
         }
 
-        public static void AddElement(IUIElement elementToAdd) {
-            if (_curElementCollection != null) {
-                if (elementToAdd is IUIInteractiveElement) {
+        public static void AddElement(IUIElement elementToAdd){
+            if (_curElementCollection != null){
+                if (elementToAdd is IUIInteractiveElement){
                     _curElementCollection.AddElementToCollection(elementToAdd as IUIInteractiveElement);
                 }
                 else{
@@ -269,7 +147,7 @@ namespace Drydock.UI{
         }
 
         public static void BindCollection(UIElementCollection collection){
-            if (_curElementCollection != null) {
+            if (_curElementCollection != null){
                 throw new Exception("the previous bound collection needs to be cleared before a new one is set");
             }
             _curElementCollection = collection;
@@ -279,8 +157,17 @@ namespace Drydock.UI{
             _curElementCollection = null;
         }
 
-        public static UIElementCollection Collection{
-            get { return _curElementCollection; }
+        #endregion
+
+        #region IUpdatable Members
+
+        public void Update(double timeDelta){
+            foreach (IUIElement element in _elements){
+                element.Update(timeDelta);
+            }
+            for (int i = 0; i < _layerSortedIElements.Count; i++){
+                _layerSortedIElements[i].Update(timeDelta);
+            }
         }
 
         #endregion

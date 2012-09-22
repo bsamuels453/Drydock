@@ -87,7 +87,7 @@ namespace Drydock.Logic.HullEditorState{
             else{
                 for (int i = 0; i < _linesPerSide; i++){
                     _prevLines[i].Dispose();
-                    _prevLines[i] =_lineTemplate.GenerateLine();
+                    _prevLines[i] = _lineTemplate.GenerateLine();
                 }
             }
 
@@ -285,7 +285,6 @@ namespace Drydock.Logic.HullEditorState{
             }
             _nextCurve.Dispose();
             _prevCurve.Dispose();*/
-
         }
 
         #endregion

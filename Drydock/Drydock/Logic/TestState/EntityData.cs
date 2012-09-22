@@ -1,6 +1,9 @@
-﻿using System;
+﻿#region
+
 using System.Collections.Generic;
 using System.Linq;
+
+#endregion
 
 namespace Drydock.Logic.TestState{
     internal abstract class EntityDataContainer{
@@ -18,10 +21,9 @@ namespace Drydock.Logic.TestState{
             _valueReferences.Add(new ValueReference(identifier));
             return new RefAccessor<T>(_valueReferences.Last());
         }
-
     }
 
-    internal class ValueReference {
+    internal class ValueReference{
         #region Delegates
 
         public delegate void ClampValChange(ref object obj);
@@ -34,19 +36,19 @@ namespace Drydock.Logic.TestState{
 
         object _value;
 
-        public ValueReference(object initValue, string identifier) {
+        public ValueReference(object initValue, string identifier){
             _value = initValue;
             Identifier = identifier;
         }
 
-        public ValueReference(string identifier) {
+        public ValueReference(string identifier){
             _value = null;
             Identifier = identifier;
         }
 
-        public object Value {
+        public object Value{
             get { return _value; }
-            set {
+            set{
                 DispatchValueClamp.Invoke(ref value);
                 _value = value;
                 DispatchValueChange.Invoke(value);
@@ -66,9 +68,8 @@ namespace Drydock.Logic.TestState{
         }
 
         public T Value{
-            get { return (T)Reference.Value; } //FIND OUT HOW BAD THIS CASTING OVERHEAD IS
+            get { return (T) Reference.Value; } //FIND OUT HOW BAD THIS CASTING OVERHEAD IS
             set { Reference.Value = value; }
         }
     }
-
 }

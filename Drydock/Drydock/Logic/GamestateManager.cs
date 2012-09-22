@@ -9,7 +9,8 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic{
-    delegate void SpecialKeyboardRec(KeyboardState state);
+    internal delegate void SpecialKeyboardRec(KeyboardState state);
+
     internal static class GamestateManager{
         static IGameState _currentState;
 
@@ -17,6 +18,7 @@ namespace Drydock.Logic{
             InputEventDispatcher.SpecialKeyboardDispatcher = SpecialKeyboardRec;
             _currentState = null;
         }
+
         public static void ClearGameState(){
             RenderPanel.Clear();
             UIElementCollection.Clear();
@@ -35,18 +37,15 @@ namespace Drydock.Logic{
 
         public static void Update(){
             if (_currentState != null){
-                _currentState.InputUpdate(ref InputEventDispatcher.CurrentControlState);
-                _currentState.Update();
+                _currentState.Update(ref InputEventDispatcher.CurrentControlState, 0);
             }
         }
 
         public static void SpecialKeyboardRec(KeyboardState state){
-
         }
     }
 
     internal interface IGameState{
-        void Update();
-        void InputUpdate(ref ControlState state);
+        void Update(ref ControlState state, double timeDelta);
     }
 }

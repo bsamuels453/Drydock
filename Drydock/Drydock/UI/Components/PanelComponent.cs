@@ -1,7 +1,6 @@
 ﻿#region
 
-using Drydock.Control;
-using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -9,12 +8,36 @@ namespace Drydock.UI.Components{
     /// <summary>
     ///   prevents mouse interactions from falling through the owner's bounding box
     /// </summary>
-    internal class PanelComponent : IUIComponent{
+    internal class PanelComponent : IUIComponent, IAcceptLeftButtonPressEvent, IAcceptLeftButtonReleaseEvent, IAcceptMouseScrollEvent{
         IUIInteractiveElement _owner;
 
         public PanelComponent(){
             IsEnabled = true;
         }
+
+        #region IAcceptLeftButtonPressEvent Members
+
+        public void OnLeftButtonPress(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
+            PreventClickFallthrough(ref allowInterpretation, mousePos);
+        }
+
+        #endregion
+
+        #region IAcceptLeftButtonReleaseEvent Members
+
+        public void OnLeftButtonRelease(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
+            PreventClickFallthrough(ref allowInterpretation, mousePos);
+        }
+
+        #endregion
+
+        #region IAcceptMouseScrollEvent Members
+
+        public void OnMouseScrollwheel(ref bool allowInterpretation, float wheelChange, Point mousePos){
+            PreventClickFallthrough(ref allowInterpretation, mousePos);
+        }
+
+        #endregion
 
         #region IUIComponent Members
 
@@ -33,16 +56,17 @@ namespace Drydock.UI.Components{
         #endregion
 
         void ComponentCtor(){
-            _owner.OnLeftButtonPress.Add(OnMouseButtonAction);
-            _owner.OnLeftButtonRelease.Add(OnMouseButtonAction);
-            _owner.OnMouseScroll.Add(OnMouseButtonAction);
+            _owner.OnLeftButtonPress.Add(this);
+            _owner.OnLeftButtonRelease.Add(this);
+            _owner.OnMouseScroll.Add(this);
         }
 
-        InterruptState OnMouseButtonAction(MouseState state, MouseState? prevState = null){
-            if (_owner.BoundingBox.Contains(state.X, state.Y)){
-                return InterruptState.InterruptEventDispatch;
+        void PreventClickFallthrough(ref bool allowLeftButtonInterpretation, Point mousePos){
+            if (allowLeftButtonInterpretation){
+                if (_owner.BoundingBox.Contains(mousePos.X, mousePos.Y)){
+                    allowLeftButtonInterpretation = false;
+                }
             }
-            return InterruptState.AllowOtherEvents;
         }
     }
 }

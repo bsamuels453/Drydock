@@ -10,9 +10,9 @@ namespace Drydock.Render{
     internal abstract class BufferObject<T> : IDrawableBuffer{
         public readonly IndexBuffer Indexbuffer;
         public readonly VertexBuffer Vertexbuffer;
-        public bool IsEnabled;
         readonly int _numIndicies;
         readonly int _numPrimitives;
+        public bool IsEnabled;
         RenderPanel _bufferRenderTarget;
         //bool _isDisposed;
 
@@ -59,6 +59,8 @@ namespace Drydock.Render{
             }
         }
 
+        #endregion
+
         /*public void Dispose(){
             if (!_isDisposed){
                 _bufferRenderTarget.Remove(this);
@@ -66,8 +68,6 @@ namespace Drydock.Render{
                 _isDisposed = true;
             }
         }*/
-
-        #endregion
 
         protected abstract void UpdateEffectParams(Matrix viewMatrix);
 

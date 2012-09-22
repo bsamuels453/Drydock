@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Drydock.Control {
-    interface IUpdatable {
+﻿namespace Drydock.Control{
+    internal interface IUpdatable{
         void Update(double timeDelta);
     }
 

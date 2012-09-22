@@ -4,17 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using Drydock.Control;
-using Drydock.UI;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 #endregion
 
 namespace Drydock.Logic.HullEditorState{
     internal class BezierCurveCollection : IEnumerable<BezierCurve>{
         #region fields
+
         public readonly float PixelsPerMeter;
         readonly List<BezierCurve> _curveList;
 
@@ -29,8 +27,7 @@ namespace Drydock.Logic.HullEditorState{
 
         #endregion
 
-        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill,PanelAlias panelType){
-
+        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, PanelAlias panelType){
             var reader = XmlReader.Create(defaultConfig);
             reader.ReadToFollowing("NumControllers");
             int numControllers = int.Parse(reader.ReadString());
@@ -193,33 +190,6 @@ namespace Drydock.Logic.HullEditorState{
             return li;
         }
 
-        /*public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null){
-            //this is broken right now
-            /*if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
-                Vector2 pos;
-                float t;
-                for (int i = 1; i < CurveList.Count; i++){
-                    if ((pos = CurveList[i].PrevContains(state, out t)) != Vector2.Zero){
-                        CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection));
-                        CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
-                        return InterruptState.InterruptEventDispatch;
-                    }
-                }
-                for (int i = 0; i < CurveList.Count - 1; i++){
-
-
-                    if ((pos = CurveList[i].NextContains(state, out t)) != Vector2.Zero){
-                        i += 1;
-                        CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection ));
-                        CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
-                        return InterruptState.InterruptEventDispatch;
-                    }
-                }
-            }*/
-        /*
-            return InterruptState.AllowOtherEvents;
-        }
-    */
         #region ienumerable members + accessors
 
         public BezierCurve this[int index]{
@@ -294,7 +264,7 @@ namespace Drydock.Logic.HullEditorState{
                 prevCurve.NextHandlePos,
                 nextCurve.PrevHandlePos,
                 nextCurve.CenterHandlePos,
-                (float)t
+                (float) t
                 );
 
             return retVal;
@@ -327,6 +297,34 @@ namespace Drydock.Logic.HullEditorState{
         }
 
         #endregion
+
+        /*public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null){
+            //this is broken right now
+            /*if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
+                Vector2 pos;
+                float t;
+                for (int i = 1; i < CurveList.Count; i++){
+                    if ((pos = CurveList[i].PrevContains(state, out t)) != Vector2.Zero){
+                        CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection));
+                        CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
+                        return InterruptState.InterruptEventDispatch;
+                    }
+                }
+                for (int i = 0; i < CurveList.Count - 1; i++){
+
+
+                    if ((pos = CurveList[i].NextContains(state, out t)) != Vector2.Zero){
+                        i += 1;
+                        CurveList.Insert(i, new BezierCurve(pos.X, pos.Y, ElementCollection ));
+                        CurveList[i].InsertBetweenCurves(CurveList[i - 1], CurveList[i + 1], t);
+                        return InterruptState.InterruptEventDispatch;
+                    }
+                }
+            }*/
+        /*
+            return InterruptState.AllowOtherEvents;
+        }
+    */
     }
 
     #region nested struct

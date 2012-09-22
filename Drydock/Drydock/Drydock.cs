@@ -3,7 +3,6 @@
 using Drydock.Control;
 using Drydock.Logic;
 using Drydock.Logic.HullEditorState;
-using Drydock.Logic.TestState;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;

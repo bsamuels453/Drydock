@@ -112,7 +112,7 @@ namespace Drydock.Render{
         }
 
         public static RenderPanel Add(IDrawableSprite sprite){
-            if (_curRenderPanel != null) {
+            if (_curRenderPanel != null){
                 _curRenderPanel._sprites.Add(sprite);
             }
             else{
@@ -122,7 +122,7 @@ namespace Drydock.Render{
         }
 
         public static RenderPanel Add(IDrawableBuffer buffer){
-            if (_curRenderPanel != null) {
+            if (_curRenderPanel != null){
                 _curRenderPanel._buffers.Add(buffer);
             }
             else{

@@ -1,9 +1,7 @@
 ﻿#region
 
 using System;
-using Drydock.Control;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 #endregion
 
@@ -16,7 +14,7 @@ namespace Drydock.UI.Components{
     /// <summary>
     ///   allows a UI element to be dragged. Required element to be IUIInteractiveComponent
     /// </summary>
-    internal class DraggableComponent : IUIComponent{
+    internal class DraggableComponent : IUIComponent, IAcceptLeftButtonPressEvent, IAcceptLeftButtonReleaseEvent, IAcceptMouseMovementEvent{
         bool _isEnabled;
         bool _isMoving;
         Vector2 _mouseOffset;
@@ -45,54 +43,47 @@ namespace Drydock.UI.Components{
         void ComponentCtor(){
             _isEnabled = true;
             _isMoving = false;
-            _owner.OnLeftButtonPress.Add(OnLeftButtonDown);
-            _owner.OnLeftButtonRelease.Add(OnLeftButtonUp);
-            _owner.OnMouseMovement.Add(OnMouseMovement);
+            _owner.OnLeftButtonPress.Add(this);
+            _owner.OnLeftButtonRelease.Add(this);
+            _owner.OnMouseMovement.Add(this);
         }
 
         #endregion
 
-        #region IUIComponent Members
+        #region IAcceptLeftButtonPressEvent Members
 
-        public bool IsEnabled{
-            get { return _isEnabled; }
-            set { _isEnabled = value; }
-        }
-
-        public void Update(){
-        }
-
-        #endregion
-
-        #region event handlers
-
-        InterruptState OnLeftButtonDown(MouseState state, MouseState? prevState = null){
+        public void OnLeftButtonPress(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
             if (!_isMoving && _isEnabled){
-                if (_owner.BoundingBox.Contains(state.X, state.Y)){
+                if (_owner.BoundingBox.Contains(mousePos.X, mousePos.Y)){
                     _isMoving = true;
                     UIElementCollection.Collection.DisableEntryHandlers = true;
-                    _mouseOffset.X = _owner.X - state.X;
-                    _mouseOffset.Y = _owner.Y - state.Y;
+                    _mouseOffset.X = _owner.X - mousePos.X;
+                    _mouseOffset.Y = _owner.Y - mousePos.Y;
                 }
             }
-            return InterruptState.AllowOtherEvents;
         }
 
-        InterruptState OnLeftButtonUp(MouseState state, MouseState? prevState = null){
+        #endregion
+
+        #region IAcceptLeftButtonReleaseEvent Members
+
+        public void OnLeftButtonRelease(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
             if (_isMoving){
                 _isMoving = false;
                 UIElementCollection.Collection.DisableEntryHandlers = false;
             }
-            return InterruptState.AllowOtherEvents;
         }
 
-        InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
+        #endregion
+
+        #region IAcceptMouseMovementEvent Members
+
+        public void OnMouseMovement(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
             if (_isMoving && _isEnabled){
-                var nprevState = (MouseState) prevState;
                 var oldX = (int) _owner.X;
                 var oldY = (int) _owner.Y;
-                var x = (int) (state.X + _mouseOffset.X);
-                var y = (int) (state.Y + _mouseOffset.Y);
+                var x = (int) (mousePos.X + _mouseOffset.X);
+                var y = (int) (mousePos.Y + _mouseOffset.Y);
 
                 //var x = (int)(state.X - nprevState.X +_owner.X);
                 //var y = (int)(state.Y - nprevState.Y +_owner.Y);
@@ -104,7 +95,7 @@ namespace Drydock.UI.Components{
 
                 //this block checks if a drag clamp is preventing the owner from moving, if thats the case then kill the drag
                 var tempRect = new Rectangle(x - (int) _owner.BoundingBox.Width*2, y - (int) _owner.BoundingBox.Height*2, (int) _owner.BoundingBox.Width*6, (int) _owner.BoundingBox.Height*6);
-                if (!tempRect.Contains(state.X, state.Y)){
+                if (!tempRect.Contains(mousePos.X, mousePos.Y)){
                     //_isMoving = false;
                     //_owner.Owner.DisableEntryHandlers = false;
                     //return InterruptState.AllowOtherEvents;
@@ -117,9 +108,20 @@ namespace Drydock.UI.Components{
                 if (DragMovementDispatcher != null){
                     DragMovementDispatcher(_owner, x - oldX, y - oldY);
                 }
-                return InterruptState.InterruptEventDispatch;
+                allowInterpretation = false;
             }
-            return InterruptState.AllowOtherEvents;
+        }
+
+        #endregion
+
+        #region IUIComponent Members
+
+        public bool IsEnabled{
+            get { return _isEnabled; }
+            set { _isEnabled = value; }
+        }
+
+        public void Update(){
         }
 
         #endregion

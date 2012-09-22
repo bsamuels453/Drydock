@@ -3,7 +3,6 @@
 using System;
 using System.Linq;
 using Drydock.Render;
-using Drydock.UI;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -29,7 +28,6 @@ namespace Drydock.Logic.HullEditorState{
                      ScreenData.GetScreenValueX(0.5f),
                      ScreenData.GetScreenValueY(0.5f)
                      )){
-
             _renderTarget = new RenderPanel(
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f),
@@ -121,7 +119,7 @@ namespace Drydock.Logic.HullEditorState{
         }
 
         //public void Dispose(){
-            //_geometryBuffer.Dispose();
+        //_geometryBuffer.Dispose();
         //}
     }
 }
