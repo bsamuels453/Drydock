@@ -168,7 +168,7 @@ namespace Drydock.UI{
                 }
             }
             if (state.AllowLeftButtonInterpretation){
-                if (state.LeftButtonChange == ButtonState.Pressed){
+                if (state.LeftButtonState == ButtonState.Pressed){
                     foreach (var @event in OnLeftButtonPress){
                         @event.OnLeftButtonPress(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevMousePos);
                         if (!state.AllowLeftButtonInterpretation)
@@ -177,7 +177,7 @@ namespace Drydock.UI{
                 }
             }
             if (state.AllowLeftButtonInterpretation){
-                if (state.LeftButtonChange == ButtonState.Released){
+                if (state.LeftButtonState == ButtonState.Released){
                     foreach (var @event in OnLeftButtonRelease){
                         @event.OnLeftButtonRelease(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevMousePos);
                         if (!state.AllowLeftButtonInterpretation)
@@ -217,6 +217,19 @@ namespace Drydock.UI{
                     @event.OnKeyboardEvent(ref state.AllowKeyboardInterpretation, state.KeyboardState);
                     if (!state.AllowKeyboardInterpretation)
                         break;
+                }
+            }
+
+            //now dispatch the external delegates
+            if (state.AllowLeftButtonInterpretation){
+                if (state.LeftButtonClick){
+                    OnLeftClickDispatcher.Invoke();
+                }
+                if (state.LeftButtonState == ButtonState.Released){
+                    OnLeftReleaseDispatcher.Invoke();
+                }
+                if (state.LeftButtonState == ButtonState.Pressed) {
+                    OnLeftPressDispatcher.Invoke();
                 }
             }
         }
