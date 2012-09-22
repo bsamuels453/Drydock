@@ -51,7 +51,7 @@ namespace Drydock.Logic.HullEditorState{
             _geometryBuffer.Indexbuffer.SetData(_indicies);
         }
 
-        public void Update(){
+        public override void Update(){
             UpdateCamera(ref InputEventDispatcher.CurrentControlState);
             _topCurves.GetParameterizedPoint(0, true);
 
