@@ -22,6 +22,7 @@ namespace Drydock.Logic.DoodadEditorState{
             _renderTarget = new RenderPanel(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
             RenderPanel.BindRenderTarget(_renderTarget);
             _uiElementCollection = new UIElementCollection();
+            UIElementCollection.BindCollection(_uiElementCollection);
 
             _deckUpButton = new Button(50, 50, 32, 32, DepthLevel.High, "uparrow");
             _deckDownButton = new Button(50, 82, 32, 32, DepthLevel.High, "downarrow");
@@ -33,6 +34,7 @@ namespace Drydock.Logic.DoodadEditorState{
             //_deckDownButton.OnLeftButtonClick.Add(_hullGeometryHandler.RemoveVisibleLevel);
 
             RenderPanel.UnbindRenderTarget();
+            UIElementCollection.UnbindCollection();
         }
 
         #region IGameState Members
@@ -42,15 +44,5 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         #endregion
-
-        public void Update(){
-        }
-
-        public void InputUpdate(ref ControlState state){
-            throw new NotImplementedException();
-        }
-
-        public void Dispose(){
-        }
     }
 }
