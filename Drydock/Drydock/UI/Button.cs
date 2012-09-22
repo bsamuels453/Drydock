@@ -222,14 +222,22 @@ namespace Drydock.UI{
 
             //now dispatch the external delegates
             if (state.AllowLeftButtonInterpretation){
-                if (state.LeftButtonClick){
-                    OnLeftClickDispatcher.Invoke();
-                }
-                if (state.LeftButtonState == ButtonState.Released){
-                    OnLeftReleaseDispatcher.Invoke();
-                }
-                if (state.LeftButtonState == ButtonState.Pressed) {
-                    OnLeftPressDispatcher.Invoke();
+                if (BoundingBox.Contains(state.MousePos.X, state.MousePos.Y)){
+                    if (state.LeftButtonClick){
+                        if (OnLeftClickDispatcher != null){
+                            OnLeftClickDispatcher.Invoke();
+                        }
+                    }
+                    if (state.LeftButtonState == ButtonState.Released){
+                        if (OnLeftReleaseDispatcher != null){
+                            OnLeftReleaseDispatcher.Invoke();
+                        }
+                    }
+                    if (state.LeftButtonState == ButtonState.Pressed){
+                        if (OnLeftPressDispatcher != null){
+                            OnLeftPressDispatcher.Invoke();
+                        }
+                    }
                 }
             }
         }
