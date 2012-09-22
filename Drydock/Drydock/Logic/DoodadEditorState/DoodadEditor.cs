@@ -30,8 +30,8 @@ namespace Drydock.Logic.DoodadEditorState{
             var geomGen = new HullGeometryGenerator(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
             _hullGeometryHandler = new HullGeometryHandler(geomGen.GetGeometrySlices(), _primsPerDeck, geomGen.NumDecks);
 
-            //_deckUpButton.OnLeftButtonClick.Add(_hullGeometryHandler.AddVisibleLevel);
-            //_deckDownButton.OnLeftButtonClick.Add(_hullGeometryHandler.RemoveVisibleLevel);
+            _deckUpButton.OnLeftClickDispatcher += _hullGeometryHandler.AddVisibleLevel;
+            _deckDownButton.OnLeftClickDispatcher += _hullGeometryHandler.RemoveVisibleLevel;
 
             RenderPanel.UnbindRenderTarget();
             UIElementCollection.UnbindCollection();
@@ -40,7 +40,12 @@ namespace Drydock.Logic.DoodadEditorState{
         #region IGameState Members
 
         public void Update(ref ControlState state, double timeDelta){
-            throw new NotImplementedException();
+            UIElementCollection.BindCollection(_uiElementCollection);
+            _hullGeometryHandler.Update();
+
+            UIElementCollection.Collection.Update(timeDelta);
+            UIElementCollection.Collection.InputUpdate(ref state);
+            UIElementCollection.UnbindCollection();
         }
 
         #endregion
