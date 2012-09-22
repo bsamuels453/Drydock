@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Drydock.Control;
+using Drydock.Logic.DoodadEditorState;
 using Drydock.Render;
 using Drydock.UI;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 #endregion
 
@@ -53,29 +55,26 @@ namespace Drydock.Logic.HullEditorState{
             UIElementCollection.Collection.InputUpdate(ref state);
             UIElementCollection.Collection.Update(timeDelta);
             UIElementCollection.UnbindCollection();
+            HandleEditorKeyboardInput(ref state);
         }
 
         #endregion
 
-        /*public override InterruptState OnKeyboardEvent(KeyboardState state){
-            if (state.IsKeyDown(Keys.LeftControl) && state.IsKeyDown(Keys.S)){
+        private void HandleEditorKeyboardInput(ref ControlState state){
+            if (state.KeyboardState.IsKeyDown(Keys.LeftControl) && state.KeyboardState.IsKeyDown(Keys.S)) {
                 SaveCurves("save/");
-                return InterruptState.InterruptEventDispatch;
             }
 
-            if (state.IsKeyDown(Keys.LeftControl) && state.IsKeyDown(Keys.N)) {
+            if (state.KeyboardState.IsKeyDown(Keys.LeftControl) && state.KeyboardState.IsKeyDown(Keys.N)) {
                 var sideInfo = _sidepanel.Curves.GetControllerInfo();
                 var backInfo = _backpanel.Curves.GetControllerInfo();
                 var topInfo = _toppanel.Curves.GetControllerInfo();
 
                 GamestateManager.ClearGameState();
                 GamestateManager.SetGameState(new DoodadEditor(backInfo, sideInfo, topInfo));
-                //GamestateManager.SetGameState(new HullEditor());
-                return InterruptState.InterruptEventDispatch;
+                GamestateManager.SetGameState(new HullEditor());
             }
-
-            return InterruptState.AllowOtherEvents;
-        }*/
+        }
 
         public void SaveCurves(string directory){
             //dear mother of god why does this have to be hardcoded
