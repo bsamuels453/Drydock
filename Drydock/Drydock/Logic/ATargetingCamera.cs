@@ -104,5 +104,7 @@ namespace Drydock.Logic{
                 }
             }
         }
+
+        public abstract void Update();
     }
 }
