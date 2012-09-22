@@ -1,8 +1,10 @@
 ﻿#region
 
 using System;
+using Drydock.Control;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 #endregion
 
@@ -11,9 +13,9 @@ namespace Drydock.Logic{
     ///   this abstract class creates a camera that rotates around a point
     /// </summary>
     internal abstract class ATargetingCamera{
-        readonly float _cameraDistance;
-        readonly float _cameraPhi;
-        readonly float _cameraTheta;
+        float _cameraDistance;
+        float _cameraPhi;
+        float _cameraTheta;
         Rectangle _boundingBox;
 
         /// <summary>
@@ -39,15 +41,17 @@ namespace Drydock.Logic{
             Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
         }
 
-        /*
-        public override InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
-            if (prevState != null){
-                if (_boundingBox.Contains(state.X, state.Y)){
-                    if (state.LeftButton == ButtonState.Pressed){
-                        int dx = state.X - ((MouseState) prevState).X;
-                        int dy = state.Y - ((MouseState) prevState).Y;
+        protected void UpdateCamera(ref ControlState state){
+                if (_boundingBox.Contains(state.MousePos.X, state.MousePos.Y)){
+                    if (state.LeftButtonChange == ButtonState.Pressed){
+                        int dx = state.MousePos.X - state.PrevMousePos.X;
+                        int dy = state.MousePos.Y - state.PrevMousePos.Y;
 
-                        if (state.LeftButton == ButtonState.Pressed){
+                        if (dx == 0 && dy == 0){
+                            int fd = 5;
+                        }
+
+                        if (state.LeftButtonChange == ButtonState.Pressed){
                             _cameraPhi += dy*0.01f;
                             _cameraTheta -= dx*0.01f;
 
@@ -62,7 +66,7 @@ namespace Drydock.Logic{
                             Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
                         }
 
-                        return InterruptState.InterruptEventDispatch;
+                        state.AllowMouseMovementInterpretation = false;
 
                         /*if (state.RightButton == ButtonState.Pressed) {
                         int dx = state.X - ((MouseState)prevState).X;
@@ -83,29 +87,22 @@ namespace Drydock.Logic{
                         Renderer.CameraTarget.Y = (float)(_cameraDistance * Math.Sin(_cameraPhi + Math.PI)) + Renderer.CameraPosition.Y;
                         return InterruptState.InterruptEventDispatch;
                     }*/
+                    }
 
-        //return InterruptState.InterruptEventDispatch;
-    }
-
-/*
                 }
-            }
-            return InterruptState.AllowOtherEvents;
-        }*/
-    /*
-        public override InterruptState OnMouseScroll(MouseState state, MouseState? prevState = null){
-            if (prevState != null){
-                if (_boundingBox.Contains(state.X, state.Y)){
-                    _cameraDistance += (((MouseState) prevState).ScrollWheelValue - state.ScrollWheelValue)/20f;
-                    if (_cameraDistance < 5){
+            
+            if (state.AllowMouseScrollInterpretation) {
+                if (_boundingBox.Contains(state.MousePos.X, state.MousePos.Y)) {
+                    _cameraDistance += -state.MouseScrollChange / 20f;
+                    if (_cameraDistance < 5) {
                         _cameraDistance = 5;
                     }
-                    Renderer.CameraPosition.X = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Sin(_cameraTheta)) + Renderer.CameraTarget.X;
-                    Renderer.CameraPosition.Z = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
-                    Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
+                    Renderer.CameraPosition.X = (float)(_cameraDistance * Math.Cos(_cameraPhi) * Math.Sin(_cameraTheta)) + Renderer.CameraTarget.X;
+                    Renderer.CameraPosition.Z = (float)(_cameraDistance * Math.Cos(_cameraPhi) * Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
+                    Renderer.CameraPosition.Y = (float)(_cameraDistance * Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
+
                 }
             }
-            return InterruptState.AllowOtherEvents;
         }
-        * */
+    }
 }
