@@ -56,6 +56,7 @@ namespace Drydock.Control{
                         _clickTimer.Reset();
                     }
                     else{
+                        _clickTimer.Reset();
                         curControlState.LeftButtonClick = false;
                     }
                 }
