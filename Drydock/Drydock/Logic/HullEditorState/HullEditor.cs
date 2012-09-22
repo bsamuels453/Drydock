@@ -12,10 +12,11 @@ using Microsoft.Xna.Framework;
 
 namespace Drydock.Logic.HullEditorState{
     internal class HullEditor : IGameState{
-        readonly BackEditorPanel _backpanel;
+
         readonly UIElementCollection _elementCollection;
 
         readonly PreviewRenderer _previewRenderer;
+        readonly BackEditorPanel _backpanel;
         readonly SideEditorPanel _sidepanel;
         readonly TopEditorPanel _toppanel;
 
