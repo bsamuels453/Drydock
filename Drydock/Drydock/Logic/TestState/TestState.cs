@@ -5,7 +5,7 @@ using System.Text;
 using Drydock.Control;
 
 namespace Drydock.Logic.TestState {
-    class TestState : CanReceiveInputEvents, IGameState {
+    /*class TestState :  IGameState {
         public void Update(){
             Entity e = new Entity();
 
@@ -15,6 +15,6 @@ namespace Drydock.Logic.TestState {
         public void Dispose(){
             //throw new NotImplementedException();
         }
-    }
+    }*/
 
 }

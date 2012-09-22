@@ -80,5 +80,9 @@ namespace Drydock.UI{
         }
 
         #endregion
+
+        public void Update(double timeDelta){
+            throw new NotImplementedException();
+        }
     }
 }

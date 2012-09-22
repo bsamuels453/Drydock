@@ -166,17 +166,17 @@ namespace Drydock.UI{
             return false;
         }
 
-        public void Update(){
-            if (Components != null){
-                foreach (IUIComponent component in Components){
-                    component.Update();
-                }
-            }
-        }
-
         public void Dispose(){
             Sprite.Dispose();
             _lineSprite.Dispose();
+        }
+
+        public void Update(double timeDelta){
+            if (Components != null) {
+                foreach (IUIComponent component in Components) {
+                    component.Update();
+                }
+            }
         }
 
         #endregion

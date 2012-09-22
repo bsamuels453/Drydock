@@ -12,35 +12,30 @@ namespace Drydock.Logic{
     delegate void SpecialKeyboardRec(KeyboardState state);
     internal static class GamestateManager{
         static IGameState _currentState;
-        static bool _isGStateCleared;
 
         public static void Init(){
             InputEventDispatcher.SpecialKeyboardDispatcher = SpecialKeyboardRec;
-            _isGStateCleared = true;
+            _currentState = null;
         }
         public static void ClearGameState(){
-            _isGStateCleared = true;
-            InputEventDispatcher.EventSubscribers.Clear();
             RenderPanel.Clear();
             UIElementCollection.Clear();
             _currentState = null;
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            int g = 5;
         }
 
         public static void SetGameState(IGameState newState){
-            if (!_isGStateCleared){
+            if (_currentState != null){
                 throw new Exception("gamestate has to be cleared before setting a new state");
             }
-
             _currentState = newState;
-            _isGStateCleared = false;
         }
 
 
         public static void Update(){
             if (_currentState != null){
+                _currentState.InputUpdate(ref InputEventDispatcher.CurrentControlState);
                 _currentState.Update();
             }
         }
@@ -52,5 +47,6 @@ namespace Drydock.Logic{
 
     internal interface IGameState{
         void Update();
+        void InputUpdate(ref ControlState state);
     }
 }

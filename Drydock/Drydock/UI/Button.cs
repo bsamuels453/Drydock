@@ -145,15 +145,20 @@ namespace Drydock.UI{
             return false;
         }
 
-        public void Update(){
-            if (Components != null){
-                foreach (IUIComponent component in Components){
+        public void Dispose(){
+            throw new NotImplementedException();
+        }
+
+
+        public void Update(double timeDelta){
+            if (Components != null) {
+                foreach (IUIComponent component in Components) {
                     component.Update();
                 }
             }
         }
 
-        public void Dispose(){
+        public void InputUpdate(ref ControlState state){
             throw new NotImplementedException();
         }
 

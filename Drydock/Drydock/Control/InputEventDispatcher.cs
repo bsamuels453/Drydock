@@ -25,17 +25,14 @@ namespace Drydock.Control{
     internal delegate void EOnKeyboardEvent(KeyboardState state);
 
     internal static class InputEventDispatcher{
-        public static DepthSortedList EventSubscribers;
         public static SpecialKeyboardRec SpecialKeyboardDispatcher;
 
         static readonly Stopwatch _clickTimer;
-        static ControlState _prevState;
         static MouseState _prevMouseState;
         static KeyboardState _prevKeyboardState;
         public static ControlState CurrentControlState;
 
         static InputEventDispatcher(){
-            EventSubscribers = new DepthSortedList();
 
             _prevKeyboardState = Keyboard.GetState();
             _prevMouseState = Mouse.GetState();
@@ -43,8 +40,7 @@ namespace Drydock.Control{
         }
 
         public static void Update(){
-            //UpdateMouse();
-            //UpdateKeyboard();
+            //all this crap updates the CurrentControlState to whatever the hell is going on
 
             var curMouseState = Mouse.GetState();
             var curKeyboardState = Keyboard.GetState();
@@ -67,6 +63,19 @@ namespace Drydock.Control{
             if (_prevMouseState.LeftButton != curMouseState.LeftButton) {
                 curControlState.LeftButtonChange = curMouseState.LeftButton;
                 curControlState.AllowLeftButtonInterpretation = true;
+                if (curMouseState.LeftButton == ButtonState.Released) {
+                    //check if this qualifies as a click
+                    if (_clickTimer.ElapsedMilliseconds < 200) {
+                        curControlState.LeftButtonClick = true;
+                        _clickTimer.Reset();
+                    }
+                    else {
+                        curControlState.LeftButtonClick = false;
+                    }
+                }
+                else{//button was pressed so start the click timer
+                    _clickTimer.Start();
+                }
             }
             else
                 curControlState.AllowLeftButtonInterpretation = false;
@@ -78,7 +87,17 @@ namespace Drydock.Control{
             else
                 curControlState.AllowRightButtonInterpretation = false;
 
+            if (_prevMouseState.ScrollWheelValue != curMouseState.ScrollWheelValue) {
+                curControlState.MouseScrollChange = curMouseState.ScrollWheelValue - _prevMouseState.ScrollWheelValue;
+                curControlState.AllowMouseScrollInterpretation = true;
+            }
+            else
+                curControlState.AllowMouseScrollInterpretation = false;
+
             curControlState.KeyboardState = curKeyboardState;
+
+            _prevKeyboardState = curKeyboardState;
+            _prevMouseState = curMouseState;
         }
         /*
         static void UpdateMouse(){
@@ -166,6 +185,7 @@ namespace Drydock.Control{
 
         public bool AllowLeftButtonInterpretation;
         public bool AllowRightButtonInterpretation;
+        public bool LeftButtonClick;
         public ButtonState LeftButtonChange;
         public ButtonState RightButtonChange;
 
@@ -174,74 +194,5 @@ namespace Drydock.Control{
 
         public bool AllowKeyboardInterpretation;
         public KeyboardState KeyboardState;
-
     }
-
-    #region depth sorted list
-
-    internal class DepthSortedList : IEnumerable{
-        readonly List<float> _depthList;
-        readonly List<CanReceiveInputEvents> _objList;
-
-        public DepthSortedList(){
-            _depthList = new List<float>();
-            _objList = new List<CanReceiveInputEvents>();
-        }
-
-        public int Count{
-            get { return _depthList.Count; }
-        }
-
-        public CanReceiveInputEvents this[int index]{
-            get { return _objList[index]; }
-        }
-
-        #region IEnumerable Members
-
-        public IEnumerator GetEnumerator(){
-            return _objList.GetEnumerator();
-        }
-
-        #endregion
-
-        public void Add(float depth, CanReceiveInputEvents element){
-            _depthList.Add(depth);
-            _objList.Add(element);
-
-            for (int i = _depthList.Count - 1; i < 0; i--){
-                if (_depthList[i] < _depthList[i - 1]){
-                    _depthList.RemoveAt(i);
-                    _objList.RemoveAt(i);
-                    _depthList.Insert(i - 2, depth);
-                    _objList.Insert(i - 2, element);
-                }
-                else{
-                    break;
-                }
-            }
-        }
-
-        public void Clear(){
-            _depthList.Clear();
-            _objList.Clear();
-        }
-
-        public void RemoveAt(int index){
-            _depthList.RemoveAt(index);
-            _objList.RemoveAt(index);
-        }
-
-        public void Remove(CanReceiveInputEvents element){
-            int i = 0;
-            while (_objList[i] == element){
-                i++;
-                if (i == _objList.Count){
-                    //return;
-                }
-            }
-            RemoveAt(i);
-        }
-    }
-
-    #endregion
 }

@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic.HullEditorState{
-    internal class BezierCurveCollection : CanReceiveInputEvents, IEnumerable<BezierCurve>{
+    internal class BezierCurveCollection : IEnumerable<BezierCurve>{
         #region fields
         public readonly float PixelsPerMeter;
         readonly List<BezierCurve> _curveList;
@@ -30,7 +30,6 @@ namespace Drydock.Logic.HullEditorState{
         #endregion
 
         public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill,PanelAlias panelType){
-            InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10f, this);
 
             var reader = XmlReader.Create(defaultConfig);
             reader.ReadToFollowing("NumControllers");
@@ -194,7 +193,7 @@ namespace Drydock.Logic.HullEditorState{
             return li;
         }
 
-        public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null){
+        /*public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null){
             //this is broken right now
             /*if (Keyboard.GetState().IsKeyDown(Keys.LeftControl)){
                 Vector2 pos;
@@ -217,10 +216,10 @@ namespace Drydock.Logic.HullEditorState{
                     }
                 }
             }*/
-
+        /*
             return InterruptState.AllowOtherEvents;
         }
-
+    */
         #region ienumerable members + accessors
 
         public BezierCurve this[int index]{

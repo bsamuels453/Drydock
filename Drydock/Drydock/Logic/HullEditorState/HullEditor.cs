@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic.HullEditorState{
-    internal class HullEditor : CanReceiveInputEvents, IGameState{
+    internal class HullEditor : IGameState{
         readonly BackEditorPanel _backpanel;
 
         readonly PreviewRenderer _previewRenderer;
@@ -41,8 +41,6 @@ namespace Drydock.Logic.HullEditorState{
 
             _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves, _backpanel.Curves);
 
-            InputEventDispatcher.EventSubscribers.Add((float) DepthLevel.Medium/10, this);
-
             UIElementCollection.UnbindCollection();
         }
 
@@ -50,7 +48,6 @@ namespace Drydock.Logic.HullEditorState{
 
         public void Update(){
             UIElementCollection.BindCollection(_elementCollection);
-            _elementCollection.Update();
             _sidepanel.Update();
             _toppanel.Update();
             _backpanel.Update();
@@ -58,9 +55,13 @@ namespace Drydock.Logic.HullEditorState{
             UIElementCollection.UnbindCollection();
         }
 
+        public void InputUpdate(ref ControlState state){
+            
+        }
+
         #endregion
 
-        public override InterruptState OnKeyboardEvent(KeyboardState state){
+        /*public override InterruptState OnKeyboardEvent(KeyboardState state){
             if (state.IsKeyDown(Keys.LeftControl) && state.IsKeyDown(Keys.S)){
                 SaveCurves("save/");
                 return InterruptState.InterruptEventDispatch;
@@ -78,7 +79,7 @@ namespace Drydock.Logic.HullEditorState{
             }
 
             return InterruptState.AllowOtherEvents;
-        }
+        }*/
 
         public void SaveCurves(string directory){
             //dear mother of god why does this have to be hardcoded

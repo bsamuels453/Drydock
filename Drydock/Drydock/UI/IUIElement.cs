@@ -1,11 +1,12 @@
 ﻿#region
 
+using Drydock.Control;
 using Drydock.Utilities;
 
 #endregion
 
 namespace Drydock.UI{
-    internal interface IUIElement{
+    internal interface IUIElement : IUpdatable{
         float X { get; set; }
         float Y { get; set; }
         float Width { get; set; }
@@ -18,6 +19,5 @@ namespace Drydock.UI{
 
         TComponent GetComponent<TComponent>();
         bool DoesComponentExist<TComponent>();
-        void Update();
     }
 }

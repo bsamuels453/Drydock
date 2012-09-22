@@ -12,7 +12,7 @@ namespace Drydock.UI{
     /// <summary>
     ///   This class serves as a container for UI elements. Its purpose is to update said elements through the UIContext, and to provide collection-wide modification methods for use by external classes.
     /// </summary>
-    internal class UIElementCollection : CanReceiveInputEvents{
+    internal class UIElementCollection : IUpdatable, IInputUpdatable{
         readonly List<IUIElement> _elements;
         readonly UISortedList _layerSortedIElements;
         public bool DisableEntryHandlers;
@@ -23,7 +23,7 @@ namespace Drydock.UI{
             _elements = new List<IUIElement>();
             _layerSortedIElements = new UISortedList();
             DisableEntryHandlers = false;
-            InputEventDispatcher.EventSubscribers.Add((float) depth/10, this);
+            //InputEventDispatcher.EventSubscribers.Add((float) depth/10, this);
             Add(this);
         }
 
@@ -41,16 +41,22 @@ namespace Drydock.UI{
 
         #endregion
 
-        public void Update(){
+        public void Update(double timeDelta){
             foreach (IUIElement element in _elements){
-                element.Update();
+                element.Update(timeDelta);
+            }
+        }
+
+        public void InputUpdate(ref ControlState state){
+            foreach (IUIElement element in _elements) {
+                //element.InputUpdate(ref state);
             }
         }
 
         #region event dispatchers
 
         //i'll rip your balls off if you LINQ these foreach loops
-        public override InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
+        /*public override InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 foreach (var mouseEvent in _layerSortedIElements[i].OnMouseMovement){
                     if (mouseEvent(state, prevState) == InterruptState.InterruptEventDispatch){
@@ -86,7 +92,7 @@ namespace Drydock.UI{
             }
             return InterruptState.AllowOtherEvents;
         }
-
+        
         public override InterruptState OnLeftButtonClick(MouseState state, MouseState? prevState = null){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 if (_layerSortedIElements[i].ContainsMouse){
@@ -143,7 +149,7 @@ namespace Drydock.UI{
             }
             return InterruptState.AllowOtherEvents;
         }
-
+        */
         #endregion
 
         #region collection modification methods

@@ -12,7 +12,7 @@ namespace Drydock.Logic{
     /// <summary>
     ///   this abstract class creates a camera that rotates around a point
     /// </summary>
-    internal abstract class ATargetingCamera : CanReceiveInputEvents{
+    internal abstract class ATargetingCamera{
         Rectangle _boundingBox;
         float _cameraDistance;
         float _cameraPhi;
@@ -32,7 +32,6 @@ namespace Drydock.Logic{
             else{
                 _boundingBox = new Rectangle(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
             }
-            InputEventDispatcher.EventSubscribers.Add(0.1f, this);
         }
 
         protected void SetCameraTarget(Vector3 target){
@@ -41,7 +40,7 @@ namespace Drydock.Logic{
             Renderer.CameraPosition.Z = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
             Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
         }
-
+        /*
         public override InterruptState OnMouseMovement(MouseState state, MouseState? prevState = null){
             if (prevState != null){
                 if (_boundingBox.Contains(state.X, state.Y)){
@@ -87,12 +86,12 @@ namespace Drydock.Logic{
                     }*/
 
                         //return InterruptState.InterruptEventDispatch;
-                    }
+                    }/*
                 }
             }
             return InterruptState.AllowOtherEvents;
-        }
-
+        }*/
+        /*
         public override InterruptState OnMouseScroll(MouseState state, MouseState? prevState = null){
             if (prevState != null){
                 if (_boundingBox.Contains(state.X, state.Y)){
@@ -107,5 +106,6 @@ namespace Drydock.Logic{
             }
             return InterruptState.AllowOtherEvents;
         }
-    }
+        * */
+    
 }

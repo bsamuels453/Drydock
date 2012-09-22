@@ -6,7 +6,7 @@ using Drydock.Control;
 #endregion
 
 namespace Drydock.UI{
-    internal interface IUIInteractiveElement : IUIElement{
+    internal interface IUIInteractiveElement : IUIElement, IInputUpdatable{
         bool ContainsMouse { get; set; }
 
         #region event dispatch lists

@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections.Generic;
+using Drydock.Control;
 using Drydock.Render;
 using Drydock.UI;
 using Drydock.Utilities;
@@ -36,9 +37,10 @@ namespace Drydock.Logic.DoodadEditorState{
         #region IGameState Members
 
         public void Update(){
-            //throw new NotImplementedException();
-            _deckUpButton.Update();
-            _deckDownButton.Update();
+        }
+
+        public void InputUpdate(ref ControlState state){
+            throw new System.NotImplementedException();
         }
 
         public void Dispose(){
