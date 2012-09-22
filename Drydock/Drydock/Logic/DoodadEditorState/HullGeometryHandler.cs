@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Drydock.Control;
 using Drydock.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -106,7 +107,7 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
 
-        /*public InterruptState AddVisibleLevel(MouseState state, MouseState? prevState){
+        public void AddVisibleLevel(){
             if (_visibleDecks != _numDecks){
                 foreach (var buffer in _deckBuffers.Where(buffer => buffer.IsEnabled == false)){
                     buffer.IsEnabled = true;
@@ -115,10 +116,9 @@ namespace Drydock.Logic.DoodadEditorState{
                 }
 
             }
-            return InterruptState.InterruptEventDispatch;
         }
 
-        public InterruptState RemoveVisibleLevel(MouseState state, MouseState? prevState) {
+        public void RemoveVisibleLevel() {
             if (_visibleDecks != 0){
                 foreach (var buffer in Enumerable.Reverse(_deckBuffers)) {
                     if (buffer.IsEnabled == true) {
@@ -128,9 +128,10 @@ namespace Drydock.Logic.DoodadEditorState{
                     }
                 }
             }
+        }
 
-
-            return InterruptState.InterruptEventDispatch;
-        }*/
+        public override void Update(){
+            UpdateCamera(ref InputEventDispatcher.CurrentControlState);
+        }
     }
 }
