@@ -43,9 +43,11 @@ namespace Drydock.Control{
             curControlState.PrevMousePos = new Point();
             curControlState.PrevMousePos.X = _prevMouseState.X;
             curControlState.PrevMousePos.Y = _prevMouseState.Y;
+            curControlState.LeftButtonChange = curMouseState.LeftButton;
+            curControlState.RightButtonChange = curMouseState.RightButton;
+            curControlState.MouseScrollChange = curMouseState.ScrollWheelValue - _prevMouseState.ScrollWheelValue;
 
             if (_prevMouseState.LeftButton != curMouseState.LeftButton){
-                curControlState.LeftButtonChange = curMouseState.LeftButton;
                 curControlState.AllowLeftButtonInterpretation = true;
                 if (curMouseState.LeftButton == ButtonState.Released){
                     //check if this qualifies as a click
@@ -65,14 +67,12 @@ namespace Drydock.Control{
                 curControlState.AllowLeftButtonInterpretation = false;
 
             if (_prevMouseState.RightButton != curMouseState.RightButton){
-                curControlState.RightButtonChange = curMouseState.RightButton;
                 curControlState.AllowRightButtonInterpretation = true;
             }
             else
                 curControlState.AllowRightButtonInterpretation = false;
 
             if (_prevMouseState.ScrollWheelValue != curMouseState.ScrollWheelValue){
-                curControlState.MouseScrollChange = curMouseState.ScrollWheelValue - _prevMouseState.ScrollWheelValue;
                 curControlState.AllowMouseScrollInterpretation = true;
             }
             else
