@@ -43,7 +43,7 @@ namespace Drydock.Logic{
 
         protected void UpdateCamera(ref ControlState state){
                 if (_boundingBox.Contains(state.MousePos.X, state.MousePos.Y)){
-                    if (state.LeftButtonChange == ButtonState.Pressed){
+                    if (state.LeftButtonState == ButtonState.Pressed){
                         int dx = state.MousePos.X - state.PrevMousePos.X;
                         int dy = state.MousePos.Y - state.PrevMousePos.Y;
 
@@ -51,7 +51,7 @@ namespace Drydock.Logic{
                             int fd = 5;
                         }
 
-                        if (state.LeftButtonChange == ButtonState.Pressed){
+                        if (state.LeftButtonState == ButtonState.Pressed){
                             _cameraPhi += dy*0.01f;
                             _cameraTheta -= dx*0.01f;
 

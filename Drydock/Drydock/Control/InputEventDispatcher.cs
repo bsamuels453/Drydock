@@ -43,8 +43,8 @@ namespace Drydock.Control{
             curControlState.PrevMousePos = new Point();
             curControlState.PrevMousePos.X = _prevMouseState.X;
             curControlState.PrevMousePos.Y = _prevMouseState.Y;
-            curControlState.LeftButtonChange = curMouseState.LeftButton;
-            curControlState.RightButtonChange = curMouseState.RightButton;
+            curControlState.LeftButtonState = curMouseState.LeftButton;
+            curControlState.RightButtonState = curMouseState.RightButton;
             curControlState.MouseScrollChange = curMouseState.ScrollWheelValue - _prevMouseState.ScrollWheelValue;
 
             if (_prevMouseState.LeftButton != curMouseState.LeftButton){
@@ -93,11 +93,11 @@ namespace Drydock.Control{
         public bool AllowMouseScrollInterpretation;
         public bool AllowRightButtonInterpretation;
         public KeyboardState KeyboardState;
-        public ButtonState LeftButtonChange;
+        public ButtonState LeftButtonState;
         public bool LeftButtonClick;
         public Point MousePos;
         public int MouseScrollChange;
         public Point PrevMousePos;
-        public ButtonState RightButtonChange;
+        public ButtonState RightButtonState;
     }
 }
