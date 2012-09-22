@@ -2,6 +2,7 @@
 
 using System;
 using System.Linq;
+using Drydock.Control;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
@@ -48,10 +49,10 @@ namespace Drydock.Logic.HullEditorState{
             _backCurves = backCurves;
 
             _geometryBuffer.Indexbuffer.SetData(_indicies);
-            Update();
         }
 
         public void Update(){
+            UpdateCamera(ref InputEventDispatcher.CurrentControlState);
             _topCurves.GetParameterizedPoint(0, true);
 
             var topPts = new Vector2[_meshVertexWidth];
