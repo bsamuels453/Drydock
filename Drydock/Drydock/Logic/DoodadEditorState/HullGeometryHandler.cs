@@ -109,7 +109,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
         public void AddVisibleLevel(){
             if (_visibleDecks != _numDecks){
-                foreach (var buffer in _deckBuffers.Where(buffer => buffer.IsEnabled == false)){
+                foreach (var buffer in _deckBuffers.Reverse().Where(buffer => buffer.IsEnabled == false)) {
                     buffer.IsEnabled = true;
                     _visibleDecks++;
                     break;
@@ -120,8 +120,8 @@ namespace Drydock.Logic.DoodadEditorState{
 
         public void RemoveVisibleLevel() {
             if (_visibleDecks != 0){
-                foreach (var buffer in Enumerable.Reverse(_deckBuffers)) {
-                    if (buffer.IsEnabled == true) {
+                foreach (var buffer in _deckBuffers) {
+                    if (buffer.IsEnabled) {
                         buffer.IsEnabled = false;
                         _visibleDecks--;
                         break;
