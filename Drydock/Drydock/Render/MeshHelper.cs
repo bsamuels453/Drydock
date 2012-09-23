@@ -58,7 +58,7 @@ namespace Drydock.Render{
             return verticies;
         }
 
-        public static void Encode2DListIntoMesh(int meshWidth, int meshHeight, ref Vector3[,] mesh, List<List<Vector3>> list){
+        public static void Encode2DListIntoArray(int meshWidth, int meshHeight, ref Vector3[,] mesh, List<List<Vector3>> list){
             for (int x = 0; x < meshWidth; x++){
                 for (int y = 0; y < meshHeight; y++){
                     mesh[x, y] = list[x][y];
