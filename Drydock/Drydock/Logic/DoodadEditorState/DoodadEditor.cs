@@ -27,8 +27,8 @@ namespace Drydock.Logic.DoodadEditorState{
             _deckUpButton = new Button(50, 50, 32, 32, DepthLevel.High, "uparrow");
             _deckDownButton = new Button(50, 82, 32, 32, DepthLevel.High, "downarrow");
 
-            var geomGen = new HullGeometryGenerator(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
-            _hullGeometryHandler = new HullGeometryHandler(geomGen.GetGeometrySlices(), _primsPerDeck, geomGen.NumDecks);
+            var geometryGenerator = new HullGeometryGenerator(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
+            _hullGeometryHandler = new HullGeometryHandler(geometryGenerator.Resultant);
 
             _deckUpButton.OnLeftClickDispatcher += _hullGeometryHandler.AddVisibleLevel;
             _deckDownButton.OnLeftClickDispatcher += _hullGeometryHandler.RemoveVisibleLevel;
