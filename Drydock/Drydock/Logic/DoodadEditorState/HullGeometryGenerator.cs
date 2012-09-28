@@ -63,6 +63,7 @@ namespace Drydock.Logic.DoodadEditorState{
             float berth = topCurveInfo[1].Pos.Y;
             float length = sideCurveInfo[2].Pos.X;
             _numDecks = (int) (draft/_metersPerDeck);
+            Resultant.NumDecks = _numDecks;
             int numVerticalVertexes = _numDecks*_primHeightPerDeck + _primHeightPerDeck + 1;
 
             //get the y values for the hull
@@ -299,5 +300,6 @@ namespace Drydock.Logic.DoodadEditorState{
         public ShipGeometryBuffer[] DeckWallBuffers;
         public ShipGeometryBuffer[] DeckFloorBuffers;
         public Vector3 CenterPoint;
+        public int NumDecks;
     }
 }
