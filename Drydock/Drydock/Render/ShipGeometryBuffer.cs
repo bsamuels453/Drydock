@@ -34,6 +34,14 @@ namespace Drydock.Render{
             get { return _rasterizerState; }
         }
 
+        public CullMode CullMode{
+            set { _rasterizerState.CullMode = value; }
+        }
+
+        public Vector3 DiffuseDirection{
+            set { _effect.Parameters["DiffuseLightDirection"].SetValue(value);  }
+        }
+
         protected override void UpdateEffectParams(Matrix viewMatrix){
             _effect.Parameters["View"].SetValue(viewMatrix);
         }
