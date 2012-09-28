@@ -217,7 +217,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
         void GenerateDecks(){
             _deckFloorMesh = new List<Vector3[,]>();
-            for (int deck = 0; deck < _numDecks; deck++){
+            for (int deck = 0; deck < _numDecks+1; deck++){
                 _deckFloorMesh.Add(new Vector3[3,_layerVerts[0].Count/2]);
                 for (int vert = 0; vert < _layerVerts[0].Count/2; vert++){
                     _deckFloorMesh.Last()[0, vert] = _layerVerts[deck*_primHeightPerDeck][_layerVerts[0].Count/2 + vert];
@@ -252,7 +252,7 @@ namespace Drydock.Logic.DoodadEditorState{
                 MeshHelper.ConvertMeshToVertList(hullMesh, hullNormals, ref hullVerticies);
 
                 //now stick it in a buffer
-                hullBuffers[i] = new ShipGeometryBuffer(hullIndicies.Length, hullVerticies.Length, hullIndicies.Length / 3, "whiteborder");
+                hullBuffers[i] = new ShipGeometryBuffer(hullIndicies.Length, hullVerticies.Length, hullIndicies.Length / 3, "whiteborder", CullMode.CullClockwiseFace);
                 hullBuffers[i].Indexbuffer.SetData(hullIndicies);
                 hullBuffers[i].Vertexbuffer.SetData(hullVerticies);
             }
@@ -267,10 +267,10 @@ namespace Drydock.Logic.DoodadEditorState{
                 }
             }
 
-            var deckFloorbuffers = new ShipGeometryBuffer[_numDecks];
+            var deckFloorbuffers = new ShipGeometryBuffer[_deckFloorMesh.Count];
 
             //now set up the display buffer for each deck floor
-            for (int i = 0; i < _deckVertexes.Count - 1; i++){
+            for (int i = 0; i < _deckFloorMesh.Count; i++) {
                 VertexPositionNormalTexture[] floorVerticies = MeshHelper.CreateTexcoordedVertexList(4*_layerVerts[0].Count/2);
                 int[] foorIndicies = MeshHelper.CreateIndiceArray(4*_layerVerts[0].Count/2);
 

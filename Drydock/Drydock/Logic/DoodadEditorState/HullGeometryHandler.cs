@@ -23,7 +23,7 @@ namespace Drydock.Logic.DoodadEditorState{
             _deckFloorBuffers = geometryInfo.DeckFloorBuffers;
             _centerPoint = geometryInfo.CenterPoint;
             _numDecks = geometryInfo.NumDecks;
-            _visibleDecks = _numDecks - 1;
+            _visibleDecks = _numDecks;
             SetCameraTarget(_centerPoint);
         }
 
