@@ -12,10 +12,10 @@ namespace Drydock.Render{
         readonly RasterizerState _rasterizerState;
         readonly Texture2D _texture;
 
-        public ShipGeometryBuffer(int numIndicies, int numVerticies, int numPrimitives, string textureName)
+        public ShipGeometryBuffer(int numIndicies, int numVerticies, int numPrimitives, string textureName, CullMode cullMode = CullMode.None)
             : base(numIndicies, numVerticies, numPrimitives){
             _rasterizerState = new RasterizerState();
-            _rasterizerState.CullMode = CullMode.None;
+            _rasterizerState.CullMode = cullMode;
 
             _texture = Singleton.ContentManager.Load<Texture2D>(textureName);
             _effect = Singleton.ContentManager.Load<Effect>("StandardEffect");
