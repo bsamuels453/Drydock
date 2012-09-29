@@ -29,13 +29,13 @@ namespace Drydock.Logic.DoodadEditorState{
 
             //override default lighting
             foreach (var buffer in _deckFloorBuffers){
-                buffer.DiffuseDirection = new Vector3(0, 1, 1);
-                buffer.AmbientIntensity = 1.60f;}
+                buffer.DiffuseDirection = new Vector3(0, 1, 0);
+            }
             foreach (var buffer in _deckWallBuffers){
-                //buffer.DiffuseDirection = new Vector3(0, -1, 1);
-                buffer.DiffuseDirection = new Vector3(0, 1, 1);
+                buffer.DiffuseDirection = new Vector3(0, -1, 1);
                 buffer.CullMode = CullMode.None;
             }
+                
         }
 
 
