@@ -30,30 +30,39 @@ namespace Drydock.Logic.DoodadEditorState{
             //override default lighting
             foreach (var buffer in _deckFloorBuffers){
                 buffer.DiffuseDirection = new Vector3(0, 1, 1);
-            }
+                buffer.AmbientIntensity = 1.60f;}
             foreach (var buffer in _deckWallBuffers){
+                //buffer.DiffuseDirection = new Vector3(0, -1, 1);
                 buffer.DiffuseDirection = new Vector3(0, 1, 1);
+                buffer.CullMode = CullMode.None;
             }
         }
 
 
         public void AddVisibleLevel(){
             if (_visibleDecks != _numDecks){
-                foreach (var buffer in _deckFloorBuffers.Reverse().Where(buffer => buffer.IsEnabled == false)) {
-                    buffer.IsEnabled = true;
-                    _visibleDecks++;
-                    break;
-                }
+                //todo: linq this
+                var tempFloorBuff = _deckFloorBuffers.Reverse().ToArray();
+                var tempWallBuff = _deckWallBuffers.Reverse().ToArray();
 
+                for (int i = 0; i < tempFloorBuff.Count(); i++){
+                    if (tempFloorBuff[i].IsEnabled == false){
+                        _visibleDecks++;
+                        tempFloorBuff[i].IsEnabled = true;
+                        tempWallBuff[i].CullMode = CullMode.None;
+                        break;
+                    }
+                }
             }
         }
 
         public void RemoveVisibleLevel() {
             if (_visibleDecks != 0){
-                foreach (var buffer in _deckFloorBuffers) {
-                    if (buffer.IsEnabled) {
-                        buffer.IsEnabled = false;
+                for (int i = 0; i < _deckFloorBuffers.Count(); i++) {
+                    if (_deckFloorBuffers[i].IsEnabled == true) {
                         _visibleDecks--;
+                        _deckFloorBuffers[i].IsEnabled = false;
+                        _deckWallBuffers[i].CullMode = CullMode.CullClockwiseFace;
                         break;
                     }
                 }
