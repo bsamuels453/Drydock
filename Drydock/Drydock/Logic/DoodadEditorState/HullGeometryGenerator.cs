@@ -211,6 +211,14 @@ namespace Drydock.Logic.DoodadEditorState{
             MeshHelper.Encode2DListIntoArray(_layerVerts.Count, _layerVerts[0].Count, ref totalMesh, _layerVerts);
             MeshHelper.GenerateMeshNormals(totalMesh, ref _totalNormals);
 
+            for (int x = 0; x < _layerVerts.Count; x++){
+                for (int y = 0; y < _layerVerts[0].Count; y++){
+                    _totalNormals[x, y].Y *= -1;
+                    //_totalNormals[x, y] = Vector3.Up;
+                }
+            }
+
+
             //since we have generated totalmesh, might as well get the centerpoint now
             GenerateCenterPoint(totalMesh);
         }
