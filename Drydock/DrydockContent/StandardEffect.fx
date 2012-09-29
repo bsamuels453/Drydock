@@ -2,12 +2,12 @@ float4x4 World;
 float4x4 View;
 float4x4 Projection;
 float4 AmbientColor;
-float AmbientIntensity;
+float AmbientIntensity = 1;
 float4x4 WorldInverseTranspose;
 
 float3 DiffuseLightDirection = float3(0, -1, 1);
 float4 DiffuseColor = float4(1, 1, 1, 1);
-float DiffuseIntensity = 0.7;
+float DiffuseIntensity = 1;
 
 texture Texture;
 sampler2D textureSampler = sampler_state {
@@ -47,7 +47,9 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
     float4 normal = mul(input.Normal, WorldInverseTranspose);
 	normal = normalize(normal);
-    float lightIntensity = dot(normal, DiffuseLightDirection) * AmbientIntensity;
+	float3 dir = normalize(DiffuseLightDirection);
+    float lightIntensity = dot(normal, dir) * AmbientIntensity;
+	//float lightIntensity = dot(normal, DiffuseLightDirection) * AmbientIntensity;
     output.Color = saturate(DiffuseColor * DiffuseIntensity * lightIntensity);
 
     output.Normal = normal;
@@ -61,7 +63,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 ////////////////////////////////////////////
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-	input.Color = clamp(input.Color, 0.5, 1);
+	input.Color = clamp(input.Color, 0.35, 1);
 
 	float4 textureColor = tex2D(textureSampler, input.TextureCoordinate);
     float4 tex = saturate(textureColor * input.Color);
