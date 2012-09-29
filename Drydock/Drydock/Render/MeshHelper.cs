@@ -79,7 +79,9 @@ namespace Drydock.Render{
                     crossSum += Vector3.Cross(s3, s2);
 
                     normals[vertX, vertZ] += crossSum;
-                    normals[vertX, vertZ].Normalize();
+                    if (crossSum != Vector3.Zero){
+                        normals[vertX, vertZ].Normalize();
+                    }
                 }
             }
 
