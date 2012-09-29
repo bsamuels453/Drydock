@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Drydock.Render{
     internal class ShipGeometryBuffer : BufferObject<VertexPositionNormalTexture>{
         readonly Effect _effect;
-        readonly RasterizerState _rasterizerState;
+        RasterizerState _rasterizerState;
         readonly Texture2D _texture;
 
         public ShipGeometryBuffer(int numIndicies, int numVerticies, int numPrimitives, string textureName, CullMode cullMode = CullMode.None)
@@ -35,7 +35,10 @@ namespace Drydock.Render{
         }
 
         public CullMode CullMode{
-            set { _rasterizerState.CullMode = value; }
+            set {
+            _rasterizerState = new RasterizerState();
+            _rasterizerState.CullMode = value; 
+            }
         }
 
         public Effect Effect { get { return _effect; }
