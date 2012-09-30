@@ -184,6 +184,7 @@
     <Compile Include="Render\MeshHelper.cs" />
     <Compile Include="Render\RenderPanel.cs" />
     <Compile Include="Render\ShipGeometryBuffer.cs" />
+    <Compile Include="Render\WireframeBuffer.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="UI\Components\DraggableComponent.cs" />
     <Compile Include="UI\Components\FadeComponent.cs" />

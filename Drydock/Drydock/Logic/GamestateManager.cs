@@ -36,6 +36,7 @@ namespace Drydock.Logic{
 
 
         public static void Update(){
+            InputEventDispatcher.Update();
             if (_currentState != null){
                 _currentState.Update(ref InputEventDispatcher.CurrentControlState, 0);
             }

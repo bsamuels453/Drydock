@@ -46,7 +46,6 @@ namespace Drydock{
 
 
         protected override void Update(GameTime gameTime){
-            InputEventDispatcher.Update();
             GamestateManager.Update();
             //Thread.Sleep(10);
             base.Update(gameTime);
