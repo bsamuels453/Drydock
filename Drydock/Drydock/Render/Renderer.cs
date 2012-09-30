@@ -28,8 +28,8 @@ namespace Drydock.Render{
             _projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
                 fieldOfView: 3.14f/4,
                 aspectRatio: AspectRatio,
-                nearPlaneDistance: 0.1f,
-                farPlaneDistance: 50000
+                nearPlaneDistance: 1,
+                farPlaneDistance: 500
                 );
             Singleton.ProjectionMatrix = _projectionMatrix;
 
@@ -41,7 +41,6 @@ namespace Drydock.Render{
 
         public static void Draw(){
             var viewMatrix = Matrix.CreateLookAt(CameraPosition, CameraTarget, Vector3.Up);
-
 
             RenderPanel.Draw(viewMatrix);
             ScreenText.Draw(_batch);
