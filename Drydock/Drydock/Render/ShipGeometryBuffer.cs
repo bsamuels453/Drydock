@@ -8,50 +8,33 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal class ShipGeometryBuffer : BufferObject<VertexPositionNormalTexture>{
-        readonly Effect _effect;
-        RasterizerState _rasterizerState;
         readonly Texture2D _texture;
 
         public ShipGeometryBuffer(int numIndicies, int numVerticies, int numPrimitives, string textureName, CullMode cullMode = CullMode.None)
-            : base(numIndicies, numVerticies, numPrimitives){
-            _rasterizerState = new RasterizerState();
-            _rasterizerState.CullMode = cullMode;
+            : base(numIndicies, numVerticies, numPrimitives, PrimitiveType.TriangleList){
+                BufferRasterizer = new RasterizerState();
+                BufferRasterizer.CullMode = cullMode;
 
             _texture = Singleton.ContentManager.Load<Texture2D>(textureName);
-            _effect = Singleton.ContentManager.Load<Effect>("StandardEffect").Clone();
-            _effect.Parameters["Projection"].SetValue(Singleton.ProjectionMatrix);
-            _effect.Parameters["World"].SetValue(Matrix.Identity);
-            _effect.Parameters["Texture"].SetValue(_texture);
-        }
-
-        protected override Effect BufferEffect{
-            get { return _effect; }
-        }
-
-        protected override RasterizerState BufferRasterizer{
-            get { return _rasterizerState; }
+            BufferEffect = Singleton.ContentManager.Load<Effect>("StandardEffect").Clone();
+            BufferEffect.Parameters["Projection"].SetValue(Singleton.ProjectionMatrix);
+            BufferEffect.Parameters["World"].SetValue(Matrix.Identity);
+            BufferEffect.Parameters["Texture"].SetValue(_texture);
         }
 
         public CullMode CullMode{
             set {
-            _rasterizerState = new RasterizerState();
-            _rasterizerState.CullMode = value; 
+                BufferRasterizer = new RasterizerState();
+                BufferRasterizer.CullMode = value; 
             }
         }
 
-        public Effect Effect { get { return _effect; }
-        }
-
         public Vector3 DiffuseDirection{
-            set { _effect.Parameters["DiffuseLightDirection"].SetValue(value);  }
+            set { BufferEffect.Parameters["DiffuseLightDirection"].SetValue(value); }
         }
 
         public float AmbientIntensity {
-            set { _effect.Parameters["AmbientIntensity"].SetValue(value); }
-        }
-
-        protected override void UpdateEffectParams(Matrix viewMatrix){
-            _effect.Parameters["View"].SetValue(viewMatrix);
+            set { BufferEffect.Parameters["AmbientIntensity"].SetValue(value); }
         }
     }
 }

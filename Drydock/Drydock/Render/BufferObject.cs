@@ -12,14 +12,18 @@ namespace Drydock.Render{
         public readonly VertexBuffer Vertexbuffer;
         readonly int _numIndicies;
         readonly int _numPrimitives;
+        readonly PrimitiveType _primitiveType;
         public bool IsEnabled;
         RenderPanel _bufferRenderTarget;
-        //bool _isDisposed;
 
-        protected BufferObject(int numIndicies, int numVerticies, int numPrimitives){
+        protected Effect BufferEffect;
+        protected RasterizerState BufferRasterizer;
+
+        protected BufferObject(int numIndicies, int numVerticies, int numPrimitives, PrimitiveType primitiveType){
             IsEnabled = true;
             _numPrimitives = numPrimitives;
             _numIndicies = numIndicies;
+            _primitiveType = primitiveType;
 
             Indexbuffer = new IndexBuffer(
                 Singleton.Device,
@@ -36,24 +40,20 @@ namespace Drydock.Render{
                 );
 
             _bufferRenderTarget = RenderPanel.Add(this);
-            //_isDisposed = false;
         }
-
-        protected abstract Effect BufferEffect { get; }
-        protected abstract RasterizerState BufferRasterizer { get; }
 
         #region IDrawableBuffer Members
 
         public void Draw(Matrix viewMatrix){
             if (IsEnabled){
-                UpdateEffectParams(viewMatrix);
+                UpdateViewMatrix(viewMatrix);
                 Singleton.Device.RasterizerState = BufferRasterizer;
 
                 foreach (EffectPass pass in BufferEffect.CurrentTechnique.Passes){
                     pass.Apply();
                     Singleton.Device.Indices = Indexbuffer;
                     Singleton.Device.SetVertexBuffer(Vertexbuffer);
-                    Singleton.Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _numIndicies, 0, _numPrimitives);
+                    Singleton.Device.DrawIndexedPrimitives(_primitiveType, 0, 0, _numIndicies, 0, _numPrimitives);
                 }
                 Singleton.Device.SetVertexBuffer(null);
             }
@@ -69,7 +69,11 @@ namespace Drydock.Render{
             }
         }*/
 
-        protected abstract void UpdateEffectParams(Matrix viewMatrix);
+        public void UpdateViewMatrix(Matrix viewMatrix){
+            BufferEffect.Parameters["View"].SetValue(viewMatrix);
+        }
+
+
 
         ~BufferObject(){
             //Dispose();
