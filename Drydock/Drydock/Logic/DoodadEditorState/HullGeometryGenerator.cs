@@ -45,6 +45,7 @@ namespace Drydock.Logic.DoodadEditorState{
             GenerateDecks();
             GenerateDeckWallBuffers();
             GenerateDeckFloorBuffers();
+            GenerateBoundingBoxes();
         }
 
         //todo: break up this method into submethods for the sake of cleanliness.
@@ -293,6 +294,22 @@ namespace Drydock.Logic.DoodadEditorState{
 
             Resultant.CenterPoint = p;
         }
+
+        void GenerateBoundingBoxes(){
+            var floorBounding = new BoundingBox[_deckFloorMesh.Count][];
+
+            for (int deck = 0; deck < _deckFloorMesh.Count; deck++){
+                floorBounding[deck] = new BoundingBox[_deckFloorMesh[0].Length];
+                int i = 0;
+                for (int x = 0; x < _deckFloorMesh[0].GetLength(0)-1; x++){
+                    for (int z = 0; z < _deckFloorMesh[0].GetLength(1)-1; z++) {
+                        floorBounding[deck][i] = new BoundingBox(_deckFloorMesh[deck][x, z], _deckFloorMesh[deck][x + 1, z + 1]);
+                        i++;
+                    }
+                }
+            }
+            Resultant.DeckFloorBoundingBoxes = floorBounding;
+        }
     }
 
     //this is only used for data transfer between this class and hullgeometryhandler
@@ -301,5 +318,6 @@ namespace Drydock.Logic.DoodadEditorState{
         public ShipGeometryBuffer[] DeckFloorBuffers;
         public Vector3 CenterPoint;
         public int NumDecks;
+        public BoundingBox[][] DeckFloorBoundingBoxes; 
     }
 }
