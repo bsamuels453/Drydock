@@ -41,10 +41,13 @@ namespace Drydock.Logic.DoodadEditorState{
 
         public void Update(ref ControlState state, double timeDelta){
             UIElementCollection.BindCollection(_uiElementCollection);
-            _hullGeometryHandler.Update();
 
-            UIElementCollection.Collection.Update(timeDelta);
+            _hullGeometryHandler.InputUpdate(ref state);
             UIElementCollection.Collection.InputUpdate(ref state);
+
+            _hullGeometryHandler.Update();
+            UIElementCollection.Collection.Update(timeDelta);
+         
             UIElementCollection.UnbindCollection();
         }
 
