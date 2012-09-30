@@ -2,6 +2,7 @@
 
 using System.Diagnostics;
 using Drydock.Logic;
+using Drydock.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -83,6 +84,9 @@ namespace Drydock.Control{
 
             _prevKeyboardState = curKeyboardState;
             _prevMouseState = curMouseState;
+
+            curControlState.ViewMatrix = Matrix.CreateLookAt(Renderer.CameraPosition, Renderer.CameraTarget, Vector3.Up);
+
             CurrentControlState = curControlState;
         }
     }
@@ -100,5 +104,6 @@ namespace Drydock.Control{
         public int MouseScrollChange;
         public Point PrevMousePos;
         public ButtonState RightButtonState;
+        public Matrix ViewMatrix;
     }
 }
