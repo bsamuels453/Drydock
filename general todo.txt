@@ -1,0 +1,18 @@
+Timeframes are not listed for tasks intended to be completed during the school semester.
+
+-Doodad buffer with elements that can be turned on or off
+-Doodad buffer implementation for airship hull, allowing portholes and such.
+
+-Making boundingboxes dependent on a set of squares rather than deck geometry
+-Toolbox sidebar
+-Tooltips
+-Tool for buildings walls
+
+-Toolbox bottombar
+->doors
+->stairs
+->engine
+
+
+
+Wishlist: value type interpolation classes

@@ -1,12 +1,12 @@
+This is a list of low priority refinements that can be made to improve usability. It's likely that none of them will ever be implemented.
+
 -control-modifier snaps curves to angle
 -control-modifier snaps to grid
 -ctr+z
 -actually fix curve addition and deletion
 -add border class
 -scale indicator
---"next" button
-
-long term:
+--"next" button 
 -scale swapper
 -border highlight for selected
 -zooming in an out of each representation
