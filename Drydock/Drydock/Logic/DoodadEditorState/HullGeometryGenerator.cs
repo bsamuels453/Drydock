@@ -26,7 +26,7 @@ namespace Drydock.Logic.DoodadEditorState{
     internal class HullGeometryGenerator{
         const float _metersPerDeck = 2.13f;
         const int _numHorizontalPrimitives = 32; //welp
-        const float _floorSelectionMeshWidth = 1f; //1 decimeter
+        const float _floorSelectionMeshWidth = 0.5f; //1 decimeter
         readonly int _primHeightPerDeck;
 
         //todo: clean up all these fields, they should be passing between methods, not left here like global garbage
@@ -329,11 +329,14 @@ namespace Drydock.Logic.DoodadEditorState{
         //this function takes the previously generated bounding boxes as a reference, and generates the correct scale
         void GenerateFloorSelectionMesh(BoundingBox[][] boundingBoxes){
             var floorSelectionBoxes = new List<List<BoundingBox>>();
+            var floorVertexes = new List<List<Vector3>>();
 
             for (int layer = 0; layer < boundingBoxes.Count(); layer++){
                 floorSelectionBoxes.Add(new List<BoundingBox>());
+                floorVertexes.Add(new List<Vector3>());
 
                 float prevBoxEndX = boundingBoxes[layer][0].Min.X;
+                float hullEnd = boundingBoxes[layer][boundingBoxes[layer].Count() - 1].Max.X;
                 BoundingBox nextBox = new BoundingBox();
                 for (int boxIndex = 0; boxIndex < boundingBoxes[layer].Count(); boxIndex++){
                     BoundingBox curBox = boundingBoxes[layer][boxIndex];
@@ -373,6 +376,16 @@ namespace Drydock.Logic.DoodadEditorState{
                                         )
                                     )
                                 );
+
+                            //now add vertex points to that list
+                            floorVertexes.Last().Add(new Vector3(prevBoxEndX, curBox.Max.Y, z * _floorSelectionMeshWidth));
+                            if (z == (zNumBoxes / 2 - 1)){
+                                floorVertexes.Last().Add(new Vector3(prevBoxEndX + _floorSelectionMeshWidth, curBox.Max.Y,z*_floorSelectionMeshWidth));
+                            }
+                            if (prevBoxEndX + _floorSelectionMeshWidth > hullEnd){
+                                floorVertexes.Last().Add(new Vector3(prevBoxEndX + _floorSelectionMeshWidth, curBox.Max.Y, (z + 1) * _floorSelectionMeshWidth));
+                            }
+
                         }
 
                         //make sure this reference box will be relevant for the next row, if not, break the loop
@@ -383,10 +396,20 @@ namespace Drydock.Logic.DoodadEditorState{
 
                 }
             }
-            //var floorSelectionArray = new BoundingBox[_deckFloorMesh.Count][];
             var floorSelectionArray = (from layer in floorSelectionBoxes
                                        select layer.ToArray()).ToArray();
             Resultant.DeckFloorBoundingBoxes = floorSelectionArray;
+
+            //finalize the vertex array with vertexes that are not a part of a bounding box
+            //make sure the first and last values are clipped
+            /*for(int i=0; i<floorVertexes.Count; i++){
+                floorVertexes[i].AddRange(_layerVerts[i*_numDecks].GetRange(1,_layerVerts[i*_numDecks].Count/2-2));
+                floorVertexes[i].AddRange(_layerVerts[i * _numDecks].GetRange(_layerVerts[i * _numDecks].Count / 2+1, _layerVerts[i * _numDecks].Count/2-2));
+            }*/
+
+            var floorVertexArray = (from layer in floorVertexes
+                                    select layer.ToArray()).ToArray();
+            Resultant.DeckFloorVertexes = floorVertexArray;
         }
     }
 
@@ -396,6 +419,7 @@ namespace Drydock.Logic.DoodadEditorState{
         public ShipGeometryBuffer[] DeckFloorBuffers;
         public Vector3 CenterPoint;
         public int NumDecks;
-        public BoundingBox[][] DeckFloorBoundingBoxes; 
+        public BoundingBox[][] DeckFloorBoundingBoxes;
+        public Vector3[][] DeckFloorVertexes;
     }
 }
