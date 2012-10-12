@@ -26,7 +26,7 @@ namespace Drydock.Logic.DoodadEditorState{
     internal class HullGeometryGenerator{
         const float _metersPerDeck = 2.13f;
         const int _numHorizontalPrimitives = 32; //welp
-        const float _floorSelectionMeshResolution = 0.1f; //1 decimeter
+        const float _floorSelectionMeshWidth = 0.1f; //1 decimeter
         readonly int _primHeightPerDeck;
 
         //todo: clean up all these fields, they should be passing between methods, not left here like global garbage
@@ -323,23 +323,70 @@ namespace Drydock.Logic.DoodadEditorState{
                         i++;
                     }
             }
-            Resultant.DeckFloorBoundingBoxes = floorBounding;
-            //GenerateFloorSelectionMesh(floorBounding);
+            GenerateFloorSelectionMesh(floorBounding);
         }
 
-        //this function takes the bounding boxes as a reference, and generates the actual bounding boxes for each floor
+        //this function takes the previously generated bounding boxes as a reference, and generates the correct scale
         void GenerateFloorSelectionMesh(BoundingBox[][] boundingBoxes){
-            var floorSelectionBoxes = new BoundingBox[_deckFloorMesh.Count][];
-
+            var floorSelectionBoxes = new List<List<BoundingBox>>();
 
             for (int layer = 0; layer < boundingBoxes.Count(); layer++){
-                float overlap = 0;
-                for (int i = 0; i < boundingBoxes[layer].Count(); i++){
+                floorSelectionBoxes.Add(new List<BoundingBox>());
 
+                float prevBoxEndX = boundingBoxes[layer][0].Min.X;
+                BoundingBox nextBox = new BoundingBox();
+                for (int boxIndex = 0; boxIndex < boundingBoxes[layer].Count(); boxIndex++){
+                    BoundingBox curBox = boundingBoxes[layer][boxIndex];
+                    if (boxIndex != boundingBoxes[layer].Count() - 1){
+                        nextBox = boundingBoxes[layer][boxIndex + 1];
+                    }
+
+                    while (true){
+                        //first check if this next row is going to be overlapping with another boundingbox reference
+                        //if so, make the decision on whether this box should handle the restrictions for this row or if the next should
+                        //make sure this doesn't run when the last box is being analyzed since it wont have a nextBox
+                        if (prevBoxEndX + _floorSelectionMeshWidth > curBox.Max.X && boxIndex != boundingBoxes[layer].Count() - 1){
+                            if (curBox.Min.Z < nextBox.Min.Z){
+                                //we handle this row, but this loop will break after it's done
+                            }
+                            else{
+                                //this row can be restricted by the next box
+                                break;
+                            }
+                        }
+
+                        //now create the row
+                        int zNumBoxes = (int) ((curBox.Min.Z - curBox.Max.Z)/_floorSelectionMeshWidth);
+                        float zStart = curBox.Max.Z;
+                        for (int z = 0; z < zNumBoxes; z++){
+                            floorSelectionBoxes.Last().Add(
+                                new BoundingBox(
+                                    new Vector3(
+                                        prevBoxEndX,
+                                        curBox.Max.Y,
+                                        zStart + z*_floorSelectionMeshWidth
+                                        ),
+                                    new Vector3(
+                                        prevBoxEndX + _floorSelectionMeshWidth,
+                                        curBox.Max.Y,
+                                        zStart + (z + 1)*_floorSelectionMeshWidth
+                                        )
+                                    )
+                                );
+                        }
+
+                        //make sure this reference box will be relevant for the next row, if not, break the loop
+                        prevBoxEndX += _floorSelectionMeshWidth;
+                        if (prevBoxEndX > curBox.Max.X)
+                            break;
+                    }
 
                 }
             }
-
+            //var floorSelectionArray = new BoundingBox[_deckFloorMesh.Count][];
+            var floorSelectionArray = (from layer in floorSelectionBoxes
+                                       select layer.ToArray()).ToArray();
+            Resultant.DeckFloorBoundingBoxes = floorSelectionArray;
         }
     }
 
