@@ -109,7 +109,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
 
             int deckIndex = _numDecks - _visibleDecks;
-            for (int i = 0; i < _deckFloorBoundingBoxes[0].Length; i++){
+            for (int i = 0; i < _deckFloorBoundingBoxes[deckIndex].Length; i++) {
                 if (ray.Intersects(_deckFloorBoundingBoxes[deckIndex][i]) != null){
 
                     Vector3 v1, v2, v3, v4;
