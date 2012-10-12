@@ -327,18 +327,47 @@ namespace Drydock.Logic.DoodadEditorState{
             GenerateFloorSelectionMesh(floorBounding);
         }
 
-        void GenerateFloorSelectionMesh(BoundingBox[][] referenceBoxes) {
+        void GenerateFloorSelectionMesh(BoundingBox[][] referenceBoxes){
             Resultant.DeckFloorBoundingBoxes = SubdivideBoundingBoxes(referenceBoxes, _floorSelectionMeshWidth);
 
             //for walls, we don't need boundingboxes, only the vertexes of the bounding boxes
             var wallSelectionBoxes = SubdivideBoundingBoxes(referenceBoxes, _wallSelectionMeshWidth);
-
+            var wallSelectionPoints = new List<List<Vector3>>();
             //generate vertexes of the bounding boxes
 
+            for (int layer = 0; layer < wallSelectionBoxes.Count(); layer++){
+                wallSelectionPoints.Add(new List<Vector3>());
+                foreach (var box in wallSelectionBoxes[layer]){
+                    wallSelectionPoints.Last().Add(box.Min);
+                    wallSelectionPoints.Last().Add(box.Max);
+                    wallSelectionPoints.Last().Add(new Vector3(box.Max.X, box.Min.Y, box.Max.Z));
+                    wallSelectionPoints.Last().Add(new Vector3(box.Min.X, box.Max.Y, box.Max.Z));
+                }
+
+                //now we clear out all of the double entries
+                for (int box = 0; box < wallSelectionPoints[layer].Count(); box++){
+                    for (int otherBox = 0; otherBox < wallSelectionPoints[layer].Count(); otherBox++){
+                        if (box == otherBox)
+                            continue;
+
+                        if (wallSelectionPoints[layer][box] == wallSelectionPoints[layer][otherBox]){
+                            wallSelectionPoints[layer].RemoveAt(otherBox);
+                        }
+
+                    }
+                }
+
+            }
+
+            Resultant.DeckFloorVertexes =
+                (
+                    from layer in wallSelectionPoints
+                    select layer.ToArray()
+                ).ToArray();
         }
 
         //this function takes the previously generated bounding boxes as a reference, and generates the correct scale
-        BoundingBox[][] SubdivideBoundingBoxes(BoundingBox[][] referenceBoxes, float tileWidth){
+        BoundingBox[][] SubdivideBoundingBoxes(BoundingBox[][] referenceBoxes, float tileWidth) {
             var floorSelectionBoxes = new List<List<BoundingBox>>();
             var floorVertexes = new List<List<Vector3>>();
 
