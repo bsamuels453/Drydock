@@ -26,7 +26,7 @@ namespace Drydock.Logic.DoodadEditorState{
     internal class HullGeometryGenerator{
         const float _metersPerDeck = 2.13f;
         const int _numHorizontalPrimitives = 32; //welp
-        const float _floorSelectionMeshWidth = 0.1f; //1 decimeter
+        const float _floorSelectionMeshWidth = 1f; //1 decimeter
         readonly int _primHeightPerDeck;
 
         //todo: clean up all these fields, they should be passing between methods, not left here like global garbage
@@ -358,18 +358,18 @@ namespace Drydock.Logic.DoodadEditorState{
                         //now create the row
                         int zNumBoxes = (int) ((curBox.Min.Z - curBox.Max.Z)/_floorSelectionMeshWidth);
                         float zStart = curBox.Max.Z;
-                        for (int z = 0; z < zNumBoxes; z++){
+                        for (int z = -zNumBoxes / 2; z < zNumBoxes / 2; z++) {
                             floorSelectionBoxes.Last().Add(
                                 new BoundingBox(
                                     new Vector3(
                                         prevBoxEndX,
                                         curBox.Max.Y,
-                                        zStart + z*_floorSelectionMeshWidth
+                                        z*_floorSelectionMeshWidth
                                         ),
                                     new Vector3(
                                         prevBoxEndX + _floorSelectionMeshWidth,
                                         curBox.Max.Y,
-                                        zStart + (z + 1)*_floorSelectionMeshWidth
+                                        (z + 1)*_floorSelectionMeshWidth
                                         )
                                     )
                                 );
