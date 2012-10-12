@@ -26,6 +26,7 @@ namespace Drydock.Logic.DoodadEditorState{
     internal class HullGeometryGenerator{
         const float _metersPerDeck = 2.13f;
         const int _numHorizontalPrimitives = 32; //welp
+        const float _floorSelectionMeshResolution = 0.1f; //1 decimeter
         readonly int _primHeightPerDeck;
 
         //todo: clean up all these fields, they should be passing between methods, not left here like global garbage
@@ -299,16 +300,46 @@ namespace Drydock.Logic.DoodadEditorState{
             var floorBounding = new BoundingBox[_deckFloorMesh.Count][];
 
             for (int deck = 0; deck < _deckFloorMesh.Count; deck++){
-                floorBounding[deck] = new BoundingBox[_deckFloorMesh[0].Length];
+                floorBounding[deck] = new BoundingBox[_deckFloorMesh[0].GetLength(1)-3];
                 int i = 0;
-                for (int x = 0; x < _deckFloorMesh[0].GetLength(0)-1; x++){
-                    for (int z = 0; z < _deckFloorMesh[0].GetLength(1)-1; z++) {
-                        floorBounding[deck][i] = new BoundingBox(_deckFloorMesh[deck][x, z], _deckFloorMesh[deck][x + 1, z + 1]);
+                    for (int z = 1; z < _deckFloorMesh[0].GetLength(1)-2; z++) {
+                        Vector3 endBox;
+                        Vector3 startBox;
+
+                        //modify the starting point for the bounding box so it doesnt go outside the hull
+                        if (_deckFloorMesh[deck][0, z].Z > _deckFloorMesh[deck][0, z-1].Z)
+                            startBox = _deckFloorMesh[deck][0, z];
+                        else                      
+                            startBox = new Vector3(_deckFloorMesh[deck][0, z].X, _deckFloorMesh[deck][0, z].Y, _deckFloorMesh[deck][0, z + 1].Z);
+
+
+                        //modify the ending point for the bounding box so it doesnt go outside the hull
+                        if (_deckFloorMesh[deck][2, z].Z < _deckFloorMesh[deck][2, z + 1].Z)
+                            endBox = _deckFloorMesh[deck][2, z+1];
+                        else
+                            endBox = new Vector3(_deckFloorMesh[deck][2, z + 1].X, _deckFloorMesh[deck][2, z + 1].Y, _deckFloorMesh[deck][2, z].Z);
+                        
+                        floorBounding[deck][i] = new BoundingBox(startBox, endBox);
                         i++;
                     }
-                }
             }
             Resultant.DeckFloorBoundingBoxes = floorBounding;
+            //GenerateFloorSelectionMesh(floorBounding);
+        }
+
+        //this function takes the bounding boxes as a reference, and generates the actual bounding boxes for each floor
+        void GenerateFloorSelectionMesh(BoundingBox[][] boundingBoxes){
+            var floorSelectionBoxes = new BoundingBox[_deckFloorMesh.Count][];
+
+
+            for (int layer = 0; layer < boundingBoxes.Count(); layer++){
+                float overlap = 0;
+                for (int i = 0; i < boundingBoxes[layer].Count(); i++){
+
+
+                }
+            }
+
         }
     }
 
