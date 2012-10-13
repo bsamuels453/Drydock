@@ -12,28 +12,24 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Logic.DoodadEditorState{
-    internal class HullGeometryHandler : ATargetingCamera {
+    internal class HullGeometryHandler: IInputUpdates{
         int _visibleDecks;
         readonly ShipGeometryBuffer[] _deckWallBuffers;
         readonly ShipGeometryBuffer[] _deckFloorBuffers;
         readonly WireframeBuffer _selectionBuff;
         readonly BoundingBox[][] _deckFloorBoundingBoxes;
         readonly int _numDecks;
-        readonly Vector3 _centerPoint;
 
         public HullGeometryHandler(HullGeometryInfo geometryInfo){
             //CullMode.CullClockwiseFace
             _deckWallBuffers = geometryInfo.DeckWallBuffers;
             _deckFloorBuffers = geometryInfo.DeckFloorBuffers;
-            _centerPoint = geometryInfo.CenterPoint;
             _numDecks = geometryInfo.NumDecks;
             _visibleDecks = _numDecks;
             _deckFloorBoundingBoxes = geometryInfo.DeckFloorBoundingBoxes;
 
             _selectionBuff = new WireframeBuffer(12, 12, 6);
             _selectionBuff.Indexbuffer.SetData(new []{ 0, 1, 2, 3,4,5,6,7,8,9,10,11 });
-
-            SetCameraTarget(_centerPoint);
 
             //override default lighting
             foreach (var buffer in _deckFloorBuffers){
@@ -42,10 +38,8 @@ namespace Drydock.Logic.DoodadEditorState{
             foreach (var buffer in _deckWallBuffers){
                 buffer.DiffuseDirection = new Vector3(0, -1, 1);
                 buffer.CullMode = CullMode.None;
-            }
-                
+            }   
         }
-
 
         public void AddVisibleLevel(){
             if (_visibleDecks != _numDecks){
@@ -77,12 +71,7 @@ namespace Drydock.Logic.DoodadEditorState{
             }
         }
 
-        public override void Update(){
-            UpdateCamera(ref InputEventDispatcher.CurrentControlState);
-        }
-
-
-        public void InputUpdate(ref ControlState state){
+        public void UpdateInput(ref ControlState state){
             //first we generate the mouse's ray
             var nearMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 0);
             var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);

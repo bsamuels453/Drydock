@@ -12,7 +12,7 @@ namespace Drydock.Logic{
     /// <summary>
     ///   this abstract class creates a camera that rotates around a point
     /// </summary>
-    internal abstract class ATargetingCamera{
+    internal class BodyCenteredCamera{
         float _cameraDistance;
         float _cameraPhi;
         float _cameraTheta;
@@ -22,7 +22,7 @@ namespace Drydock.Logic{
         ///   default constructor makes it recieve from entire screen
         /// </summary>
         /// <param name="boundingBox"> </param>
-        protected ATargetingCamera(Rectangle? boundingBox = null){
+        protected BodyCenteredCamera(Rectangle? boundingBox = null){
             _cameraPhi = 0.32f;
             _cameraTheta = 0.63f;
             _cameraDistance = 100;
@@ -104,7 +104,5 @@ namespace Drydock.Logic{
                 }
             }
         }
-
-        public abstract void Update();
     }
 }

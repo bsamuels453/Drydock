@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Logic.HullEditorState{
-    internal class PreviewRenderer : ATargetingCamera{
+    internal class PreviewRenderer : BodyCenteredCamera{
         const int _meshVertexWidth = 64; //this is in primitives
         readonly BezierCurveCollection _backCurves;
         readonly ShipGeometryBuffer _geometryBuffer;
