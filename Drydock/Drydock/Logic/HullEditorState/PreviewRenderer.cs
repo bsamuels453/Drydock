@@ -52,7 +52,7 @@ namespace Drydock.Logic.HullEditorState{
         }
 
         public void Update(){
-            UpdateCamera(ref InputEventDispatcher.CurrentControlState);
+            base.UpdateInput(ref InputEventDispatcher.CurrentControlState);
             _topCurves.GetParameterizedPoint(0, true);
 
             var topPts = new Vector2[_meshVertexWidth];

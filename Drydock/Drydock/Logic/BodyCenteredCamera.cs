@@ -12,7 +12,7 @@ namespace Drydock.Logic{
     /// <summary>
     ///   this abstract class creates a camera that rotates around a point
     /// </summary>
-    internal class BodyCenteredCamera{
+    internal class BodyCenteredCamera : IInputUpdates{
         float _cameraDistance;
         float _cameraPhi;
         float _cameraTheta;
@@ -41,7 +41,7 @@ namespace Drydock.Logic{
             Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
         }
 
-        public void UpdateCamera(ref ControlState state) {
+        public void UpdateInput(ref ControlState state) {
                 if (_boundingBox.Contains(state.MousePos.X, state.MousePos.Y)){
                     if (state.LeftButtonState == ButtonState.Pressed){
                         int dx = state.MousePos.X - state.PrevMousePos.X;
@@ -104,5 +104,6 @@ namespace Drydock.Logic{
                 }
             }
         }
+
     }
 }
