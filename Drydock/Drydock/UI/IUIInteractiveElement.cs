@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.UI{
-    internal delegate void OnBasicMouseEvent();
+    internal delegate void OnBasicMouseEvent(int identifier);
 
     internal interface IUIInteractiveElement : IUIElement, IInputUpdates{
         bool ContainsMouse { get; set; }

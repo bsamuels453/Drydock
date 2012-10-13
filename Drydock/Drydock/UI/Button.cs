@@ -233,17 +233,17 @@ namespace Drydock.UI{
                 if (BoundingBox.Contains(state.MousePos.X, state.MousePos.Y)){
                     if (state.LeftButtonClick){
                         if (OnLeftClickDispatcher != null){
-                            OnLeftClickDispatcher.Invoke();
+                            OnLeftClickDispatcher.Invoke(Identifier);
                         }
                     }
                     if (state.LeftButtonState == ButtonState.Released){
                         if (OnLeftReleaseDispatcher != null){
-                            OnLeftReleaseDispatcher.Invoke();
+                            OnLeftReleaseDispatcher.Invoke(Identifier);
                         }
                     }
                     if (state.LeftButtonState == ButtonState.Pressed){
                         if (OnLeftPressDispatcher != null){
-                            OnLeftPressDispatcher.Invoke();
+                            OnLeftPressDispatcher.Invoke(Identifier);
                         }
                     }
                 }

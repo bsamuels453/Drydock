@@ -51,7 +51,7 @@ namespace Drydock.Logic.DoodadEditorState{
             _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;
         }
 
-        private void AddVisibleLevel(){
+        private void AddVisibleLevel(int identifier) {
             if (_visibleDecks != _numDecks){
                 //todo: linq this
                 var tempFloorBuff = _deckFloorBuffers.Reverse().ToArray();
@@ -68,7 +68,7 @@ namespace Drydock.Logic.DoodadEditorState{
             }
         }
 
-        private void RemoveVisibleLevel() {
+        private void RemoveVisibleLevel(int identifier) {
             if (_visibleDecks != 0){
                 for (int i = 0; i < _deckFloorBuffers.Count(); i++) {
                     if (_deckFloorBuffers[i].IsEnabled == true) {
