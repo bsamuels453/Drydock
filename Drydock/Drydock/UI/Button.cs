@@ -2,12 +2,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Drydock.Control;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -34,6 +38,10 @@ namespace Drydock.UI{
         }
 
         public IUIComponent[] Components { get; set; }
+
+        public string Sprite{
+            set { _sprite.SetTextureFromString(value); }
+        }
 
         public String Texture{
             get { return _texture; }
@@ -272,6 +280,35 @@ namespace Drydock.UI{
             TextureName = null;
             X = null;
             Y = null;
+        }
+
+        public ButtonGenerator(string template){
+            var sr = new StreamReader("Templates/" + template);
+            string str = sr.ReadToEnd();
+
+            JObject obj = JObject.Parse(str);
+
+
+            try {
+                var jComponents = (JArray)obj["Components"];
+                if (jComponents != null)
+                    Components = jComponents.ToObject<Dictionary<string, object[]>>();
+                else
+                    Components = null;
+            }
+            catch (InvalidCastException){
+                Components = null;
+            }
+
+            var depth = obj["Depth"].Value<int>();
+            Depth = (DepthLevel?)depth;
+
+            Width = obj["Width"].Value<float>();
+            Height = obj["Height"].Value<float>();
+            Identifier = obj["Identifier"].Value<int>();
+            SpriteTexRepeatX = obj["SpriteTexRepeatX"].Value<float>();
+            SpriteTexRepeatY = obj["SpriteTexRepeatY"].Value<float>();
+            TextureName = obj["TextureName"].Value<string>();
         }
 
         public Button GenerateButton(){
