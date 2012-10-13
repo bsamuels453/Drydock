@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Drydock.Control;
 using Drydock.Render;
+using Drydock.UI;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,6 +20,9 @@ namespace Drydock.Logic.DoodadEditorState{
         readonly WireframeBuffer _selectionBuff;
         readonly BoundingBox[][] _deckFloorBoundingBoxes;
         readonly int _numDecks;
+
+        readonly Button _deckDownButton;
+        readonly Button _deckUpButton;
 
         public HullGeometryHandler(HullGeometryInfo geometryInfo){
             //CullMode.CullClockwiseFace
@@ -38,10 +42,16 @@ namespace Drydock.Logic.DoodadEditorState{
             foreach (var buffer in _deckWallBuffers){
                 buffer.DiffuseDirection = new Vector3(0, -1, 1);
                 buffer.CullMode = CullMode.None;
-            }   
+            }
+
+
+            _deckUpButton = new Button(50, 50, 32, 32, DepthLevel.High, "uparrow");
+            _deckDownButton = new Button(50, 82, 32, 32, DepthLevel.High, "downarrow");
+            _deckUpButton.OnLeftClickDispatcher += AddVisibleLevel;
+            _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;
         }
 
-        public void AddVisibleLevel(){
+        private void AddVisibleLevel(){
             if (_visibleDecks != _numDecks){
                 //todo: linq this
                 var tempFloorBuff = _deckFloorBuffers.Reverse().ToArray();
@@ -58,7 +68,7 @@ namespace Drydock.Logic.DoodadEditorState{
             }
         }
 
-        public void RemoveVisibleLevel() {
+        private void RemoveVisibleLevel() {
             if (_visibleDecks != 0){
                 for (int i = 0; i < _deckFloorBuffers.Count(); i++) {
                     if (_deckFloorBuffers[i].IsEnabled == true) {
