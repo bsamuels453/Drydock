@@ -7,6 +7,7 @@ using Drydock.Control;
 using Drydock.Render;
 using Drydock.UI;
 using Drydock.Utilities;
+using Drydock.Utilities.ReferenceTypes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -14,7 +15,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Logic.DoodadEditorState{
     internal class HullGeometryHandler: IInputUpdates{
-        int _visibleDecks;
+        public IntRef VisibleDecks;
         readonly ShipGeometryBuffer[] _deckWallBuffers;
         readonly ShipGeometryBuffer[] _deckFloorBuffers;
         readonly WireframeBuffer _selectionBuff;
@@ -29,7 +30,8 @@ namespace Drydock.Logic.DoodadEditorState{
             _deckWallBuffers = geometryInfo.DeckWallBuffers;
             _deckFloorBuffers = geometryInfo.DeckFloorBuffers;
             _numDecks = geometryInfo.NumDecks;
-            _visibleDecks = _numDecks;
+            VisibleDecks = new IntRef();
+            VisibleDecks.Value = _numDecks;
             _deckFloorBoundingBoxes = geometryInfo.DeckFloorBoundingBoxes;
 
             _selectionBuff = new WireframeBuffer(12, 12, 6);
@@ -52,14 +54,14 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         private void AddVisibleLevel(int identifier) {
-            if (_visibleDecks != _numDecks){
+            if (VisibleDecks.Value != _numDecks) {
                 //todo: linq this
                 var tempFloorBuff = _deckFloorBuffers.Reverse().ToArray();
                 var tempWallBuff = _deckWallBuffers.Reverse().ToArray();
 
                 for (int i = 0; i < tempFloorBuff.Count(); i++){
                     if (tempFloorBuff[i].IsEnabled == false){
-                        _visibleDecks++;
+                        VisibleDecks.Value++;
                         tempFloorBuff[i].IsEnabled = true;
                         tempWallBuff[i].CullMode = CullMode.None;
                         break;
@@ -69,10 +71,10 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         private void RemoveVisibleLevel(int identifier) {
-            if (_visibleDecks != 0){
+            if (VisibleDecks.Value != 0) {
                 for (int i = 0; i < _deckFloorBuffers.Count(); i++) {
                     if (_deckFloorBuffers[i].IsEnabled == true) {
-                        _visibleDecks--;
+                        VisibleDecks.Value--;
                         _deckFloorBuffers[i].IsEnabled = false;
                         _deckWallBuffers[i].CullMode = CullMode.CullClockwiseFace;
                         break;
@@ -107,7 +109,7 @@ namespace Drydock.Logic.DoodadEditorState{
             var ray = new Ray(nearPoint, direction);
 
 
-            int deckIndex = _numDecks - _visibleDecks;
+            int deckIndex = _numDecks - VisibleDecks.Value;
             for (int i = 0; i < _deckFloorBoundingBoxes[deckIndex].Length; i++) {
                 if (ray.Intersects(_deckFloorBoundingBoxes[deckIndex][i]) != null){
 
