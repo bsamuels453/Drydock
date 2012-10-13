@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Drydock.Control;
+using Drydock.Logic.DoodadEditorState.Tools;
 using Drydock.Render;
 using Drydock.UI;
 using Drydock.UI.Widgets;
@@ -34,7 +35,13 @@ namespace Drydock.Logic.DoodadEditorState{
             _hullInfo = geometryGenerator.Resultant;
 
             _hullGeometryHandler = new HullGeometryHandler(_hullInfo);
+
+            #region construct toolbar
             _toolBar = new Toolbar("Templates/DoodadToolbar.json");
+            _toolBar.SetButtonTool(0, new WallBuildTool(_hullInfo));
+
+            _toolBar.ToolbarButtons[0].Sprite = "wallbuildicon";
+            #endregion
             //////////
             RenderPanel.UnbindRenderTarget();
             UIElementCollection.UnbindCollection();
@@ -54,10 +61,12 @@ namespace Drydock.Logic.DoodadEditorState{
             #region update input
             UIElementCollection.Collection.UpdateInput(ref state);
             _cameraController.UpdateInput(ref state);
+            _toolBar.UpdateInput(ref state);
             #endregion
 
             #region update logic
             UIElementCollection.Collection.UpdateLogic(timeDelta);
+            _toolBar.UpdateLogic(timeDelta);
             #endregion
 
             UIElementCollection.UnbindCollection();

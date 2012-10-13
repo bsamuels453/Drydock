@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using Drydock.Control;
 using Microsoft.Xna.Framework;
@@ -24,7 +25,10 @@ namespace Drydock.UI.Widgets{
         readonly int _numButtons;
         readonly ToolbarOrientation _orientation;
 
-        public Button[] ToolbarButtons;
+        public Button[] ToolbarButtons;//be nice to find a way to make this readonly to public since properties cant do it
+        readonly IToolbarTool[] _buttonTools;
+
+        readonly IToolbarTool _nullTool;
         IToolbarTool _activeTool;
 
         public Toolbar(string path){
@@ -65,6 +69,7 @@ namespace Drydock.UI.Widgets{
                 yIncrement = _dimensions.Height/_numButtons;
 
             for (int i = 0; i < ctorData.NumButtons; i++){
+                buttonGen.Identifier = i;
                 buttonGen.X = xPos;
                 buttonGen.Y = yPos;
 
@@ -73,16 +78,44 @@ namespace Drydock.UI.Widgets{
                 xPos += xIncrement;
                 yPos += yIncrement;
             }
+            foreach (var button in ToolbarButtons){
+                button.OnLeftClickDispatcher += HandleButtonClick;
+            }
 
-            ToolbarButtons[0].Sprite = "wallbuildicon";
+            #endregion
+
+            #region finalize construction
+            _nullTool = new NullTool();
+            _activeTool = _nullTool;
+
+            _buttonTools = new IToolbarTool[_numButtons];
+            for (int i = 0; i < _numButtons; i++)
+                _buttonTools[i] = _nullTool;
 
             #endregion
         }
 
+        public void SetButtonTool(int buttonIdentifier, IToolbarTool tool){
+            Debug.Assert(buttonIdentifier < _buttonTools.Length);
+            _buttonTools[buttonIdentifier] = tool;
+        }
+
+        public void ClearTool(){
+            _activeTool.Disable();
+            _activeTool = _nullTool;
+        }
+
+        void HandleButtonClick(int identifier){
+            Debug.Assert(identifier < _buttonTools.Length);
+            _activeTool.Disable();
+            _buttonTools[identifier].Enable();
+            _activeTool = _buttonTools[identifier];
+        }
+
         #region IInputUpdates Members
 
-        public void UpdateInput(ref ControlState state){
-            throw new NotImplementedException();
+        public void UpdateInput(ref ControlState state) {
+            _activeTool.UpdateInput(ref state);
         }
 
         #endregion
@@ -90,7 +123,7 @@ namespace Drydock.UI.Widgets{
         #region ILogicUpdates Members
 
         public void UpdateLogic(double timeDelta){
-            throw new NotImplementedException();
+            _activeTool.UpdateLogic(timeDelta);
         }
 
         #endregion
