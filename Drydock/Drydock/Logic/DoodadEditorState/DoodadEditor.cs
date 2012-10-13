@@ -3,9 +3,9 @@
 using System;
 using System.Collections.Generic;
 using Drydock.Control;
-using Drydock.Logic.DoodadEditorState.Tools;
 using Drydock.Render;
 using Drydock.UI;
+using Drydock.UI.Widgets;
 using Drydock.Utilities;
 
 #endregion
@@ -34,7 +34,7 @@ namespace Drydock.Logic.DoodadEditorState{
             _hullInfo = geometryGenerator.Resultant;
 
             _hullGeometryHandler = new HullGeometryHandler(_hullInfo);
-            _toolBar = new Toolbar();
+            _toolBar = new Toolbar("Templates/DoodadToolbar.json");
             //////////
             RenderPanel.UnbindRenderTarget();
             UIElementCollection.UnbindCollection();

@@ -170,8 +170,8 @@
     <Compile Include="Logic\BodyCenteredCamera.cs" />
     <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
     <Compile Include="Logic\DoodadEditorState\HullGeometryHandler.cs" />
-    <Compile Include="Logic\DoodadEditorState\Toolbar.cs" />
-    <Compile Include="Logic\DoodadEditorState\Tools\ToolbarTool.cs" />
+    <Compile Include="UI\Widgets\Toolbar.cs" />
+    <Compile Include="Logic\DoodadEditorState\Tools\IToolbarTool.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\NullTool.cs" />
     <Compile Include="Logic\HullEditorState\BezierCurve.cs" />
     <Compile Include="Logic\HullEditorState\BezierCurveCollection.cs" />
@@ -260,7 +260,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--
