@@ -287,7 +287,8 @@ namespace Drydock.UI{
             string str = sr.ReadToEnd();
 
             JObject obj = JObject.Parse(str);
-
+            var depthLevelSerializer = new JsonSerializer();
+            depthLevelSerializer.Converters.Add(new DepthLevelConverter());
 
             try {
                 var jComponents = (JArray)obj["Components"];
@@ -300,8 +301,7 @@ namespace Drydock.UI{
                 Components = null;
             }
 
-            var depth = obj["Depth"].Value<int>();
-            Depth = (DepthLevel?)depth;
+            Depth = obj["Depth"].ToObject<DepthLevel?>(depthLevelSerializer);
 
             Width = obj["Width"].Value<float>();
             Height = obj["Height"].Value<float>();
