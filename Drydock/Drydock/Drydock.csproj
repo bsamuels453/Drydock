@@ -141,6 +141,9 @@
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
@@ -164,11 +167,12 @@
     <Compile Include="Control\InputEventDispatcher.cs" />
     <Compile Include="Control\UpdateInterfaces.cs" />
     <Compile Include="DebugTimer.cs" />
-    <Compile Include="Logic\ATargetingCamera.cs" />
+    <Compile Include="Logic\BodyCenteredCamera.cs" />
     <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
     <Compile Include="Logic\DoodadEditorState\HullGeometryHandler.cs" />
     <Compile Include="Logic\DoodadEditorState\Toolbar.cs" />
-    <Compile Include="Logic\DoodadEditorState\Tools\IDoodadEditorTool.cs" />
+    <Compile Include="Logic\DoodadEditorState\Tools\ToolbarTool.cs" />
+    <Compile Include="Logic\DoodadEditorState\Tools\NullTool.cs" />
     <Compile Include="Logic\HullEditorState\BezierCurve.cs" />
     <Compile Include="Logic\HullEditorState\BezierCurveCollection.cs" />
     <Compile Include="Logic\HullEditorState\CurveHandle.cs" />
