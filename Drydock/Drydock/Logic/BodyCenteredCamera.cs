@@ -22,7 +22,7 @@ namespace Drydock.Logic{
         ///   default constructor makes it recieve from entire screen
         /// </summary>
         /// <param name="boundingBox"> </param>
-        protected BodyCenteredCamera(Rectangle? boundingBox = null){
+        public BodyCenteredCamera(Rectangle? boundingBox = null){
             _cameraPhi = 0.32f;
             _cameraTheta = 0.63f;
             _cameraDistance = 100;
@@ -34,14 +34,14 @@ namespace Drydock.Logic{
             }
         }
 
-        protected void SetCameraTarget(Vector3 target){
+        public void SetCameraTarget(Vector3 target){
             Renderer.CameraTarget = target;
             Renderer.CameraPosition.X = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Sin(_cameraTheta)) + Renderer.CameraTarget.X;
             Renderer.CameraPosition.Z = (float) (_cameraDistance*Math.Cos(_cameraPhi)*Math.Cos(_cameraTheta)) + Renderer.CameraTarget.Z;
             Renderer.CameraPosition.Y = (float) (_cameraDistance*Math.Sin(_cameraPhi)) + Renderer.CameraTarget.Y;
         }
 
-        protected void UpdateCamera(ref ControlState state){
+        public void UpdateCamera(ref ControlState state) {
                 if (_boundingBox.Contains(state.MousePos.X, state.MousePos.Y)){
                     if (state.LeftButtonState == ButtonState.Pressed){
                         int dx = state.MousePos.X - state.PrevMousePos.X;
