@@ -1,6 +1,6 @@
 ﻿using Drydock.Control;
 
-namespace Drydock.Logic.DoodadEditorState.Tools {
+namespace Drydock.UI.Widgets {
     class NullTool : IToolbarTool{
         public void UpdateInput(ref ControlState state){
             //throw new NotImplementedException();
