@@ -254,7 +254,6 @@ namespace Drydock.UI{
         public DepthLevel? Depth;
         public float? Height;
         public int? Identifier;
-        public UIElementCollection Owner;
         public float? SpriteTexRepeatX;
         public float? SpriteTexRepeatY;
         public string TextureName;
@@ -268,7 +267,6 @@ namespace Drydock.UI{
             Height = null;
             Width = null;
             Identifier = null;
-            Owner = null;
             SpriteTexRepeatX = null;
             SpriteTexRepeatY = null;
             TextureName = null;

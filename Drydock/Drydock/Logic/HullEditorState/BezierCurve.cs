@@ -249,7 +249,6 @@ namespace Drydock.Logic.HullEditorState{
             buttonTemplate.Width = 9;
             buttonTemplate.Height = 9;
             buttonTemplate.Depth = DepthLevel.High;
-            buttonTemplate.Owner = _elementCollection;
             buttonTemplate.TextureName = "whitebox";
             buttonTemplate.Components = new Dictionary<string, object[]>{
                 {"DraggableComponent", null},
