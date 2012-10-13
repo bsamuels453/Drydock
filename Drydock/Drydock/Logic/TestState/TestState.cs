@@ -1,6 +1,6 @@
 ﻿namespace Drydock.Logic.TestState{
     /*class TestState :  IGameState {
-        public void Update(){
+        public void UpdateLogic(){
             Entity e = new Entity();
 
             //throw new NotImplementedException();

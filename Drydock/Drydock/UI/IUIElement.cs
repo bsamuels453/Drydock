@@ -6,7 +6,7 @@ using Drydock.Utilities;
 #endregion
 
 namespace Drydock.UI{
-    internal interface IUIElement : IUpdatable{
+    internal interface IUIElement : ILogicUpdates{
         float X { get; set; }
         float Y { get; set; }
         float Width { get; set; }

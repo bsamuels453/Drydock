@@ -166,7 +166,7 @@ namespace Drydock.UI{
             return false;
         }
 
-        public void Update(double timeDelta){
+        public void UpdateLogic(double timeDelta){
             if (Components != null){
                 foreach (IUIComponent component in Components){
                     component.Update();

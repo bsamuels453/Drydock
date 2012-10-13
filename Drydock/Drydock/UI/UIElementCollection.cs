@@ -11,7 +11,7 @@ namespace Drydock.UI{
     /// <summary>
     ///   This class serves as a container for UI elements. Its purpose is to update said elements, and to provide collection-wide modification methods for use by external classes.
     /// </summary>
-    internal class UIElementCollection : IUpdatable, IInputUpdatable{
+    internal class UIElementCollection : ILogicUpdates, IInputUpdates{
         readonly List<IUIElement> _elements;
         readonly UISortedList _layerSortedIElements;
         public bool DisableEntryHandlers;
@@ -39,11 +39,11 @@ namespace Drydock.UI{
 
         #endregion
 
-        #region IInputUpdatable Members
+        #region IInputUpdates Members
 
-        public void InputUpdate(ref ControlState state){
+        public void UpdateInput(ref ControlState state){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
-                _layerSortedIElements[i].InputUpdate(ref state);
+                _layerSortedIElements[i].UpdateInput(ref state);
             }
         }
 
@@ -159,14 +159,14 @@ namespace Drydock.UI{
 
         #endregion
 
-        #region IUpdatable Members
+        #region ILogicUpdates Members
 
-        public void Update(double timeDelta){
+        public void UpdateLogic(double timeDelta){
             foreach (IUIElement element in _elements){
-                element.Update(timeDelta);
+                element.UpdateLogic(timeDelta);
             }
             for (int i = 0; i < _layerSortedIElements.Count; i++){
-                _layerSortedIElements[i].Update(timeDelta);
+                _layerSortedIElements[i].UpdateLogic(timeDelta);
             }
         }
 

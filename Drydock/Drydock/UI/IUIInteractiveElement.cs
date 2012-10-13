@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 namespace Drydock.UI{
     internal delegate void OnBasicMouseEvent();
 
-    internal interface IUIInteractiveElement : IUIElement, IInputUpdatable{
+    internal interface IUIInteractiveElement : IUIElement, IInputUpdates{
         bool ContainsMouse { get; set; }
 
         #region event dispatch lists

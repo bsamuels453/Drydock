@@ -14,9 +14,9 @@ namespace Drydock.Logic.DoodadEditorState{
         const int _primsPerDeck = 3;
         readonly Button _deckDownButton;
         readonly Button _deckUpButton;
-        readonly HullGeometryHandler _hullGeometryHandler;
         readonly RenderPanel _renderTarget;
         readonly UIElementCollection _uiElementCollection;
+        readonly HullGeometryHandler _hullGeometryHandler;
 
         public DoodadEditor(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo){
             _renderTarget = new RenderPanel(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
@@ -43,10 +43,10 @@ namespace Drydock.Logic.DoodadEditorState{
             UIElementCollection.BindCollection(_uiElementCollection);
 
             _hullGeometryHandler.InputUpdate(ref state);
-            UIElementCollection.Collection.InputUpdate(ref state);
+            UIElementCollection.Collection.UpdateInput(ref state);
 
             _hullGeometryHandler.Update();
-            UIElementCollection.Collection.Update(timeDelta);
+            UIElementCollection.Collection.UpdateLogic(timeDelta);
          
             UIElementCollection.UnbindCollection();
         }

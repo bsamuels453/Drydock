@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Logic.DoodadEditorState{
-    internal class HullGeometryHandler : ATargetingCamera, IInputUpdatable {
+    internal class HullGeometryHandler : ATargetingCamera {
         int _visibleDecks;
         readonly ShipGeometryBuffer[] _deckWallBuffers;
         readonly ShipGeometryBuffer[] _deckFloorBuffers;

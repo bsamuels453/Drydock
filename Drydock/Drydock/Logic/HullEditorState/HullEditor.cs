@@ -52,8 +52,8 @@ namespace Drydock.Logic.HullEditorState{
             _toppanel.Update();
             _backpanel.Update();
             _previewRenderer.Update();
-            UIElementCollection.Collection.InputUpdate(ref state);
-            UIElementCollection.Collection.Update(timeDelta);
+            UIElementCollection.Collection.UpdateInput(ref state);
+            UIElementCollection.Collection.UpdateLogic(timeDelta);
             UIElementCollection.UnbindCollection();
             HandleEditorKeyboardInput(ref state);
         }

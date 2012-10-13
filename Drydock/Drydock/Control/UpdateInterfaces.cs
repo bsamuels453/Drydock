@@ -1,9 +1,9 @@
 ﻿namespace Drydock.Control{
-    internal interface IUpdatable{
-        void Update(double timeDelta);
+    internal interface ILogicUpdates{
+        void UpdateLogic(double timeDelta);
     }
 
-    internal interface IInputUpdatable{
-        void InputUpdate(ref ControlState state);
+    internal interface IInputUpdates{
+        void UpdateInput(ref ControlState state);
     }
 }

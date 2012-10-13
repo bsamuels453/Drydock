@@ -149,7 +149,7 @@ namespace Drydock.UI{
             return false;
         }
 
-        public void Update(double timeDelta){
+        public void UpdateLogic(double timeDelta){
             if (Components != null){
                 foreach (IUIComponent component in Components){
                     component.Update();
@@ -157,7 +157,7 @@ namespace Drydock.UI{
             }
         }
 
-        public void InputUpdate(ref ControlState state){
+        public void UpdateInput(ref ControlState state){
             if (state.AllowLeftButtonInterpretation){
                 if (state.LeftButtonClick){
                     foreach (var @event in OnLeftButtonClick){
