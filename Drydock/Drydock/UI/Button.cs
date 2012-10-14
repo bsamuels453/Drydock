@@ -169,7 +169,7 @@ namespace Drydock.UI{
             if (state.AllowLeftButtonInterpretation){
                 if (state.LeftButtonClick){
                     foreach (var @event in OnLeftButtonClick){
-                        @event.OnLeftButtonClick(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevMousePos);
+                        @event.OnLeftButtonClick(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowLeftButtonInterpretation)
                             break;
                     }
@@ -178,7 +178,7 @@ namespace Drydock.UI{
             if (state.AllowLeftButtonInterpretation){
                 if (state.LeftButtonState == ButtonState.Pressed){
                     foreach (var @event in OnLeftButtonPress){
-                        @event.OnLeftButtonPress(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevMousePos);
+                        @event.OnLeftButtonPress(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowLeftButtonInterpretation)
                             break;
                     }
@@ -187,7 +187,7 @@ namespace Drydock.UI{
             if (state.AllowLeftButtonInterpretation){
                 if (state.LeftButtonState == ButtonState.Released){
                     foreach (var @event in OnLeftButtonRelease){
-                        @event.OnLeftButtonRelease(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevMousePos);
+                        @event.OnLeftButtonRelease(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowLeftButtonInterpretation)
                             break;
                     }
@@ -195,7 +195,7 @@ namespace Drydock.UI{
             }
             if (state.AllowMouseMovementInterpretation){
                 foreach (var @event in OnMouseMovement){
-                    @event.OnMouseMovement(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevMousePos);
+                    @event.OnMouseMovement(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
                     if (!state.AllowMouseMovementInterpretation)
                         break;
                 }
@@ -204,7 +204,7 @@ namespace Drydock.UI{
                 if (BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && !ContainsMouse){
                     ContainsMouse = true;
                     foreach (var @event in OnMouseEntry){
-                        @event.OnMouseEntry(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevMousePos);
+                        @event.OnMouseEntry(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowMouseMovementInterpretation)
                             break;
                     }
@@ -214,7 +214,7 @@ namespace Drydock.UI{
                 if (!BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && ContainsMouse){
                     ContainsMouse = false;
                     foreach (var @event in OnMouseExit){
-                        @event.OnMouseExit(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevMousePos);
+                        @event.OnMouseExit(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowMouseMovementInterpretation)
                             break;
                     }

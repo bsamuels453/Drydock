@@ -41,9 +41,6 @@ namespace Drydock.Control{
             curControlState.MousePos = new Point();
             curControlState.MousePos.X = curMouseState.X;
             curControlState.MousePos.Y = curMouseState.Y;
-            curControlState.PrevMousePos = new Point();
-            curControlState.PrevMousePos.X = _prevMouseState.X;
-            curControlState.PrevMousePos.Y = _prevMouseState.Y;
             curControlState.LeftButtonState = curMouseState.LeftButton;
             curControlState.RightButtonState = curMouseState.RightButton;
             curControlState.MouseScrollChange = curMouseState.ScrollWheelValue - _prevMouseState.ScrollWheelValue;
@@ -87,23 +84,26 @@ namespace Drydock.Control{
 
             curControlState.ViewMatrix = Matrix.CreateLookAt(Renderer.CameraPosition, Renderer.CameraTarget, Vector3.Up);
 
+            curControlState.PrevState = CurrentControlState;
+            CurrentControlState.PrevState = null;
             CurrentControlState = curControlState;
         }
     }
 
     internal class ControlState{
-        public bool AllowKeyboardInterpretation;
+        public bool AllowKeyboardInterpretation;//todo: remove these
         public bool AllowLeftButtonInterpretation;
         public bool AllowMouseMovementInterpretation;
         public bool AllowMouseScrollInterpretation;
         public bool AllowRightButtonInterpretation;
+
         public KeyboardState KeyboardState;
         public ButtonState LeftButtonState;
         public bool LeftButtonClick;
         public Point MousePos;
         public int MouseScrollChange;
-        public Point PrevMousePos;
         public ButtonState RightButtonState;
         public Matrix ViewMatrix;
+        public ControlState PrevState;
     }
 }

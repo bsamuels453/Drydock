@@ -18,11 +18,14 @@ namespace Drydock.Logic{
         float _cameraTheta;
         Rectangle _boundingBox;
 
+        bool _isBeingDragged;
+
         /// <summary>
         ///   default constructor makes it recieve from entire screen
         /// </summary>
         /// <param name="boundingBox"> </param>
         public BodyCenteredCamera(Rectangle? boundingBox = null){
+            _isBeingDragged = false;
             _cameraPhi = 0.32f;
             _cameraTheta = 0.63f;
             _cameraDistance = 100;
@@ -43,9 +46,11 @@ namespace Drydock.Logic{
 
         public void UpdateInput(ref ControlState state) {
                 if (_boundingBox.Contains(state.MousePos.X, state.MousePos.Y)){
+
+
                     if (state.LeftButtonState == ButtonState.Pressed){
-                        int dx = state.MousePos.X - state.PrevMousePos.X;
-                        int dy = state.MousePos.Y - state.PrevMousePos.Y;
+                        int dx = state.MousePos.X - state.PrevState.MousePos.X;
+                        int dy = state.MousePos.Y - state.PrevState.MousePos.Y;
 
                         if (dx == 0 && dy == 0){
                             int fd = 5;
