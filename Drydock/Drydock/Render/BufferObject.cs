@@ -13,7 +13,7 @@ namespace Drydock.Render{
         readonly int _numIndicies;
         readonly int _numPrimitives;
         readonly PrimitiveType _primitiveType;
-        public bool IsEnabled;
+        public bool IsEnabled;//this shouldnt be a field xx
         RenderPanel _bufferRenderTarget;
 
         protected Effect BufferEffect;
