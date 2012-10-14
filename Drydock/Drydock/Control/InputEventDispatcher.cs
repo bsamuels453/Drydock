@@ -84,9 +84,13 @@ namespace Drydock.Control{
 
             curControlState.ViewMatrix = Matrix.CreateLookAt(Renderer.CameraPosition, Renderer.CameraTarget, Vector3.Up);
 
-            curControlState.PrevState = CurrentControlState;
-            if (CurrentControlState != null){
+            
+            if (CurrentControlState != null) {
+                curControlState.PrevState = CurrentControlState;
                 CurrentControlState.PrevState = null;
+            }
+            else{
+                curControlState.PrevState = new ControlState();
             }
             CurrentControlState = curControlState;
         }
