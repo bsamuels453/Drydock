@@ -91,7 +91,7 @@ namespace Drydock.Control{
     }
 
     internal class ControlState{
-        public bool AllowKeyboardInterpretation;//todo: remove these
+        public bool AllowKeyboardInterpretation;
         public bool AllowLeftButtonInterpretation;
         public bool AllowMouseMovementInterpretation;
         public bool AllowMouseScrollInterpretation;
