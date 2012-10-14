@@ -3,25 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Drydock.Control;
+using Drydock.Render;
 using Drydock.UI.Widgets;
 using Drydock.Utilities;
 using Drydock.Utilities.ReferenceTypes;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Logic.DoodadEditorState.Tools {
     class WallBuildTool : IToolbarTool{
-        HullGeometryInfo _hullInfo;
         readonly IntRef _visibleDecks;
+        readonly int _numDecks;
+        readonly BoundingBox[][] _deckFloorBoundingboxes;
+        readonly Vector3[][] _deckFloorVertexes;
+        readonly WireframeBuffer _selectionBuff;
 
         public WallBuildTool(HullGeometryInfo hullInfo, IntRef visibleDecks){
-            _hullInfo = hullInfo;
             _visibleDecks = visibleDecks;
+            _numDecks = hullInfo.NumDecks;
+            _deckFloorBoundingboxes = hullInfo.DeckFloorBoundingBoxes;
+            _deckFloorVertexes = hullInfo.DeckFloorVertexes;
+            _selectionBuff = new WireframeBuffer(2, 2, 1);
+
+            var indicies = new []{ 0, 1 };
+            _selectionBuff.Indexbuffer.SetData(indicies);
+            _selectionBuff.IsEnabled = false;
         }
 
         public void UpdateInput(ref ControlState state){
             var nearMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 0);
             var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);
-            //var nearMouse = new Vector3(1, 1, 1);
 
             //transform the mouse into world space
             var nearPoint = Singleton.Device.Viewport.Unproject(
@@ -43,9 +54,33 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
             var ray = new Ray(nearPoint, direction);
 
 
-            int deckIndex = _hullInfo.NumDecks - _visibleDecks.Value;
-            for (int i = 0; i < _hullInfo.DeckFloorBoundingBoxes[deckIndex].Length; i++){
-                if (ray.Intersects(_hullInfo.DeckFloorBoundingBoxes[deckIndex][i]) != null){
+            int deckIndex = _numDecks - _visibleDecks.Value;
+            float? ndist;
+            for (int i = 0; i < _deckFloorBoundingboxes[deckIndex].Length; i++) {
+                if ((ndist = ray.Intersects(_deckFloorBoundingboxes[deckIndex][i])) != null) {
+                    var rayTermination = ray.Position + ray.Direction * (float)ndist;
+
+                    var distList = new List<float>();
+
+                    for (int point = 0; point < _deckFloorVertexes[deckIndex].Count(); point++) {
+                        distList.Add( Vector3.Distance(rayTermination, _deckFloorVertexes[deckIndex][point]));
+                    }
+                    float f = distList.Min();
+                    int ptIdx = distList.IndexOf(f);
+
+                    var verts = new VertexPositionColor[2];
+                    verts[0] = new VertexPositionColor(_deckFloorVertexes[deckIndex][ptIdx], Color.White);
+                    verts[1] = new VertexPositionColor(
+                        new Vector3(
+                            _deckFloorVertexes[deckIndex][ptIdx].X,
+                            _deckFloorVertexes[deckIndex][ptIdx].Y+10,
+                            _deckFloorVertexes[deckIndex][ptIdx].Z
+                            ),
+                        Color.White
+                        );
+                    int h = 5;
+                    _selectionBuff.Vertexbuffer.SetData(verts);
+                    _selectionBuff.IsEnabled = true;
                 }
             }
         }
@@ -55,11 +90,10 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
         }
 
         public void Enable(){
-            //throw new NotImplementedException();
         }
 
         public void Disable(){
-            //throw new NotImplementedException();
+            _selectionBuff.IsEnabled = false;
         }
     }
 }

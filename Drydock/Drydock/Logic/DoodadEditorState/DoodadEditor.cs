@@ -30,19 +30,19 @@ namespace Drydock.Logic.DoodadEditorState{
             #region construct UI and any UI-related tools
             RenderPanel.BindRenderTarget(_renderTarget);
             UIElementCollection.BindCollection(_uiElementCollection);
-            //////////
+
+
             var geometryGenerator = new HullGeometryGenerator(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
             _hullInfo = geometryGenerator.Resultant;
-
             _hullGeometryHandler = new HullGeometryHandler(_hullInfo);
 
             #region construct toolbar
             _toolBar = new Toolbar("Templates/DoodadToolbar.json");
-            _toolBar.SetButtonTool(0, new WallBuildTool(_hullInfo));
-
+            _toolBar.SetButtonTool(0, new WallBuildTool(_hullInfo, _hullGeometryHandler.VisibleDecks));
             _toolBar.ToolbarButtons[0].Sprite = "wallbuildicon";
             #endregion
-            //////////
+
+
             RenderPanel.UnbindRenderTarget();
             UIElementCollection.UnbindCollection();
             #endregion
@@ -60,8 +60,8 @@ namespace Drydock.Logic.DoodadEditorState{
             UIElementCollection.BindCollection(_uiElementCollection);
             #region update input
             UIElementCollection.Collection.UpdateInput(ref state);
-            _cameraController.UpdateInput(ref state);
             _toolBar.UpdateInput(ref state);
+            _cameraController.UpdateInput(ref state);
             #endregion
 
             #region update logic
