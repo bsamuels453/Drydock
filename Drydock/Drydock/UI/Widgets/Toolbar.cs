@@ -23,7 +23,8 @@ namespace Drydock.UI.Widgets{
 
         readonly IToolbarTool[] _buttonTools;
 
-        readonly Rectangle _dimensions;
+        readonly Point _position;
+        readonly Point _buttonSize;
         readonly IToolbarTool _nullTool;
         readonly int _numButtons;
         readonly ToolbarOrientation _orientation;
@@ -49,7 +50,8 @@ namespace Drydock.UI.Widgets{
 
             #region set ctor data
 
-            _dimensions = ctorData.Dimensions;
+            _position = ctorData.Position;
+            _buttonSize = ctorData.ButtonSize;
             _orientation = ctorData.Orientation;
             _numButtons = ctorData.NumButtons;
 
@@ -60,13 +62,13 @@ namespace Drydock.UI.Widgets{
             var buttonGen = new ButtonGenerator("DToolbarButton.json");
             ToolbarButtons = new Button[ctorData.NumButtons];
 
-            int xPos = _dimensions.X;
-            int yPos = _dimensions.Y;
+            int xPos = _position.X;
+            int yPos = _position.Y;
             int xIncrement = 0, yIncrement = 0;
             if (_orientation == ToolbarOrientation.Horizontal)
-                xIncrement = _dimensions.Width/_numButtons;
+                xIncrement = _buttonSize.X;
             else
-                yIncrement = _dimensions.Height/_numButtons;
+                yIncrement = _buttonSize.Y;
 
             for (int i = 0; i < ctorData.NumButtons; i++){
                 buttonGen.Identifier = i;
@@ -129,34 +131,14 @@ namespace Drydock.UI.Widgets{
             _activeTool = _buttonTools[identifier];
         }
 
-        //we need to use a special version of Rectangle here because the XNA one isn't deserializing properly
-
-        #region Nested type: SpecRectangle
-
-        struct SpecRectangle{
-            // ReSharper disable UnassignedField.Local //field is assigned by json
-            // ReSharper disable MemberCanBePrivate.Local  //field is assigned by json
-            public int Height;
-            public int Width;
-            public int X;
-            public int Y;
-            // ReSharper restore MemberCanBePrivate.Local
-            // ReSharper restore UnassignedField.Local
-
-            public static implicit operator Rectangle(SpecRectangle f){
-                return new Rectangle(f.X, f.Y, f.Width, f.Height);
-            }
-        }
-
-        #endregion
-
         #region Nested type: ToolbarCtorData
 
         struct ToolbarCtorData{
             // ReSharper disable UnassignedField.Local
             public Color BackgroundColor; //unimplemented
             public string[] ButtonIcons;
-            public SpecRectangle Dimensions;
+            public Point Position;
+            public Point ButtonSize;
             public int NumButtons;
             //[JsonConverter(typeof(ToolbarOrientationConverter))]
             public ToolbarOrientation Orientation;
