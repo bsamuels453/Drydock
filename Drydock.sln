@@ -14,8 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject3", "TestProject3\TestProject3.csproj", "{67FCCCE0-10CE-4114-A93C-A64A67C8A6C9}"
 EndProject
-Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "Drydock Schematics", "Drydock Schematics\Drydock Schematics.modelproj", "{F62872DF-3AA6-4366-818E-36F483A66B8B}"
-EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Drydock.vsmdi
@@ -107,30 +105,6 @@ Global
 		{67FCCCE0-10CE-4114-A93C-A64A67C8A6C9}.Unit Testing Debug|x64.Build.0 = Unit Testing Debug|x86
 		{67FCCCE0-10CE-4114-A93C-A64A67C8A6C9}.Unit Testing Debug|x86.ActiveCfg = Unit Testing Debug|x86
 		{67FCCCE0-10CE-4114-A93C-A64A67C8A6C9}.Unit Testing Debug|x86.Build.0 = Unit Testing Debug|x86
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Drydock Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Drydock Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Drydock Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Drydock Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Drydock Debug|x64.ActiveCfg = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Drydock Debug|x86.ActiveCfg = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Release|x64.ActiveCfg = Release|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Release|x86.ActiveCfg = Release|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Unit Testing Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Unit Testing Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Unit Testing Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Unit Testing Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Unit Testing Debug|x64.ActiveCfg = Debug|Any CPU
-		{F62872DF-3AA6-4366-818E-36F483A66B8B}.Unit Testing Debug|x86.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
