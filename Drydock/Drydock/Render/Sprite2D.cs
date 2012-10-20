@@ -8,26 +8,36 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Render{
-    internal class ButtonSprite : IDrawableSprite{
-        readonly IUIElement _parent;
+    internal class Sprite2D : IDrawableSprite{
         readonly RenderPanel _renderPanel;
         readonly FloatingRectangle _srcRect;
         bool _isDisposed;
         Texture2D _texture;
 
+        public int X;
+        public int Y;
+        public int Width;
+        public int Height;
+        public float Opacity;
+        public float Depth;
+
+        Rectangle _destRect;
+
         /// <summary>
         ///   constructor for a normal sprite
         /// </summary>
-        /// <param name="textureName"> </param>
-        /// <param name="parent"> </param>
-        /// <param name="spriteRepeatX"> </param>
-        /// <param name="spriteRepeatY"> </param>
-        public ButtonSprite(string textureName, IUIElement parent, float spriteRepeatX = 1, float spriteRepeatY = 1){
+        public Sprite2D(string textureName, int x, int y, int width, int height, float depth=0.5f, float opacity = 1, float spriteRepeatX = 1, float spriteRepeatY = 1){
             _texture = Singleton.ContentManager.Load<Texture2D>(textureName);
-            _parent = parent;
             _srcRect = new FloatingRectangle(0f, 0f, _texture.Height*spriteRepeatX, _texture.Width*spriteRepeatY);
+            _destRect = new Rectangle();
             _isDisposed = false;
             _renderPanel = RenderPanel.Add(this);
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
+            Depth = depth;
+            Opacity = opacity;
         }
 
         #region IDrawableSprite Members
@@ -49,24 +59,25 @@ namespace Drydock.Render{
         }
 
         public void Draw(SpriteBatch batch, Vector2 renderTargOffset){
-            var rect = _parent.BoundingBox.Clone();
-            rect.X -= (int) renderTargOffset.X;
-            rect.Y -= (int) renderTargOffset.Y;
+            _destRect.X = X - (int) renderTargOffset.X;
+            _destRect.Y = Y - (int)renderTargOffset.Y;
+            _destRect.Width = Width;
+            _destRect.Height = Height;
             batch.Draw(
                 _texture,
-                rect,
+                _destRect,
                 (Rectangle?) _srcRect,
-                Color.White*_parent.Opacity,
+                Color.White * Opacity,
                 0,
                 Vector2.Zero,
                 SpriteEffects.None,
-                _parent.Depth
+                Depth
                 );
         }
 
         #endregion
 
-        ~ButtonSprite(){
+        ~Sprite2D(){
             if (!_isDisposed){
                 _renderPanel.Remove(this);
                 _isDisposed = true;

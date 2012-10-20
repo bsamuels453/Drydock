@@ -25,7 +25,7 @@ namespace Drydock.UI{
         readonly FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
         readonly ButtonEventDispatcher _iEventDispatcher;
         readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
-        readonly ButtonSprite _sprite; //the button's sprite
+        readonly Sprite2D _sprite; //the button's sprite
         Vector2 _centPosition; //represents the approximate center of the button
         string _texture;
 
@@ -57,6 +57,7 @@ namespace Drydock.UI{
             set{
                 _boundingBox.X = value;
                 _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
+                _sprite.X = (int)value;
             }
         }
 
@@ -65,17 +66,24 @@ namespace Drydock.UI{
             set{
                 _boundingBox.Y = value;
                 _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
+                _sprite.Y = (int)value;
             }
         }
 
         public float Width{
             get { return _boundingBox.Width; }
-            set { _boundingBox.Width = value; }
+            set { 
+                _boundingBox.Width = value;
+                _sprite.Width = (int)value;
+            }
         }
 
         public float Height{
             get { return _boundingBox.Height; }
-            set { _boundingBox.Height = value; }
+            set { 
+                _boundingBox.Height = value;
+                _sprite.Height = (int)value;
+            }
         }
 
         public FloatingRectangle BoundingBox{
@@ -87,23 +95,33 @@ namespace Drydock.UI{
         public event OnBasicMouseEvent OnLeftReleaseDispatcher;
         public bool ContainsMouse { get; set; }
 
-        public float Opacity { get; set; }
-        public float Depth { get; set; }
+        public float Opacity{
+            get { return _sprite.Opacity; }
+            set{
+                _sprite.Opacity = value;
+            }
+
+        }
+
+        public float Depth{
+            get { return _sprite.Depth; }
+            set { _sprite.Depth = value; }
+        }
 
         #endregion
 
         #region ctor
 
+        //xxx why are these position coordinates all floats?
         public Button(float x, float y, float width, float height, DepthLevel depth, string textureName, float spriteTexRepeatX = DefaultTexRepeat, float spriteTexRepeatY = DefaultTexRepeat, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _identifier = identifier;
-            Depth = (float) depth/10;
 
-            UIElementCollection.AddElement(this);
+
             _iEventDispatcher = new ButtonEventDispatcher();
 
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
-            _sprite = new ButtonSprite(textureName, this, spriteTexRepeatX, spriteTexRepeatY);
+            _sprite = new Sprite2D(textureName, (int)x, (int)y, (int)width, (int)height, (float) depth/10, 1, spriteTexRepeatX, spriteTexRepeatY);
 
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
@@ -115,6 +133,7 @@ namespace Drydock.UI{
                     component.ComponentCtor(this, _iEventDispatcher);
                 }
             }
+            UIElementCollection.AddElement(this);
         }
 
         #endregion
