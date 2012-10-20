@@ -1,5 +1,6 @@
 This is a list of low priority refinements that can be made to improve usability. It's likely that none of them will ever be implemented.
 
+-fix controller dragging issues
 -control-modifier snaps curves to angle
 -control-modifier snaps to grid
 -ctr+z

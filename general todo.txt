@@ -3,7 +3,6 @@ Timeframes are not listed for tasks intended to be completed during the school s
 -Doodad buffer with elements that can be turned on or off
 -Doodad buffer implementation for airship hull, allowing portholes and such.
 
--Making boundingboxes dependent on a set of squares rather than deck geometry
 -Toolbox sidebar
 -Tooltips
 -Tool for buildings walls
@@ -13,6 +12,13 @@ Timeframes are not listed for tasks intended to be completed during the school s
 ->stairs
 ->engine
 
-
-
 Wishlist: value type interpolation classes
+
+
+
+things to do to make this project less embarassing:
+-replace remaining xml with json
+-stop adding binaries to source control
+-heed warnings and remove or comment unused code
+-provide less comments, more commentary
+-start documenting the UI stuff since it's probably going to be in use for a long time
