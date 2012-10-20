@@ -4,7 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 
 #endregion
-
+/*
 namespace Drydock.UI.Components{
     internal delegate void ReactToSelection(SelectState state);
 
@@ -14,26 +14,19 @@ namespace Drydock.UI.Components{
     };
 
     /// <summary>
-    ///   allows a UI element to be selected. Required element to be IUIInteractiveComponent
+    ///  
     /// </summary>
     internal class SelectableComponent : IUIComponent, IAcceptLeftButtonClickEvent, IAcceptMouseMovementEvent{
         readonly int _selectedHeight;
-        readonly String _selectedTexture;
-        readonly int _selectedWidth;
-        int _heightDx;
+        readonly String _highlightTexture;
         bool _isSelected;
 
-        //these fields contain the "differences" in bounding boxes between the owner's selected texture/bbox and normal texture/bbox
         string _originalTexture;
         IUIInteractiveElement _owner;
-        int _positionDx;
-        int _positionDy;
-        int _widthDx;
 
-        public SelectableComponent(string selectedTexture, int width, int height){
-            _selectedTexture = selectedTexture;
-            _selectedWidth = width;
-            _selectedHeight = height;
+
+        public SelectableComponent(string highlightTexture){
+            _highlightTexture = highlightTexture;
             IsEnabled = true;
             _isSelected = false;
         }
@@ -71,11 +64,11 @@ namespace Drydock.UI.Components{
             ownerEventDispatcher.OnMouseMovement.Add(this);
 
             _originalTexture = _owner.Texture;
-            _widthDx = (int) (_selectedWidth - _owner.BoundingBox.Width);
+            /*_widthDx = (int) (_selectedWidth - _owner.BoundingBox.Width);
             _heightDx = (int) (_selectedHeight - _owner.BoundingBox.Height);
             _positionDx = _widthDx/2;
-            _positionDy = _heightDx/2;
-        }
+            _positionDy = _heightDx/2;*/
+        /*}
 
         public bool IsEnabled { get; set; }
 
@@ -90,11 +83,15 @@ namespace Drydock.UI.Components{
 
         public void ProcSelect(){
             if (IsEnabled && !_isSelected){
-                _owner.Texture = _selectedTexture;
+                _owner.Texture = _highlightTexture;
+                
+                /*
                 _owner.Width += _widthDx;
                 _owner.Height += _heightDx;
                 _owner.X -= _positionDx;
                 _owner.Y -= _positionDy;
+                 */
+/*
                 _isSelected = true;
 
                 try{
@@ -108,23 +105,28 @@ namespace Drydock.UI.Components{
                 //if (ReactToSelectionDispatcher != null){
                 //    ReactToSelectionDispatcher(SelectState.Selected);
                 //}
+/*
             }
         }
 
         public void ProcDeselect(){
             if (IsEnabled && _isSelected){
                 _owner.Texture = _originalTexture;
+
+                /*
                 _owner.Width -= _widthDx;
                 _owner.Height -= _heightDx;
                 _owner.X += _positionDx;
                 _owner.Y += _positionDy;
+                 */
+/*
                 _isSelected = false;
                 try{
                     _owner.GetComponent<FadeComponent>().IsEnabled = true;
                 }
                     // ReSharper disable EmptyGeneralCatchClause
                 catch (Exception){ /*there is no fade component*/
-                }
+                /*}
                 // ReSharper restore EmptyGeneralCatchClause
                 //if (ReactToSelectionDispatcher != null){
                 //    ReactToSelectionDispatcher(SelectState.UnSelected);
@@ -138,4 +140,5 @@ namespace Drydock.UI.Components{
         public void ProcUnhover(){
         }
     }
-}
+
+}*/

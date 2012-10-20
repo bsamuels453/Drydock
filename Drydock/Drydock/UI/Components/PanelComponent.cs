@@ -62,5 +62,9 @@ namespace Drydock.UI.Components{
                 }
             }
         }
+
+        public static PanelComponent ConstructFromArray(object[] array) {
+            return new PanelComponent();
+        }
     }
 }

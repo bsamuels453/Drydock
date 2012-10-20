@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Drydock.Render;
+using Drydock.UI.Components;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -182,7 +183,7 @@ namespace Drydock.UI{
         }
     }
 
-    internal class LineGenerator : ComponentGenerator{
+    internal class LineGenerator{
         public Color? Color;
         public Dictionary<string, object[]> Components;
         public DepthLevel? Depth;
@@ -229,6 +230,30 @@ namespace Drydock.UI{
                 identifier,
                 components
                 );
+        }
+
+        private IUIComponent[] GenerateComponents(Dictionary<string, object[]> componentCtorData) {
+            var components = new List<IUIComponent>();
+
+            foreach (var data in componentCtorData) {
+                switch (data.Key) {
+                    case "FadeComponent":
+                        components.Add(FadeComponent.ConstructFromArray(data.Value));
+                        break;
+                    case "DraggableComponent":
+                        components.Add(DraggableComponent.ConstructFromArray(data.Value));
+                        break;
+                    case "PanelComponent":
+                        components.Add(PanelComponent.ConstructFromArray(data.Value));
+                        break;
+                    case "HighlightComponent":
+                        components.Add(HighlightComponent.ConstructFromArray(data.Value));
+                        break;
+                }
+            }
+
+
+            return components.ToArray();
         }
     }
 }

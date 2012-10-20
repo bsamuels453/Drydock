@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -295,5 +296,35 @@ namespace Drydock.UI.Components{
         #endregion
 
         public event FadeStateChange FadeStateChangeDispatcher;
+
+        public static FadeComponent ConstructFromArray(object[] array){
+            if (!array.Any())
+                throw new Exception("not enough data to create a FadeComponent from template");
+
+            var defaultState = (FadeState) array[0];
+            FadeTrigger fadeTrigger;
+            float fadeOpacity;
+            float fadeDuration;
+
+            //this is tricky because FadeComponent has a few parameters with default values
+            if (array.Count() > 1)
+                fadeTrigger = (FadeTrigger) array[1];
+            else
+                fadeTrigger = DefaultTrigger;
+
+
+            if (array.Count() > 2)
+                fadeOpacity = (float) array[2];
+            else
+                fadeOpacity = DefaultFadeoutOpacity;
+
+
+            if (array.Count() > 3)
+                fadeDuration = (float) array[3];
+            else
+                fadeDuration = DefaultFadeDuration;
+
+            return new FadeComponent(defaultState, fadeTrigger, fadeOpacity, fadeDuration);
+        }
     }
 }

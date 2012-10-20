@@ -118,5 +118,10 @@ namespace Drydock.UI.Components{
 
         public event OnComponentDrag DragMovementDispatcher;
         public event DraggableObjectClamp DragMovementClamp;
+
+        static public DraggableComponent ConstructFromArray(object[] array){
+            return new DraggableComponent();
+        }
+
     }
 }

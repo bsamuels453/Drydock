@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Drydock.Control;
 using Drydock.Render;
+using Drydock.UI.Components;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -238,7 +239,7 @@ namespace Drydock.UI{
         #endregion
     }
 
-    internal class ButtonGenerator : ComponentGenerator{
+    internal class ButtonGenerator{
         public Dictionary<string, object[]> Components;
         public DepthLevel? Depth;
         public float? Height;
@@ -341,7 +342,33 @@ namespace Drydock.UI{
                 components
                 );
         }
+
+        private IUIComponent[] GenerateComponents(Dictionary<string, object[]> componentCtorData) {
+            var components = new List<IUIComponent>();
+
+            foreach (var data in componentCtorData){
+                switch (data.Key){
+                    case "FadeComponent":
+                        components.Add(FadeComponent.ConstructFromArray(data.Value));
+                        break;
+                    case "DraggableComponent":
+                        components.Add(DraggableComponent.ConstructFromArray(data.Value));
+                        break;
+                    case "PanelComponent":
+                        components.Add(PanelComponent.ConstructFromArray(data.Value));
+                        break;
+                    case "HighlightComponent":
+                        components.Add(HighlightComponent.ConstructFromArray(data.Value));
+                        break;
+                }
+            }
+
+
+            return components.ToArray();
+        }
     }
+
+    
 
     internal class ButtonEventDispatcher{
         public ButtonEventDispatcher(){

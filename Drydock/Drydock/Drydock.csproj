@@ -171,6 +171,7 @@
     <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
     <Compile Include="Logic\DoodadEditorState\HullGeometryHandler.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\WallBuildTool.cs" />
+    <Compile Include="UI\Components\HighlightComponent.cs" />
     <Compile Include="UI\Widgets\Toolbar.cs" />
     <Compile Include="UI\Widgets\IToolbarTool.cs" />
     <Compile Include="UI\Widgets\NullTool.cs" />
@@ -197,7 +198,6 @@
     <Compile Include="UI\Components\FadeComponent.cs" />
     <Compile Include="UI\Components\PanelComponent.cs" />
     <Compile Include="UI\Components\SelectableComponent.cs" />
-    <Compile Include="UI\ComponentGenerator.cs" />
     <Compile Include="UI\DepthManager.cs" />
     <Compile Include="UI\IUIElement.cs" />
     <Compile Include="UI\IUIComponent.cs" />
