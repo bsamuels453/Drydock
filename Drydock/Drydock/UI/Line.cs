@@ -2,11 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Drydock.Render;
 using Drydock.UI.Components;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -185,7 +188,7 @@ namespace Drydock.UI{
 
     internal class LineGenerator{
         public Color? Color;
-        public Dictionary<string, object[]> Components;
+        public Dictionary<string, JObject> Components;
         public DepthLevel? Depth;
         public int? Identifier;
         public Vector2? V1;
@@ -232,26 +235,50 @@ namespace Drydock.UI{
                 );
         }
 
-        private IUIComponent[] GenerateComponents(Dictionary<string, object[]> componentCtorData) {
+        public LineGenerator(string template){
+
+            var sr = new StreamReader("Templates/" + template);
+            string str = sr.ReadToEnd();
+
+            JObject obj = JObject.Parse(str);
+            var depthLevelSerializer = new JsonSerializer();
+            depthLevelSerializer.Converters.Add(new DepthLevelConverter());
+
+
+            //try{
+            var jComponents = obj["Components"];
+            if (jComponents != null)
+                Components = jComponents.ToObject<Dictionary<string, JObject>>();
+            else
+                Components = null;
+
+            Depth = obj["Depth"].ToObject<DepthLevel?>(depthLevelSerializer);
+            V1 = obj["V1"].ToObject<Vector2>();
+            V2 = obj["V2"].ToObject<Vector2>();
+
+            Identifier = obj["Identifier"].Value<int>();
+            Color = obj["Color"].ToObject<Color>();           
+        }
+
+        IUIComponent[] GenerateComponents(Dictionary<string, JObject> componentCtorData){
             var components = new List<IUIComponent>();
 
-            foreach (var data in componentCtorData) {
-                switch (data.Key) {
+            foreach (var data in componentCtorData){
+                switch (data.Key){
                     case "FadeComponent":
-                        components.Add(FadeComponent.ConstructFromArray(data.Value));
+                        components.Add(FadeComponent.ConstructFromObject(data.Value));
                         break;
                     case "DraggableComponent":
-                        components.Add(DraggableComponent.ConstructFromArray(data.Value));
+                        components.Add(DraggableComponent.ConstructFromObject(data.Value));
                         break;
                     case "PanelComponent":
-                        components.Add(PanelComponent.ConstructFromArray(data.Value));
+                        components.Add(PanelComponent.ConstructFromObject(data.Value));
                         break;
                     case "HighlightComponent":
-                        components.Add(HighlightComponent.ConstructFromArray(data.Value));
+                        components.Add(HighlightComponent.ConstructFromObject(data.Value));
                         break;
                 }
             }
-
 
             return components.ToArray();
         }

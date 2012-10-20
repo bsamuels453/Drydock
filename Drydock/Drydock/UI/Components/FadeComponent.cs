@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -17,6 +18,7 @@ namespace Drydock.UI.Components{
         #region FadeState enum
 
         public enum FadeState{
+            InvalidState,
             Visible,
             Faded
         }
@@ -26,6 +28,7 @@ namespace Drydock.UI.Components{
         #region FadeTrigger enum
 
         public enum FadeTrigger{
+            InvalidState,
             EntryExit,
             None
         }
@@ -297,34 +300,42 @@ namespace Drydock.UI.Components{
 
         public event FadeStateChange FadeStateChangeDispatcher;
 
-        public static FadeComponent ConstructFromArray(object[] array){
-            if (!array.Any())
+        public static FadeComponent ConstructFromObject(JObject obj) {
+            var ctorData = obj.ToObject<FadeComponentCtorData>();
+
+            if (ctorData.DefaultState == FadeState.InvalidState)//trivial: why no default state for this?
                 throw new Exception("not enough data to create a FadeComponent from template");
 
-            var defaultState = (FadeState) array[0];
+            var defaultState = ctorData.DefaultState;
             FadeTrigger fadeTrigger;
             float fadeOpacity;
             float fadeDuration;
 
-            //this is tricky because FadeComponent has a few parameters with default values
-            if (array.Count() > 1)
-                fadeTrigger = (FadeTrigger) array[1];
+            if (ctorData.FadeTrigger != FadeTrigger.InvalidState)
+                fadeTrigger = ctorData.FadeTrigger;
             else
                 fadeTrigger = DefaultTrigger;
 
 
-            if (array.Count() > 2)
-                fadeOpacity = (float) array[2];
+            if (ctorData.FadeOpacity != null)
+                fadeOpacity = (float)ctorData.FadeOpacity;
             else
                 fadeOpacity = DefaultFadeoutOpacity;
 
 
-            if (array.Count() > 3)
-                fadeDuration = (float) array[3];
+            if (ctorData.FadeDuration != null)
+                fadeDuration = (float)ctorData.FadeDuration;
             else
                 fadeDuration = DefaultFadeDuration;
 
             return new FadeComponent(defaultState, fadeTrigger, fadeOpacity, fadeDuration);
+        }
+
+        struct FadeComponentCtorData{
+            public FadeState DefaultState;
+            public FadeTrigger FadeTrigger;
+            public float? FadeOpacity;
+            public float? FadeDuration;
         }
     }
 }

@@ -46,9 +46,12 @@ namespace Drydock.Logic.HullEditorState{
         /// <param name="prevComponent"> </param>
         /// <param name="nextComponent"> </param>
         public CurveHandle(ButtonGenerator buttonTemplate, LineGenerator lineTemplate, Vector2 pos, Vector2 prevComponent, Vector2 nextComponent){
-            buttonTemplate.Identifier = (int) HandleType.Center;
+            
+            buttonTemplate = new ButtonGenerator("HullEditorHandle.json");
+            buttonTemplate.Identifier = (int)HandleType.Center;
             buttonTemplate.X = pos.X;
             buttonTemplate.Y = pos.Y;
+            
             _centerButton = buttonTemplate.GenerateButton();
             _centerButton.GetComponent<DraggableComponent>().DragMovementDispatcher += TranslateToLinks;
             _centerButton.GetComponent<DraggableComponent>().DragMovementClamp += ClampHandleMovement;

@@ -259,7 +259,7 @@ namespace Drydock.UI{
     }
 
     internal class ButtonGenerator{
-        public Dictionary<string, object[]> Components;
+        public Dictionary<string, JObject> Components;
         public DepthLevel? Depth;
         public float? Height;
         public int? Identifier;
@@ -282,7 +282,6 @@ namespace Drydock.UI{
             X = null;
             Y = null;
         }
-
         public ButtonGenerator(string template){
             var sr = new StreamReader("Templates/" + template);
             string str = sr.ReadToEnd();
@@ -291,16 +290,17 @@ namespace Drydock.UI{
             var depthLevelSerializer = new JsonSerializer();
             depthLevelSerializer.Converters.Add(new DepthLevelConverter());
 
-            try{
-                var jComponents = (JArray) obj["Components"];
+
+            //try{
+                var jComponents =  obj["Components"];
                 if (jComponents != null)
-                    Components = jComponents.ToObject<Dictionary<string, object[]>>();
+                    Components = jComponents.ToObject<Dictionary<string, JObject>>();
                 else
                     Components = null;
-            }
-            catch (InvalidCastException){
-                Components = null;
-            }
+            //}
+            //catch (InvalidCastException){
+                //Components = null;
+            //}
 
             Depth = obj["Depth"].ToObject<DepthLevel?>(depthLevelSerializer);
 
@@ -362,26 +362,25 @@ namespace Drydock.UI{
                 );
         }
 
-        private IUIComponent[] GenerateComponents(Dictionary<string, object[]> componentCtorData) {
+        private IUIComponent[] GenerateComponents(Dictionary<string, JObject> componentCtorData) {
             var components = new List<IUIComponent>();
 
             foreach (var data in componentCtorData){
                 switch (data.Key){
                     case "FadeComponent":
-                        components.Add(FadeComponent.ConstructFromArray(data.Value));
+                        components.Add(FadeComponent.ConstructFromObject(data.Value));
                         break;
                     case "DraggableComponent":
-                        components.Add(DraggableComponent.ConstructFromArray(data.Value));
+                        components.Add(DraggableComponent.ConstructFromObject(data.Value));
                         break;
                     case "PanelComponent":
-                        components.Add(PanelComponent.ConstructFromArray(data.Value));
+                        components.Add(PanelComponent.ConstructFromObject(data.Value));
                         break;
                     case "HighlightComponent":
-                        components.Add(HighlightComponent.ConstructFromArray(data.Value));
+                        components.Add(HighlightComponent.ConstructFromObject(data.Value));
                         break;
                 }
             }
-
 
             return components.ToArray();
         }

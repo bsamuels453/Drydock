@@ -1,6 +1,7 @@
 ﻿#region
 
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -119,7 +120,7 @@ namespace Drydock.UI.Components{
         public event OnComponentDrag DragMovementDispatcher;
         public event DraggableObjectClamp DragMovementClamp;
 
-        static public DraggableComponent ConstructFromArray(object[] array){
+        static public DraggableComponent ConstructFromObject(JObject obj) {
             return new DraggableComponent();
         }
 

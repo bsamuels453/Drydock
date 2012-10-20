@@ -245,25 +245,9 @@ namespace Drydock.Logic.HullEditorState{
 
             #region stuff for generating ui elements
 
-            var buttonTemplate = new ButtonGenerator();
-            buttonTemplate.Width = 9;
-            buttonTemplate.Height = 9;
-            buttonTemplate.Depth = DepthLevel.High;
-            buttonTemplate.TextureName = "whitebox";
-            buttonTemplate.Components = new Dictionary<string, object[]>{
-                {"DraggableComponent", null},
-                {"FadeComponent", new object[]{FadeComponent.FadeState.Faded, FadeComponent.FadeTrigger.EntryExit}},
-                //{"SelectableComponent", new object[]{"bigbox", 15, 15}}
-            };
+            var buttonTemplate = new ButtonGenerator("HullEditorHandle.json");
 
-            var lineTemplate = new LineGenerator();
-            lineTemplate.V1 = Vector2.Zero;
-            lineTemplate.V2 = Vector2.Zero;
-            lineTemplate.Depth = DepthLevel.Medium;
-            lineTemplate.Color = Color.Black;
-            lineTemplate.Components = new Dictionary<string, object[]>{
-                {"FadeComponent", new object[]{FadeComponent.FadeState.Faded}}
-            };
+            var lineTemplate = new LineGenerator("HullEditorLine.json");
 
             Handle = new CurveHandle(buttonTemplate, lineTemplate, new Vector2(initX, initY), component1, component2);
 

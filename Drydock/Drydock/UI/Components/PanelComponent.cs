@@ -1,6 +1,7 @@
 ﻿#region
 
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -63,7 +64,7 @@ namespace Drydock.UI.Components{
             }
         }
 
-        public static PanelComponent ConstructFromArray(object[] array) {
+        public static PanelComponent ConstructFromObject(JObject obj) {
             return new PanelComponent();
         }
     }
