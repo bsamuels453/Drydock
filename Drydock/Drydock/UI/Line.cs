@@ -118,7 +118,7 @@ namespace Drydock.UI{
             Components = components;
             if (Components != null){
                 foreach (IUIComponent component in Components){
-                    component.Owner = this;
+                    component.ComponentCtor(this, null);
                 }
             }
         }

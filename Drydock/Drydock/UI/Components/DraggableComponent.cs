@@ -22,15 +22,6 @@ namespace Drydock.UI.Components{
 
         #region properties
 
-        public IUIElement Owner{ //this function acts as kind of a pseudo-constructor
-            set{
-                if (!(value is IUIInteractiveElement)){
-                    throw new Exception("Invalid element componenet: Unable to set a drag component for a non-interactive element.");
-                }
-                _owner = (IUIInteractiveElement) value;
-                ComponentCtor();
-            }
-        }
 
         #endregion
 
@@ -40,12 +31,13 @@ namespace Drydock.UI.Components{
             _mouseOffset = new Vector2();
         }
 
-        void ComponentCtor(){
+        public void ComponentCtor(IUIElement owner, ButtonEventDispatcher ownerEventDispatcher) {
+            _owner = (IUIInteractiveElement)owner;
             _isEnabled = true;
             _isMoving = false;
-            _owner.OnLeftButtonPress.Add(this);
-            _owner.OnLeftButtonRelease.Add(this);
-            _owner.OnMouseMovement.Add(this);
+            ownerEventDispatcher.OnLeftButtonPress.Add(this);
+            ownerEventDispatcher.OnLeftButtonRelease.Add(this);
+            ownerEventDispatcher.OnMouseMovement.Add(this);
         }
 
         #endregion
@@ -115,6 +107,7 @@ namespace Drydock.UI.Components{
         #endregion
 
         #region IUIComponent Members
+
 
         public bool IsEnabled{
             get { return _isEnabled; }

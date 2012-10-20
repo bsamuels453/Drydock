@@ -3,7 +3,7 @@
         /// <summary>
         ///   A reference to the owner of the element.
         /// </summary>
-        IUIElement Owner { set; }
+        void ComponentCtor(IUIElement owner, ButtonEventDispatcher ownerEventDispatcher);
 
         /// <summary>
         ///   Disabling a component will cause it to ignore all public method calls, and ignore all event dispatches. Enabling a component will undo these changes. Components start enabled by default.

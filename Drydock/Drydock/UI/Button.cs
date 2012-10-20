@@ -27,6 +27,7 @@ namespace Drydock.UI{
         readonly Sprite2D _sprite; //the button's sprite
         Vector2 _centPosition; //represents the approximate center of the button
         string _texture;
+        readonly ButtonEventDispatcher _iEventDispatcher;
 
         public Vector2 CentPosition{
             get { return _centPosition; }
@@ -38,10 +39,6 @@ namespace Drydock.UI{
         }
 
         public IUIComponent[] Components { get; set; }
-
-        public string Sprite{
-            set { _sprite.SetTextureFromString(value); }
-        }
 
         public String Texture{
             get { return _texture; }
@@ -89,14 +86,6 @@ namespace Drydock.UI{
         public event OnBasicMouseEvent OnLeftPressDispatcher;
         public event OnBasicMouseEvent OnLeftReleaseDispatcher;
         public bool ContainsMouse { get; set; }
-        public List<IAcceptLeftButtonClickEvent> OnLeftButtonClick { get; set; }
-        public List<IAcceptLeftButtonPressEvent> OnLeftButtonPress { get; set; }
-        public List<IAcceptLeftButtonReleaseEvent> OnLeftButtonRelease { get; set; }
-        public List<IAcceptMouseEntryEvent> OnMouseEntry { get; set; }
-        public List<IAcceptMouseExitEvent> OnMouseExit { get; set; }
-        public List<IAcceptMouseMovementEvent> OnMouseMovement { get; set; }
-        public List<IAcceptMouseScrollEvent> OnMouseScroll { get; set; }
-        public List<IAcceptKeyboardEvent> OnKeyboardEvent { get; set; }
 
         public float Opacity { get; set; }
         public float Depth { get; set; }
@@ -110,14 +99,7 @@ namespace Drydock.UI{
             Depth = (float) depth/10;
 
             UIElementCollection.AddElement(this);
-            OnLeftButtonClick = new List<IAcceptLeftButtonClickEvent>();
-            OnLeftButtonPress = new List<IAcceptLeftButtonPressEvent>();
-            OnLeftButtonRelease = new List<IAcceptLeftButtonReleaseEvent>();
-            OnMouseEntry = new List<IAcceptMouseEntryEvent>();
-            OnMouseExit = new List<IAcceptMouseExitEvent>();
-            OnMouseMovement = new List<IAcceptMouseMovementEvent>();
-            OnMouseScroll = new List<IAcceptMouseScrollEvent>();
-            OnKeyboardEvent = new List<IAcceptKeyboardEvent>();
+            _iEventDispatcher = new ButtonEventDispatcher();
 
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
@@ -130,7 +112,7 @@ namespace Drydock.UI{
             Opacity = 1;
             if (Components != null){
                 foreach (IUIComponent component in Components){
-                    component.Owner = this;
+                    component.ComponentCtor(this, _iEventDispatcher);
                 }
             }
         }
@@ -168,7 +150,7 @@ namespace Drydock.UI{
         public void UpdateInput(ref ControlState state){
             if (state.AllowLeftButtonInterpretation){
                 if (state.LeftButtonClick){
-                    foreach (var @event in OnLeftButtonClick){
+                    foreach (var @event in _iEventDispatcher.OnLeftButtonClick){
                         @event.OnLeftButtonClick(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowLeftButtonInterpretation)
                             break;
@@ -177,7 +159,7 @@ namespace Drydock.UI{
             }
             if (state.AllowLeftButtonInterpretation){
                 if (state.LeftButtonState == ButtonState.Pressed){
-                    foreach (var @event in OnLeftButtonPress){
+                    foreach (var @event in _iEventDispatcher.OnLeftButtonPress) {
                         @event.OnLeftButtonPress(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowLeftButtonInterpretation)
                             break;
@@ -186,7 +168,7 @@ namespace Drydock.UI{
             }
             if (state.AllowLeftButtonInterpretation){
                 if (state.LeftButtonState == ButtonState.Released){
-                    foreach (var @event in OnLeftButtonRelease){
+                    foreach (var @event in _iEventDispatcher.OnLeftButtonRelease) {
                         @event.OnLeftButtonRelease(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowLeftButtonInterpretation)
                             break;
@@ -194,7 +176,7 @@ namespace Drydock.UI{
                 }
             }
             if (state.AllowMouseMovementInterpretation){
-                foreach (var @event in OnMouseMovement){
+                foreach (var @event in _iEventDispatcher.OnMouseMovement) {
                     @event.OnMouseMovement(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
                     if (!state.AllowMouseMovementInterpretation)
                         break;
@@ -203,7 +185,7 @@ namespace Drydock.UI{
             if (state.AllowMouseMovementInterpretation){
                 if (BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && !ContainsMouse){
                     ContainsMouse = true;
-                    foreach (var @event in OnMouseEntry){
+                    foreach (var @event in _iEventDispatcher.OnMouseEntry) {
                         @event.OnMouseEntry(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowMouseMovementInterpretation)
                             break;
@@ -213,7 +195,7 @@ namespace Drydock.UI{
             if (state.AllowMouseMovementInterpretation){
                 if (!BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && ContainsMouse){
                     ContainsMouse = false;
-                    foreach (var @event in OnMouseExit){
+                    foreach (var @event in _iEventDispatcher.OnMouseExit) {
                         @event.OnMouseExit(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowMouseMovementInterpretation)
                             break;
@@ -221,7 +203,7 @@ namespace Drydock.UI{
                 }
             }
             if (state.AllowKeyboardInterpretation){
-                foreach (var @event in OnKeyboardEvent){
+                foreach (var @event in _iEventDispatcher.OnKeyboardEvent) {
                     @event.OnKeyboardEvent(ref state.AllowKeyboardInterpretation, state.KeyboardState);
                     if (!state.AllowKeyboardInterpretation)
                         break;
@@ -360,5 +342,30 @@ namespace Drydock.UI{
                 components
                 );
         }
+
+
+    }
+
+    class ButtonEventDispatcher {
+        public List<IAcceptLeftButtonClickEvent> OnLeftButtonClick { get; set; }
+        public List<IAcceptLeftButtonPressEvent> OnLeftButtonPress { get; set; }
+        public List<IAcceptLeftButtonReleaseEvent> OnLeftButtonRelease { get; set; }
+        public List<IAcceptMouseEntryEvent> OnMouseEntry { get; set; }
+        public List<IAcceptMouseExitEvent> OnMouseExit { get; set; }
+        public List<IAcceptMouseMovementEvent> OnMouseMovement { get; set; }
+        public List<IAcceptMouseScrollEvent> OnMouseScroll { get; set; }
+        public List<IAcceptKeyboardEvent> OnKeyboardEvent { get; set; }
+
+        public ButtonEventDispatcher() {
+            OnLeftButtonClick = new List<IAcceptLeftButtonClickEvent>();
+            OnLeftButtonPress = new List<IAcceptLeftButtonPressEvent>();
+            OnLeftButtonRelease = new List<IAcceptLeftButtonReleaseEvent>();
+            OnMouseEntry = new List<IAcceptMouseEntryEvent>();
+            OnMouseExit = new List<IAcceptMouseExitEvent>();
+            OnMouseMovement = new List<IAcceptMouseMovementEvent>();
+            OnMouseScroll = new List<IAcceptMouseScrollEvent>();
+            OnKeyboardEvent = new List<IAcceptKeyboardEvent>();
+        }
+
     }
 }

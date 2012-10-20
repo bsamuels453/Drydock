@@ -13,19 +13,6 @@ namespace Drydock.UI{
     internal interface IUIInteractiveElement : IUIElement, IInputUpdates{
         bool ContainsMouse { get; set; }
 
-        #region event dispatch lists
-
-        List<IAcceptLeftButtonClickEvent> OnLeftButtonClick { get; } //procs when left mouse button is pressed and released within a time interval (global)
-        List<IAcceptLeftButtonPressEvent> OnLeftButtonPress { get; } //procs when left mouse button is pressed (global)
-        List<IAcceptLeftButtonReleaseEvent> OnLeftButtonRelease { get; } //procs when left mouse button is released (global)
-        List<IAcceptMouseEntryEvent> OnMouseEntry { get; } //procs when mouse enters the bounding box of the element
-        List<IAcceptMouseExitEvent> OnMouseExit { get; } //procs when the mouse exits the bounding box of the element
-        List<IAcceptMouseMovementEvent> OnMouseMovement { get; } //procs on global mouse movement
-        List<IAcceptMouseScrollEvent> OnMouseScroll { get; }
-        List<IAcceptKeyboardEvent> OnKeyboardEvent { get; }
-
-        #endregion
-
         event OnBasicMouseEvent OnLeftClickDispatcher;
         event OnBasicMouseEvent OnLeftPressDispatcher;
         event OnBasicMouseEvent OnLeftReleaseDispatcher;

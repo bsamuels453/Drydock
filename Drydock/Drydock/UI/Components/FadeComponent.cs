@@ -42,6 +42,7 @@ namespace Drydock.UI.Components{
         bool _isFadingOut;
         bool _isInTransition;
         IUIElement _owner;
+        ButtonEventDispatcher _ownerEventDispatcher;
         long _prevUpdateTimeIndex;
 
         #region properties
@@ -55,10 +56,29 @@ namespace Drydock.UI.Components{
             }
         }
 
-        public IUIElement Owner{
-            set{
-                _owner = value;
-                ComponentCtor();
+
+
+        public void ComponentCtor(IUIElement owner, ButtonEventDispatcher ownerEventDispatcher){
+            _owner = owner;
+            _ownerEventDispatcher = ownerEventDispatcher;
+            if (_defaultState == FadeState.Faded) {
+                _owner.Opacity = _fadeoutOpacity;
+            }
+            switch (_fadeTrigger) {
+                case FadeTrigger.EntryExit:
+
+
+                    if (!(_owner is IUIInteractiveElement)) {
+                        throw new Exception("Invalid fade trigger: Unable to set an interactive trigger to a non-interactive element.");
+                    }
+
+                    ownerEventDispatcher.OnMouseEntry.Add(this);
+                    ownerEventDispatcher.OnMouseExit.Add(this);
+                    //((IUIInteractiveElement) _owner).OnLeftButtonRelease.Add(ConfirmFadeoutProc);what the fuck was this for
+                    break;
+
+                case FadeTrigger.None:
+                    break;
             }
         }
 
@@ -96,28 +116,6 @@ namespace Drydock.UI.Components{
             _defaultState = defaultState;
             _fadeTrigger = trigger;
             _isEnabled = true;
-        }
-
-        void ComponentCtor(){
-            if (_defaultState == FadeState.Faded){
-                _owner.Opacity = _fadeoutOpacity;
-            }
-            switch (_fadeTrigger){
-                case FadeTrigger.EntryExit:
-
-
-                    if (! (_owner is IUIInteractiveElement)){
-                        throw new Exception("Invalid fade trigger: Unable to set an interactive trigger to a non-interactive element.");
-                    }
-
-                    ((IUIInteractiveElement) _owner).OnMouseEntry.Add(this);
-                    ((IUIInteractiveElement) _owner).OnMouseExit.Add(this);
-                    //((IUIInteractiveElement) _owner).OnLeftButtonRelease.Add(ConfirmFadeoutProc);what the fuck was this for
-                    break;
-
-                case FadeTrigger.None:
-                    break;
-            }
         }
 
         #endregion
@@ -225,14 +223,21 @@ namespace Drydock.UI.Components{
                     var e1 = (IUIInteractiveElement) element1;
                     var e2 = (IUIInteractiveElement) element2;
 
-                    e1.OnMouseEntry.Add(e2.GetComponent<FadeComponent>());
-                    e2.OnMouseEntry.Add(e1.GetComponent<FadeComponent>());
+                    e1.GetComponent<FadeComponent>().AddRecievingFadeComponent(
+                        e2.GetComponent<FadeComponent>()
+                        );
 
-                    e1.OnMouseExit.Add(e2.GetComponent<FadeComponent>());
-                    e2.OnMouseExit.Add(e1.GetComponent<FadeComponent>());
+                    e2.GetComponent<FadeComponent>().AddRecievingFadeComponent(
+                        e1.GetComponent<FadeComponent>()
+                        );
 
                     break;
             }
+        }
+
+        public void AddRecievingFadeComponent(FadeComponent component){
+            _ownerEventDispatcher.OnMouseEntry.Add(component);
+            _ownerEventDispatcher.OnMouseExit.Add(component);
         }
 
         /// <summary>
@@ -250,12 +255,11 @@ namespace Drydock.UI.Components{
                     //cast to interactive
                     var e1 = (IUIInteractiveElement) eventProcElement;
 
-                    e1.OnMouseEntry.Add(eventRecieveElement.GetComponent<FadeComponent>());
-                    e1.OnMouseExit.Add(eventRecieveElement.GetComponent<FadeComponent>());
 
-                    break;
+                    e1.GetComponent<FadeComponent>().AddRecievingFadeComponent(
+                        eventRecieveElement.GetComponent<FadeComponent>()
+                        );
 
-                default:
                     break;
             }
         }
@@ -274,8 +278,11 @@ namespace Drydock.UI.Components{
                             throw new Exception("Unable to link interactive element fade triggers; the event proc element is not interactive.");
                         }
                         foreach (var eElement in eventRecieveElements){
-                            ((IUIInteractiveElement) pElement).OnMouseEntry.Add(eElement.GetComponent<FadeComponent>());
-                            ((IUIInteractiveElement) pElement).OnMouseExit.Add(eElement.GetComponent<FadeComponent>());
+                            var procElement = (IUIInteractiveElement)pElement;
+
+                            procElement.GetComponent<FadeComponent>().AddRecievingFadeComponent(
+                                eElement.GetComponent<FadeComponent>()
+                                );
                         }
                     }
 

@@ -4,7 +4,10 @@
 
 #endregion
 
-/*~eventually
+using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+
 namespace Drydock.UI.Components{
     internal delegate void ReactToSelection(SelectState state);
 
@@ -16,7 +19,7 @@ namespace Drydock.UI.Components{
     /// <summary>
     ///   allows a UI element to be selected. Required element to be IUIInteractiveComponent
     /// </summary>
-    internal class SelectableComponent : IUIComponent{
+    internal class SelectableComponent : IUIComponent, IAcceptLeftButtonClickEvent, IAcceptMouseMovementEvent {
         readonly int _selectedHeight;
         readonly String _selectedTexture;
         readonly int _selectedWidth;
@@ -40,53 +43,31 @@ namespace Drydock.UI.Components{
 
         #region IUIComponent Members
 
-        public IUIElement Owner{
-            set{
-                if (value is IUIInteractiveElement){
-                    _owner = (IUIInteractiveElement) value;
-                    ComponentCtor();
-                }
-                else{
-                    throw new Exception("Element is not interactive");
-                }
-            }
+        public void ComponentCtor(IUIElement owner, ButtonEventDispatcher ownerEventDispatcher){
+            _owner = (IUIInteractiveElement)owner;
+            IsEnabled = true;
+            ownerEventDispatcher.OnLeftButtonClick.Add(this);
+            ownerEventDispatcher.OnMouseMovement.Add(this);
+
+            _originalTexture = _owner.Texture;
+            _widthDx = (int)(_selectedWidth - _owner.BoundingBox.Width);
+            _heightDx = (int)(_selectedHeight - _owner.BoundingBox.Height);
+            _positionDx = _widthDx / 2;
+            _positionDy = _heightDx / 2;
         }
 
         public bool IsEnabled { get; set; }
+
+        public void Update(){
+            throw new NotImplementedException();
+        }
 
         public void UpdateLogic(){
         }
 
         #endregion
 
-        public event ReactToSelection ReactToSelectionDispatcher;
-
-        void ComponentCtor(){
-            IsEnabled = true;
-            _owner.OnLeftButtonClick.Add(OnMouseClick);
-
-            _originalTexture = _owner.Texture;
-            _widthDx = (int) (_selectedWidth - _owner.BoundingBox.Width);
-            _heightDx = (int) (_selectedHeight - _owner.BoundingBox.Height);
-            _positionDx = _widthDx/2;
-            _positionDy = _heightDx/2;
-        }
-
-        InterruptState OnMouseClick(MouseState state, MouseState? prevState = null){
-            if (IsEnabled){
-                if (_isSelected){
-                    DeselectThis();
-                }
-                else{
-                    if (_owner.BoundingBox.Contains(state.X, state.Y)){
-                        SelectThis();
-                    }
-                }
-            }
-            return InterruptState.AllowOtherEvents;
-        }
-
-        public void SelectThis(){
+        public void ProcSelect(){
             if (IsEnabled && !_isSelected){
                 _owner.Texture = _selectedTexture;
                 _owner.Width += _widthDx;
@@ -99,16 +80,17 @@ namespace Drydock.UI.Components{
                     _owner.GetComponent<FadeComponent>().IsEnabled = false;
                 }
                     // ReSharper disable EmptyGeneralCatchClause
-                catch (Exception){ /*there is no fade component*/
-/*}
+                catch (Exception){
+                } /*there is no fade component*/
+
                 // ReSharper restore EmptyGeneralCatchClause
-                if (ReactToSelectionDispatcher != null){
-                    ReactToSelectionDispatcher(SelectState.Selected);
-                }
+                //if (ReactToSelectionDispatcher != null){
+                //    ReactToSelectionDispatcher(SelectState.Selected);
+                //}
             }
         }
 
-        public void DeselectThis(){
+        public void ProcDeselect(){
             if (IsEnabled && _isSelected){
                 _owner.Texture = _originalTexture;
                 _owner.Width -= _widthDx;
@@ -121,13 +103,37 @@ namespace Drydock.UI.Components{
                 }
                     // ReSharper disable EmptyGeneralCatchClause
                 catch (Exception){ /*there is no fade component*/
-/* }
+ }
                 // ReSharper restore EmptyGeneralCatchClause
-                if (ReactToSelectionDispatcher != null){
-                    ReactToSelectionDispatcher(SelectState.UnSelected);
+                //if (ReactToSelectionDispatcher != null){
+                //    ReactToSelectionDispatcher(SelectState.UnSelected);
+                //}
+            }
+        }
+
+        public void ProcHover(){
+
+        }
+
+        public void ProcUnhover(){
+
+        }
+
+        public void OnLeftButtonClick(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
+            if (IsEnabled) {
+                if (_isSelected) {
+                    ProcDeselect();
+                }
+                else {
+                    if (_owner.BoundingBox.Contains(mousePos.X, mousePos.Y)) {
+                        ProcSelect();
+                    }
                 }
             }
         }
+
+        public void OnMouseMovement(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
+            
+        }
     }
 }
-*/

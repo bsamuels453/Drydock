@@ -41,11 +41,11 @@ namespace Drydock.UI.Components{
 
         #region IUIComponent Members
 
-        public IUIElement Owner{
-            set{
-                _owner = (IUIInteractiveElement) value;
-                ComponentCtor();
-            }
+        public void ComponentCtor(IUIElement owner, ButtonEventDispatcher ownerEventDispatcher){
+            _owner = (IUIInteractiveElement)owner;
+            ownerEventDispatcher.OnLeftButtonPress.Add(this);
+            ownerEventDispatcher.OnLeftButtonRelease.Add(this);
+            ownerEventDispatcher.OnMouseScroll.Add(this);
         }
 
         public bool IsEnabled { get; set; }
@@ -56,9 +56,7 @@ namespace Drydock.UI.Components{
         #endregion
 
         void ComponentCtor(){
-            _owner.OnLeftButtonPress.Add(this);
-            _owner.OnLeftButtonRelease.Add(this);
-            _owner.OnMouseScroll.Add(this);
+
         }
 
         void PreventClickFallthrough(ref bool allowLeftButtonInterpretation, Point mousePos){
