@@ -4,7 +4,7 @@
     "FadeComponent": {
       "DefaultState": "Visible",
       "FadeTrigger": "EntryExit",
-	  "FadeOpacity": 0.3
+	  "FadedOpacity": 0.3
     }
   },
   "Depth": "High",

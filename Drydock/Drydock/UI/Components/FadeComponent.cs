@@ -317,8 +317,8 @@ namespace Drydock.UI.Components{
                 fadeTrigger = DefaultTrigger;
 
 
-            if (ctorData.FadeOpacity != null)
-                fadeOpacity = (float)ctorData.FadeOpacity;
+            if (ctorData.FadedOpacity != null)
+                fadeOpacity = (float)ctorData.FadedOpacity;
             else
                 fadeOpacity = DefaultFadeoutOpacity;
 
@@ -335,7 +335,7 @@ namespace Drydock.UI.Components{
 // ReSharper disable UnassignedField.Local
             public FadeState DefaultState;
             public FadeTrigger FadeTrigger;
-            public float? FadeOpacity;
+            public float? FadedOpacity;
             public float? FadeDuration;
 // ReSharper restore UnassignedField.Local
         }
