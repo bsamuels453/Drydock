@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Render{
-    internal class Sprite2D : IDrawableSprite{
+    internal class ButtonSprite : IDrawableSprite{
         readonly IUIElement _parent;
         readonly RenderPanel _renderPanel;
         readonly FloatingRectangle _srcRect;
@@ -22,7 +22,7 @@ namespace Drydock.Render{
         /// <param name="parent"> </param>
         /// <param name="spriteRepeatX"> </param>
         /// <param name="spriteRepeatY"> </param>
-        public Sprite2D(string textureName, IUIElement parent, float spriteRepeatX = 1, float spriteRepeatY = 1){
+        public ButtonSprite(string textureName, IUIElement parent, float spriteRepeatX = 1, float spriteRepeatY = 1){
             _texture = Singleton.ContentManager.Load<Texture2D>(textureName);
             _parent = parent;
             _srcRect = new FloatingRectangle(0f, 0f, _texture.Height*spriteRepeatX, _texture.Width*spriteRepeatY);
@@ -66,7 +66,7 @@ namespace Drydock.Render{
 
         #endregion
 
-        ~Sprite2D(){
+        ~ButtonSprite(){
             if (!_isDisposed){
                 _renderPanel.Remove(this);
                 _isDisposed = true;

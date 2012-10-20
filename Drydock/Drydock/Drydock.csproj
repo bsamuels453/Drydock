@@ -206,7 +206,7 @@
     <Compile Include="UI\UIElementCollection.cs" />
     <Compile Include="Utilities\Bezier.cs" />
     <Compile Include="Render\Line2D.cs" />
-    <Compile Include="Render\Sprite2D.cs" />
+    <Compile Include="Render\ButtonSprite.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Drydock.cs" />

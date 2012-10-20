@@ -25,7 +25,7 @@ namespace Drydock.UI{
         readonly FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
         readonly ButtonEventDispatcher _iEventDispatcher;
         readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
-        readonly Sprite2D _sprite; //the button's sprite
+        readonly ButtonSprite _sprite; //the button's sprite
         Vector2 _centPosition; //represents the approximate center of the button
         string _texture;
 
@@ -103,7 +103,7 @@ namespace Drydock.UI{
 
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
-            _sprite = new Sprite2D(textureName, this, spriteTexRepeatX, spriteTexRepeatY);
+            _sprite = new ButtonSprite(textureName, this, spriteTexRepeatX, spriteTexRepeatY);
 
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
