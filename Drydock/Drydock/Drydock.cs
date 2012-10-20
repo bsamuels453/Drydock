@@ -1,6 +1,5 @@
 #region
 
-using Drydock.Control;
 using Drydock.Logic;
 using Drydock.Logic.HullEditorState;
 using Drydock.Render;

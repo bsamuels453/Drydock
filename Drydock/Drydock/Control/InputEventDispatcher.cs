@@ -84,8 +84,8 @@ namespace Drydock.Control{
 
             curControlState.ViewMatrix = Matrix.CreateLookAt(Renderer.CameraPosition, Renderer.CameraTarget, Vector3.Up);
 
-            
-            if (CurrentControlState != null) {
+
+            if (CurrentControlState != null){
                 curControlState.PrevState = CurrentControlState;
                 CurrentControlState.PrevState = null;
             }
@@ -104,12 +104,12 @@ namespace Drydock.Control{
         public bool AllowRightButtonInterpretation;
 
         public KeyboardState KeyboardState;
-        public ButtonState LeftButtonState;
         public bool LeftButtonClick;
+        public ButtonState LeftButtonState;
         public Point MousePos;
         public int MouseScrollChange;
+        public ControlState PrevState;
         public ButtonState RightButtonState;
         public Matrix ViewMatrix;
-        public ControlState PrevState;
     }
 }

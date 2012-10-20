@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#region
+
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Drydock.Render {
-    class WireframeBuffer : BufferObject<VertexPositionColor> {
+#endregion
+
+namespace Drydock.Render{
+    internal class WireframeBuffer : BufferObject<VertexPositionColor>{
         public WireframeBuffer(int numIndicies, int numVerticies, int numPrimitives) : base(numIndicies, numVerticies, numPrimitives, PrimitiveType.LineList){
             BufferRasterizer = new RasterizerState();
             BufferRasterizer.CullMode = CullMode.None;
@@ -15,7 +15,6 @@ namespace Drydock.Render {
 
             BufferEffect.Parameters["Projection"].SetValue(Singleton.ProjectionMatrix);
             BufferEffect.Parameters["World"].SetValue(Matrix.Identity);
-            
         }
     }
 

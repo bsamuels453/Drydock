@@ -57,18 +57,17 @@ namespace Drydock.UI.Components{
         }
 
 
-
         public void ComponentCtor(IUIElement owner, ButtonEventDispatcher ownerEventDispatcher){
             _owner = owner;
             _ownerEventDispatcher = ownerEventDispatcher;
-            if (_defaultState == FadeState.Faded) {
+            if (_defaultState == FadeState.Faded){
                 _owner.Opacity = _fadeoutOpacity;
             }
-            switch (_fadeTrigger) {
+            switch (_fadeTrigger){
                 case FadeTrigger.EntryExit:
 
 
-                    if (!(_owner is IUIInteractiveElement)) {
+                    if (!(_owner is IUIInteractiveElement)){
                         throw new Exception("Invalid fade trigger: Unable to set an interactive trigger to a non-interactive element.");
                     }
 
@@ -278,7 +277,7 @@ namespace Drydock.UI.Components{
                             throw new Exception("Unable to link interactive element fade triggers; the event proc element is not interactive.");
                         }
                         foreach (var eElement in eventRecieveElements){
-                            var procElement = (IUIInteractiveElement)pElement;
+                            var procElement = (IUIInteractiveElement) pElement;
 
                             procElement.GetComponent<FadeComponent>().AddRecievingFadeComponent(
                                 eElement.GetComponent<FadeComponent>()

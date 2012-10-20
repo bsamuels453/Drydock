@@ -1,6 +1,5 @@
 ﻿#region
 
-using System.Collections.Generic;
 using Drydock.Control;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;

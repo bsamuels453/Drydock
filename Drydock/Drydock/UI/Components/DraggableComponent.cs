@@ -1,6 +1,5 @@
 ﻿#region
 
-using System;
 using Microsoft.Xna.Framework;
 
 #endregion
@@ -22,7 +21,6 @@ namespace Drydock.UI.Components{
 
         #region properties
 
-
         #endregion
 
         #region ctor
@@ -31,8 +29,8 @@ namespace Drydock.UI.Components{
             _mouseOffset = new Vector2();
         }
 
-        public void ComponentCtor(IUIElement owner, ButtonEventDispatcher ownerEventDispatcher) {
-            _owner = (IUIInteractiveElement)owner;
+        public void ComponentCtor(IUIElement owner, ButtonEventDispatcher ownerEventDispatcher){
+            _owner = (IUIInteractiveElement) owner;
             _isEnabled = true;
             _isMoving = false;
             ownerEventDispatcher.OnLeftButtonPress.Add(this);
@@ -107,7 +105,6 @@ namespace Drydock.UI.Components{
         #endregion
 
         #region IUIComponent Members
-
 
         public bool IsEnabled{
             get { return _isEnabled; }

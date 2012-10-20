@@ -10,7 +10,6 @@ using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 #endregion
@@ -23,11 +22,11 @@ namespace Drydock.UI{
         public const int DefaultIdentifier = 1;
 
         readonly FloatingRectangle _boundingBox; //bounding box that represents the bounds of the button
+        readonly ButtonEventDispatcher _iEventDispatcher;
         readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
         readonly Sprite2D _sprite; //the button's sprite
         Vector2 _centPosition; //represents the approximate center of the button
         string _texture;
-        readonly ButtonEventDispatcher _iEventDispatcher;
 
         public Vector2 CentPosition{
             get { return _centPosition; }
@@ -159,7 +158,7 @@ namespace Drydock.UI{
             }
             if (state.AllowLeftButtonInterpretation){
                 if (state.LeftButtonState == ButtonState.Pressed){
-                    foreach (var @event in _iEventDispatcher.OnLeftButtonPress) {
+                    foreach (var @event in _iEventDispatcher.OnLeftButtonPress){
                         @event.OnLeftButtonPress(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowLeftButtonInterpretation)
                             break;
@@ -168,7 +167,7 @@ namespace Drydock.UI{
             }
             if (state.AllowLeftButtonInterpretation){
                 if (state.LeftButtonState == ButtonState.Released){
-                    foreach (var @event in _iEventDispatcher.OnLeftButtonRelease) {
+                    foreach (var @event in _iEventDispatcher.OnLeftButtonRelease){
                         @event.OnLeftButtonRelease(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowLeftButtonInterpretation)
                             break;
@@ -176,7 +175,7 @@ namespace Drydock.UI{
                 }
             }
             if (state.AllowMouseMovementInterpretation){
-                foreach (var @event in _iEventDispatcher.OnMouseMovement) {
+                foreach (var @event in _iEventDispatcher.OnMouseMovement){
                     @event.OnMouseMovement(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
                     if (!state.AllowMouseMovementInterpretation)
                         break;
@@ -185,7 +184,7 @@ namespace Drydock.UI{
             if (state.AllowMouseMovementInterpretation){
                 if (BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && !ContainsMouse){
                     ContainsMouse = true;
-                    foreach (var @event in _iEventDispatcher.OnMouseEntry) {
+                    foreach (var @event in _iEventDispatcher.OnMouseEntry){
                         @event.OnMouseEntry(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowMouseMovementInterpretation)
                             break;
@@ -195,7 +194,7 @@ namespace Drydock.UI{
             if (state.AllowMouseMovementInterpretation){
                 if (!BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && ContainsMouse){
                     ContainsMouse = false;
-                    foreach (var @event in _iEventDispatcher.OnMouseExit) {
+                    foreach (var @event in _iEventDispatcher.OnMouseExit){
                         @event.OnMouseExit(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
                         if (!state.AllowMouseMovementInterpretation)
                             break;
@@ -203,7 +202,7 @@ namespace Drydock.UI{
                 }
             }
             if (state.AllowKeyboardInterpretation){
-                foreach (var @event in _iEventDispatcher.OnKeyboardEvent) {
+                foreach (var @event in _iEventDispatcher.OnKeyboardEvent){
                     @event.OnKeyboardEvent(ref state.AllowKeyboardInterpretation, state.KeyboardState);
                     if (!state.AllowKeyboardInterpretation)
                         break;
@@ -272,8 +271,8 @@ namespace Drydock.UI{
             var depthLevelSerializer = new JsonSerializer();
             depthLevelSerializer.Converters.Add(new DepthLevelConverter());
 
-            try {
-                var jComponents = (JArray)obj["Components"];
+            try{
+                var jComponents = (JArray) obj["Components"];
                 if (jComponents != null)
                     Components = jComponents.ToObject<Dictionary<string, object[]>>();
                 else
@@ -342,21 +341,10 @@ namespace Drydock.UI{
                 components
                 );
         }
-
-
     }
 
-    class ButtonEventDispatcher {
-        public List<IAcceptLeftButtonClickEvent> OnLeftButtonClick { get; set; }
-        public List<IAcceptLeftButtonPressEvent> OnLeftButtonPress { get; set; }
-        public List<IAcceptLeftButtonReleaseEvent> OnLeftButtonRelease { get; set; }
-        public List<IAcceptMouseEntryEvent> OnMouseEntry { get; set; }
-        public List<IAcceptMouseExitEvent> OnMouseExit { get; set; }
-        public List<IAcceptMouseMovementEvent> OnMouseMovement { get; set; }
-        public List<IAcceptMouseScrollEvent> OnMouseScroll { get; set; }
-        public List<IAcceptKeyboardEvent> OnKeyboardEvent { get; set; }
-
-        public ButtonEventDispatcher() {
+    internal class ButtonEventDispatcher{
+        public ButtonEventDispatcher(){
             OnLeftButtonClick = new List<IAcceptLeftButtonClickEvent>();
             OnLeftButtonPress = new List<IAcceptLeftButtonPressEvent>();
             OnLeftButtonRelease = new List<IAcceptLeftButtonReleaseEvent>();
@@ -367,5 +355,13 @@ namespace Drydock.UI{
             OnKeyboardEvent = new List<IAcceptKeyboardEvent>();
         }
 
+        public List<IAcceptLeftButtonClickEvent> OnLeftButtonClick { get; set; }
+        public List<IAcceptLeftButtonPressEvent> OnLeftButtonPress { get; set; }
+        public List<IAcceptLeftButtonReleaseEvent> OnLeftButtonRelease { get; set; }
+        public List<IAcceptMouseEntryEvent> OnMouseEntry { get; set; }
+        public List<IAcceptMouseExitEvent> OnMouseExit { get; set; }
+        public List<IAcceptMouseMovementEvent> OnMouseMovement { get; set; }
+        public List<IAcceptMouseScrollEvent> OnMouseScroll { get; set; }
+        public List<IAcceptKeyboardEvent> OnKeyboardEvent { get; set; }
     }
 }

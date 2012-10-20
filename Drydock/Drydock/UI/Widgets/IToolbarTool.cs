@@ -1,7 +1,11 @@
-﻿using Drydock.Control;
+﻿#region
 
-namespace Drydock.UI.Widgets {
-    interface IToolbarTool : IInputUpdates, ILogicUpdates {
+using Drydock.Control;
+
+#endregion
+
+namespace Drydock.UI.Widgets{
+    internal interface IToolbarTool : IInputUpdates, ILogicUpdates{
         void Enable();
         void Disable();
     }

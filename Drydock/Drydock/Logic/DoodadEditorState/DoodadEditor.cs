@@ -1,6 +1,5 @@
 ﻿#region
 
-using System;
 using System.Collections.Generic;
 using Drydock.Control;
 using Drydock.Logic.DoodadEditorState.Tools;
@@ -15,12 +14,12 @@ namespace Drydock.Logic.DoodadEditorState{
     internal class DoodadEditor : IGameState{
         const int _primsPerDeck = 3;
 
-        readonly RenderPanel _renderTarget;
-        readonly UIElementCollection _uiElementCollection;
-        readonly HullGeometryHandler _hullGeometryHandler;
-        readonly Toolbar _toolBar;
         readonly BodyCenteredCamera _cameraController;
+        readonly HullGeometryHandler _hullGeometryHandler;
         readonly HullGeometryInfo _hullInfo;
+        readonly RenderPanel _renderTarget;
+        readonly Toolbar _toolBar;
+        readonly UIElementCollection _uiElementCollection;
 
         public DoodadEditor(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo){
             _renderTarget = new RenderPanel(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
@@ -28,6 +27,7 @@ namespace Drydock.Logic.DoodadEditorState{
             _cameraController = new BodyCenteredCamera();
 
             #region construct UI and any UI-related tools
+
             RenderPanel.BindRenderTarget(_renderTarget);
             UIElementCollection.BindCollection(_uiElementCollection);
 
@@ -37,14 +37,16 @@ namespace Drydock.Logic.DoodadEditorState{
             _hullGeometryHandler = new HullGeometryHandler(_hullInfo);
 
             #region construct toolbar
+
             _toolBar = new Toolbar("Templates/DoodadToolbar.json");
             _toolBar.SetButtonTool(0, new WallBuildTool(_hullInfo, _hullGeometryHandler.VisibleDecks));
             _toolBar.ToolbarButtons[0].Texture = "wallbuildicon";
-            #endregion
 
+            #endregion
 
             RenderPanel.UnbindRenderTarget();
             UIElementCollection.UnbindCollection();
+
             #endregion
 
             _cameraController.SetCameraTarget(_hullInfo.CenterPoint);
@@ -58,21 +60,25 @@ namespace Drydock.Logic.DoodadEditorState{
 
         public void Update(ref ControlState state, double timeDelta){
             UIElementCollection.BindCollection(_uiElementCollection);
+
             #region update input
+
             UIElementCollection.Collection.UpdateInput(ref state);
             _toolBar.UpdateInput(ref state);
             _cameraController.UpdateInput(ref state);
+
             #endregion
 
             #region update logic
+
             UIElementCollection.Collection.UpdateLogic(timeDelta);
             _toolBar.UpdateLogic(timeDelta);
+
             #endregion
 
             UIElementCollection.UnbindCollection();
         }
 
         #endregion
-
     }
 }

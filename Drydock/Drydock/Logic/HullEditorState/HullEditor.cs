@@ -14,11 +14,10 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic.HullEditorState{
     internal class HullEditor : IGameState{
-
+        readonly BackEditorPanel _backpanel;
         readonly UIElementCollection _elementCollection;
 
         readonly PreviewRenderer _previewRenderer;
-        readonly BackEditorPanel _backpanel;
         readonly SideEditorPanel _sidepanel;
         readonly TopEditorPanel _toppanel;
 
@@ -60,12 +59,12 @@ namespace Drydock.Logic.HullEditorState{
 
         #endregion
 
-        private void HandleEditorKeyboardInput(ref ControlState state){
-            if (state.KeyboardState.IsKeyDown(Keys.LeftControl) && state.KeyboardState.IsKeyDown(Keys.S)) {
+        void HandleEditorKeyboardInput(ref ControlState state){
+            if (state.KeyboardState.IsKeyDown(Keys.LeftControl) && state.KeyboardState.IsKeyDown(Keys.S)){
                 SaveCurves("save/");
             }
 
-            if (state.KeyboardState.IsKeyDown(Keys.LeftControl) && state.KeyboardState.IsKeyDown(Keys.N)) {
+            if (state.KeyboardState.IsKeyDown(Keys.LeftControl) && state.KeyboardState.IsKeyDown(Keys.N)){
                 var sideInfo = _sidepanel.Curves.GetControllerInfo();
                 var backInfo = _backpanel.Curves.GetControllerInfo();
                 var topInfo = _toppanel.Curves.GetControllerInfo();

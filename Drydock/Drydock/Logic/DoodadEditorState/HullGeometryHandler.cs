@@ -1,7 +1,5 @@
 ﻿#region
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Drydock.Control;
 using Drydock.Render;
@@ -14,16 +12,15 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Logic.DoodadEditorState{
-    internal class HullGeometryHandler: IInputUpdates{
-        public IntRef VisibleDecks;
-        readonly ShipGeometryBuffer[] _deckWallBuffers;
-        readonly ShipGeometryBuffer[] _deckFloorBuffers;
-        readonly WireframeBuffer _selectionBuff;
-        readonly BoundingBox[][] _deckFloorBoundingBoxes;
-        readonly int _numDecks;
-
+    internal class HullGeometryHandler : IInputUpdates{
         readonly Button _deckDownButton;
+        readonly BoundingBox[][] _deckFloorBoundingBoxes;
+        readonly ShipGeometryBuffer[] _deckFloorBuffers;
         readonly Button _deckUpButton;
+        readonly ShipGeometryBuffer[] _deckWallBuffers;
+        readonly int _numDecks;
+        readonly WireframeBuffer _selectionBuff;
+        public IntRef VisibleDecks;
 
         public HullGeometryHandler(HullGeometryInfo geometryInfo){
             //CullMode.CullClockwiseFace
@@ -35,7 +32,7 @@ namespace Drydock.Logic.DoodadEditorState{
             _deckFloorBoundingBoxes = geometryInfo.DeckFloorBoundingBoxes;
 
             _selectionBuff = new WireframeBuffer(12, 12, 6);
-            _selectionBuff.Indexbuffer.SetData(new []{ 0, 1, 2, 3,4,5,6,7,8,9,10,11 });
+            _selectionBuff.Indexbuffer.SetData(new[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
 
             //override default lighting
             foreach (var buffer in _deckFloorBuffers){
@@ -53,35 +50,7 @@ namespace Drydock.Logic.DoodadEditorState{
             _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;
         }
 
-        private void AddVisibleLevel(int identifier) {
-            if (VisibleDecks.Value != _numDecks) {
-                //todo: linq this
-                var tempFloorBuff = _deckFloorBuffers.Reverse().ToArray();
-                var tempWallBuff = _deckWallBuffers.Reverse().ToArray();
-
-                for (int i = 0; i < tempFloorBuff.Count(); i++){
-                    if (tempFloorBuff[i].IsEnabled == false){
-                        VisibleDecks.Value++;
-                        tempFloorBuff[i].IsEnabled = true;
-                        tempWallBuff[i].CullMode = CullMode.None;
-                        break;
-                    }
-                }
-            }
-        }
-
-        private void RemoveVisibleLevel(int identifier) {
-            if (VisibleDecks.Value != 0) {
-                for (int i = 0; i < _deckFloorBuffers.Count(); i++) {
-                    if (_deckFloorBuffers[i].IsEnabled == true) {
-                        VisibleDecks.Value--;
-                        _deckFloorBuffers[i].IsEnabled = false;
-                        _deckWallBuffers[i].CullMode = CullMode.CullClockwiseFace;
-                        break;
-                    }
-                }
-            }
-        }
+        #region IInputUpdates Members
 
         public void UpdateInput(ref ControlState state){
             //first we generate the mouse's ray
@@ -110,9 +79,8 @@ namespace Drydock.Logic.DoodadEditorState{
 
 
             int deckIndex = _numDecks - VisibleDecks.Value;
-            for (int i = 0; i < _deckFloorBoundingBoxes[deckIndex].Length; i++) {
+            for (int i = 0; i < _deckFloorBoundingBoxes[deckIndex].Length; i++){
                 if (ray.Intersects(_deckFloorBoundingBoxes[deckIndex][i]) != null){
-
                     Vector3 v1, v2, v3, v4;
                     //v4  v3
                     //
@@ -146,6 +114,38 @@ namespace Drydock.Logic.DoodadEditorState{
                     _selectionBuff.Vertexbuffer.SetData(verts);
 
                     break;
+                }
+            }
+        }
+
+        #endregion
+
+        void AddVisibleLevel(int identifier){
+            if (VisibleDecks.Value != _numDecks){
+                //todo: linq this
+                var tempFloorBuff = _deckFloorBuffers.Reverse().ToArray();
+                var tempWallBuff = _deckWallBuffers.Reverse().ToArray();
+
+                for (int i = 0; i < tempFloorBuff.Count(); i++){
+                    if (tempFloorBuff[i].IsEnabled == false){
+                        VisibleDecks.Value++;
+                        tempFloorBuff[i].IsEnabled = true;
+                        tempWallBuff[i].CullMode = CullMode.None;
+                        break;
+                    }
+                }
+            }
+        }
+
+        void RemoveVisibleLevel(int identifier){
+            if (VisibleDecks.Value != 0){
+                for (int i = 0; i < _deckFloorBuffers.Count(); i++){
+                    if (_deckFloorBuffers[i].IsEnabled){
+                        VisibleDecks.Value--;
+                        _deckFloorBuffers[i].IsEnabled = false;
+                        _deckWallBuffers[i].CullMode = CullMode.CullClockwiseFace;
+                        break;
+                    }
                 }
             }
         }

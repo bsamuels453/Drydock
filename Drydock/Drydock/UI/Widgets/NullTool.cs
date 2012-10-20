@@ -1,7 +1,13 @@
-﻿using Drydock.Control;
+﻿#region
 
-namespace Drydock.UI.Widgets {
-    class NullTool : IToolbarTool{
+using Drydock.Control;
+
+#endregion
+
+namespace Drydock.UI.Widgets{
+    internal class NullTool : IToolbarTool{
+        #region IToolbarTool Members
+
         public void UpdateInput(ref ControlState state){
             //throw new NotImplementedException();
         }
@@ -17,5 +23,7 @@ namespace Drydock.UI.Widgets {
         public void Disable(){
             //throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

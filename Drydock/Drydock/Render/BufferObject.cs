@@ -13,11 +13,11 @@ namespace Drydock.Render{
         readonly int _numIndicies;
         readonly int _numPrimitives;
         readonly PrimitiveType _primitiveType;
-        public bool IsEnabled;//this shouldnt be a field xx
-        RenderPanel _bufferRenderTarget;
 
         protected Effect BufferEffect;
         protected RasterizerState BufferRasterizer;
+        public bool IsEnabled; //this shouldnt be a field xx
+        RenderPanel _bufferRenderTarget;
 
         protected BufferObject(int numIndicies, int numVerticies, int numPrimitives, PrimitiveType primitiveType){
             IsEnabled = true;
@@ -72,7 +72,6 @@ namespace Drydock.Render{
         public void UpdateViewMatrix(Matrix viewMatrix){
             BufferEffect.Parameters["View"].SetValue(viewMatrix);
         }
-
 
 
         ~BufferObject(){

@@ -12,8 +12,8 @@ namespace Drydock.Render{
 
         public ShipGeometryBuffer(int numIndicies, int numVerticies, int numPrimitives, string textureName, CullMode cullMode = CullMode.None)
             : base(numIndicies, numVerticies, numPrimitives, PrimitiveType.TriangleList){
-                BufferRasterizer = new RasterizerState();
-                BufferRasterizer.CullMode = cullMode;
+            BufferRasterizer = new RasterizerState();
+            BufferRasterizer.CullMode = cullMode;
 
             _texture = Singleton.ContentManager.Load<Texture2D>(textureName);
             BufferEffect = Singleton.ContentManager.Load<Effect>("StandardEffect").Clone();
@@ -23,9 +23,9 @@ namespace Drydock.Render{
         }
 
         public CullMode CullMode{
-            set {
+            set{
                 BufferRasterizer = new RasterizerState();
-                BufferRasterizer.CullMode = value; 
+                BufferRasterizer.CullMode = value;
             }
         }
 
@@ -33,7 +33,7 @@ namespace Drydock.Render{
             set { BufferEffect.Parameters["DiffuseLightDirection"].SetValue(value); }
         }
 
-        public float AmbientIntensity {
+        public float AmbientIntensity{
             set { BufferEffect.Parameters["AmbientIntensity"].SetValue(value); }
         }
     }

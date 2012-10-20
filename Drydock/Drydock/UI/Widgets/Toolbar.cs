@@ -21,14 +21,14 @@ namespace Drydock.UI.Widgets{
 
         #endregion
 
+        readonly IToolbarTool[] _buttonTools;
+
         readonly Rectangle _dimensions;
+        readonly IToolbarTool _nullTool;
         readonly int _numButtons;
         readonly ToolbarOrientation _orientation;
 
-        public Button[] ToolbarButtons;//be nice to find a way to make this readonly to public since properties cant do it
-        readonly IToolbarTool[] _buttonTools;
-
-        readonly IToolbarTool _nullTool;
+        public Button[] ToolbarButtons; //be nice to find a way to make this readonly to public since properties cant do it
         IToolbarTool _activeTool;
 
         public Toolbar(string path){
@@ -85,6 +85,7 @@ namespace Drydock.UI.Widgets{
             #endregion
 
             #region finalize construction
+
             _nullTool = new NullTool();
             _activeTool = _nullTool;
 
@@ -94,6 +95,22 @@ namespace Drydock.UI.Widgets{
 
             #endregion
         }
+
+        #region IInputUpdates Members
+
+        public void UpdateInput(ref ControlState state){
+            _activeTool.UpdateInput(ref state);
+        }
+
+        #endregion
+
+        #region ILogicUpdates Members
+
+        public void UpdateLogic(double timeDelta){
+            _activeTool.UpdateLogic(timeDelta);
+        }
+
+        #endregion
 
         public void SetButtonTool(int buttonIdentifier, IToolbarTool tool){
             Debug.Assert(buttonIdentifier < _buttonTools.Length);
@@ -111,22 +128,6 @@ namespace Drydock.UI.Widgets{
             _buttonTools[identifier].Enable();
             _activeTool = _buttonTools[identifier];
         }
-
-        #region IInputUpdates Members
-
-        public void UpdateInput(ref ControlState state) {
-            _activeTool.UpdateInput(ref state);
-        }
-
-        #endregion
-
-        #region ILogicUpdates Members
-
-        public void UpdateLogic(double timeDelta){
-            _activeTool.UpdateLogic(timeDelta);
-        }
-
-        #endregion
 
         //we need to use a special version of Rectangle here because the XNA one isn't deserializing properly
 

@@ -42,7 +42,7 @@ namespace Drydock.UI.Components{
         #region IUIComponent Members
 
         public void ComponentCtor(IUIElement owner, ButtonEventDispatcher ownerEventDispatcher){
-            _owner = (IUIInteractiveElement)owner;
+            _owner = (IUIInteractiveElement) owner;
             ownerEventDispatcher.OnLeftButtonPress.Add(this);
             ownerEventDispatcher.OnLeftButtonRelease.Add(this);
             ownerEventDispatcher.OnMouseScroll.Add(this);
@@ -54,10 +54,6 @@ namespace Drydock.UI.Components{
         }
 
         #endregion
-
-        void ComponentCtor(){
-
-        }
 
         void PreventClickFallthrough(ref bool allowLeftButtonInterpretation, Point mousePos){
             if (allowLeftButtonInterpretation){
