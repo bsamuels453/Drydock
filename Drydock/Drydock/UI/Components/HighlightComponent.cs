@@ -22,7 +22,7 @@ namespace Drydock.UI.Components{
         readonly string _highlightTexture;
         readonly HighlightTrigger _highlightTrigger;
         Sprite2D _highlightSprite;
-        float _highlightTexOpacity;
+        readonly float _highlightTexOpacity;
         IUIInteractiveElement _owner;
 
         public HighlightComponent(string highlightTexture, HighlightTrigger highlightTrigger, float highlightTexOpacity = 0.3f){
@@ -105,7 +105,7 @@ namespace Drydock.UI.Components{
             if (data.HighlightTexture == null || data.HighlightTrigger == HighlightTrigger.InvalidTrigger)
                 throw new Exception("not enough information to generate highlight component");
 
-            return new HighlightComponent(data.HighlightTexture, data.HighlightTrigger);
+            return new HighlightComponent(data.HighlightTexture, data.HighlightTrigger, data.HighlightTexOpacity);
         }
 
         #region Nested type: HighlightComponentCtorData
