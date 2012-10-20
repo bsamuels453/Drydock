@@ -135,7 +135,7 @@ namespace Drydock.UI.Widgets{
 
         struct ToolbarCtorData{
             // ReSharper disable UnassignedField.Local
-            public Color BackgroundColor; //unimplemented
+            //public Color BackgroundColor; //unimplemented
             public string[] ButtonIcons;
             public Point Position;
             public Point ButtonSize;
