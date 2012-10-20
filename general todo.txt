@@ -6,6 +6,7 @@ Timeframes are not listed for tasks intended to be completed during the school s
 -Toolbox sidebar
 -Tooltips
 -Tool for buildings walls
+--point sprites to represent the intervals on which walls can be built
 
 -Toolbox bottombar
 ->doors
