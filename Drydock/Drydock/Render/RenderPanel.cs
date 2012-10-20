@@ -50,7 +50,8 @@ namespace Drydock.Render{
         void DrawToTarget(Matrix viewMatrix){
             Singleton.Device.SetRenderTarget(_renderTarget);
             Singleton.Device.Clear(Color.CornflowerBlue);
-            _panelSpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
+            //_panelSpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
+            _panelSpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
             foreach (var sprite in _sprites){
                 sprite.Draw(_panelSpriteBatch, _position);
             }
