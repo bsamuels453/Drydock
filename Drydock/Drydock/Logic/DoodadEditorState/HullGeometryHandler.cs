@@ -43,9 +43,14 @@ namespace Drydock.Logic.DoodadEditorState{
                 buffer.CullMode = CullMode.None;
             }
 
-
-            _deckUpButton = new Button(50, 50, 32, 32, DepthLevel.High, "uparrow");
-            _deckDownButton = new Button(50, 82, 32, 32, DepthLevel.High, "downarrow");
+            var buttonGen = new ButtonGenerator("DToolbarButton.json");
+            buttonGen.X = 50;
+            buttonGen.Y = 50;
+            buttonGen.TextureName = "uparrow";
+            _deckUpButton = buttonGen.GenerateButton();
+            buttonGen.Y = 50 + 64;
+            buttonGen.TextureName = "downarrow";
+            _deckDownButton = buttonGen.GenerateButton();
             _deckUpButton.OnLeftClickDispatcher += AddVisibleLevel;
             _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;
         }
