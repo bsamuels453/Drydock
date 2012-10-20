@@ -1,5 +1,9 @@
 {
-  "Components": null,
+  "Components": {
+    "HighlightComponent":{
+	  "HighlightTexture": "highlighteffect"
+	}
+  },
   "Depth": "High",
   "Width": 64,
   "Height": 64,
