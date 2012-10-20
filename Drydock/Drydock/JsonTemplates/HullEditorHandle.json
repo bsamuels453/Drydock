@@ -1,0 +1,17 @@
+{
+  "Components": {
+    "DraggableComponent":{},
+    "FadeComponent": {
+      "DefaultState": "Visible",
+      "FadeTrigger": "EntryExit",
+    }
+  },
+  "Depth": "High",
+  "Identifier": 0,
+  "SpriteTexRepeatX": 1.0,
+  "SpriteTexRepeatY": 1.0,
+  "TextureName": "whitebox",
+  "Color": "0, 0, 0, 0",
+  "Width": 9,
+  "Height": 9
+}

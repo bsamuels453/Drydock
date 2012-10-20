@@ -1,0 +1,12 @@
+{
+  "Position": "20, 200",
+  "ButtonSize": "64, 64",
+  "BackgroundColor": "0, 0, 0, 0",
+  "ButtonIcons": [
+    "wallbuildicon",
+    "cross",
+    "cross"
+  ],
+  "NumButtons": 3,
+  "Orientation": "Vertical"
+}

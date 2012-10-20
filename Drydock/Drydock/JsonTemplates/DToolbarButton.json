@@ -1,0 +1,10 @@
+{
+  "Components": null,
+  "Depth": "High",
+  "Width": 64,
+  "Height": 64,
+  "Identifier": 0,
+  "SpriteTexRepeatX": 1,
+  "SpriteTexRepeatY": 1,
+  "TextureName": "cross"
+}
