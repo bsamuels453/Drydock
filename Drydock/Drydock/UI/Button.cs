@@ -365,7 +365,14 @@ namespace Drydock.UI{
             var components = new List<IUIComponent>();
 
             foreach (var data in componentCtorData){
-                switch (data.Key){
+                string str = data.Key;
+                //when there are multiple components, they are named "Componentname_n" where n is the number of the component
+                //gotta remove that for the switch, if it exists
+                if (str.Contains('_')){
+                    str = str.Substring(0, str.Length - 2);
+                }
+
+                switch (str) {
                     case "FadeComponent":
                         components.Add(FadeComponent.ConstructFromObject(data.Value));
                         break;
