@@ -19,7 +19,7 @@ namespace Drydock.UI{
         Background
     }
 
-    internal class DepthLevelConverter : StringEnumConverter{
+    /*internal class DepthLevelConverter : StringEnumConverter{
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer){
             throw new NotImplementedException();
         }
@@ -55,5 +55,5 @@ namespace Drydock.UI{
             }
             return false;
         }
-    }
+    }*/
 }

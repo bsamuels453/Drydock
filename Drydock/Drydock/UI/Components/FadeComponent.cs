@@ -332,10 +332,12 @@ namespace Drydock.UI.Components{
         }
 
         struct FadeComponentCtorData{
+// ReSharper disable UnassignedField.Local
             public FadeState DefaultState;
             public FadeTrigger FadeTrigger;
             public float? FadeOpacity;
             public float? FadeDuration;
+// ReSharper restore UnassignedField.Local
         }
     }
 }

@@ -288,7 +288,6 @@ namespace Drydock.UI{
 
             JObject obj = JObject.Parse(str);
             var depthLevelSerializer = new JsonSerializer();
-            depthLevelSerializer.Converters.Add(new DepthLevelConverter());
 
 
             //try{

@@ -134,10 +134,14 @@ namespace Drydock.UI.Widgets{
         #region Nested type: SpecRectangle
 
         struct SpecRectangle{
+            // ReSharper disable UnassignedField.Local //field is assigned by json
+            // ReSharper disable MemberCanBePrivate.Local  //field is assigned by json
             public int Height;
             public int Width;
             public int X;
             public int Y;
+            // ReSharper restore MemberCanBePrivate.Local
+            // ReSharper restore UnassignedField.Local
 
             public static implicit operator Rectangle(SpecRectangle f){
                 return new Rectangle(f.X, f.Y, f.Width, f.Height);
@@ -149,11 +153,14 @@ namespace Drydock.UI.Widgets{
         #region Nested type: ToolbarCtorData
 
         struct ToolbarCtorData{
+            // ReSharper disable UnassignedField.Local
             public Color BackgroundColor; //unimplemented
             public string[] ButtonIcons;
             public SpecRectangle Dimensions;
             public int NumButtons;
-            [JsonConverter(typeof (ToolbarOrientationConverter))] public ToolbarOrientation Orientation;
+            //[JsonConverter(typeof(ToolbarOrientationConverter))]
+            public ToolbarOrientation Orientation;
+            // ReSharper restore UnassignedField.Local
         }
 
         #endregion

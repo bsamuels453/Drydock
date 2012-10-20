@@ -242,10 +242,8 @@ namespace Drydock.UI{
 
             JObject obj = JObject.Parse(str);
             var depthLevelSerializer = new JsonSerializer();
-            depthLevelSerializer.Converters.Add(new DepthLevelConverter());
+            //depthLevelSerializer.Converters.Add(new DepthLevelConverter());
 
-
-            //try{
             var jComponents = obj["Components"];
             if (jComponents != null)
                 Components = jComponents.ToObject<Dictionary<string, JObject>>();
