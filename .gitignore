@@ -25,7 +25,12 @@ Thumbs.db
 *.vsmdi
 *.sbr
 TestProject3*/
-bin*/
+*.exe
+*.application
+*.xnb
+*.exe.manifest
+*.pdb
+*.dll
 obj*/
 [Rr]elease*/
 _ReSharper*/
