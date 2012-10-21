@@ -9,7 +9,9 @@
             set{
                 int oldValue = _value;
                 _value = value;
-                RefModCallback.Invoke(this, oldValue, _value);
+                if (RefModCallback != null){
+                    RefModCallback.Invoke(this, oldValue, _value);
+                }
             }
         }
 
