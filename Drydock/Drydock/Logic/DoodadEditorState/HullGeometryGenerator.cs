@@ -18,11 +18,11 @@ namespace Drydock.Logic.DoodadEditorState{
         const float _metersPerDeck = 2.13f;
         const int _numHorizontalPrimitives = 32; //welp
         const float _floorSelectionMeshWidth = 0.1f; //1 decimeter
-        const float _wallSelectionMeshWidth = 2f;
+        const float _wallSelectionMeshWidth = 1f;
         readonly int _primHeightPerDeck;
         public HullGeometryInfo Resultant;
 
-        //todo: clean up all these fields, they should be passing between methods, not left here like global garbage
+        //todo: clean up all these fields, they should be passing between methods, not l    eft here like global garbage
         List<Vector3[,]> _deckFloorMesh;
         List<List<List<Vector3>>> _deckVertexes; // deck->levels of deck vertexes->vertexes for each level 
         List<List<Vector3>> _layerVerts;
@@ -320,8 +320,9 @@ namespace Drydock.Logic.DoodadEditorState{
         void GenerateFloorSelectionMesh(BoundingBox[][] referenceBoxes){
             Resultant.DeckFloorBoundingBoxes = SubdivideBoundingBoxes(referenceBoxes, _floorSelectionMeshWidth);
 
-            //for walls, we don't need boundingboxes, only the vertexes of the bounding boxes
-            var wallSelectionBoxes = SubdivideBoundingBoxes(referenceBoxes, _wallSelectionMeshWidth);
+
+            Resultant.LowResFloorBoundingBoxes = SubdivideBoundingBoxes(referenceBoxes, _wallSelectionMeshWidth);
+            var wallSelectionBoxes = Resultant.LowResFloorBoundingBoxes;
             var wallSelectionPoints = new List<List<Vector3>>();
             //generate vertexes of the bounding boxes
 
@@ -433,6 +434,7 @@ namespace Drydock.Logic.DoodadEditorState{
     internal struct HullGeometryInfo{
         public Vector3 CenterPoint;
         public BoundingBox[][] DeckFloorBoundingBoxes;
+        public BoundingBox[][] LowResFloorBoundingBoxes;
         public ShipGeometryBuffer[] DeckFloorBuffers;
         public Vector3[][] DeckFloorVertexes;
         public ShipGeometryBuffer[] DeckWallBuffers;
