@@ -1,9 +1,9 @@
 ﻿namespace Drydock.Utilities.ReferenceTypes{
-    delegate void RefModCallback(IntRef caller, int oldValue, int newValue);
+    delegate void IntModCallback(IntRef caller, int oldValue, int newValue);
     internal class IntRef{
         int _value;
 
-        public event RefModCallback RefModCallback;
+        public event IntModCallback RefModCallback;
 
         public int Value{
             get { return _value; }
