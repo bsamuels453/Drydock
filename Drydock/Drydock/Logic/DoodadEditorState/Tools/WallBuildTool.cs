@@ -125,6 +125,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             var ray = new Ray(nearPoint, direction);
 
             float? ndist;
+            bool intersectionFound = false;
             for (int i = 0; i < _deckFloorBoundingboxes[_curDeck.Value].Length; i++) {
                 if ((ndist = ray.Intersects(_deckFloorBoundingboxes[_curDeck.Value][i])) != null) {
                     var rayTermination = ray.Position + ray.Direction*(float) ndist;
@@ -135,6 +136,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                         distList.Add(Vector3.Distance(rayTermination, _deckFloorVertexes[_curDeck.Value][point]));
                     }
                     float f = distList.Min();
+
                     int ptIdx = distList.IndexOf(f);
 
                     var verts = new VertexPositionColor[2];
@@ -142,14 +144,19 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     verts[1] = new VertexPositionColor(
                         new Vector3(
                             _deckFloorVertexes[_curDeck.Value][ptIdx].X,
-                            _deckFloorVertexes[_curDeck.Value][ptIdx].Y + 10,
+                            _deckFloorVertexes[_curDeck.Value][ptIdx].Y + 10f,
                             _deckFloorVertexes[_curDeck.Value][ptIdx].Z
                             ),
                         Color.White
                         );
                     _selectionBuff.Vertexbuffer.SetData(verts);
                     _selectionBuff.IsEnabled = true;
+                    intersectionFound = true;
+                    break;
                 }
+            }
+            if(!intersectionFound){
+                _selectionBuff.IsEnabled = false;
             }
         }
 
