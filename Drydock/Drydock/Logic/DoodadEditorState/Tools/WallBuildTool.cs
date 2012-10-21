@@ -87,7 +87,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                             ),
                         Color.White
                         );
-                    int h = 5;
                     _selectionBuff.Vertexbuffer.SetData(verts);
                     _selectionBuff.IsEnabled = true;
                 }
