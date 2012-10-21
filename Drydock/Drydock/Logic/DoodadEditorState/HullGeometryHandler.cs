@@ -43,7 +43,7 @@ namespace Drydock.Logic.DoodadEditorState{
                 buffer.CullMode = CullMode.None;
             }
 
-            var buttonGen = new ButtonGenerator("DToolbarButton.json");
+            var buttonGen = new ButtonGenerator("ToolbarButton.json");
             buttonGen.X = 50;
             buttonGen.Y = 50;
             buttonGen.TextureName = "uparrow";
