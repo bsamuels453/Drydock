@@ -15,4 +15,24 @@
 
         public event IntModCallback RefModCallback;
     }
+
+    internal class IntRefLambda{
+        #region Delegates
+
+        public delegate int IntLambdaDelegate(int input);
+
+        #endregion
+
+        readonly IntRef _reference;
+        readonly IntLambdaDelegate _function;
+
+        public IntRefLambda(IntRef reference, IntLambdaDelegate functionToApply){
+            _reference = reference;    
+            _function = functionToApply;
+        }
+
+        public int Value{
+            get { return _function.Invoke(_reference.Value); }
+        }
+    }
 }
