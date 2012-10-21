@@ -140,7 +140,14 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     int ptIdx = distList.IndexOf(f);
 
                     var verts = new VertexPositionColor[2];
-                    verts[0] = new VertexPositionColor(_deckFloorVertexes[_curDeck.Value][ptIdx], Color.White);
+                    verts[0] = new VertexPositionColor(
+                        new Vector3(
+                        _deckFloorVertexes[_curDeck.Value][ptIdx].X,
+                        _deckFloorVertexes[_curDeck.Value][ptIdx].Y+0.03f,
+                        _deckFloorVertexes[_curDeck.Value][ptIdx].Z
+                        ), 
+                        Color.White
+                        );
                     verts[1] = new VertexPositionColor(
                         new Vector3(
                             _deckFloorVertexes[_curDeck.Value][ptIdx].X,
