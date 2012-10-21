@@ -30,7 +30,7 @@ namespace Drydock.UI.Widgets{
         readonly int _numButtons;
         readonly ToolbarOrientation _orientation;
 
-        public Button[] ToolbarButtons; //be nice to find a way to make this readonly to public since properties cant do it
+        public Button[] ToolbarButtons;
         IToolbarTool _activeTool;
 
         public Toolbar(string path){
