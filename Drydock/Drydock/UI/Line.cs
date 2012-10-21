@@ -152,20 +152,36 @@ namespace Drydock.UI{
 
         #region IUIElement Members
 
-        public TComponent GetComponent<TComponent>(){
-            if (Components != null){
-                foreach (IUIComponent component in Components){
-                    if (component.GetType() == typeof (TComponent)){
-                        return (TComponent) component;
+        public TComponent GetComponent<TComponent>(string identifier = null) {
+            if (Components != null) {
+                foreach (IUIComponent component in Components) {
+                    if (component is TComponent) {
+                        if (identifier != null) {
+                            if (component.Identifier == identifier) {
+                                return (TComponent)component;
+                            }
+                            continue;
+                        }
+                        return (TComponent)component;
                     }
                 }
             }
-            throw new Exception("Request made to a Line object for a component that did not exist.");
+            throw new Exception("Request made to a line object for a component that did not exist.");
         }
 
-        public bool DoesComponentExist<TComponent>(){
-            if (Components != null){
-                return Components.OfType<TComponent>().Any();
+        public bool DoesComponentExist<TComponent>(string identifier = null) {
+            if (Components != null) {
+                foreach (var component in Components) {
+                    if (component is TComponent) {
+                        if (identifier != null) {
+                            if (component.Identifier == identifier) {
+                                return true;
+                            }
+                            continue;
+                        }
+                        return true;
+                    }
+                }
             }
             return false;
         }
@@ -258,13 +274,22 @@ namespace Drydock.UI{
             Color = obj["Color"].ToObject<Color>();           
         }
 
-        IUIComponent[] GenerateComponents(Dictionary<string, JObject> componentCtorData){
+        private IUIComponent[] GenerateComponents(Dictionary<string, JObject> componentCtorData) {
             var components = new List<IUIComponent>();
 
             foreach (var data in componentCtorData){
-                switch (data.Key){
+                string str = data.Key;
+                //when there are multiple components, they are named "Componentname_n" where n is the number of the component
+                //gotta remove that for the switch, if it exists
+                string identifier = "";
+                if (str.Contains('_')){
+                    identifier = str.Substring(str.IndexOf('_'), str.Count());
+                    str = str.Substring(0, str.IndexOf('_'));
+                }
+
+                switch (str) {
                     case "FadeComponent":
-                        components.Add(FadeComponent.ConstructFromObject(data.Value));
+                        components.Add(FadeComponent.ConstructFromObject(data.Value, identifier));
                         break;
                     case "DraggableComponent":
                         components.Add(DraggableComponent.ConstructFromObject(data.Value));
@@ -273,7 +298,7 @@ namespace Drydock.UI{
                         components.Add(PanelComponent.ConstructFromObject(data.Value));
                         break;
                     case "HighlightComponent":
-                        components.Add(HighlightComponent.ConstructFromObject(data.Value));
+                        components.Add(HighlightComponent.ConstructFromObject(data.Value, identifier));
                         break;
                 }
             }

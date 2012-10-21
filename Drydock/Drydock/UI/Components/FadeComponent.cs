@@ -102,15 +102,14 @@ namespace Drydock.UI.Components{
 
         #endregion
 
-        #region ctor
-
         /// <summary>
         /// </summary>
         /// <param name="defaultState"> default state of the parent object, faded or visible </param>
         /// <param name="trigger"> </param>
         /// <param name="fadeoutOpacity"> opacity level to fade out to. range 0-1f </param>
         /// <param name="fadeDuration"> the time it takes for sprite to fade out in milliseconds </param>
-        public FadeComponent(FadeState defaultState, FadeTrigger trigger = DefaultTrigger, float fadeoutOpacity = DefaultFadeoutOpacity, float fadeDuration = DefaultFadeDuration){
+        /// <param name="identifier"> </param>
+        public FadeComponent(FadeState defaultState, FadeTrigger trigger = DefaultTrigger, float fadeoutOpacity = DefaultFadeoutOpacity, float fadeDuration = DefaultFadeDuration, string identifier=""){
             _fadeoutOpacity = fadeoutOpacity;
             _fadeDuration = fadeDuration*10000; //10k ticks in a millisecond
             _isInTransition = false;
@@ -119,9 +118,8 @@ namespace Drydock.UI.Components{
             _defaultState = defaultState;
             _fadeTrigger = trigger;
             _isEnabled = true;
+            Identifier = identifier;
         }
-
-        #endregion
 
         #region IAcceptMouseEntryEvent Members
 
@@ -177,6 +175,11 @@ namespace Drydock.UI.Components{
                 }
                 _prevUpdateTimeIndex = DateTime.Now.Ticks;
             }
+        }
+
+        public string Identifier {
+            get;
+            private set;
         }
 
         #endregion
@@ -290,9 +293,6 @@ namespace Drydock.UI.Components{
                     }
 
                     break;
-
-                default:
-                    break;
             }
         }
 
@@ -300,7 +300,7 @@ namespace Drydock.UI.Components{
 
         public event FadeStateChange FadeStateChangeDispatcher;
 
-        public static FadeComponent ConstructFromObject(JObject obj) {
+        public static FadeComponent ConstructFromObject(JObject obj, string identifier) {
             var ctorData = obj.ToObject<FadeComponentCtorData>();
 
             if (ctorData.DefaultState == FadeState.InvalidState)//trivial: why no default state for this?
@@ -328,7 +328,7 @@ namespace Drydock.UI.Components{
             else
                 fadeDuration = DefaultFadeDuration;
 
-            return new FadeComponent(defaultState, fadeTrigger, fadeOpacity, fadeDuration);
+            return new FadeComponent(defaultState, fadeTrigger, fadeOpacity, fadeDuration, identifier);
         }
 
         struct FadeComponentCtorData{

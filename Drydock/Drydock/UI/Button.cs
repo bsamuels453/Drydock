@@ -140,10 +140,16 @@ namespace Drydock.UI{
 
         #region other IUIElement derived methods
 
-        public TComponent GetComponent<TComponent>(){
+        public TComponent GetComponent<TComponent>(string identifier=null){
             if (Components != null){
                 foreach (IUIComponent component in Components){
                     if (component is TComponent){
+                        if (identifier != null){
+                            if (component.Identifier == identifier) {
+                                return (TComponent)component;
+                            }
+                            continue;
+                        }
                         return (TComponent) component;
                     }
                 }
@@ -151,9 +157,19 @@ namespace Drydock.UI{
             throw new Exception("Request made to a Button object for a component that did not exist.");
         }
 
-        public bool DoesComponentExist<TComponent>(){
+        public bool DoesComponentExist<TComponent>(string identifier = null) {
             if (Components != null){
-                return Components.OfType<TComponent>().Any();
+                foreach (var component in Components){
+                    if (component is TComponent){
+                        if (identifier != null){
+                            if (component.Identifier == identifier){
+                                return true;
+                            }
+                            continue;
+                        }
+                        return true;
+                    }
+                }
             }
             return false;
         }
@@ -368,13 +384,15 @@ namespace Drydock.UI{
                 string str = data.Key;
                 //when there are multiple components, they are named "Componentname_n" where n is the number of the component
                 //gotta remove that for the switch, if it exists
+                string identifier = "";
                 if (str.Contains('_')){
-                    str = str.Substring(0, str.Length - 2);
+                    identifier = str.Substring(str.IndexOf('_')+1, str.Count() - str.IndexOf('_')-1);
+                    str = str.Substring(0, str.IndexOf('_'));
                 }
 
                 switch (str) {
                     case "FadeComponent":
-                        components.Add(FadeComponent.ConstructFromObject(data.Value));
+                        components.Add(FadeComponent.ConstructFromObject(data.Value, identifier));
                         break;
                     case "DraggableComponent":
                         components.Add(DraggableComponent.ConstructFromObject(data.Value));
@@ -383,7 +401,7 @@ namespace Drydock.UI{
                         components.Add(PanelComponent.ConstructFromObject(data.Value));
                         break;
                     case "HighlightComponent":
-                        components.Add(HighlightComponent.ConstructFromObject(data.Value));
+                        components.Add(HighlightComponent.ConstructFromObject(data.Value, identifier));
                         break;
                 }
             }

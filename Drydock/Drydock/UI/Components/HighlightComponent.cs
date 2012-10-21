@@ -27,10 +27,11 @@ namespace Drydock.UI.Components{
         Sprite2D _highlightSprite;
         IUIInteractiveElement _owner;
 
-        public HighlightComponent(string highlightTexture, HighlightTrigger highlightTrigger, float highlightTexOpacity = 0.3f){
+        public HighlightComponent(string highlightTexture, HighlightTrigger highlightTrigger, float highlightTexOpacity = 0.3f, string identifier=""){
             _highlightTexture = highlightTexture;
             _highlightTrigger = highlightTrigger;
             _highlightTexOpacity = highlightTexOpacity;
+            Identifier = identifier;
             IsEnabled = true;
         }
 
@@ -105,6 +106,11 @@ namespace Drydock.UI.Components{
         public void Update(){
         }
 
+        public string Identifier {
+            get;
+            private set;
+        }
+
         #endregion
 
         public void ProcHighlight(){
@@ -121,13 +127,13 @@ namespace Drydock.UI.Components{
             _highlightSprite.Y += dy;
         }
 
-        public static HighlightComponent ConstructFromObject(JObject obj){
+        public static HighlightComponent ConstructFromObject(JObject obj, string identifier=""){
             var data = obj.ToObject<HighlightComponentCtorData>();
 
             if (data.HighlightTexture == null || data.HighlightTrigger == HighlightTrigger.InvalidTrigger)
                 throw new Exception("not enough information to generate highlight component");
 
-            return new HighlightComponent(data.HighlightTexture, data.HighlightTrigger, data.HighlightTexOpacity);
+            return new HighlightComponent(data.HighlightTexture, data.HighlightTrigger, data.HighlightTexOpacity, identifier);
         }
 
         #region Nested type: HighlightComponentCtorData

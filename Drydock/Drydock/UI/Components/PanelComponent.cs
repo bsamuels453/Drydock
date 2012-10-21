@@ -54,6 +54,11 @@ namespace Drydock.UI.Components{
         public void Update(){
         }
 
+        public string Identifier {
+            get;
+            private set;
+        }
+
         #endregion
 
         void PreventClickFallthrough(ref bool allowLeftButtonInterpretation, Point mousePos){

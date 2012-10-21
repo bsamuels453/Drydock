@@ -15,5 +15,7 @@
         /// </summary>
         void Update();
 
+        string Identifier { get; }
+
     }
 }

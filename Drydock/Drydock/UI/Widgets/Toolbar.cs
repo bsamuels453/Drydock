@@ -59,7 +59,7 @@ namespace Drydock.UI.Widgets{
 
             #region create the buttons
 
-            var buttonGen = new ButtonGenerator("DToolbarButton.json");
+            var buttonGen = new ButtonGenerator("ToolbarButton.json");
             ToolbarButtons = new Button[ctorData.NumButtons];
 
             int xPos = _position.X;

@@ -115,6 +115,11 @@ namespace Drydock.UI.Components{
         public void Update(){
         }
 
+        public string Identifier {
+            get;
+            private set;
+        }
+
         #endregion
 
         public event OnComponentDrag DragMovementDispatcher;
