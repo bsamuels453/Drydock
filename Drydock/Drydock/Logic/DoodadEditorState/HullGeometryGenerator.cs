@@ -22,7 +22,7 @@ namespace Drydock.Logic.DoodadEditorState{
         readonly int _primHeightPerDeck;
         public HullGeometryInfo Resultant;
 
-        //todo: clean up all these fields, they should be passing between methods, not l    eft here like global garbage
+        //todo: clean up all these fields, they should be passing between methods, not left here like global garbage
         List<Vector3[,]> _deckFloorMesh;
         List<List<List<Vector3>>> _deckVertexes; // deck->levels of deck vertexes->vertexes for each level 
         List<List<Vector3>> _layerVerts;
@@ -387,8 +387,15 @@ namespace Drydock.Logic.DoodadEditorState{
                             }
                         }
 
+                        //this will prevent new boxes from being created that would extend past the final bounding box
+                        if (boxIndex == referenceBoxes[layer].Count() - 1 && prevBoxEndX+tileWidth>curBox.Max.X){
+                            break;
+                        }
+
                         //now create the row
-                        int zNumBoxes = (int) ((curBox.Min.Z - curBox.Max.Z)/tileWidth);
+                        int curZBoxes = (int) ((curBox.Min.Z - curBox.Max.Z)/tileWidth);
+                        int zNumBoxes = curZBoxes;
+
                         float zStart = curBox.Max.Z;
                         for (int z = -zNumBoxes/2; z < zNumBoxes/2; z++){
                             floorSelectionBoxes.Last().Add(
@@ -414,8 +421,8 @@ namespace Drydock.Logic.DoodadEditorState{
                             if (prevBoxEndX + tileWidth > hullEnd){
                                 floorVertexes.Last().Add(new Vector3(prevBoxEndX + tileWidth, curBox.Max.Y, (z + 1)*tileWidth));
                             }
-                        }
 
+                        }
                         //make sure this reference box will be relevant for the next row, if not, break the loop
                         prevBoxEndX += tileWidth;
                         if (prevBoxEndX > curBox.Max.X)
