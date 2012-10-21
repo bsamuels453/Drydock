@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using Drydock.Control;
+using Drydock.UI.Components;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -114,7 +115,7 @@ namespace Drydock.UI.Widgets{
 
         #endregion
 
-        public void SetButtonTool(int buttonIdentifier, IToolbarTool tool){
+        public void BindButtonToTool(int buttonIdentifier, IToolbarTool tool){
             Debug.Assert(buttonIdentifier < _buttonTools.Length);
             _buttonTools[buttonIdentifier] = tool;
         }
@@ -126,8 +127,14 @@ namespace Drydock.UI.Widgets{
 
         void HandleButtonClick(int identifier){
             Debug.Assert(identifier < _buttonTools.Length);
+            foreach (var button in ToolbarButtons){
+                button.GetComponent<HighlightComponent>("ClickHoldEffect").UnprocHighlight();
+                button.GetComponent<HighlightComponent>("HoverMask").IsEnabled = true;
+            }
             _activeTool.Disable();
             _buttonTools[identifier].Enable();
+            ToolbarButtons[identifier].GetComponent<HighlightComponent>("ClickHoldEffect").ProcHighlight();
+            ToolbarButtons[identifier].GetComponent<HighlightComponent>("HoverMask").IsEnabled = false;
             _activeTool = _buttonTools[identifier];
         }
 
