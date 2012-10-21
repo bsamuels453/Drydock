@@ -26,6 +26,7 @@ namespace Drydock.UI.Components{
 
         Sprite2D _highlightSprite;
         IUIInteractiveElement _owner;
+        bool _isEnabled;
 
         public HighlightComponent(string highlightTexture, HighlightTrigger highlightTrigger, float highlightTexOpacity = 0.3f, string identifier=""){
             _highlightTexture = highlightTexture;
@@ -77,7 +78,14 @@ namespace Drydock.UI.Components{
 
         #region IUIComponent Members
 
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled{
+            get { return _isEnabled; }
+            set { 
+                _isEnabled = value;
+                if (!_isEnabled)
+                    _highlightSprite.Opacity = 0;
+            }
+        }
 
         public void ComponentCtor(IUIElement owner, ButtonEventDispatcher ownerEventDispatcher){
             _owner = (IUIInteractiveElement) owner;
