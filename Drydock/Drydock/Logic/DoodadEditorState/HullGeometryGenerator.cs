@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Drydock.Render;
 using Drydock.Utilities;
@@ -18,14 +19,17 @@ namespace Drydock.Logic.DoodadEditorState{
         const float _metersPerDeck = 2.13f;
         const int _numHorizontalPrimitives = 32; //welp
         const float _floorSelectionMeshWidth = 0.1f; //1 decimeter
-        const float _wallSelectionMeshWidth = 1f;
+        const float _wallSelectionMeshWidth = 0.3f;
         readonly int _primHeightPerDeck;
         public HullGeometryInfo Resultant;
+        float _berth;
+
 
         //todo: clean up all these fields, they should be passing between methods, not left here like global garbage
         List<Vector3[,]> _deckFloorMesh;
         List<List<List<Vector3>>> _deckVertexes; // deck->levels of deck vertexes->vertexes for each level 
         List<List<Vector3>> _layerVerts;
+        float _length;
         int _numDecks;
         Vector3[,] _totalNormals;
 
@@ -37,7 +41,7 @@ namespace Drydock.Logic.DoodadEditorState{
             GenerateDecks();
             GenerateDeckWallBuffers();
             GenerateDeckFloorBuffers();
-            GenerateBoundingBoxes();
+            GenerateFloorBoundingBoxes();
         }
 
         //todo: break up this method into submethods for the sake of cleanliness.
@@ -53,8 +57,8 @@ namespace Drydock.Logic.DoodadEditorState{
 
             //get the draft and the berth
             float draft = sideCurveInfo[1].Pos.Y;
-            float berth = topCurveInfo[1].Pos.Y;
-            float length = sideCurveInfo[2].Pos.X;
+            _berth = topCurveInfo[1].Pos.Y;
+            _length = sideCurveInfo[2].Pos.X;
             _numDecks = (int) (draft/_metersPerDeck);
             Resultant.NumDecks = _numDecks;
             int numVerticalVertexes = _numDecks*_primHeightPerDeck + _primHeightPerDeck + 1;
@@ -77,9 +81,8 @@ namespace Drydock.Logic.DoodadEditorState{
                     if (xzHullIntercepts[xzHullIntercepts.Count - 1].Count == 1){ //this happens at the very bottom of the ship
                         xzHullIntercepts[xzHullIntercepts.Count - 1].Add(xzHullIntercepts[xzHullIntercepts.Count - 1][0]);
                     }
-                    else{
+                    else
                         throw new Exception("more/less than two independent solutions found for a given dependent value");
-                    }
                 }
             }
 
@@ -107,7 +110,7 @@ namespace Drydock.Logic.DoodadEditorState{
                     point.X = keelIntersect.X;
 
                     var topIntersect = topPtGen.GetValueFromIndependent(xPos);
-                    float profileXScale = (topIntersect.Y - topCurveInfo[0].Pos.Y)/(berth/2f);
+                    float profileXScale = (topIntersect.Y - topCurveInfo[0].Pos.Y)/(_berth/2f);
                     //float profileXScale = topIntersect.Y  / berth;
 
                     var scaledProfile = new List<BezierInfo>();
@@ -287,37 +290,127 @@ namespace Drydock.Logic.DoodadEditorState{
             Resultant.CenterPoint = p;
         }
 
-        void GenerateBoundingBoxes(){
-            var floorBounding = new BoundingBox[_deckFloorMesh.Count][];
+        void GenerateFloorBoundingBoxes(){
+            var deckBoundingBoxes = new BoundingBox[_deckFloorMesh.Count][];
 
-            for (int deck = 0; deck < _deckFloorMesh.Count; deck++){
-                floorBounding[deck] = new BoundingBox[_deckFloorMesh[0].GetLength(1) - 3];
-                int i = 0;
-                for (int z = 1; z < _deckFloorMesh[0].GetLength(1) - 2; z++){
-                    Vector3 endBox;
-                    Vector3 startBox;
+            for (int layer = 0; layer < _deckFloorMesh.Count; layer++){
+                var layerBBoxes = new List<BoundingBox>();
+                float yLayer = _deckFloorMesh[layer][0, 0].Y;
 
-                    //modify the starting point for the bounding box so it doesnt go outside the hull
-                    if (_deckFloorMesh[deck][0, z].Z > _deckFloorMesh[deck][0, z - 1].Z)
-                        startBox = _deckFloorMesh[deck][0, z];
+                float boxCreatorPos = _deckFloorMesh[layer][1, 0].X;
+
+                while (boxCreatorPos < _deckFloorMesh[layer][1, 31].X){
+                    int index = -1; //index of the first of the two set of vertexes to use when determining 
+                    for (int i = 0; i < _numHorizontalPrimitives; i++){
+                        if (boxCreatorPos >= _deckFloorMesh[layer][1, i].X && boxCreatorPos < _deckFloorMesh[layer][1, i + 1].X){
+                            index = i;
+                            break;
+                        }
+                    }
+                    Debug.Assert(index != -1);
+
+                    float startX = _deckFloorMesh[layer][0, index].X;
+                    float endX = _deckFloorMesh[layer][0, index + 1].X;
+                    float startZ = _deckFloorMesh[layer][0, index].Z;
+                    float endZ = _deckFloorMesh[layer][0, index + 1].Z;
+                    float zBounding1, zBounding2;
+
+                    var interpolator = new Interpolate(
+                        startZ,
+                        endZ,
+                        endX - startX
+                        );
+
+                    if (boxCreatorPos + _wallSelectionMeshWidth < endX){ //easy scenario where we only have to take one line into consideration when finding how many boxes wide should be
+                        zBounding1 = interpolator.GetLinearValue(boxCreatorPos - startX);
+                        zBounding2 = interpolator.GetLinearValue(boxCreatorPos + _wallSelectionMeshWidth - startX);
+                    }
+                    else{
+                        zBounding1 = interpolator.GetLinearValue(boxCreatorPos - startX);
+                        if (index + 2 != _numHorizontalPrimitives){
+                            var interpolator2 = new Interpolate(
+                                _deckFloorMesh[layer][0, index + 1].Z,
+                                _deckFloorMesh[layer][0, index + 2].Z,
+                                _deckFloorMesh[layer][0, index + 2].X - _deckFloorMesh[layer][0, index+1].X
+                                );
+
+                            zBounding2 = interpolator2.GetLinearValue(boxCreatorPos + _wallSelectionMeshWidth - _deckFloorMesh[layer][0, index + 1].X);
+                        }
+                        else{
+                            zBounding2 = 0;
+                        }
+                    }
+
+                    int zBoxes1 = (int)(zBounding1 / _wallSelectionMeshWidth);
+                    int zBoxes2 = (int)(zBounding2 / _wallSelectionMeshWidth);
+
+                    int numZBoxes;
+                    if (zBoxes1 < zBoxes2)
+                        numZBoxes = zBoxes1;
                     else
-                        startBox = new Vector3(_deckFloorMesh[deck][0, z].X, _deckFloorMesh[deck][0, z].Y, _deckFloorMesh[deck][0, z + 1].Z);
+                        numZBoxes = zBoxes2;
 
 
-                    //modify the ending point for the bounding box so it doesnt go outside the hull
-                    if (_deckFloorMesh[deck][2, z].Z < _deckFloorMesh[deck][2, z + 1].Z)
-                        endBox = _deckFloorMesh[deck][2, z + 1];
-                    else
-                        endBox = new Vector3(_deckFloorMesh[deck][2, z + 1].X, _deckFloorMesh[deck][2, z + 1].Y, _deckFloorMesh[deck][2, z].Z);
+                    for (int i = -numZBoxes; i < numZBoxes; i++){
+                        layerBBoxes.Add(
+                            new BoundingBox(
+                                new Vector3(
+                                    boxCreatorPos,
+                                    yLayer,
+                                    i*_wallSelectionMeshWidth
+                                    ),
+                                new Vector3(
+                                    boxCreatorPos + _wallSelectionMeshWidth,
+                                    yLayer,
+                                    (i + 1)*_wallSelectionMeshWidth
+                                    )
+                                )
+                            );
+                    }
 
-                    floorBounding[deck][i] = new BoundingBox(startBox, endBox);
-                    i++;
+                    boxCreatorPos += _wallSelectionMeshWidth;
+                }
+                deckBoundingBoxes[layer] = layerBBoxes.ToArray();
+            }
+            Resultant.DeckFloorBoundingBoxes = deckBoundingBoxes;
+            Resultant.LowResFloorBoundingBoxes = deckBoundingBoxes;
+
+            var wallSelectionBoxes = Resultant.LowResFloorBoundingBoxes;
+            var wallSelectionPoints = new List<List<Vector3>>();
+            //generate vertexes of the bounding boxes
+
+            for (int layer = 0; layer < wallSelectionBoxes.Count(); layer++){
+                wallSelectionPoints.Add(new List<Vector3>());
+                foreach (var box in wallSelectionBoxes[layer]){
+                    wallSelectionPoints.Last().Add(box.Min);
+                    wallSelectionPoints.Last().Add(box.Max);
+                    wallSelectionPoints.Last().Add(new Vector3(box.Max.X, box.Min.Y, box.Max.Z));
+                    wallSelectionPoints.Last().Add(new Vector3(box.Min.X, box.Max.Y, box.Max.Z));
+                }
+
+                //now we clear out all of the double entries
+                for (int box = 0; box < wallSelectionPoints[layer].Count(); box++){
+                    for (int otherBox = 0; otherBox < wallSelectionPoints[layer].Count(); otherBox++){
+                        if (box == otherBox)
+                            continue;
+
+                        if (wallSelectionPoints[layer][box] == wallSelectionPoints[layer][otherBox]){
+                            wallSelectionPoints[layer].RemoveAt(otherBox);
+                        }
+                    }
                 }
             }
-            GenerateFloorSelectionMesh(floorBounding);
-        }
 
-        void GenerateFloorSelectionMesh(BoundingBox[][] referenceBoxes){
+            Resultant.DeckFloorVertexes =
+                (
+                    from layer in wallSelectionPoints
+                    select layer.ToArray()
+                ).ToArray();
+        }
+    }
+
+
+    /*void GenerateFloorSelectionMesh(BoundingBox[][] referenceBoxes){
             Resultant.DeckFloorBoundingBoxes = SubdivideBoundingBoxes(referenceBoxes, _floorSelectionMeshWidth);
 
 
@@ -354,97 +447,129 @@ namespace Drydock.Logic.DoodadEditorState{
                     select layer.ToArray()
                 ).ToArray();
         }
+        */
+}
 
-        //this function takes the previously generated bounding boxes as a reference, and generates the correct scale
-        BoundingBox[][] SubdivideBoundingBoxes(BoundingBox[][] referenceBoxes, float tileWidth){
-            var floorSelectionBoxes = new List<List<BoundingBox>>();
-            var floorVertexes = new List<List<Vector3>>();
+//this is only used for data transfer between this class and hullgeometryhandler
+internal struct HullGeometryInfo{
+    public Vector3 CenterPoint;
+    public BoundingBox[][] DeckFloorBoundingBoxes;
+    public ShipGeometryBuffer[] DeckFloorBuffers;
+    public Vector3[][] DeckFloorVertexes;
+    public ShipGeometryBuffer[] DeckWallBuffers;
+    public BoundingBox[][] LowResFloorBoundingBoxes;
+    public int NumDecks;
+}
 
-            for (int layer = 0; layer < referenceBoxes.Count(); layer++){
-                floorSelectionBoxes.Add(new List<BoundingBox>());
-                floorVertexes.Add(new List<Vector3>());
 
-                float prevBoxEndX = referenceBoxes[layer][0].Min.X;
-                float hullEnd = referenceBoxes[layer][referenceBoxes[layer].Count() - 1].Max.X;
-                BoundingBox nextBox = new BoundingBox();
-                for (int boxIndex = 0; boxIndex < referenceBoxes[layer].Count(); boxIndex++){
-                    BoundingBox curBox = referenceBoxes[layer][boxIndex];
-                    if (boxIndex != referenceBoxes[layer].Count() - 1){
-                        nextBox = referenceBoxes[layer][boxIndex + 1];
-                    }
+/*var floorBounding = new BoundingBox[_deckFloorMesh.Count][];
 
-                    while (true){
-                        //first check if this next row is going to be overlapping with another boundingbox reference
-                        //if so, make the decision on whether this box should handle the restrictions for this row or if the next should
-                        //make sure this doesn't run when the last box is being analyzed since it wont have a nextBox
-                        if (prevBoxEndX + tileWidth > curBox.Max.X && boxIndex != referenceBoxes[layer].Count() - 1){
-                            if (curBox.Min.Z < nextBox.Min.Z){
-                                //we handle this row, but this loop will break after it's done
-                            }
-                            else{
-                                //this row can be restricted by the next box
-                                break;
-                            }
-                        }
+for (int deck = 0; deck < _deckFloorMesh.Count; deck++){
+    floorBounding[deck] = new BoundingBox[_deckFloorMesh[0].GetLength(1) - 3];
+    int i = 0;
+    for (int z = 1; z < _deckFloorMesh[0].GetLength(1) - 2; z++){
+        Vector3 endBox;
+        Vector3 startBox;
 
-                        //this will prevent new boxes from being created that would extend past the final bounding box
-                        if (boxIndex == referenceBoxes[layer].Count() - 1 && prevBoxEndX+tileWidth>curBox.Max.X){
-                            break;
-                        }
+        //modify the starting point for the bounding box so it doesnt go outside the hull
+        if (_deckFloorMesh[deck][0, z].Z > _deckFloorMesh[deck][0, z - 1].Z)
+            startBox = _deckFloorMesh[deck][0, z];
+        else
+            startBox = new Vector3(_deckFloorMesh[deck][0, z].X, _deckFloorMesh[deck][0, z].Y, _deckFloorMesh[deck][0, z + 1].Z);
 
-                        //now create the row
-                        int curZBoxes = (int) ((curBox.Min.Z - curBox.Max.Z)/tileWidth);
-                        int zNumBoxes = curZBoxes;
 
-                        float zStart = curBox.Max.Z;
-                        for (int z = -zNumBoxes/2; z < zNumBoxes/2; z++){
-                            floorSelectionBoxes.Last().Add(
-                                new BoundingBox(
-                                    new Vector3(
-                                        prevBoxEndX,
-                                        curBox.Max.Y,
-                                        z*tileWidth
-                                        ),
-                                    new Vector3(
-                                        prevBoxEndX + tileWidth,
-                                        curBox.Max.Y,
-                                        (z + 1)*tileWidth
-                                        )
-                                    )
-                                );
+        //modify the ending point for the bounding box so it doesnt go outside the hull
+        if (_deckFloorMesh[deck][2, z].Z < _deckFloorMesh[deck][2, z + 1].Z)
+            endBox = _deckFloorMesh[deck][2, z + 1];
+        else
+            endBox = new Vector3(_deckFloorMesh[deck][2, z + 1].X, _deckFloorMesh[deck][2, z + 1].Y, _deckFloorMesh[deck][2, z].Z);
 
-                            //now add vertex points to that list
-                            floorVertexes.Last().Add(new Vector3(prevBoxEndX, curBox.Max.Y, z*tileWidth));
-                            if (z == (zNumBoxes/2 - 1)){
-                                floorVertexes.Last().Add(new Vector3(prevBoxEndX + tileWidth, curBox.Max.Y, z*tileWidth));
-                            }
-                            if (prevBoxEndX + tileWidth > hullEnd){
-                                floorVertexes.Last().Add(new Vector3(prevBoxEndX + tileWidth, curBox.Max.Y, (z + 1)*tileWidth));
-                            }
-
-                        }
-                        //make sure this reference box will be relevant for the next row, if not, break the loop
-                        prevBoxEndX += tileWidth;
-                        if (prevBoxEndX > curBox.Max.X)
-                            break;
-                    }
-                }
-            }
-            return (
-                       from layer in floorSelectionBoxes
-                       select layer.ToArray()
-                   ).ToArray();
-        }
-    }
-
-    //this is only used for data transfer between this class and hullgeometryhandler
-    internal struct HullGeometryInfo{
-        public Vector3 CenterPoint;
-        public BoundingBox[][] DeckFloorBoundingBoxes;
-        public BoundingBox[][] LowResFloorBoundingBoxes;
-        public ShipGeometryBuffer[] DeckFloorBuffers;
-        public Vector3[][] DeckFloorVertexes;
-        public ShipGeometryBuffer[] DeckWallBuffers;
-        public int NumDecks;
+        floorBounding[deck][i] = new BoundingBox(startBox, endBox);
+        i++;
     }
 }
+ */
+
+
+/*
+//this function takes the previously generated bounding boxes as a reference, and generates the correct scale
+BoundingBox[][] SubdivideBoundingBoxes(BoundingBox[][] referenceBoxes, float tileWidth){
+    var floorSelectionBoxes = new List<List<BoundingBox>>();
+    var floorVertexes = new List<List<Vector3>>();
+
+    for (int layer = 0; layer < referenceBoxes.Count(); layer++){
+        floorSelectionBoxes.Add(new List<BoundingBox>());
+        floorVertexes.Add(new List<Vector3>());
+
+        float prevBoxEndX = referenceBoxes[layer][0].Min.X;
+        float hullEnd = referenceBoxes[layer][referenceBoxes[layer].Count() - 1].Max.X;
+        BoundingBox nextBox = new BoundingBox();
+        for (int boxIndex = 0; boxIndex < referenceBoxes[layer].Count(); boxIndex++){
+            BoundingBox curBox = referenceBoxes[layer][boxIndex];
+            if (boxIndex != referenceBoxes[layer].Count() - 1){
+                nextBox = referenceBoxes[layer][boxIndex + 1];
+            }
+
+            while (true){
+                //first check if this next row is going to be overlapping with another boundingbox reference
+                //if so, make the decision on whether this box should handle the restrictions for this row or if the next should
+                //make sure this doesn't run when the last box is being analyzed since it wont have a nextBox
+                if (prevBoxEndX + tileWidth > curBox.Max.X && boxIndex != referenceBoxes[layer].Count() - 1){
+                    if (curBox.Min.Z < nextBox.Min.Z){
+                        //we handle this row, but this loop will break after it's done
+                    }
+                    else{
+                        //this row can be restricted by the next box
+                        break;
+                    }
+                }
+
+                //this will prevent new boxes from being created that would extend past the final bounding box
+                if (boxIndex == referenceBoxes[layer].Count() - 1 && prevBoxEndX+tileWidth>curBox.Max.X){
+                    break;
+                }
+
+                //now create the row
+                int curZBoxes = (int) ((curBox.Min.Z - curBox.Max.Z)/tileWidth);
+                int zNumBoxes = curZBoxes;
+
+                float zStart = curBox.Max.Z;
+                for (int z = -zNumBoxes/2; z < zNumBoxes/2; z++){
+                    floorSelectionBoxes.Last().Add(
+                        new BoundingBox(
+                            new Vector3(
+                                prevBoxEndX,
+                                curBox.Max.Y,
+                                z*tileWidth
+                                ),
+                            new Vector3(
+                                prevBoxEndX + tileWidth,
+                                curBox.Max.Y,
+                                (z + 1)*tileWidth
+                                )
+                            )
+                        );
+
+                    //now add vertex points to that list
+                    floorVertexes.Last().Add(new Vector3(prevBoxEndX, curBox.Max.Y, z*tileWidth));
+                    if (z == (zNumBoxes/2 - 1)){
+                        floorVertexes.Last().Add(new Vector3(prevBoxEndX + tileWidth, curBox.Max.Y, z*tileWidth));
+                    }
+                    if (prevBoxEndX + tileWidth > hullEnd){
+                        floorVertexes.Last().Add(new Vector3(prevBoxEndX + tileWidth, curBox.Max.Y, (z + 1)*tileWidth));
+                    }
+
+                }
+                //make sure this reference box will be relevant for the next row, if not, break the loop
+                prevBoxEndX += tileWidth;
+                if (prevBoxEndX > curBox.Max.X)
+                    break;
+            }
+        }
+    }
+    return (
+               from layer in floorSelectionBoxes
+               select layer.ToArray()
+           ).ToArray();
+}
+ */
