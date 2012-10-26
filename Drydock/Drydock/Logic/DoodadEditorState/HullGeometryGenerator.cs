@@ -18,8 +18,8 @@ namespace Drydock.Logic.DoodadEditorState{
     internal class HullGeometryGenerator{
         const float _metersPerDeck = 2.13f;
         const int _numHorizontalPrimitives = 32; //welp
-        const float _floorSelectionMeshWidth = 0.1f; //1 decimeter
-        const float _wallSelectionMeshWidth = 0.3f;
+        //const float _floorSelectionMeshWidth = 0.1f; //1 decimeter
+        const float _wallSelectionMeshWidth = 0.5f;
         readonly int _primHeightPerDeck;
         public HullGeometryInfo Resultant;
         float _berth;
@@ -291,6 +291,7 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         void GenerateFloorBoundingBoxes(){
+            //todo: break this down so it's reusable
             var deckBoundingBoxes = new BoundingBox[_deckFloorMesh.Count][];
 
             for (int layer = 0; layer < _deckFloorMesh.Count; layer++){
@@ -331,7 +332,7 @@ namespace Drydock.Logic.DoodadEditorState{
                             var interpolator2 = new Interpolate(
                                 _deckFloorMesh[layer][0, index + 1].Z,
                                 _deckFloorMesh[layer][0, index + 2].Z,
-                                _deckFloorMesh[layer][0, index + 2].X - _deckFloorMesh[layer][0, index+1].X
+                                _deckFloorMesh[layer][0, index + 2].X - _deckFloorMesh[layer][0, index + 1].X
                                 );
 
                             zBounding2 = interpolator2.GetLinearValue(boxCreatorPos + _wallSelectionMeshWidth - _deckFloorMesh[layer][0, index + 1].X);
@@ -341,8 +342,8 @@ namespace Drydock.Logic.DoodadEditorState{
                         }
                     }
 
-                    int zBoxes1 = (int)(zBounding1 / _wallSelectionMeshWidth);
-                    int zBoxes2 = (int)(zBounding2 / _wallSelectionMeshWidth);
+                    int zBoxes1 = (int) (zBounding1/_wallSelectionMeshWidth);
+                    int zBoxes2 = (int) (zBounding2/_wallSelectionMeshWidth);
 
                     int numZBoxes;
                     if (zBoxes1 < zBoxes2)
@@ -388,8 +389,8 @@ namespace Drydock.Logic.DoodadEditorState{
                     wallSelectionPoints.Last().Add(new Vector3(box.Min.X, box.Max.Y, box.Max.Z));
                 }
 
-                //now we clear out all of the double entries
-                for (int box = 0; box < wallSelectionPoints[layer].Count(); box++){
+                //now we clear out all of the double entries (stupid time hog optimization)
+                /*for (int box = 0; box < wallSelectionPoints[layer].Count(); box++){
                     for (int otherBox = 0; otherBox < wallSelectionPoints[layer].Count(); otherBox++){
                         if (box == otherBox)
                             continue;
@@ -398,7 +399,7 @@ namespace Drydock.Logic.DoodadEditorState{
                             wallSelectionPoints[layer].RemoveAt(otherBox);
                         }
                     }
-                }
+                }*/
             }
 
             Resultant.DeckFloorVertexes =
