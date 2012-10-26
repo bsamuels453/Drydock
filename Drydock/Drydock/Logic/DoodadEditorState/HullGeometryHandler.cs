@@ -24,7 +24,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
         public HullGeometryHandler(HullGeometryInfo geometryInfo){
             //CullMode.CullClockwiseFace
-            _deckWallBuffers = geometryInfo.DeckWallBuffers;
+            _deckWallBuffers = geometryInfo.HullWallBuffers;
             _deckFloorBuffers = geometryInfo.DeckFloorBuffers;
             _numDecks = geometryInfo.NumDecks;
             VisibleDecks = new IntRef();

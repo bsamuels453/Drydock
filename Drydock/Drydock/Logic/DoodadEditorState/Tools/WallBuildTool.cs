@@ -23,8 +23,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         public WallBuildTool(HullGeometryInfo hullInfo, IntRef visibleDecks){
             _isEnabled = false;
-            _deckFloorBoundingboxes = hullInfo.LowResFloorBoundingBoxes;
-            _deckFloorVertexes = hullInfo.DeckFloorVertexes;
+            _deckFloorBoundingboxes = hullInfo.DeckFloorBoundingBoxes;
+            _deckFloorVertexes = hullInfo.FloorVertexes;
             _curDeck = new IntRefLambda(visibleDecks, input => hullInfo.NumDecks - input);
             visibleDecks.RefModCallback += VisibleDeckChange;
 

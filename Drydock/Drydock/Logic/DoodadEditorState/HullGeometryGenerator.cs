@@ -18,8 +18,7 @@ namespace Drydock.Logic.DoodadEditorState{
     internal class HullGeometryGenerator{
         const float _metersPerDeck = 2.13f;
         const int _numHorizontalPrimitives = 32; //welp
-        //const float _floorSelectionMeshWidth = 0.1f; //1 decimeter
-        const float _wallSelectionMeshWidth = 0.5f;
+        const float _floorBBoxWidth = 0.5f;
         readonly int _primHeightPerDeck;
         public HullGeometryInfo Resultant;
         float _berth;
@@ -252,7 +251,7 @@ namespace Drydock.Logic.DoodadEditorState{
                 hullBuffers[i].Indexbuffer.SetData(hullIndicies);
                 hullBuffers[i].Vertexbuffer.SetData(hullVerticies);
             }
-            Resultant.DeckWallBuffers = hullBuffers;
+            Resultant.HullWallBuffers = hullBuffers;
         }
 
         void GenerateDeckFloorBuffers(){
@@ -322,9 +321,9 @@ namespace Drydock.Logic.DoodadEditorState{
                         endX - startX
                         );
 
-                    if (boxCreatorPos + _wallSelectionMeshWidth < endX){ //easy scenario where we only have to take one line into consideration when finding how many boxes wide should be
+                    if (boxCreatorPos + _floorBBoxWidth < endX){ //easy scenario where we only have to take one line into consideration when finding how many boxes wide should be
                         zBounding1 = interpolator.GetLinearValue(boxCreatorPos - startX);
-                        zBounding2 = interpolator.GetLinearValue(boxCreatorPos + _wallSelectionMeshWidth - startX);
+                        zBounding2 = interpolator.GetLinearValue(boxCreatorPos + _floorBBoxWidth - startX);
                     }
                     else{
                         zBounding1 = interpolator.GetLinearValue(boxCreatorPos - startX);
@@ -335,15 +334,15 @@ namespace Drydock.Logic.DoodadEditorState{
                                 _deckFloorMesh[layer][0, index + 2].X - _deckFloorMesh[layer][0, index + 1].X
                                 );
 
-                            zBounding2 = interpolator2.GetLinearValue(boxCreatorPos + _wallSelectionMeshWidth - _deckFloorMesh[layer][0, index + 1].X);
+                            zBounding2 = interpolator2.GetLinearValue(boxCreatorPos + _floorBBoxWidth - _deckFloorMesh[layer][0, index + 1].X);
                         }
                         else{
                             zBounding2 = 0;
                         }
                     }
 
-                    int zBoxes1 = (int) (zBounding1/_wallSelectionMeshWidth);
-                    int zBoxes2 = (int) (zBounding2/_wallSelectionMeshWidth);
+                    int zBoxes1 = (int) (zBounding1/_floorBBoxWidth);
+                    int zBoxes2 = (int) (zBounding2/_floorBBoxWidth);
 
                     int numZBoxes;
                     if (zBoxes1 < zBoxes2)
@@ -358,25 +357,24 @@ namespace Drydock.Logic.DoodadEditorState{
                                 new Vector3(
                                     boxCreatorPos,
                                     yLayer,
-                                    i*_wallSelectionMeshWidth
+                                    i*_floorBBoxWidth
                                     ),
                                 new Vector3(
-                                    boxCreatorPos + _wallSelectionMeshWidth,
+                                    boxCreatorPos + _floorBBoxWidth,
                                     yLayer,
-                                    (i + 1)*_wallSelectionMeshWidth
+                                    (i + 1)*_floorBBoxWidth
                                     )
                                 )
                             );
                     }
 
-                    boxCreatorPos += _wallSelectionMeshWidth;
+                    boxCreatorPos += _floorBBoxWidth;
                 }
                 deckBoundingBoxes[layer] = layerBBoxes.ToArray();
             }
             Resultant.DeckFloorBoundingBoxes = deckBoundingBoxes;
-            Resultant.LowResFloorBoundingBoxes = deckBoundingBoxes;
 
-            var wallSelectionBoxes = Resultant.LowResFloorBoundingBoxes;
+            var wallSelectionBoxes = Resultant.DeckFloorBoundingBoxes;
             var wallSelectionPoints = new List<List<Vector3>>();
             //generate vertexes of the bounding boxes
 
@@ -402,7 +400,7 @@ namespace Drydock.Logic.DoodadEditorState{
                 }*/
             }
 
-            Resultant.DeckFloorVertexes =
+            Resultant.FloorVertexes =
                 (
                     from layer in wallSelectionPoints
                     select layer.ToArray()
@@ -442,7 +440,7 @@ namespace Drydock.Logic.DoodadEditorState{
                 }
             }
 
-            Resultant.DeckFloorVertexes =
+            Resultant.FloorVertexes =
                 (
                     from layer in wallSelectionPoints
                     select layer.ToArray()
@@ -455,10 +453,10 @@ namespace Drydock.Logic.DoodadEditorState{
 internal struct HullGeometryInfo{
     public Vector3 CenterPoint;
     public BoundingBox[][] DeckFloorBoundingBoxes;
+    public ShipGeometryBuffer[] HullWallBuffers;
     public ShipGeometryBuffer[] DeckFloorBuffers;
-    public Vector3[][] DeckFloorVertexes;
-    public ShipGeometryBuffer[] DeckWallBuffers;
-    public BoundingBox[][] LowResFloorBoundingBoxes;
+    public WireframeBuffer[] FloorBoundingBoxBuffers;
+    public Vector3[][] FloorVertexes;
     public int NumDecks;
 }
 
