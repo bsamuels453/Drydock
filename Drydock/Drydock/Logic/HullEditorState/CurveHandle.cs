@@ -46,12 +46,11 @@ namespace Drydock.Logic.HullEditorState{
         /// <param name="prevComponent"> </param>
         /// <param name="nextComponent"> </param>
         public CurveHandle(ButtonGenerator buttonTemplate, LineGenerator lineTemplate, Vector2 pos, Vector2 prevComponent, Vector2 nextComponent){
-            
             buttonTemplate = new ButtonGenerator("HullEditorHandle.json");
-            buttonTemplate.Identifier = (int)HandleType.Center;
+            buttonTemplate.Identifier = (int) HandleType.Center;
             buttonTemplate.X = pos.X;
             buttonTemplate.Y = pos.Y;
-            
+
             _centerButton = buttonTemplate.GenerateButton();
             _centerButton.GetComponent<DraggableComponent>().DragMovementDispatcher += TranslateToLinks;
             _centerButton.GetComponent<DraggableComponent>().DragMovementClamp += ClampHandleMovement;
@@ -146,8 +145,7 @@ namespace Drydock.Logic.HullEditorState{
             BalancedCenterTranslate(dx, dy);
         }
 
-        public void ClampPositionFromExternal(float dx, float dy){
-        }
+        public void ClampPositionFromExternal(float dx, float dy){}
 
         void ClampHandleMovement(IUIInteractiveElement owner, ref int x, ref int y, int oldX, int oldY){
             var button = (Button) owner;
@@ -346,8 +344,7 @@ namespace Drydock.Logic.HullEditorState{
             }
         }
 
-        void TopNeighborClamp(ref float dx, ref float dy, Button button){
-        }
+        void TopNeighborClamp(ref float dx, ref float dy, Button button){}
 
         void SideNeighborClamp(ref float dx, ref float dy, Button button){
             //prevent symmetric buttons from crossing each other

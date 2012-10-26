@@ -25,11 +25,11 @@
 
         #endregion
 
-        readonly IntRef _reference;
         readonly IntLambdaDelegate _function;
+        readonly IntRef _reference;
 
         public IntRefLambda(IntRef reference, IntLambdaDelegate functionToApply){
-            _reference = reference;    
+            _reference = reference;
             _function = functionToApply;
         }
 

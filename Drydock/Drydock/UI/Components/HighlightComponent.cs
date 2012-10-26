@@ -25,10 +25,10 @@ namespace Drydock.UI.Components{
         readonly HighlightTrigger _highlightTrigger;
 
         Sprite2D _highlightSprite;
-        IUIInteractiveElement _owner;
         bool _isEnabled;
+        IUIInteractiveElement _owner;
 
-        public HighlightComponent(string highlightTexture, HighlightTrigger highlightTrigger, float highlightTexOpacity = 0.3f, string identifier=""){
+        public HighlightComponent(string highlightTexture, HighlightTrigger highlightTrigger, float highlightTexOpacity = 0.3f, string identifier = ""){
             _highlightTexture = highlightTexture;
             _highlightTrigger = highlightTrigger;
             _highlightTexOpacity = highlightTexOpacity;
@@ -80,7 +80,7 @@ namespace Drydock.UI.Components{
 
         public bool IsEnabled{
             get { return _isEnabled; }
-            set { 
+            set{
                 _isEnabled = value;
                 if (!_isEnabled)
                     _highlightSprite.Opacity = 0;
@@ -111,13 +111,9 @@ namespace Drydock.UI.Components{
             _highlightSprite = new Sprite2D(_highlightTexture, (int) _owner.X, (int) _owner.Y, (int) _owner.Width, (int) _owner.Height, _owner.Depth - 0.01f, 0);
         }
 
-        public void Update(){
-        }
+        public void Update(){}
 
-        public string Identifier {
-            get;
-            private set;
-        }
+        public string Identifier { get; private set; }
 
         #endregion
 
@@ -135,7 +131,7 @@ namespace Drydock.UI.Components{
             _highlightSprite.Y += dy;
         }
 
-        public static HighlightComponent ConstructFromObject(JObject obj, string identifier=""){
+        public static HighlightComponent ConstructFromObject(JObject obj, string identifier = ""){
             var data = obj.ToObject<HighlightComponentCtorData>();
 
             if (data.HighlightTexture == null || data.HighlightTrigger == HighlightTrigger.InvalidTrigger)
@@ -147,11 +143,11 @@ namespace Drydock.UI.Components{
         #region Nested type: HighlightComponentCtorData
 
         struct HighlightComponentCtorData{
-            // ReSharper disable UnassignedField.Local
+#pragma warning disable 649
             public float HighlightTexOpacity;
             public string HighlightTexture;
             public HighlightTrigger HighlightTrigger;
-            // ReSharper restore UnassignedField.Local
+#pragma warning restore 649
         }
 
         #endregion

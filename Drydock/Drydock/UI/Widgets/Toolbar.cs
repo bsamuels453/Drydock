@@ -22,13 +22,12 @@ namespace Drydock.UI.Widgets{
 
         #endregion
 
-        readonly IToolbarTool[] _buttonTools;
-
-        readonly Point _position;
         readonly Point _buttonSize;
+        readonly IToolbarTool[] _buttonTools;
         readonly IToolbarTool _nullTool;
         readonly int _numButtons;
         readonly ToolbarOrientation _orientation;
+        readonly Point _position;
 
         public Button[] ToolbarButtons;
         IToolbarTool _activeTool;
@@ -141,15 +140,15 @@ namespace Drydock.UI.Widgets{
         #region Nested type: ToolbarCtorData
 
         struct ToolbarCtorData{
-            // ReSharper disable UnassignedField.Local
             //public Color BackgroundColor; //unimplemented
+#pragma warning disable 649
             public string[] ButtonIcons;
             public Point Position;
             public Point ButtonSize;
             public int NumButtons;
             //[JsonConverter(typeof(ToolbarOrientationConverter))]
             public ToolbarOrientation Orientation;
-            // ReSharper restore UnassignedField.Local
+#pragma warning restore 649
         }
 
         #endregion

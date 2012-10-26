@@ -57,7 +57,7 @@ namespace Drydock.UI{
             set{
                 _boundingBox.X = value;
                 _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
-                _sprite.X = (int)value;
+                _sprite.X = (int) value;
             }
         }
 
@@ -66,23 +66,23 @@ namespace Drydock.UI{
             set{
                 _boundingBox.Y = value;
                 _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
-                _sprite.Y = (int)value;
+                _sprite.Y = (int) value;
             }
         }
 
         public float Width{
             get { return _boundingBox.Width; }
-            set { 
+            set{
                 _boundingBox.Width = value;
-                _sprite.Width = (int)value;
+                _sprite.Width = (int) value;
             }
         }
 
         public float Height{
             get { return _boundingBox.Height; }
-            set { 
+            set{
                 _boundingBox.Height = value;
-                _sprite.Height = (int)value;
+                _sprite.Height = (int) value;
             }
         }
 
@@ -97,10 +97,7 @@ namespace Drydock.UI{
 
         public float Opacity{
             get { return _sprite.Opacity; }
-            set{
-                _sprite.Opacity = value;
-            }
-
+            set { _sprite.Opacity = value; }
         }
 
         public float Depth{
@@ -121,7 +118,7 @@ namespace Drydock.UI{
 
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
-            _sprite = new Sprite2D(textureName, (int)x, (int)y, (int)width, (int)height, (float) depth/10, 1, spriteTexRepeatX, spriteTexRepeatY);
+            _sprite = new Sprite2D(textureName, (int) x, (int) y, (int) width, (int) height, (float) depth/10, 1, spriteTexRepeatX, spriteTexRepeatY);
 
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
@@ -140,13 +137,13 @@ namespace Drydock.UI{
 
         #region other IUIElement derived methods
 
-        public TComponent GetComponent<TComponent>(string identifier=null){
+        public TComponent GetComponent<TComponent>(string identifier = null){
             if (Components != null){
                 foreach (IUIComponent component in Components){
                     if (component is TComponent){
                         if (identifier != null){
-                            if (component.Identifier == identifier) {
-                                return (TComponent)component;
+                            if (component.Identifier == identifier){
+                                return (TComponent) component;
                             }
                             continue;
                         }
@@ -157,7 +154,7 @@ namespace Drydock.UI{
             throw new Exception("Request made to a Button object for a component that did not exist.");
         }
 
-        public bool DoesComponentExist<TComponent>(string identifier = null) {
+        public bool DoesComponentExist<TComponent>(string identifier = null){
             if (Components != null){
                 foreach (var component in Components){
                     if (component is TComponent){
@@ -298,6 +295,7 @@ namespace Drydock.UI{
             X = null;
             Y = null;
         }
+
         public ButtonGenerator(string template){
             var sr = new StreamReader("Templates/" + template);
             string str = sr.ReadToEnd();
@@ -307,14 +305,14 @@ namespace Drydock.UI{
 
 
             //try{
-                var jComponents =  obj["Components"];
-                if (jComponents != null)
-                    Components = jComponents.ToObject<Dictionary<string, JObject>>();
-                else
-                    Components = null;
+            var jComponents = obj["Components"];
+            if (jComponents != null)
+                Components = jComponents.ToObject<Dictionary<string, JObject>>();
+            else
+                Components = null;
             //}
             //catch (InvalidCastException){
-                //Components = null;
+            //Components = null;
             //}
 
             Depth = obj["Depth"].ToObject<DepthLevel?>(depthLevelSerializer);
@@ -377,7 +375,7 @@ namespace Drydock.UI{
                 );
         }
 
-        private IUIComponent[] GenerateComponents(Dictionary<string, JObject> componentCtorData) {
+        IUIComponent[] GenerateComponents(Dictionary<string, JObject> componentCtorData){
             var components = new List<IUIComponent>();
 
             foreach (var data in componentCtorData){
@@ -386,11 +384,11 @@ namespace Drydock.UI{
                 //gotta remove that for the switch, if it exists
                 string identifier = "";
                 if (str.Contains('_')){
-                    identifier = str.Substring(str.IndexOf('_')+1, str.Count() - str.IndexOf('_')-1);
+                    identifier = str.Substring(str.IndexOf('_') + 1, str.Count() - str.IndexOf('_') - 1);
                     str = str.Substring(0, str.IndexOf('_'));
                 }
 
-                switch (str) {
+                switch (str){
                     case "FadeComponent":
                         components.Add(FadeComponent.ConstructFromObject(data.Value, identifier));
                         break;
@@ -410,7 +408,6 @@ namespace Drydock.UI{
         }
     }
 
-    
 
     internal class ButtonEventDispatcher{
         public ButtonEventDispatcher(){

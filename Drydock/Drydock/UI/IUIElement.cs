@@ -17,7 +17,7 @@ namespace Drydock.UI{
         string Texture { get; set; }
         int Identifier { get; }
 
-        TComponent GetComponent<TComponent>(string identifier=null);
-        bool DoesComponentExist<TComponent>(string identifier=null);
+        TComponent GetComponent<TComponent>(string identifier = null);
+        bool DoesComponentExist<TComponent>(string identifier = null);
     }
 }

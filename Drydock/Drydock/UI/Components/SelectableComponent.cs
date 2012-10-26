@@ -1,9 +1,9 @@
 ﻿#region
 
-using System;
-using Microsoft.Xna.Framework;
+
 
 #endregion
+
 /*
 namespace Drydock.UI.Components{
     internal delegate void ReactToSelection(SelectState state);
@@ -68,7 +68,7 @@ namespace Drydock.UI.Components{
             _heightDx = (int) (_selectedHeight - _owner.BoundingBox.Height);
             _positionDx = _widthDx/2;
             _positionDy = _heightDx/2;*/
-        /*}
+/*}
 
         public bool IsEnabled { get; set; }
 
@@ -101,10 +101,10 @@ namespace Drydock.UI.Components{
                 catch (Exception){
                 } /*there is no fade component*/
 
-                // ReSharper restore EmptyGeneralCatchClause
-                //if (ReactToSelectionDispatcher != null){
-                //    ReactToSelectionDispatcher(SelectState.Selected);
-                //}
+// ReSharper restore EmptyGeneralCatchClause
+//if (ReactToSelectionDispatcher != null){
+//    ReactToSelectionDispatcher(SelectState.Selected);
+//}
 /*
             }
         }
@@ -126,7 +126,7 @@ namespace Drydock.UI.Components{
                 }
                     // ReSharper disable EmptyGeneralCatchClause
                 catch (Exception){ /*there is no fade component*/
-                /*}
+/*}
                 // ReSharper restore EmptyGeneralCatchClause
                 //if (ReactToSelectionDispatcher != null){
                 //    ReactToSelectionDispatcher(SelectState.UnSelected);

@@ -1,4 +1,3 @@
 ﻿namespace Drydock.Logic.TestState{
-    internal class Component{
-    }
+    internal class Component{}
 }

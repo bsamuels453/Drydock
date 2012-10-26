@@ -14,11 +14,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
     internal class WallBuildTool : IToolbarTool{
+        readonly IntRefLambda _curDeck;
         readonly BoundingBox[][] _deckFloorBoundingboxes;
         readonly Vector3[][] _deckFloorVertexes;
-        readonly WireframeBuffer _selectionBuff;
-        readonly IntRefLambda _curDeck;
         readonly WireframeBuffer[] _guideDotBuffer;
+        readonly WireframeBuffer _selectionBuff;
         bool _isEnabled;
 
         public WallBuildTool(HullGeometryInfo hullInfo, IntRef visibleDecks){
@@ -33,10 +33,11 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _selectionBuff.Indexbuffer.SetData(selectionIndicies);
             _selectionBuff.IsEnabled = false;
 
-            _guideDotBuffer = new WireframeBuffer[hullInfo.NumDecks+1];
+            _guideDotBuffer = new WireframeBuffer[hullInfo.NumDecks + 1];
 
-            for (int i = 0; i < hullInfo.NumDecks+1; i++) {
+            for (int i = 0; i < hullInfo.NumDecks + 1; i++){
                 #region indicies
+
                 int numBoxes = _deckFloorBoundingboxes[i].Count();
                 _guideDotBuffer[i] = new WireframeBuffer(8*numBoxes, 8*numBoxes, 4*numBoxes);
                 var guideDotIndicies = new int[8*numBoxes];
@@ -44,16 +45,16 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     guideDotIndicies[si] = si;
                 }
                 _guideDotBuffer[i].Indexbuffer.SetData(guideDotIndicies);
-                
+
                 #endregion
 
                 #region verticies
 
-                var verts = new VertexPositionColor[_deckFloorBoundingboxes[i].Count() * 8];
+                var verts = new VertexPositionColor[_deckFloorBoundingboxes[i].Count()*8];
 
                 int vertIndex = 0;
 
-                foreach (var boundingBox in _deckFloorBoundingboxes[i]) {
+                foreach (var boundingBox in _deckFloorBoundingboxes[i]){
                     Vector3 v1, v2, v3, v4;
                     //v4  v3
                     //
@@ -82,26 +83,16 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     vertIndex += 8;
                 }
                 _guideDotBuffer[i].Vertexbuffer.SetData(verts);
+
                 #endregion
 
                 _guideDotBuffer[i].IsEnabled = false;
             }
-
         }
 
         #region IToolbarTool Members
 
-        void VisibleDeckChange(IntRef caller, int oldVal, int newVal){
-            if (_isEnabled){
-                foreach (var buffer in _guideDotBuffer){
-                    buffer.IsEnabled = false;
-                }
-
-                _guideDotBuffer[_curDeck.Value].IsEnabled = true;
-            }
-        }
-
-        public void UpdateInput(ref ControlState state) {
+        public void UpdateInput(ref ControlState state){
             var nearMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 0);
             var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);
 
@@ -126,13 +117,13 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
             float? ndist;
             bool intersectionFound = false;
-            for (int i = 0; i < _deckFloorBoundingboxes[_curDeck.Value].Length; i++) {
-                if ((ndist = ray.Intersects(_deckFloorBoundingboxes[_curDeck.Value][i])) != null) {
+            for (int i = 0; i < _deckFloorBoundingboxes[_curDeck.Value].Length; i++){
+                if ((ndist = ray.Intersects(_deckFloorBoundingboxes[_curDeck.Value][i])) != null){
                     var rayTermination = ray.Position + ray.Direction*(float) ndist;
 
                     var distList = new List<float>();
 
-                    for (int point = 0; point < _deckFloorVertexes[_curDeck.Value].Count(); point++) {
+                    for (int point = 0; point < _deckFloorVertexes[_curDeck.Value].Count(); point++){
                         distList.Add(Vector3.Distance(rayTermination, _deckFloorVertexes[_curDeck.Value][point]));
                     }
                     float f = distList.Min();
@@ -142,10 +133,10 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     var verts = new VertexPositionColor[2];
                     verts[0] = new VertexPositionColor(
                         new Vector3(
-                        _deckFloorVertexes[_curDeck.Value][ptIdx].X,
-                        _deckFloorVertexes[_curDeck.Value][ptIdx].Y+0.03f,
-                        _deckFloorVertexes[_curDeck.Value][ptIdx].Z
-                        ), 
+                            _deckFloorVertexes[_curDeck.Value][ptIdx].X,
+                            _deckFloorVertexes[_curDeck.Value][ptIdx].Y + 0.03f,
+                            _deckFloorVertexes[_curDeck.Value][ptIdx].Z
+                            ),
                         Color.White
                         );
                     verts[1] = new VertexPositionColor(
@@ -162,13 +153,12 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     break;
                 }
             }
-            if(!intersectionFound){
+            if (!intersectionFound){
                 _selectionBuff.IsEnabled = false;
             }
         }
 
-        public void UpdateLogic(double timeDelta){
-        }
+        public void UpdateLogic(double timeDelta){}
 
         public void Enable(){
             _isEnabled = true;
@@ -185,5 +175,15 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         #endregion
+
+        void VisibleDeckChange(IntRef caller, int oldVal, int newVal){
+            if (_isEnabled){
+                foreach (var buffer in _guideDotBuffer){
+                    buffer.IsEnabled = false;
+                }
+
+                _guideDotBuffer[_curDeck.Value].IsEnabled = true;
+            }
+        }
     }
 }

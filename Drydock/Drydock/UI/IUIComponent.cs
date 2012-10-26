@@ -5,6 +5,8 @@
         /// </summary>
         bool IsEnabled { get; set; }
 
+        string Identifier { get; }
+
         /// <summary>
         ///   A reference to the owner of the element.
         /// </summary>
@@ -14,8 +16,5 @@
         ///   An update function that will be called by the component's owner element.
         /// </summary>
         void Update();
-
-        string Identifier { get; }
-
     }
 }

@@ -1,6 +1,5 @@
 ﻿#region
 
-using Drydock.UI;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,22 +10,21 @@ namespace Drydock.Render{
     internal class Sprite2D : IDrawableSprite{
         readonly RenderPanel _renderPanel;
         readonly FloatingRectangle _srcRect;
-        bool _isDisposed;
-        Texture2D _texture;
-
-        public int X;
-        public int Y;
-        public int Width;
+        public float Depth;
         public int Height;
         public float Opacity;
-        public float Depth;
+        public int Width;
+        public int X;
+        public int Y;
 
         Rectangle _destRect;
+        bool _isDisposed;
+        Texture2D _texture;
 
         /// <summary>
         ///   constructor for a normal sprite
         /// </summary>
-        public Sprite2D(string textureName, int x, int y, int width, int height, float depth=0.5f, float opacity = 1, float spriteRepeatX = 1, float spriteRepeatY = 1){
+        public Sprite2D(string textureName, int x, int y, int width, int height, float depth = 0.5f, float opacity = 1, float spriteRepeatX = 1, float spriteRepeatY = 1){
             _texture = Singleton.ContentManager.Load<Texture2D>(textureName);
             _srcRect = new FloatingRectangle(0f, 0f, _texture.Height*spriteRepeatX, _texture.Width*spriteRepeatY);
             _destRect = new Rectangle();
@@ -60,14 +58,14 @@ namespace Drydock.Render{
 
         public void Draw(SpriteBatch batch, Vector2 renderTargOffset){
             _destRect.X = X - (int) renderTargOffset.X;
-            _destRect.Y = Y - (int)renderTargOffset.Y;
+            _destRect.Y = Y - (int) renderTargOffset.Y;
             _destRect.Width = Width;
             _destRect.Height = Height;
             batch.Draw(
                 _texture,
                 _destRect,
                 (Rectangle?) _srcRect,
-                Color.White * Opacity,
+                Color.White*Opacity,
                 0,
                 Vector2.Zero,
                 SpriteEffects.None,

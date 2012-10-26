@@ -152,29 +152,29 @@ namespace Drydock.UI{
 
         #region IUIElement Members
 
-        public TComponent GetComponent<TComponent>(string identifier = null) {
-            if (Components != null) {
-                foreach (IUIComponent component in Components) {
-                    if (component is TComponent) {
-                        if (identifier != null) {
-                            if (component.Identifier == identifier) {
-                                return (TComponent)component;
+        public TComponent GetComponent<TComponent>(string identifier = null){
+            if (Components != null){
+                foreach (IUIComponent component in Components){
+                    if (component is TComponent){
+                        if (identifier != null){
+                            if (component.Identifier == identifier){
+                                return (TComponent) component;
                             }
                             continue;
                         }
-                        return (TComponent)component;
+                        return (TComponent) component;
                     }
                 }
             }
             throw new Exception("Request made to a line object for a component that did not exist.");
         }
 
-        public bool DoesComponentExist<TComponent>(string identifier = null) {
-            if (Components != null) {
-                foreach (var component in Components) {
-                    if (component is TComponent) {
-                        if (identifier != null) {
-                            if (component.Identifier == identifier) {
+        public bool DoesComponentExist<TComponent>(string identifier = null){
+            if (Components != null){
+                foreach (var component in Components){
+                    if (component is TComponent){
+                        if (identifier != null){
+                            if (component.Identifier == identifier){
                                 return true;
                             }
                             continue;
@@ -219,6 +219,28 @@ namespace Drydock.UI{
             Identifier = null;
         }
 
+        public LineGenerator(string template){
+            var sr = new StreamReader("Templates/" + template);
+            string str = sr.ReadToEnd();
+
+            JObject obj = JObject.Parse(str);
+            var depthLevelSerializer = new JsonSerializer();
+            //depthLevelSerializer.Converters.Add(new DepthLevelConverter());
+
+            var jComponents = obj["Components"];
+            if (jComponents != null)
+                Components = jComponents.ToObject<Dictionary<string, JObject>>();
+            else
+                Components = null;
+
+            Depth = obj["Depth"].ToObject<DepthLevel?>(depthLevelSerializer);
+            V1 = obj["V1"].ToObject<Vector2>();
+            V2 = obj["V2"].ToObject<Vector2>();
+
+            Identifier = obj["Identifier"].Value<int>();
+            Color = obj["Color"].ToObject<Color>();
+        }
+
         public Line GenerateLine(){
             //make sure we have all the data required
             if (Depth == null ||
@@ -251,30 +273,7 @@ namespace Drydock.UI{
                 );
         }
 
-        public LineGenerator(string template){
-
-            var sr = new StreamReader("Templates/" + template);
-            string str = sr.ReadToEnd();
-
-            JObject obj = JObject.Parse(str);
-            var depthLevelSerializer = new JsonSerializer();
-            //depthLevelSerializer.Converters.Add(new DepthLevelConverter());
-
-            var jComponents = obj["Components"];
-            if (jComponents != null)
-                Components = jComponents.ToObject<Dictionary<string, JObject>>();
-            else
-                Components = null;
-
-            Depth = obj["Depth"].ToObject<DepthLevel?>(depthLevelSerializer);
-            V1 = obj["V1"].ToObject<Vector2>();
-            V2 = obj["V2"].ToObject<Vector2>();
-
-            Identifier = obj["Identifier"].Value<int>();
-            Color = obj["Color"].ToObject<Color>();           
-        }
-
-        private IUIComponent[] GenerateComponents(Dictionary<string, JObject> componentCtorData) {
+        IUIComponent[] GenerateComponents(Dictionary<string, JObject> componentCtorData){
             var components = new List<IUIComponent>();
 
             foreach (var data in componentCtorData){
@@ -287,7 +286,7 @@ namespace Drydock.UI{
                     str = str.Substring(0, str.IndexOf('_'));
                 }
 
-                switch (str) {
+                switch (str){
                     case "FadeComponent":
                         components.Add(FadeComponent.ConstructFromObject(data.Value, identifier));
                         break;

@@ -453,10 +453,10 @@ namespace Drydock.Logic.DoodadEditorState{
 internal struct HullGeometryInfo{
     public Vector3 CenterPoint;
     public BoundingBox[][] DeckFloorBoundingBoxes;
-    public ShipGeometryBuffer[] HullWallBuffers;
     public ShipGeometryBuffer[] DeckFloorBuffers;
     public WireframeBuffer[] FloorBoundingBoxBuffers;
     public Vector3[][] FloorVertexes;
+    public ShipGeometryBuffer[] HullWallBuffers;
     public int NumDecks;
 }
 

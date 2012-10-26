@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Drydock.UI;
-using Drydock.UI.Components;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -20,7 +19,6 @@ namespace Drydock.Logic.HullEditorState{
 
         const int _linesPerSide = 50;
         public readonly CurveHandle Handle;
-        UIElementCollection _elementCollection;
         LineGenerator _lineTemplate;
         BezierCurve _nextCurve;
         List<Line> _nextLines;
@@ -198,8 +196,7 @@ namespace Drydock.Logic.HullEditorState{
                         return new Vector2(_prevLines[i].DestPoint.X, _prevLines[i].DestPoint.Y);
                     }
                 }
-                foreach (var line in _prevLines){
-                }
+                foreach (var line in _prevLines){}
             }
             //todo: fix these returns to not break on zero
             t = -1;
@@ -256,7 +253,6 @@ namespace Drydock.Logic.HullEditorState{
 
         public void Dispose(){
             Handle.Dispose();
-            _elementCollection = null;
             _lineTemplate = null;
             _nextCurve = null;
             _prevCurve = null;

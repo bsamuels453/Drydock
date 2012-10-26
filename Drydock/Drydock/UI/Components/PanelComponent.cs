@@ -51,13 +51,9 @@ namespace Drydock.UI.Components{
 
         public bool IsEnabled { get; set; }
 
-        public void Update(){
-        }
+        public void Update(){}
 
-        public string Identifier {
-            get;
-            private set;
-        }
+        public string Identifier { get; private set; }
 
         #endregion
 
@@ -69,7 +65,7 @@ namespace Drydock.UI.Components{
             }
         }
 
-        public static PanelComponent ConstructFromObject(JObject obj) {
+        public static PanelComponent ConstructFromObject(JObject obj){
             return new PanelComponent();
         }
     }

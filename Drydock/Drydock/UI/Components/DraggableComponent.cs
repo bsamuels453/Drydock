@@ -112,22 +112,17 @@ namespace Drydock.UI.Components{
             set { _isEnabled = value; }
         }
 
-        public void Update(){
-        }
+        public void Update(){}
 
-        public string Identifier {
-            get;
-            private set;
-        }
+        public string Identifier { get; private set; }
 
         #endregion
 
         public event OnComponentDrag DragMovementDispatcher;
         public event DraggableObjectClamp DragMovementClamp;
 
-        static public DraggableComponent ConstructFromObject(JObject obj) {
+        public static DraggableComponent ConstructFromObject(JObject obj){
             return new DraggableComponent();
         }
-
     }
 }

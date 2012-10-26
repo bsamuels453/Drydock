@@ -145,8 +145,7 @@ namespace Drydock.Logic.HullEditorState{
                         break;
                 }
             }
-            else{
-            }
+            else{}
         }
 
         protected abstract void ProcExternalDrag(object caller, ref float dx, ref float dy, bool doApplyChange);

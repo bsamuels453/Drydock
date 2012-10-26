@@ -1,7 +1,6 @@
 ﻿#region
 
 using System;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json.Linq;
@@ -109,7 +108,7 @@ namespace Drydock.UI.Components{
         /// <param name="fadeoutOpacity"> opacity level to fade out to. range 0-1f </param>
         /// <param name="fadeDuration"> the time it takes for sprite to fade out in milliseconds </param>
         /// <param name="identifier"> </param>
-        public FadeComponent(FadeState defaultState, FadeTrigger trigger = DefaultTrigger, float fadeoutOpacity = DefaultFadeoutOpacity, float fadeDuration = DefaultFadeDuration, string identifier=""){
+        public FadeComponent(FadeState defaultState, FadeTrigger trigger = DefaultTrigger, float fadeoutOpacity = DefaultFadeoutOpacity, float fadeDuration = DefaultFadeDuration, string identifier = ""){
             _fadeoutOpacity = fadeoutOpacity;
             _fadeDuration = fadeDuration*10000; //10k ticks in a millisecond
             _isInTransition = false;
@@ -177,10 +176,7 @@ namespace Drydock.UI.Components{
             }
         }
 
-        public string Identifier {
-            get;
-            private set;
-        }
+        public string Identifier { get; private set; }
 
         #endregion
 
@@ -300,10 +296,10 @@ namespace Drydock.UI.Components{
 
         public event FadeStateChange FadeStateChangeDispatcher;
 
-        public static FadeComponent ConstructFromObject(JObject obj, string identifier) {
+        public static FadeComponent ConstructFromObject(JObject obj, string identifier){
             var ctorData = obj.ToObject<FadeComponentCtorData>();
 
-            if (ctorData.DefaultState == FadeState.InvalidState)//trivial: why no default state for this?
+            if (ctorData.DefaultState == FadeState.InvalidState) //trivial: why no default state for this?
                 throw new Exception("not enough data to create a FadeComponent from template");
 
             var defaultState = ctorData.DefaultState;
@@ -318,26 +314,30 @@ namespace Drydock.UI.Components{
 
 
             if (ctorData.FadedOpacity != null)
-                fadeOpacity = (float)ctorData.FadedOpacity;
+                fadeOpacity = (float) ctorData.FadedOpacity;
             else
                 fadeOpacity = DefaultFadeoutOpacity;
 
 
             if (ctorData.FadeDuration != null)
-                fadeDuration = (float)ctorData.FadeDuration;
+                fadeDuration = (float) ctorData.FadeDuration;
             else
                 fadeDuration = DefaultFadeDuration;
 
             return new FadeComponent(defaultState, fadeTrigger, fadeOpacity, fadeDuration, identifier);
         }
 
+        #region Nested type: FadeComponentCtorData
+
         struct FadeComponentCtorData{
-// ReSharper disable UnassignedField.Local
+#pragma warning disable 649
             public FadeState DefaultState;
             public FadeTrigger FadeTrigger;
             public float? FadedOpacity;
             public float? FadeDuration;
-// ReSharper restore UnassignedField.Local
+#pragma warning restore 649
         }
+
+        #endregion
     }
 }
