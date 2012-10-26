@@ -220,6 +220,7 @@
     <Compile Include="Utilities\ConfigRetriever.cs" />
     <Compile Include="Utilities\DVector2.cs" />
     <Compile Include="Utilities\FloatingRectangle.cs" />
+    <Compile Include="Utilities\Interpolate.cs" />
     <Compile Include="Utilities\Pair.cs" />
     <Compile Include="Utilities\ReferenceTypes\IntRef.cs" />
     <Compile Include="Utilities\Singleton.cs" />
