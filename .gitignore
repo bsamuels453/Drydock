@@ -31,6 +31,8 @@ TestProject3*/
 *.exe.manifest
 *.pdb
 *.dll
+*.CodeAnalysisLog.xml
+*.lastcodeanalysissucceeded
 obj*/
 [Rr]elease*/
 _ReSharper*/
