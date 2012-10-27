@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Render{
-    internal class WireframeBuffer : BufferObject<VertexPositionColor>{
+    internal class WireframeBuffer : BaseBufferObject<VertexPositionColor>{
         public WireframeBuffer(int numIndicies, int numVerticies, int numPrimitives) : base(numIndicies, numVerticies, numPrimitives, PrimitiveType.LineList){
             BufferRasterizer = new RasterizerState();
             BufferRasterizer.CullMode = CullMode.None;

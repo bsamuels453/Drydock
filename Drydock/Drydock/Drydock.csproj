@@ -171,6 +171,7 @@
     <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
     <Compile Include="Logic\DoodadEditorState\HullGeometryHandler.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\WallBuildTool.cs" />
+    <Compile Include="Render\ObjectBuffer.cs" />
     <Compile Include="UI\Components\HighlightComponent.cs" />
     <Compile Include="UI\Widgets\Toolbar.cs" />
     <Compile Include="UI\Widgets\IToolbarTool.cs" />
@@ -187,7 +188,7 @@
     <Compile Include="Logic\TestState\Entity.cs" />
     <Compile Include="Logic\TestState\EntityData.cs" />
     <Compile Include="Logic\TestState\TestState.cs" />
-    <Compile Include="Render\BufferObject.cs" />
+    <Compile Include="Render\BaseBufferObject.cs" />
     <Compile Include="Render\IDrawable.cs" />
     <Compile Include="Render\MeshHelper.cs" />
     <Compile Include="Render\RenderPanel.cs" />

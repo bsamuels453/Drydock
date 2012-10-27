@@ -36,7 +36,7 @@ namespace Drydock.Render{
             ScreenData.Init(Device.Viewport.Bounds.Width, Device.Viewport.Bounds.Height);
             _batch = new SpriteBatch(device);
             RenderPanel.Init();
-            //BufferObject.Init(device, _projectionMatrix);
+            //BaseBufferObject.Init(device, _projectionMatrix);
         }
 
         public static void Draw(){

@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Render{
-    internal abstract class BufferObject<T> : IDrawableBuffer{
+    internal abstract class BaseBufferObject<T> : IDrawableBuffer{
         public readonly IndexBuffer Indexbuffer;
         public readonly VertexBuffer Vertexbuffer;
         readonly int _numIndicies;
@@ -19,7 +19,7 @@ namespace Drydock.Render{
         public bool IsEnabled; //this shouldnt be a field xx
         RenderPanel _bufferRenderTarget;
 
-        protected BufferObject(int numIndicies, int numVerticies, int numPrimitives, PrimitiveType primitiveType){
+        protected BaseBufferObject(int numIndicies, int numVerticies, int numPrimitives, PrimitiveType primitiveType){
             IsEnabled = true;
             _numPrimitives = numPrimitives;
             _numIndicies = numIndicies;
@@ -74,7 +74,7 @@ namespace Drydock.Render{
         }
 
 
-        ~BufferObject(){
+        ~BaseBufferObject(){
             //Dispose();
         }
     }

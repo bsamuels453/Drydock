@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Render{
-    internal class ShipGeometryBuffer : BufferObject<VertexPositionNormalTexture>{
+    internal class ShipGeometryBuffer : BaseBufferObject<VertexPositionNormalTexture>{
         readonly Texture2D _texture;
 
         public ShipGeometryBuffer(int numIndicies, int numVerticies, int numPrimitives, string textureName, CullMode cullMode = CullMode.None)
