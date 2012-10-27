@@ -36,5 +36,13 @@ namespace Drydock.Render{
         public float AmbientIntensity{
             set { BufferEffect.Parameters["AmbientIntensity"].SetValue(value); }
         }
+
+        public new IndexBuffer Indexbuffer {
+            get { return base.Indexbuffer; }
+        }
+
+        public new VertexBuffer Vertexbuffer {
+            get { return base.Vertexbuffer; }
+        }
     }
 }

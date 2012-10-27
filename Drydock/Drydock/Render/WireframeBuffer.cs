@@ -16,6 +16,14 @@ namespace Drydock.Render{
             BufferEffect.Parameters["Projection"].SetValue(Singleton.ProjectionMatrix);
             BufferEffect.Parameters["World"].SetValue(Matrix.Identity);
         }
+
+        public new IndexBuffer Indexbuffer {
+            get { return base.Indexbuffer; }
+        }
+
+        public new VertexBuffer Vertexbuffer {
+            get { return base.Vertexbuffer; }
+        }
     }
 
     /*internal struct Vertex3 : IVertexType{

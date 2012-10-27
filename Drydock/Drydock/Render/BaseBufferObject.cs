@@ -8,8 +8,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal abstract class BaseBufferObject<T> : IDrawableBuffer{
-        public readonly IndexBuffer Indexbuffer;
-        public readonly VertexBuffer Vertexbuffer;
+        protected readonly IndexBuffer Indexbuffer;
+        protected readonly VertexBuffer Vertexbuffer;
         readonly int _numIndicies;
         readonly int _numPrimitives;
         readonly PrimitiveType _primitiveType;
