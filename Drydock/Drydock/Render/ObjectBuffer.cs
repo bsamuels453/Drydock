@@ -46,6 +46,9 @@ namespace Drydock.Render{
         }
 
         public void AddObject(object identifier, int[] indicies, VertexPositionNormalTexture[] verticies){
+            Debug.Assert(indicies.Length == _indiciesPerObject);
+            Debug.Assert(verticies.Length == _verticiesPerObject);
+
             int index = -1;
             for (int i = 0; i < _maxObjects; i++){
                 if (_objectData[i] == null){
