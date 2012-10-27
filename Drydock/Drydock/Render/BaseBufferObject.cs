@@ -17,7 +17,6 @@ namespace Drydock.Render{
         protected Effect BufferEffect;
         protected RasterizerState BufferRasterizer;
         public bool IsEnabled; //this shouldnt be a field xx
-        RenderPanel _bufferRenderTarget;
 
         protected BaseBufferObject(int numIndicies, int numVerticies, int numPrimitives, PrimitiveType primitiveType){
             IsEnabled = true;
@@ -39,7 +38,7 @@ namespace Drydock.Render{
                 BufferUsage.None
                 );
 
-            _bufferRenderTarget = RenderPanel.Add(this);
+            RenderPanel.Add(this);
         }
 
         #region IDrawableBuffer Members
