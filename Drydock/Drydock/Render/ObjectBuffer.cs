@@ -51,7 +51,7 @@ namespace Drydock.Render{
                 if (_objectData[i] == null){
                     //add buffer offset to the indice list
                     for (int indice = 0; indice < indicies.Length; indice++){
-                        indicies[indice] += i;
+                        indicies[indice] += i * _verticiesPerObject;
                     }
 
                     _objectData[i] = new ObjectData(identifier, i, indicies, verticies);
