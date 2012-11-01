@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace Drydock.Utilities{
     /// <summary>
-    ///   floating point-based rectangle. This exists to fix many of the quantization problems experienced in the ui namespace caused by screen coordinates being expressed as integers. This class also provides a bit of utility in the .Position and ToRectangle methods, reducing some heap overhead.
+    ///   floating point-based rectangle. This exists to fix many of the quantization problems experienced in the ui namespace caused by screen coordinates being expressed as integers.
     /// </summary>
     internal class FloatingRectangle{
         float _height;
