@@ -39,7 +39,12 @@ namespace Drydock.Logic.DoodadEditorState{
             #region construct toolbar
 
             _toolBar = new Toolbar("Templates/DoodadToolbar.json");
-            _toolBar.BindButtonToTool(0, new WallBuildTool(_hullInfo, _hullGeometryHandler.VisibleDecks));
+            _toolBar.BindButtonToTool(0, new WallBuildTool(
+                                             _hullInfo,
+                                             _hullGeometryHandler.VisibleDecks,
+                                             _hullGeometryHandler.WallBuffers,
+                                             _hullGeometryHandler.WallPositions
+                                             ));
             _toolBar.ToolbarButtons[0].Texture = "wallbuildicon";
 
             #endregion
@@ -66,7 +71,7 @@ namespace Drydock.Logic.DoodadEditorState{
             UIElementCollection.Collection.UpdateInput(ref state);
             _toolBar.UpdateInput(ref state);
             _cameraController.UpdateInput(ref state);
-
+            
             #endregion
 
             #region update logic
@@ -78,7 +83,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
             UIElementCollection.UnbindCollection();
         }
-
         #endregion
+
     }
 }
