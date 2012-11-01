@@ -123,5 +123,46 @@ namespace Drydock.Render{
                 }
             }
         }
+
+        public static void GenerateCube(out VertexPositionNormalTexture[] verticies, out int[] indicies, Vector3 origin, float xSize, float ySize, float zSize) {
+            //boy do i love hardcoding
+            verticies = new VertexPositionNormalTexture[20];
+            indicies = new []{ 0, 1, 2, 2, 3, 0, 4, 5, 6, 6, 7, 4, 8, 9, 10, 10, 11, 8, 12, 13, 14, 14, 15, 12, 16, 19, 18, 18, 17, 16 };
+
+            for (int indexOffset = 0; indexOffset < 20; indexOffset += 4) {
+                var faceVertexes = CreateTexcoordedVertexList(1);
+
+                faceVertexes.CopyTo(verticies, indexOffset);
+            }
+
+            Vector3 xSizeV = new Vector3(xSize,0,0);
+            Vector3 ySizeV = new Vector3(0,ySize,0);
+            Vector3 zSizeV = new Vector3(0,0,zSize);
+
+            verticies[0].Position = origin;
+            verticies[1].Position = origin+ySizeV;
+            verticies[2].Position = origin+xSizeV+ySizeV;
+            verticies[3].Position = origin+xSizeV;
+             
+            verticies[4].Position = origin+xSizeV;
+            verticies[5].Position = origin+xSizeV+ySizeV;
+            verticies[6].Position = origin+ySizeV+zSizeV+xSizeV;
+            verticies[7].Position = origin+xSizeV+zSizeV;
+             
+            verticies[8].Position = origin + zSizeV + xSizeV;
+            verticies[9].Position = origin + ySizeV + zSizeV + xSizeV;
+            verticies[10].Position = origin + zSizeV + ySizeV;
+            verticies[11].Position = origin + zSizeV;
+             
+            verticies[12].Position = origin + zSizeV;
+            verticies[13].Position = origin + zSizeV + ySizeV;
+            verticies[14].Position = origin + ySizeV;
+            verticies[15].Position = origin;
+             
+            verticies[16].Position = origin + ySizeV;
+            verticies[17].Position = origin + ySizeV + xSizeV;
+            verticies[18].Position = origin + xSizeV + ySizeV + zSizeV;
+            verticies[19].Position = origin + ySizeV + zSizeV;
+        }
     }
 }
