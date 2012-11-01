@@ -17,6 +17,8 @@ namespace Drydock.Render{
         readonly VertexPositionNormalTexture[] _verticies;
         readonly int _verticiesPerObject;
 
+        public bool UpdateBufferManually;
+
         public ObjectBuffer(int maxObjects, int primitivesPerObject, int verticiesPerObject, int indiciesPerObject, string textureName) :
             base(indiciesPerObject * maxObjects, verticiesPerObject * maxObjects, primitivesPerObject * maxObjects, PrimitiveType.TriangleList) {
             BufferRasterizer = new RasterizerState{CullMode = CullMode.None};
@@ -34,6 +36,7 @@ namespace Drydock.Render{
             _indiciesPerObject = indiciesPerObject;
             _verticiesPerObject = verticiesPerObject;
             _maxObjects = maxObjects;
+            UpdateBufferManually = false;
         }
 
 
@@ -43,6 +46,12 @@ namespace Drydock.Render{
 
         public float AmbientIntensity{
             set { BufferEffect.Parameters["AmbientIntensity"].SetValue(value); }
+        }
+
+        public void UpdateBuffers(){
+            Debug.Assert(UpdateBufferManually, "cannot update a buffer that's set to automatic updating");
+            base.Indexbuffer.SetData(_indicies);
+            base.Vertexbuffer.SetData(_verticies);
         }
 
         public void AddObject(object identifier, int[] indicies, VertexPositionNormalTexture[] verticies){
@@ -66,9 +75,10 @@ namespace Drydock.Render{
 
             indicies.CopyTo(_indicies, index*_indiciesPerObject);
             verticies.CopyTo(_verticies, index*_verticiesPerObject);
-
-            base.Indexbuffer.SetData(_indicies);
-            base.Vertexbuffer.SetData(_verticies);
+            if (!UpdateBufferManually){
+                base.Indexbuffer.SetData(_indicies);
+                base.Vertexbuffer.SetData(_verticies);
+            }
         }
 
         public void RemoveObject(object identifier){
@@ -79,7 +89,9 @@ namespace Drydock.Render{
                     _objectData[i] = null;
                     var emptyIndicies = new int[_indiciesPerObject];
                     emptyIndicies.CopyTo(_indicies, index*_indiciesPerObject);
-                    base.Indexbuffer.SetData(_indicies);
+                    if (!UpdateBufferManually){
+                        base.Indexbuffer.SetData(_indicies);
+                    }
                 }
             }
         }
