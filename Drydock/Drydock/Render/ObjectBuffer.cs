@@ -18,7 +18,7 @@ namespace Drydock.Render{
         readonly int _verticiesPerObject;
 
         public ObjectBuffer(int maxObjects, int primitivesPerObject, int verticiesPerObject, int indiciesPerObject, string textureName) :
-            base(indiciesPerObject*maxObjects, verticiesPerObject*maxObjects, primitivesPerObject, PrimitiveType.TriangleList){
+            base(indiciesPerObject * maxObjects, verticiesPerObject * maxObjects, primitivesPerObject * maxObjects, PrimitiveType.TriangleList) {
             BufferRasterizer = new RasterizerState{CullMode = CullMode.None};
 
             var texture = Singleton.ContentManager.Load<Texture2D>(textureName);
@@ -84,9 +84,17 @@ namespace Drydock.Render{
             }
         }
 
+        public void ClearObjects(){
+            for (int i = 0; i < _maxObjects; i++){
+                _objectData[i] = null;
+                _indicies[i] = 0;
+            }
+            base.Indexbuffer.SetData(_indicies);
+        }
+
         #region Nested type: ObjectData
 
-        class ObjectData{
+        class ObjectData {
             // ReSharper disable MemberCanBePrivate.Local
             public readonly object Identifier;
             public readonly int[] Indicies;
