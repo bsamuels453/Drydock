@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Drydock.Control;
@@ -16,6 +17,7 @@ using Drydock.Render;
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
     internal class WallBuildTool : IToolbarTool{
+        readonly float _wallResolution;
         readonly IntRefLambda _curDeck;
         readonly BoundingBox[][] _deckFloorBoundingboxes;
         readonly Vector3[][] _deckFloorVertexes;
@@ -32,12 +34,16 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         Vector3 _strokeOrigin;
         Vector3 _strokeEnd;
 
+        ScreenText _strokeW;
+        ScreenText _strokeH;
+
         public WallBuildTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer[] wallBuffers, List<WallIdentifier>[] wallIdentifiers ){
             _isEnabled = false;
             _deckFloorBoundingboxes = hullInfo.DeckFloorBoundingBoxes;
             _deckFloorVertexes = hullInfo.FloorVertexes;
             _wallBuffers = wallBuffers;
             _wallIdentifiers = wallIdentifiers;
+            _wallResolution = hullInfo.WallResolution;
             _tempWallBuffer = new ObjectBuffer(hullInfo.FloorVertexes[0].Count() * 2, 10, 20, 30, "brown");
 
             _curDeck = new IntRefLambda(visibleDecksRef, input => hullInfo.NumDecks - input);
@@ -103,11 +109,16 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
                 _guideGridBuffers[i].IsEnabled = false;
             }
+
+            _strokeW = new ScreenText(0, 0, "w:");
+            _strokeH = new ScreenText(0, 20, "h:");
         }
 
         #region IToolbarTool Members
 
         public void UpdateInput(ref ControlState state){
+            
+
             var prevCursorPosition = _cursorPosition;
             #region update cursor
 
@@ -190,20 +201,14 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             }
 
             if (prevCursorPosition != _cursorPosition && _cursorActive && _isDrawing) {
-                
-                
-                
-                
-                
-                
-                VertexPositionNormalTexture[] v;
-                int[] p;
-                MeshHelper.GenerateCube(out v, out p, _cursorPosition, 5, 5, 5);
-                _wallBuffers[_curDeck.Value].AddObject(_cursorPosition, p, v);
+                _strokeEnd = _cursorPosition;
+                GenerateWallsFromStroke();
             }
 
             if (_cursorActive && _isDrawing && state.LeftButtonState == ButtonState.Released){
                 _isDrawing = false;
+                _strokeOrigin = new Vector3();
+                _strokeEnd = new Vector3();
             }
 
         }
@@ -237,8 +242,51 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         void GenerateWallsFromStroke(){
+            int strokeW = (int) (Math.Abs(_strokeEnd.Z - _strokeOrigin.Z) / _wallResolution);
+            int strokeH = (int)(Math.Abs(_strokeEnd.X - _strokeOrigin.X) / _wallResolution);
+            _strokeW.EditText("W:"+strokeW.ToString());
+            _strokeH.EditText("H"+strokeH.ToString());
 
+            int numWalls = strokeW * 2 + strokeH * 2;
+            _tempWallBuffer.ClearObjects();
+            int widthDir;
+            if (_strokeEnd.Z - _strokeOrigin.Z < 0)
+                widthDir = -1;
+            else
+                widthDir = 1;
+
+            int heightDir;
+            if (_strokeEnd.X - _strokeOrigin.X < 0)
+                heightDir = -1;
+            else
+                heightDir = 1;
+
+            for (int i = 0; i < strokeW; i++){
+                int[] indicies;
+                VertexPositionNormalTexture[] verticies;
+                var origin = new Vector3(_strokeOrigin.X, _strokeOrigin.Y, _strokeOrigin.Z + _wallResolution * i * widthDir);
+                MeshHelper.GenerateCube(out verticies, out indicies, origin, 0.1f, 1, _wallResolution);
+                _tempWallBuffer.AddObject(null, indicies, verticies);
+            }
+            for (int i = 0; i < strokeW; i++) {
+                int[] indicies;
+                VertexPositionNormalTexture[] verticies;
+                var origin = new Vector3(_strokeEnd.X, _strokeOrigin.Y, _strokeOrigin.Z + _wallResolution * i * widthDir);
+                MeshHelper.GenerateCube(out verticies, out indicies, origin, 0.1f, 1, _wallResolution);
+                _tempWallBuffer.AddObject(null, indicies, verticies);
+            }
+            
+
+            /*VertexPositionNormalTexture[] v;
+            int[] p;
+            MeshHelper.GenerateCube(out v, out p, _cursorPosition, 5, 5, 5);
+            _wallBuffers[_curDeck.Value].AddObject(_cursorPosition, p, v);
+             */
         }
+
+        //List<WallIdentifier> GenerateWallIdentifiersFromStroke(){
+
+        //}
 
     }
     struct WallIdentifier {
