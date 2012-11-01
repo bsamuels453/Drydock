@@ -242,37 +242,32 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         void GenerateWallsFromStroke(){
-            int strokeW = (int) (Math.Abs(_strokeEnd.Z - _strokeOrigin.Z) / _wallResolution);
-            int strokeH = (int)(Math.Abs(_strokeEnd.X - _strokeOrigin.X) / _wallResolution);
+            int strokeW = (int) ((_strokeEnd.Z - _strokeOrigin.Z) / _wallResolution);
+            int strokeH = (int)((_strokeEnd.X - _strokeOrigin.X) / _wallResolution);
             _strokeW.EditText("W:"+strokeW.ToString());
             _strokeH.EditText("H"+strokeH.ToString());
 
             int numWalls = strokeW * 2 + strokeH * 2;
             _tempWallBuffer.ClearObjects();
-            int widthDir;
-            if (_strokeEnd.Z - _strokeOrigin.Z < 0)
-                widthDir = -1;
+            int wDir;
+            if (strokeW > 0)
+                wDir = 1;
             else
-                widthDir = 1;
+                wDir = -1;
 
-            int heightDir;
-            if (_strokeEnd.X - _strokeOrigin.X < 0)
-                heightDir = -1;
-            else
-                heightDir = 1;
 
-            for (int i = 0; i < strokeW; i++){
+            for (int i = 0; i < Math.Abs(strokeW); i++) {
                 int[] indicies;
                 VertexPositionNormalTexture[] verticies;
-                var origin = new Vector3(_strokeOrigin.X, _strokeOrigin.Y, _strokeOrigin.Z + _wallResolution * i * widthDir);
-                MeshHelper.GenerateCube(out verticies, out indicies, origin, 0.1f, 1, _wallResolution);
+                var origin = new Vector3(_strokeOrigin.X, _strokeOrigin.Y, _strokeOrigin.Z + _wallResolution * i * wDir);
+                MeshHelper.GenerateCube(out verticies, out indicies, origin, 0.1f, 1, _wallResolution * wDir);
                 _tempWallBuffer.AddObject(null, indicies, verticies);
             }
-            for (int i = 0; i < strokeW; i++) {
+            for (int i = 0; i < Math.Abs(strokeW); i++) {
                 int[] indicies;
                 VertexPositionNormalTexture[] verticies;
-                var origin = new Vector3(_strokeEnd.X, _strokeOrigin.Y, _strokeOrigin.Z + _wallResolution * i * widthDir);
-                MeshHelper.GenerateCube(out verticies, out indicies, origin, 0.1f, 1, _wallResolution);
+                var origin = new Vector3(_strokeEnd.X, _strokeOrigin.Y, _strokeOrigin.Z + _wallResolution * i * wDir);
+                MeshHelper.GenerateCube(out verticies, out indicies, origin, 0.1f, 1, _wallResolution * wDir);
                 _tempWallBuffer.AddObject(null, indicies, verticies);
             }
             
