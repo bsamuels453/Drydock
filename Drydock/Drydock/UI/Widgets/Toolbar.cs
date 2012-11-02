@@ -32,10 +32,25 @@ namespace Drydock.UI.Widgets{
         public Button[] ToolbarButtons;
         IToolbarTool _activeTool;
 
+        bool _isEnabled;
+        public bool IsEnabled {
+            get { return _isEnabled; }
+            set { 
+                _isEnabled = value;
+                if (value)
+                    foreach (var button in ToolbarButtons)
+                        button.IsEnabled = true;
+                else
+                    foreach (var button in ToolbarButtons)
+                        button.IsEnabled = false;
+            }
+        }
+
         public Toolbar(string path){
             var sr = new StreamReader(path);
             var str = sr.ReadToEnd();
             var ctorData = JsonConvert.DeserializeObject<ToolbarCtorData>(str);
+            _isEnabled = true;
 
             #region some validity checks
 
@@ -59,7 +74,7 @@ namespace Drydock.UI.Widgets{
 
             #region create the buttons
 
-            var buttonGen = new ButtonGenerator("ToolbarButton.json");
+            var buttonGen = new ButtonGenerator(ctorData.ButtonTemplate);
             ToolbarButtons = new Button[ctorData.NumButtons];
 
             int xPos = _position.X;
@@ -74,6 +89,7 @@ namespace Drydock.UI.Widgets{
                 buttonGen.Identifier = i;
                 buttonGen.X = xPos;
                 buttonGen.Y = yPos;
+                buttonGen.TextureName = ctorData.ButtonIcons[i];
 
                 ToolbarButtons[i] = buttonGen.GenerateButton();
 
@@ -101,7 +117,9 @@ namespace Drydock.UI.Widgets{
         #region IInputUpdates Members
 
         public void UpdateInput(ref ControlState state){
-            _activeTool.UpdateInput(ref state);
+            if (IsEnabled){
+                _activeTool.UpdateInput(ref state);
+            }
         }
 
         #endregion
@@ -109,7 +127,9 @@ namespace Drydock.UI.Widgets{
         #region ILogicUpdates Members
 
         public void UpdateLogic(double timeDelta){
-            _activeTool.UpdateLogic(timeDelta);
+            if (IsEnabled){
+                _activeTool.UpdateLogic(timeDelta);
+            }
         }
 
         #endregion
@@ -119,22 +139,24 @@ namespace Drydock.UI.Widgets{
             _buttonTools[buttonIdentifier] = tool;
         }
 
-        public void ClearTool(){
+        public void ClearActiveTool(){
             _activeTool.Disable();
             _activeTool = _nullTool;
         }
 
         void HandleButtonClick(int identifier){
-            Debug.Assert(identifier < _buttonTools.Length);
-            foreach (var button in ToolbarButtons){
-                button.GetComponent<HighlightComponent>("ClickHoldEffect").UnprocHighlight();
-                button.GetComponent<HighlightComponent>("HoverMask").IsEnabled = true;
+            if (IsEnabled){
+                Debug.Assert(identifier < _buttonTools.Length);
+                foreach (var button in ToolbarButtons){
+                    button.GetComponent<HighlightComponent>("ClickHoldEffect").UnprocHighlight();
+                    button.GetComponent<HighlightComponent>("HoverMask").IsEnabled = true;
+                }
+                _activeTool.Disable();
+                _buttonTools[identifier].Enable();
+                ToolbarButtons[identifier].GetComponent<HighlightComponent>("ClickHoldEffect").ProcHighlight();
+                ToolbarButtons[identifier].GetComponent<HighlightComponent>("HoverMask").IsEnabled = false;
+                _activeTool = _buttonTools[identifier];
             }
-            _activeTool.Disable();
-            _buttonTools[identifier].Enable();
-            ToolbarButtons[identifier].GetComponent<HighlightComponent>("ClickHoldEffect").ProcHighlight();
-            ToolbarButtons[identifier].GetComponent<HighlightComponent>("HoverMask").IsEnabled = false;
-            _activeTool = _buttonTools[identifier];
         }
 
         #region Nested type: ToolbarCtorData
@@ -148,6 +170,7 @@ namespace Drydock.UI.Widgets{
             public int NumButtons;
             //[JsonConverter(typeof(ToolbarOrientationConverter))]
             public ToolbarOrientation Orientation;
+            public string ButtonTemplate;
 #pragma warning restore 649
         }
 
