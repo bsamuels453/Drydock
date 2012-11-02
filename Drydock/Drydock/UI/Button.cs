@@ -98,8 +98,9 @@ namespace Drydock.UI{
             get { return _isEnabled; }
             set{
                 _isEnabled = value;
-                Opacity = value ? 1 : 0;
+                _sprite.IsEnabled = value;
                 foreach (var component in Components){
+                    component.IsEnabled = value;
                     component.ClearState();
                 }
             }

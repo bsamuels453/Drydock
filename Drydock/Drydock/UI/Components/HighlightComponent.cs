@@ -83,7 +83,7 @@ namespace Drydock.UI.Components{
             set{
                 _isEnabled = value;
                 if (!_isEnabled)
-                    _highlightSprite.Opacity = 0;
+                    _highlightSprite.IsEnabled = value;
             }
         }
 
