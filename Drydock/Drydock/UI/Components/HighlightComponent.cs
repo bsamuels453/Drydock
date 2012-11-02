@@ -33,7 +33,7 @@ namespace Drydock.UI.Components{
             _highlightTrigger = highlightTrigger;
             _highlightTexOpacity = highlightTexOpacity;
             Identifier = identifier;
-            IsEnabled = true;
+            _isEnabled = true;
         }
 
         #region IAcceptLeftButtonPressEvent Members
@@ -82,8 +82,7 @@ namespace Drydock.UI.Components{
             get { return _isEnabled; }
             set{
                 _isEnabled = value;
-                if (!_isEnabled)
-                    _highlightSprite.IsEnabled = value;
+                _highlightSprite.IsEnabled = value;
             }
         }
 
