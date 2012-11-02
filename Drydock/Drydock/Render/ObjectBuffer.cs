@@ -2,14 +2,12 @@
 
 using System.Diagnostics;
 using System.Linq;
-using Drydock.Utilities;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
 namespace Drydock.Render{
-    internal class ObjectBuffer : BaseBufferObject<VertexPositionNormalTexture>{
+    internal class ObjectBuffer : StandardEffect{
         //key=identifier
         readonly int[] _indicies;
         readonly int _indiciesPerObject;
@@ -21,14 +19,8 @@ namespace Drydock.Render{
         public bool UpdateBufferManually;
 
         public ObjectBuffer(int maxObjects, int primitivesPerObject, int verticiesPerObject, int indiciesPerObject, string textureName) :
-            base(indiciesPerObject*maxObjects, verticiesPerObject*maxObjects, primitivesPerObject*maxObjects, PrimitiveType.TriangleList){
+            base(indiciesPerObject*maxObjects, verticiesPerObject*maxObjects, primitivesPerObject*maxObjects, textureName){
             BufferRasterizer = new RasterizerState{CullMode = CullMode.None};
-
-            var texture = Singleton.ContentManager.Load<Texture2D>(textureName);
-            BufferEffect = Singleton.ContentManager.Load<Effect>("StandardEffect").Clone();
-            BufferEffect.Parameters["Projection"].SetValue(Singleton.ProjectionMatrix);
-            BufferEffect.Parameters["World"].SetValue(Matrix.Identity);
-            BufferEffect.Parameters["Texture"].SetValue(texture);
 
             _objectData = new ObjectData[maxObjects];
             _indicies = new int[maxObjects*indiciesPerObject];
@@ -38,15 +30,6 @@ namespace Drydock.Render{
             _verticiesPerObject = verticiesPerObject;
             _maxObjects = maxObjects;
             UpdateBufferManually = false;
-        }
-
-
-        public Vector3 DiffuseDirection{
-            set { BufferEffect.Parameters["DiffuseLightDirection"].SetValue(value); }
-        }
-
-        public float AmbientIntensity{
-            set { BufferEffect.Parameters["AmbientIntensity"].SetValue(value); }
         }
 
         public void UpdateBuffers(){
@@ -113,8 +96,8 @@ namespace Drydock.Render{
             UpdateBufferManually = true; //temporary for this heavy copy algo
 
             foreach (var objectData in buffer._objectData){
-                if (objectData != null) {
-                    int offset = objectData.ObjectOffset * _verticiesPerObject;
+                if (objectData != null){
+                    int offset = objectData.ObjectOffset*_verticiesPerObject;
                     var indicies = from index in objectData.Indicies
                                    select index - offset;
 
