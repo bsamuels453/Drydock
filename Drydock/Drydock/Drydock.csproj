@@ -171,6 +171,7 @@
     <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
     <Compile Include="Logic\DoodadEditorState\HullGeometryHandler.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\WallBuildTool.cs" />
+    <Compile Include="Logic\DoodadEditorState\Tools\WallMenuTool.cs" />
     <Compile Include="Render\ObjectBuffer.cs" />
     <Compile Include="Render\StandardEffect.cs" />
     <Compile Include="UI\Components\HighlightComponent.cs" />
