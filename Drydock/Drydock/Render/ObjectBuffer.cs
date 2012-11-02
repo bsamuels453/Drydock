@@ -20,7 +20,7 @@ namespace Drydock.Render{
         public bool UpdateBufferManually;
 
         public ObjectBuffer(int maxObjects, int primitivesPerObject, int verticiesPerObject, int indiciesPerObject, string textureName) :
-            base(indiciesPerObject * maxObjects, verticiesPerObject * maxObjects, primitivesPerObject * maxObjects, PrimitiveType.TriangleList) {
+            base(indiciesPerObject*maxObjects, verticiesPerObject*maxObjects, primitivesPerObject*maxObjects, PrimitiveType.TriangleList){
             BufferRasterizer = new RasterizerState{CullMode = CullMode.None};
 
             var texture = Singleton.ContentManager.Load<Texture2D>(textureName);
@@ -63,7 +63,7 @@ namespace Drydock.Render{
                 if (_objectData[i] == null){
                     //add buffer offset to the indice list
                     for (int indice = 0; indice < indicies.Length; indice++){
-                        indicies[indice] += i * _verticiesPerObject;
+                        indicies[indice] += i*_verticiesPerObject;
                     }
 
                     _objectData[i] = new ObjectData(identifier, i, indicies, verticies);
@@ -104,9 +104,24 @@ namespace Drydock.Render{
             base.Indexbuffer.SetData(_indicies);
         }
 
+        /// <summary>
+        ///   really cool method that will take another objectbuffer and absorb its objects into this objectbuffer. also clears the other buffer afterwards.
+        /// </summary>
+        public void AbsorbBuffer(ObjectBuffer buffer){
+            bool buffUpdateState = UpdateBufferManually;
+            UpdateBufferManually = true; //temporary for this heavy copy algo
+
+            foreach (var objectData in buffer._objectData){
+                AddObject(objectData.Identifier, objectData.Indicies, objectData.Verticies);
+            }
+            UpdateBuffers();
+            UpdateBufferManually = buffUpdateState;
+            buffer.ClearObjects();
+        }
+
         #region Nested type: ObjectData
 
-        class ObjectData {
+        class ObjectData{
             // ReSharper disable MemberCanBePrivate.Local
             public readonly object Identifier;
             public readonly int[] Indicies;
