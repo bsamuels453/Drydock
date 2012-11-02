@@ -8,5 +8,6 @@
     "cross"
   ],
   "NumButtons": 3,
-  "Orientation": "Vertical"
+  "Orientation": "Vertical",
+  "ButtonTemplate": "ToolbarButton64.json"
 }
