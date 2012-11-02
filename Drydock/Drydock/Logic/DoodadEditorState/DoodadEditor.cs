@@ -39,13 +39,11 @@ namespace Drydock.Logic.DoodadEditorState{
             #region construct toolbar
 
             _toolBar = new Toolbar("Templates/DoodadToolbar.json");
-            _toolBar.BindButtonToTool(0, new WallBuildTool(
-                                             _hullInfo,
-                                             _hullGeometryHandler.VisibleDecks,
-                                             _hullGeometryHandler.WallBuffers,
-                                             _hullGeometryHandler.WallPositions
-                                             ));
-            _toolBar.ToolbarButtons[0].Texture = "wallbuildicon";
+            _toolBar.BindButtonToTool(0, new WallMenuTool(_hullInfo,
+                                                          _hullGeometryHandler.VisibleDecks,
+                                                          _hullGeometryHandler.WallBuffers,
+                                                          _hullGeometryHandler.WallPositions)
+                );
 
             #endregion
 
