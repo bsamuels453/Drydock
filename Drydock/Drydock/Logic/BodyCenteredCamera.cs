@@ -23,9 +23,9 @@ namespace Drydock.Logic{
         /// </summary>
         /// <param name="boundingBox"> </param>
         public BodyCenteredCamera(Rectangle? boundingBox = null){
-            _cameraPhi = 0.32f;
-            _cameraTheta = 0.63f;
-            _cameraDistance = 100;
+            _cameraPhi = 1.2f;
+            _cameraTheta = 1.93f;
+            _cameraDistance = 60;
             if (boundingBox != null){
                 _boundingBox = (Rectangle) boundingBox;
             }
