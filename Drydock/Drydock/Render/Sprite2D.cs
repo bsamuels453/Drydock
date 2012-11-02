@@ -16,6 +16,7 @@ namespace Drydock.Render{
         public int Width;
         public int X;
         public int Y;
+        public bool IsEnabled;
 
         Rectangle _destRect;
         bool _isDisposed;
@@ -36,6 +37,7 @@ namespace Drydock.Render{
             Height = height;
             Depth = depth;
             Opacity = opacity;
+            IsEnabled = true;
         }
 
         #region IDrawableSprite Members
@@ -57,20 +59,22 @@ namespace Drydock.Render{
         }
 
         public void Draw(SpriteBatch batch, Vector2 renderTargOffset){
-            _destRect.X = X - (int) renderTargOffset.X;
-            _destRect.Y = Y - (int) renderTargOffset.Y;
-            _destRect.Width = Width;
-            _destRect.Height = Height;
-            batch.Draw(
-                _texture,
-                _destRect,
-                (Rectangle?) _srcRect,
-                Color.White*Opacity,
-                0,
-                Vector2.Zero,
-                SpriteEffects.None,
-                Depth
-                );
+            if (IsEnabled){
+                _destRect.X = X - (int) renderTargOffset.X;
+                _destRect.Y = Y - (int) renderTargOffset.Y;
+                _destRect.Width = Width;
+                _destRect.Height = Height;
+                batch.Draw(
+                    _texture,
+                    _destRect,
+                    (Rectangle?) _srcRect,
+                    Color.White*Opacity,
+                    0,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    Depth
+                    );
+            }
         }
 
         #endregion
