@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Diagnostics;
+using System.Linq;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -112,7 +113,13 @@ namespace Drydock.Render{
             UpdateBufferManually = true; //temporary for this heavy copy algo
 
             foreach (var objectData in buffer._objectData){
-                AddObject(objectData.Identifier, objectData.Indicies, objectData.Verticies);
+                if (objectData != null) {
+                    int offset = objectData.ObjectOffset * _verticiesPerObject;
+                    var indicies = from index in objectData.Indicies
+                                   select index - offset;
+
+                    AddObject(objectData.Identifier, indicies.ToArray(), objectData.Verticies);
+                }
             }
             UpdateBuffers();
             UpdateBufferManually = buffUpdateState;
