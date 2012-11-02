@@ -16,7 +16,5 @@
         ///   An update function that will be called by the component's owner element.
         /// </summary>
         void Update();
-
-        void ClearState();
     }
 }

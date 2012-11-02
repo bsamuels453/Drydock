@@ -176,11 +176,6 @@ namespace Drydock.UI.Components{
             }
         }
 
-        public void ClearState(){
-            _isFadingOut = false;
-            _isInTransition = false;
-        }
-
         public string Identifier { get; private set; }
 
         #endregion
