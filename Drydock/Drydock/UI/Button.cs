@@ -93,6 +93,18 @@ namespace Drydock.UI{
         public event OnBasicMouseEvent OnLeftClickDispatcher;
         public event OnBasicMouseEvent OnLeftPressDispatcher;
         public event OnBasicMouseEvent OnLeftReleaseDispatcher;
+        bool _isEnabled;
+        public bool IsEnabled {
+            get { return _isEnabled; }
+            set{
+                _isEnabled = value;
+                Opacity = value ? 1 : 0;
+                foreach (var component in Components){
+                    component.ClearState();
+                }
+            }
+        }
+
         public bool ContainsMouse { get; set; }
 
         public float Opacity{
@@ -112,7 +124,7 @@ namespace Drydock.UI{
         //xxx why are these position coordinates all floats?
         public Button(float x, float y, float width, float height, DepthLevel depth, string textureName, float spriteTexRepeatX = DefaultTexRepeat, float spriteTexRepeatY = DefaultTexRepeat, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _identifier = identifier;
-
+            _isEnabled = true;
 
             _iEventDispatcher = new ButtonEventDispatcher();
 
@@ -172,92 +184,96 @@ namespace Drydock.UI{
         }
 
         public void UpdateLogic(double timeDelta){
-            if (Components != null){
-                foreach (IUIComponent component in Components){
-                    component.Update();
+            if (IsEnabled){
+                if (Components != null){
+                    foreach (IUIComponent component in Components){
+                        component.Update();
+                    }
                 }
             }
         }
 
         public void UpdateInput(ref ControlState state){
-            if (state.AllowLeftButtonInterpretation){
-                if (state.LeftButtonClick){
-                    foreach (var @event in _iEventDispatcher.OnLeftButtonClick){
-                        @event.OnLeftButtonClick(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
-                        if (!state.AllowLeftButtonInterpretation)
-                            break;
-                    }
-                }
-            }
-            if (state.AllowLeftButtonInterpretation){
-                if (state.LeftButtonState == ButtonState.Pressed){
-                    foreach (var @event in _iEventDispatcher.OnLeftButtonPress){
-                        @event.OnLeftButtonPress(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
-                        if (!state.AllowLeftButtonInterpretation)
-                            break;
-                    }
-                }
-            }
-            if (state.AllowLeftButtonInterpretation){
-                if (state.LeftButtonState == ButtonState.Released){
-                    foreach (var @event in _iEventDispatcher.OnLeftButtonRelease){
-                        @event.OnLeftButtonRelease(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
-                        if (!state.AllowLeftButtonInterpretation)
-                            break;
-                    }
-                }
-            }
-            if (state.AllowMouseMovementInterpretation){
-                foreach (var @event in _iEventDispatcher.OnMouseMovement){
-                    @event.OnMouseMovement(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
-                    if (!state.AllowMouseMovementInterpretation)
-                        break;
-                }
-            }
-            if (state.AllowMouseMovementInterpretation){
-                if (BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && !ContainsMouse){
-                    ContainsMouse = true;
-                    foreach (var @event in _iEventDispatcher.OnMouseEntry){
-                        @event.OnMouseEntry(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
-                        if (!state.AllowMouseMovementInterpretation)
-                            break;
-                    }
-                }
-            }
-            if (state.AllowMouseMovementInterpretation){
-                if (!BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && ContainsMouse){
-                    ContainsMouse = false;
-                    foreach (var @event in _iEventDispatcher.OnMouseExit){
-                        @event.OnMouseExit(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
-                        if (!state.AllowMouseMovementInterpretation)
-                            break;
-                    }
-                }
-            }
-            if (state.AllowKeyboardInterpretation){
-                foreach (var @event in _iEventDispatcher.OnKeyboardEvent){
-                    @event.OnKeyboardEvent(ref state.AllowKeyboardInterpretation, state.KeyboardState);
-                    if (!state.AllowKeyboardInterpretation)
-                        break;
-                }
-            }
-
-            //now dispatch the external delegates
-            if (state.AllowLeftButtonInterpretation){
-                if (BoundingBox.Contains(state.MousePos.X, state.MousePos.Y)){
+            if (IsEnabled){
+                if (state.AllowLeftButtonInterpretation){
                     if (state.LeftButtonClick){
-                        if (OnLeftClickDispatcher != null){
-                            OnLeftClickDispatcher.Invoke(Identifier);
+                        foreach (var @event in _iEventDispatcher.OnLeftButtonClick){
+                            @event.OnLeftButtonClick(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
+                            if (!state.AllowLeftButtonInterpretation)
+                                break;
                         }
                     }
-                    if (state.LeftButtonState == ButtonState.Released){
-                        if (OnLeftReleaseDispatcher != null){
-                            OnLeftReleaseDispatcher.Invoke(Identifier);
-                        }
-                    }
+                }
+                if (state.AllowLeftButtonInterpretation){
                     if (state.LeftButtonState == ButtonState.Pressed){
-                        if (OnLeftPressDispatcher != null){
-                            OnLeftPressDispatcher.Invoke(Identifier);
+                        foreach (var @event in _iEventDispatcher.OnLeftButtonPress){
+                            @event.OnLeftButtonPress(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
+                            if (!state.AllowLeftButtonInterpretation)
+                                break;
+                        }
+                    }
+                }
+                if (state.AllowLeftButtonInterpretation){
+                    if (state.LeftButtonState == ButtonState.Released){
+                        foreach (var @event in _iEventDispatcher.OnLeftButtonRelease){
+                            @event.OnLeftButtonRelease(ref state.AllowLeftButtonInterpretation, state.MousePos, state.PrevState.MousePos);
+                            if (!state.AllowLeftButtonInterpretation)
+                                break;
+                        }
+                    }
+                }
+                if (state.AllowMouseMovementInterpretation){
+                    foreach (var @event in _iEventDispatcher.OnMouseMovement){
+                        @event.OnMouseMovement(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
+                        if (!state.AllowMouseMovementInterpretation)
+                            break;
+                    }
+                }
+                if (state.AllowMouseMovementInterpretation){
+                    if (BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && !ContainsMouse){
+                        ContainsMouse = true;
+                        foreach (var @event in _iEventDispatcher.OnMouseEntry){
+                            @event.OnMouseEntry(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
+                            if (!state.AllowMouseMovementInterpretation)
+                                break;
+                        }
+                    }
+                }
+                if (state.AllowMouseMovementInterpretation){
+                    if (!BoundingBox.Contains(state.MousePos.X, state.MousePos.Y) && ContainsMouse){
+                        ContainsMouse = false;
+                        foreach (var @event in _iEventDispatcher.OnMouseExit){
+                            @event.OnMouseExit(ref state.AllowMouseMovementInterpretation, state.MousePos, state.PrevState.MousePos);
+                            if (!state.AllowMouseMovementInterpretation)
+                                break;
+                        }
+                    }
+                }
+                if (state.AllowKeyboardInterpretation){
+                    foreach (var @event in _iEventDispatcher.OnKeyboardEvent){
+                        @event.OnKeyboardEvent(ref state.AllowKeyboardInterpretation, state.KeyboardState);
+                        if (!state.AllowKeyboardInterpretation)
+                            break;
+                    }
+                }
+
+                //now dispatch the external delegates
+                if (state.AllowLeftButtonInterpretation){
+                    if (BoundingBox.Contains(state.MousePos.X, state.MousePos.Y)){
+                        if (state.LeftButtonClick){
+                            if (OnLeftClickDispatcher != null){
+                                OnLeftClickDispatcher.Invoke(Identifier);
+                            }
+                        }
+                        if (state.LeftButtonState == ButtonState.Released){
+                            if (OnLeftReleaseDispatcher != null){
+                                OnLeftReleaseDispatcher.Invoke(Identifier);
+                            }
+                        }
+                        if (state.LeftButtonState == ButtonState.Pressed){
+                            if (OnLeftPressDispatcher != null){
+                                OnLeftPressDispatcher.Invoke(Identifier);
+                            }
                         }
                     }
                 }

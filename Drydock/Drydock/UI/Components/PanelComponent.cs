@@ -52,6 +52,7 @@ namespace Drydock.UI.Components{
         public bool IsEnabled { get; set; }
 
         public void Update(){}
+        public void ClearState(){}
 
         public string Identifier { get; private set; }
 

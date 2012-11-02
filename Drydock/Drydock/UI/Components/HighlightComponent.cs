@@ -112,6 +112,9 @@ namespace Drydock.UI.Components{
         }
 
         public void Update(){}
+        public void ClearState(){
+            _highlightSprite.Opacity = 0;
+        }
 
         public string Identifier { get; private set; }
 

@@ -113,6 +113,7 @@ namespace Drydock.UI.Components{
         }
 
         public void Update(){}
+        public void ClearState(){}
 
         public string Identifier { get; private set; }
 
