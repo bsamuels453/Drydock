@@ -163,6 +163,31 @@ namespace Drydock.Render{
             verticies[17].Position = origin + ySizeV + xSizeV;
             verticies[18].Position = origin + xSizeV + ySizeV + zSizeV;
             verticies[19].Position = origin + ySizeV + zSizeV;
+
+            verticies[0].Normal = Vector3.Forward;
+            verticies[1].Normal = Vector3.Forward;
+            verticies[2].Normal = Vector3.Forward;
+            verticies[3].Normal = Vector3.Forward;
+
+            verticies[4].Normal = Vector3.Left;
+            verticies[5].Normal = Vector3.Left;
+            verticies[6].Normal = Vector3.Left;
+            verticies[7].Normal = Vector3.Left;
+
+            verticies[8].Normal = Vector3.Backward;
+            verticies[9].Normal = Vector3.Backward;
+            verticies[10].Normal = Vector3.Backward;
+            verticies[11].Normal = Vector3.Backward;
+
+            verticies[12].Normal = Vector3.Right;
+            verticies[13].Normal = Vector3.Right;
+            verticies[14].Normal = Vector3.Right;
+            verticies[15].Normal = Vector3.Right;
+
+            verticies[12].Normal = Vector3.Up;
+            verticies[13].Normal = Vector3.Up;
+            verticies[14].Normal = Vector3.Up;
+            verticies[15].Normal = Vector3.Up;
         }
     }
 }
