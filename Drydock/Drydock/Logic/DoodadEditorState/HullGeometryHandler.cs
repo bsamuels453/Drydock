@@ -68,7 +68,7 @@ namespace Drydock.Logic.DoodadEditorState{
             WallBuffers = new ObjectBuffer[_numDecks + 1];
             for (int i = 0; i < WallBuffers.Count(); i++){
                 int potentialWalls = geometryInfo.FloorVertexes[i].Count()*2;
-                WallBuffers[i] = new ObjectBuffer(potentialWalls, 10, 20, 30, "brown");
+                WallBuffers[i] = new ObjectBuffer(potentialWalls, 10, 20, 30, "whiteborder");
             }
         }
 
@@ -83,12 +83,14 @@ namespace Drydock.Logic.DoodadEditorState{
                 //todo: linq this
                 var tempFloorBuff = _deckFloorBuffers.Reverse().ToArray();
                 var tempWallBuff = _hullBuffers.Reverse().ToArray();
+                var tempWWallBuff = WallBuffers.Reverse().ToArray();
 
                 for (int i = 0; i < tempFloorBuff.Count(); i++){
                     if (tempFloorBuff[i].IsEnabled == false){
                         VisibleDecks.Value++;
                         tempFloorBuff[i].IsEnabled = true;
                         tempWallBuff[i].CullMode = CullMode.None;
+                        tempWWallBuff[i].IsEnabled = true;
                         break;
                     }
                 }
@@ -102,6 +104,7 @@ namespace Drydock.Logic.DoodadEditorState{
                         VisibleDecks.Value--;
                         _deckFloorBuffers[i].IsEnabled = false;
                         _hullBuffers[i].CullMode = CullMode.CullClockwiseFace;
+                        WallBuffers[i].IsEnabled = false;
                         break;
                     }
                 }
