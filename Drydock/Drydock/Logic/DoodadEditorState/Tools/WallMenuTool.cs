@@ -15,6 +15,16 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
 
             _toolbar = new Toolbar("Templates/BuildToolbar.json");
             _toolbar.IsEnabled = false;
+
+            _toolbar.BindButtonToTool(
+                0,
+                new WallBuildTool(
+                    hullInfo,
+                    visibleDecksRef,
+                    wallBuffers,
+                    wallIdentifiers
+                    )
+                );
         }
 
         public void UpdateInput(ref ControlState state){
