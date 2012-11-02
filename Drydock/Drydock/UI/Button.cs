@@ -101,7 +101,6 @@ namespace Drydock.UI{
                 _sprite.IsEnabled = value;
                 foreach (var component in Components){
                     component.IsEnabled = value;
-                    component.ClearState();
                 }
             }
         }
