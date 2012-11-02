@@ -41,6 +41,7 @@ namespace Drydock.Logic.HullEditorState{
             _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth)*(_meshVertexWidth));
 
             _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth)*(_meshVertexWidth)*2, "whiteborder");
+            _geometryBuffer.DiffuseDirection = new Vector3(0, -1, 1);
 
             _mesh = new Vector3[_meshVertexWidth,_meshVertexWidth];
 
