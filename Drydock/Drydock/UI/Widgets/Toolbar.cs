@@ -41,8 +41,11 @@ namespace Drydock.UI.Widgets{
                     foreach (var button in ToolbarButtons)
                         button.IsEnabled = true;
                 else
-                    foreach (var button in ToolbarButtons)
+                    foreach (var button in ToolbarButtons){
                         button.IsEnabled = false;
+                        _activeTool.Disable();
+                        _activeTool = _nullTool;
+                    }
             }
         }
 
