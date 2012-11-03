@@ -147,12 +147,20 @@ namespace Drydock.Render{
             UpdateBufferManually = true; //temporary for this heavy copy algo
 
             foreach (var objectData in buffer._objectData){
-                    int offset = objectData.ObjectOffset*_verticiesPerObject;
-                    var indicies = from index in objectData.Indicies
-                                   select index - offset;
+                bool isDuplicate = false;
+                foreach (var data in _objectData){
+                    if (data.Identifier.Equals(objectData.Identifier))
+                        isDuplicate = true;
+                }
+                if (isDuplicate)
+                    continue;
 
-                    AddObject(objectData.Identifier, indicies.ToArray(), objectData.Verticies);
-                
+                int offset = objectData.ObjectOffset*_verticiesPerObject;
+                var indicies = from index in objectData.Indicies
+                               select index - offset;
+
+                AddObject(objectData.Identifier, indicies.ToArray(), objectData.Verticies);
+
             }
             UpdateBuffers();
             UpdateBufferManually = buffUpdateState;

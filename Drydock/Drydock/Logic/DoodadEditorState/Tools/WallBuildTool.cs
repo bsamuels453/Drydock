@@ -32,12 +32,17 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         protected override void HandleCursorEnd(){
-            WallIdentifiers[CurDeck.Value].AddRange(_tempWallIdentifiers);
+            WallIdentifiers[CurDeck.Value].AddRange(
+                from id in _tempWallIdentifiers
+                where !WallIdentifiers[CurDeck.Value].Contains(id)
+                select id
+                );
             _tempWallIdentifiers.Clear();
             WallBuffers[CurDeck.Value].AbsorbBuffer(_tempWallBuffer);
         }
+    
 
-        protected override void HandleCursorBegin(){}
+    protected override void HandleCursorBegin(){}
 
         void GenerateWallsFromStroke() {
             _tempWallIdentifiers.Clear();
