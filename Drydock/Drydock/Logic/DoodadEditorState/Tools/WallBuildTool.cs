@@ -16,14 +16,14 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
     internal class WallBuildTool : WallEditTool{
-        readonly ObjectBuffer _tempWallBuffer;
+        readonly ObjectBuffer<WallIdentifier> _tempWallBuffer;
         readonly List<WallIdentifier> _tempWallIdentifiers;
 
 
-        public WallBuildTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer[] wallBuffers, List<WallIdentifier>[] wallIdentifiers) : 
+        public WallBuildTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<WallIdentifier>[] wallBuffers, List<WallIdentifier>[] wallIdentifiers) :
             base(hullInfo, visibleDecksRef, wallBuffers, wallIdentifiers){
 
-            _tempWallBuffer = new ObjectBuffer(hullInfo.FloorVertexes[0].Count() * 2, 10, 20, 30, "whiteborder") { UpdateBufferManually = true };
+            _tempWallBuffer = new ObjectBuffer<WallIdentifier>(hullInfo.FloorVertexes[0].Count()*2, 10, 20, 30, "whiteborder"){UpdateBufferManually = true};
             _tempWallIdentifiers = new List<WallIdentifier>();
         }
 
@@ -99,60 +99,4 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _tempWallBuffer.UpdateBuffers();
         }
     }
-
-    #region wallidentifier
-
-    internal struct WallIdentifier{
-        public readonly Vector3 EndPoint;
-        public readonly Vector3 StartPoint;
-
-        public WallIdentifier(Vector3 startPoint, Vector3 endPoint){
-            StartPoint = startPoint;
-            EndPoint = endPoint;
-        }
-
-        #region equality operators
-
-        public static bool operator ==(WallIdentifier wallid1, WallIdentifier wallid2){
-            if (wallid1.StartPoint == wallid2.StartPoint && wallid1.EndPoint == wallid2.EndPoint)
-                return true;
-            if (wallid1.StartPoint == wallid2.EndPoint && wallid2.EndPoint == wallid1.StartPoint)
-                return true;
-            return false;
-        }
-
-        public static bool operator !=(WallIdentifier wallid1, WallIdentifier wallid2){
-            if (wallid1.StartPoint == wallid2.StartPoint && wallid1.EndPoint == wallid2.EndPoint)
-                return false;
-            if (wallid1.StartPoint == wallid2.EndPoint && wallid2.EndPoint == wallid1.StartPoint)
-                return false;
-            return true;
-        }
-
-        public bool Equals(WallIdentifier other){
-            if (StartPoint == other.StartPoint && EndPoint == other.EndPoint)
-                return true;
-            if (StartPoint == other.EndPoint && other.EndPoint == StartPoint)
-                return true;
-            return false;
-        }
-
-        public override bool Equals(object obj){
-            if (ReferenceEquals(null, obj)) return false;
-            if (obj.GetType() != typeof (WallIdentifier)) return false;
-            return Equals((WallIdentifier) obj);
-        }
-
-        #endregion
-
-        public override int GetHashCode(){
-            unchecked{
-                // ReSharper disable NonReadonlyFieldInGetHashCode
-                return (StartPoint.GetHashCode()*397) ^ EndPoint.GetHashCode();
-                // ReSharper restore NonReadonlyFieldInGetHashCode
-            }
-        }
-    }
-
-    #endregion
 }
