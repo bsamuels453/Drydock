@@ -171,6 +171,22 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     float f = distList.Min();
 
                     int ptIdx = distList.IndexOf(f);
+
+                    if (_deckFloorVertexes[CurDeck.Value].Contains(prevCursorPosition) && _isDrawing){
+                        var v1 = new Vector3(_deckFloorVertexes[CurDeck.Value][ptIdx].X, _deckFloorVertexes[CurDeck.Value][ptIdx].Y, StrokeOrigin.Z);
+                        var v2 = new Vector3(StrokeOrigin.X, _deckFloorVertexes[CurDeck.Value][ptIdx].Y, _deckFloorVertexes[CurDeck.Value][ptIdx].Z);
+                        if (state.KeyboardState.IsKeyDown(Keys.L)){
+                            int fa = 5;
+                        }
+
+                        if (!_deckFloorVertexes[CurDeck.Value].Contains(v1))
+                            break;
+                        if (!_deckFloorVertexes[CurDeck.Value].Contains(v2))
+                            break;
+
+                    }
+
+
                     _cursorPosition = _deckFloorVertexes[CurDeck.Value][ptIdx];
                     var verts = new VertexPositionColor[2];
                     verts[0] = new VertexPositionColor(
