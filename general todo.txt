@@ -1,12 +1,13 @@
 Timeframes are not listed for tasks intended to be completed during the school semester.
 
--Doodad buffer with elements that can be turned on or off
--Doodad buffer implementation for airship hull, allowing portholes and such.
+-wall building cursor kinaesthetics
+-border walls extending to the hull
 
--Toolbox sidebar
+-portholes
+-aligned boundingboxes across levels
+-removing floor panels for stairs
+
 -Tooltips
--Tool for buildings walls
---point sprites to represent the intervals on which walls can be built
 
 -Toolbox bottombar
 ->doors
