@@ -26,7 +26,7 @@ namespace Drydock.Logic.DoodadEditorState{
         readonly int _numDecks;
         readonly WireframeBuffer _selectionBuff;
 
-        public readonly ObjectBuffer[] WallBuffers;
+        public readonly ObjectBuffer<WallIdentifier>[] WallBuffers;
         public readonly List<WallIdentifier>[] WallPositions;
         public IntRef VisibleDecks;
 
@@ -65,10 +65,10 @@ namespace Drydock.Logic.DoodadEditorState{
             _deckUpButton.OnLeftClickDispatcher += AddVisibleLevel;
             _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;
 
-            WallBuffers = new ObjectBuffer[_numDecks + 1];
+            WallBuffers = new ObjectBuffer<WallIdentifier>[_numDecks + 1];
             for (int i = 0; i < WallBuffers.Count(); i++){
                 int potentialWalls = geometryInfo.FloorVertexes[i].Count()*2;
-                WallBuffers[i] = new ObjectBuffer(potentialWalls, 10, 20, 30, "whiteborder");
+                WallBuffers[i] = new ObjectBuffer<WallIdentifier>(potentialWalls, 10, 20, 30, "whiteborder");
             }
         }
 
