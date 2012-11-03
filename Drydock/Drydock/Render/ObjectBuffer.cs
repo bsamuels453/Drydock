@@ -12,7 +12,7 @@ namespace Drydock.Render{
     internal class ObjectBuffer <T>: StandardEffect where T:IEquatable<T>{
         
         //key=identifier
-        readonly bool[] _isSlotOccupied;
+        bool[] _isSlotOccupied;
         int[] _indicies;
         readonly int _indiciesPerObject;
         readonly int _maxObjects;
@@ -72,32 +72,34 @@ namespace Drydock.Render{
         }
 
         public void RemoveObject(IEquatable<T> identifier){
-            ObjectData datumToRemove = null;
-            foreach (var data in _objectData){
-                if (data.Identifier.Equals(identifier)){
+            ObjectData objectToRemove = (
+                                            from obj in _objectData
+                                            where obj.Identifier.Equals(identifier)
+                                            select obj
+                                        ).FirstOrDefault();
 
-                    _isSlotOccupied[data.ObjectOffset] = false;
-                    var emptyIndicies = new int[_indiciesPerObject];
-                    emptyIndicies.CopyTo(_indicies, data.ObjectOffset * _indiciesPerObject);
-                    if (!UpdateBufferManually) {
-                        base.Indexbuffer.SetData(_indicies);
-                    }
-                    datumToRemove = data;
-                }
+            if (objectToRemove == null)
+                return;
+
+            _isSlotOccupied[objectToRemove.ObjectOffset] = false;
+            for (int i = 0; i < _indiciesPerObject; i++){
+                _indicies[objectToRemove.ObjectOffset * _indiciesPerObject + i] = 0;
             }
-            if (datumToRemove != null){
-                _objectData.Remove(datumToRemove);
+            if (!UpdateBufferManually){
+                base.Indexbuffer.SetData(_indicies);
             }
+            _objectData.Remove(objectToRemove);
         }
 
         public void ClearObjects(){
             _objectData.Clear();
-            var inds = new int[_maxObjects * _indiciesPerObject];
             for (int i = 0; i < _maxObjects; i++){
                 _isSlotOccupied[i] = false;
             }
-            _indicies = inds;
-            base.Indexbuffer.SetData(inds);
+            for (int i = 0; i < _maxObjects * _indiciesPerObject; i++){
+                _indicies[i] = 0;
+            }
+            base.Indexbuffer.SetData(_indicies);
         }
 
         public bool EnableObject(IEquatable<T> identifier) {
