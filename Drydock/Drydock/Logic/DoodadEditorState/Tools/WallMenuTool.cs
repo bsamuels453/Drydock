@@ -11,7 +11,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
     class WallMenuTool :IToolbarTool{
         readonly Toolbar _toolbar;
 
-        public WallMenuTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer[] wallBuffers, List<WallIdentifier>[] wallIdentifiers){
+        public WallMenuTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<WallIdentifier>[] wallBuffers, List<WallIdentifier>[] wallIdentifiers){
 
             _toolbar = new Toolbar("Templates/BuildToolbar.json");
             _toolbar.IsEnabled = false;
@@ -19,6 +19,16 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
             _toolbar.BindButtonToTool(
                 0,
                 new WallBuildTool(
+                    hullInfo,
+                    visibleDecksRef,
+                    wallBuffers,
+                    wallIdentifiers
+                    )
+                );
+
+            _toolbar.BindButtonToTool(
+                1,
+                new WallDeleteTool(
                     hullInfo,
                     visibleDecksRef,
                     wallBuffers,
