@@ -115,5 +115,9 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected override void HandleCursorBegin(){
             //throw new NotImplementedException();
         }
+
+        protected override void OnVisibleDeckChange(){
+            _prevIdentifiers.Clear();
+        }
     }
 }

@@ -279,12 +279,14 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 }
 
                 _guideGridBuffers[CurDeck.Value].IsEnabled = true;
+                OnVisibleDeckChange();
             }
         }
 
         protected abstract void HandleCursorChange();
         protected abstract void HandleCursorEnd();
         protected abstract void HandleCursorBegin();
+        protected abstract void OnVisibleDeckChange();
     }
 
     #region wallidentifier

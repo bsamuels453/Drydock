@@ -43,6 +43,9 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
     
 
     protected override void HandleCursorBegin(){}
+        protected override void OnVisibleDeckChange(){
+            
+        }
 
         void GenerateWallsFromStroke() {
             _tempWallIdentifiers.Clear();
