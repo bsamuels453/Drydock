@@ -36,7 +36,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             WallBuffers[CurDeck.Value].AbsorbBuffer(_tempWallBuffer);
         }
 
-
         protected override void HandleCursorBegin(){
         }
 
