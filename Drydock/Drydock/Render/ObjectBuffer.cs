@@ -9,12 +9,11 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Render{
-    internal class ObjectBuffer <T>: StandardEffect where T:IEquatable<T>{
-        
+    internal class ObjectBuffer<T> : StandardEffect where T : IEquatable<T>{
         //key=identifier
-        bool[] _isSlotOccupied;
-        int[] _indicies;
+        readonly int[] _indicies;
         readonly int _indiciesPerObject;
+        readonly bool[] _isSlotOccupied;
         readonly int _maxObjects;
         readonly List<ObjectData> _objectData;
         readonly VertexPositionNormalTexture[] _verticies;
@@ -43,13 +42,13 @@ namespace Drydock.Render{
             base.Vertexbuffer.SetData(_verticies);
         }
 
-        public void AddObject(IEquatable<T> identifier, int[] indicies, VertexPositionNormalTexture[] verticies) {
+        public void AddObject(IEquatable<T> identifier, int[] indicies, VertexPositionNormalTexture[] verticies){
             Debug.Assert(indicies.Length == _indiciesPerObject);
             Debug.Assert(verticies.Length == _verticiesPerObject);
 
             int index = -1;
             for (int i = 0; i < _maxObjects; i++){
-                if (_isSlotOccupied[i] == false) {
+                if (_isSlotOccupied[i] == false){
                     //add buffer offset to the indice list
                     for (int indice = 0; indice < indicies.Length; indice++){
                         indicies[indice] += i*_verticiesPerObject;
@@ -83,7 +82,7 @@ namespace Drydock.Render{
 
             _isSlotOccupied[objectToRemove.ObjectOffset] = false;
             for (int i = 0; i < _indiciesPerObject; i++){
-                _indicies[objectToRemove.ObjectOffset * _indiciesPerObject + i] = 0;
+                _indicies[objectToRemove.ObjectOffset*_indiciesPerObject + i] = 0;
             }
             if (!UpdateBufferManually){
                 base.Indexbuffer.SetData(_indicies);
@@ -96,13 +95,13 @@ namespace Drydock.Render{
             for (int i = 0; i < _maxObjects; i++){
                 _isSlotOccupied[i] = false;
             }
-            for (int i = 0; i < _maxObjects * _indiciesPerObject; i++){
+            for (int i = 0; i < _maxObjects*_indiciesPerObject; i++){
                 _indicies[i] = 0;
             }
             base.Indexbuffer.SetData(_indicies);
         }
 
-        public bool EnableObject(IEquatable<T> identifier) {
+        public bool EnableObject(IEquatable<T> identifier){
             ObjectData objToEnable = null;
             foreach (var obj in _objectData){
                 if (obj.Identifier.Equals(identifier)){
@@ -111,16 +110,16 @@ namespace Drydock.Render{
             }
             if (objToEnable == null)
                 return false;
-            
+
             objToEnable.IsEnabled = true;
-            objToEnable.Indicies.CopyTo(_indicies, objToEnable.ObjectOffset * _indiciesPerObject);
+            objToEnable.Indicies.CopyTo(_indicies, objToEnable.ObjectOffset*_indiciesPerObject);
             if (!UpdateBufferManually){
                 base.Indexbuffer.SetData(_indicies);
             }
             return true;
         }
 
-        public bool DisableObject(IEquatable<T> identifier) {
+        public bool DisableObject(IEquatable<T> identifier){
             ObjectData objToDisable = null;
             foreach (var obj in _objectData){
                 if (obj.Identifier.Equals(identifier)){
@@ -132,7 +131,7 @@ namespace Drydock.Render{
 
             objToDisable.IsEnabled = false;
             var indicies = new int[_indiciesPerObject];
-            indicies.CopyTo(_indicies, objToDisable.ObjectOffset * _indiciesPerObject);
+            indicies.CopyTo(_indicies, objToDisable.ObjectOffset*_indiciesPerObject);
             if (!UpdateBufferManually){
                 base.Indexbuffer.SetData(_indicies);
             }
@@ -160,7 +159,6 @@ namespace Drydock.Render{
                                select index - offset;
 
                 AddObject(objectData.Identifier, indicies.ToArray(), objectData.Verticies);
-
             }
             UpdateBuffers();
             UpdateBufferManually = buffUpdateState;
@@ -170,15 +168,15 @@ namespace Drydock.Render{
         #region Nested type: ObjectData
 
         class ObjectData{
-            public bool IsEnabled;
             // ReSharper disable MemberCanBePrivate.Local
             public readonly IEquatable<T> Identifier;
             public readonly int[] Indicies;
             public readonly int ObjectOffset;
             public readonly VertexPositionNormalTexture[] Verticies;
+            public bool IsEnabled;
             // ReSharper restore MemberCanBePrivate.Local
 
-            public ObjectData(IEquatable<T> identifier, int objectOffset, int[] indicies, VertexPositionNormalTexture[] verticies) {
+            public ObjectData(IEquatable<T> identifier, int objectOffset, int[] indicies, VertexPositionNormalTexture[] verticies){
                 IsEnabled = true;
                 Identifier = identifier;
                 ObjectOffset = objectOffset;

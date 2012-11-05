@@ -42,7 +42,8 @@ namespace Drydock.Logic{
             }
         }
 
-        public static void SpecialKeyboardRec(KeyboardState state){}
+        public static void SpecialKeyboardRec(KeyboardState state){
+        }
     }
 
     internal interface IGameState{

@@ -33,16 +33,6 @@ namespace Drydock.UI.Widgets{
         IToolbarTool _activeTool;
 
         bool _isEnabled;
-        public bool IsEnabled {
-            get { return _isEnabled; }
-            set{
-                _isEnabled = value;
-                ClearActiveTool();
-                foreach (var button in ToolbarButtons){
-                    button.IsEnabled = value;
-                }
-            }
-        }
 
         public Toolbar(string path){
             var sr = new StreamReader(path);
@@ -112,6 +102,17 @@ namespace Drydock.UI.Widgets{
             #endregion
         }
 
+        public bool IsEnabled{
+            get { return _isEnabled; }
+            set{
+                _isEnabled = value;
+                ClearActiveTool();
+                foreach (var button in ToolbarButtons){
+                    button.IsEnabled = value;
+                }
+            }
+        }
+
         #region IInputUpdates Members
 
         public void UpdateInput(ref ControlState state){
@@ -140,7 +141,7 @@ namespace Drydock.UI.Widgets{
         public void ClearActiveTool(){
             _activeTool.Disable();
             _activeTool = _nullTool;
-            foreach (var button in ToolbarButtons) {
+            foreach (var button in ToolbarButtons){
                 button.GetComponent<HighlightComponent>("ClickHoldEffect").UnprocHighlight();
                 button.GetComponent<HighlightComponent>("HoverMask").IsEnabled = true;
                 button.GetComponent<HighlightComponent>("HoverMask").UnprocHighlight();

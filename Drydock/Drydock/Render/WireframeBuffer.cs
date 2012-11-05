@@ -17,11 +17,11 @@ namespace Drydock.Render{
             BufferEffect.Parameters["World"].SetValue(Matrix.Identity);
         }
 
-        public new IndexBuffer Indexbuffer {
+        public new IndexBuffer Indexbuffer{
             get { return base.Indexbuffer; }
         }
 
-        public new VertexBuffer Vertexbuffer {
+        public new VertexBuffer Vertexbuffer{
             get { return base.Vertexbuffer; }
         }
     }

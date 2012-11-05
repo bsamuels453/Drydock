@@ -1,10 +1,4 @@
-﻿#region
-
-
-
-#endregion
-
-/*
+﻿/*
 namespace Drydock.UI.Components{
     internal delegate void ReactToSelection(SelectState state);
 
@@ -142,3 +136,4 @@ namespace Drydock.UI.Components{
     }
 
 }*/
+

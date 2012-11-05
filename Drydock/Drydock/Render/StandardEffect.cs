@@ -10,7 +10,6 @@ namespace Drydock.Render{
     internal abstract class StandardEffect : BaseBufferObject<VertexPositionNormalTexture>{
         protected StandardEffect(int numIndicies, int numVerticies, int numPrimitives, string textureName) :
             base(numIndicies, numVerticies, numPrimitives, PrimitiveType.TriangleList){
-
             var texture = Singleton.ContentManager.Load<Texture2D>(textureName);
             BufferEffect = Singleton.ContentManager.Load<Effect>("StandardEffect").Clone();
             BufferEffect.Parameters["Projection"].SetValue(Singleton.ProjectionMatrix);
@@ -21,8 +20,8 @@ namespace Drydock.Render{
             BufferEffect.Parameters["DiffuseLightDirection"].SetValue(new Vector3(0, -1, 1));
         }
 
-        public CullMode CullMode {
-            set {
+        public CullMode CullMode{
+            set{
                 BufferRasterizer = new RasterizerState();
                 BufferRasterizer.CullMode = value;
             }

@@ -1,3 +1,4 @@
 ﻿namespace Drydock.Logic.TestState{
-    internal class Entity : EntityDataContainer{}
+    internal class Entity : EntityDataContainer{
+    }
 }

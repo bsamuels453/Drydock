@@ -145,7 +145,8 @@ namespace Drydock.Logic.HullEditorState{
             BalancedCenterTranslate(dx, dy);
         }
 
-        public void ClampPositionFromExternal(float dx, float dy){}
+        public void ClampPositionFromExternal(float dx, float dy){
+        }
 
         void ClampHandleMovement(IUIInteractiveElement owner, ref int x, ref int y, int oldX, int oldY){
             var button = (Button) owner;
@@ -344,7 +345,8 @@ namespace Drydock.Logic.HullEditorState{
             }
         }
 
-        void TopNeighborClamp(ref float dx, ref float dy, Button button){}
+        void TopNeighborClamp(ref float dx, ref float dy, Button button){
+        }
 
         void SideNeighborClamp(ref float dx, ref float dy, Button button){
             //prevent symmetric buttons from crossing each other

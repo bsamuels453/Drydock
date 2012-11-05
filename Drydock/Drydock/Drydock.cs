@@ -36,7 +36,8 @@ namespace Drydock{
             base.Initialize();
         }
 
-        protected override void LoadContent(){}
+        protected override void LoadContent(){
+        }
 
         protected override void UnloadContent(){
             GamestateManager.ClearGameState();

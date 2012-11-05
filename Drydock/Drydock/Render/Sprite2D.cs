@@ -12,11 +12,11 @@ namespace Drydock.Render{
         readonly FloatingRectangle _srcRect;
         public float Depth;
         public int Height;
+        public bool IsEnabled;
         public float Opacity;
         public int Width;
         public int X;
         public int Y;
-        public bool IsEnabled;
 
         Rectangle _destRect;
         bool _isDisposed;

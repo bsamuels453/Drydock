@@ -14,9 +14,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Logic.DoodadEditorState{
     /// <summary>
-    /// this class handles the display of the prototype airship and all of its components
+    ///   this class handles the display of the prototype airship and all of its components
     /// </summary>
     internal class HullGeometryHandler : IInputUpdates{
+        public readonly ObjectBuffer<WallIdentifier>[] WallBuffers;
+        public readonly List<WallIdentifier>[] WallPositions;
         readonly Button _deckDownButton;
 
         readonly ShipGeometryBuffer[] _deckFloorBuffers;
@@ -26,8 +28,6 @@ namespace Drydock.Logic.DoodadEditorState{
         readonly int _numDecks;
         readonly WireframeBuffer _selectionBuff;
 
-        public readonly ObjectBuffer<WallIdentifier>[] WallBuffers;
-        public readonly List<WallIdentifier>[] WallPositions;
         public IntRef VisibleDecks;
 
         public HullGeometryHandler(HullGeometryInfo geometryInfo){
@@ -37,7 +37,7 @@ namespace Drydock.Logic.DoodadEditorState{
             _numDecks = geometryInfo.NumDecks;
             VisibleDecks = new IntRef();
             VisibleDecks.Value = _numDecks;
-            WallPositions = new List<WallIdentifier>[_numDecks+1];
+            WallPositions = new List<WallIdentifier>[_numDecks + 1];
             for (int i = 0; i < WallPositions.Length; i++){
                 WallPositions[i] = new List<WallIdentifier>();
             }
@@ -74,7 +74,8 @@ namespace Drydock.Logic.DoodadEditorState{
 
         #region IInputUpdates Members
 
-        public void UpdateInput(ref ControlState state) { }
+        public void UpdateInput(ref ControlState state){
+        }
 
         #endregion
 

@@ -196,7 +196,8 @@ namespace Drydock.Logic.HullEditorState{
                         return new Vector2(_prevLines[i].DestPoint.X, _prevLines[i].DestPoint.Y);
                     }
                 }
-                foreach (var line in _prevLines){}
+                foreach (var line in _prevLines){
+                }
             }
             //todo: fix these returns to not break on zero
             t = -1;

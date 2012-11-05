@@ -1,18 +1,18 @@
-﻿using System;
+﻿#region
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Drydock.Control;
 using Drydock.Render;
 using Drydock.UI.Widgets;
 using Drydock.Utilities.ReferenceTypes;
 
-namespace Drydock.Logic.DoodadEditorState.Tools {
-    class WallMenuTool :IToolbarTool{
+#endregion
+
+namespace Drydock.Logic.DoodadEditorState.Tools{
+    internal class WallMenuTool : IToolbarTool{
         readonly Toolbar _toolbar;
 
         public WallMenuTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<WallIdentifier>[] wallBuffers, List<WallIdentifier>[] wallIdentifiers){
-
             _toolbar = new Toolbar("Templates/BuildToolbar.json");
             _toolbar.IsEnabled = false;
 
@@ -37,6 +37,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
                 );
         }
 
+        #region IToolbarTool Members
+
         public void UpdateInput(ref ControlState state){
             _toolbar.UpdateInput(ref state);
         }
@@ -52,5 +54,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
         public void Disable(){
             _toolbar.IsEnabled = false;
         }
+
+        #endregion
     }
 }

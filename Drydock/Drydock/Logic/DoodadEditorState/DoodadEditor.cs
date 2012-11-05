@@ -69,7 +69,7 @@ namespace Drydock.Logic.DoodadEditorState{
             UIElementCollection.Collection.UpdateInput(ref state);
             _toolBar.UpdateInput(ref state);
             _cameraController.UpdateInput(ref state);
-            
+
             #endregion
 
             #region update logic
@@ -81,7 +81,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
             UIElementCollection.UnbindCollection();
         }
-        #endregion
 
+        #endregion
     }
 }

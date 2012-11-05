@@ -27,6 +27,7 @@ namespace Drydock.UI{
         readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
         readonly Sprite2D _sprite; //the button's sprite
         Vector2 _centPosition; //represents the approximate center of the button
+        bool _isEnabled;
         string _texture;
 
         public Vector2 CentPosition{
@@ -93,8 +94,8 @@ namespace Drydock.UI{
         public event OnBasicMouseEvent OnLeftClickDispatcher;
         public event OnBasicMouseEvent OnLeftPressDispatcher;
         public event OnBasicMouseEvent OnLeftReleaseDispatcher;
-        bool _isEnabled;
-        public bool IsEnabled {
+
+        public bool IsEnabled{
             get { return _isEnabled; }
             set{
                 _isEnabled = value;

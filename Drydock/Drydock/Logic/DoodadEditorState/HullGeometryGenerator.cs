@@ -43,7 +43,7 @@ namespace Drydock.Logic.DoodadEditorState{
             GenerateFloorBoundingBoxes();
             Resultant.WallResolution = _floorBBoxWidth;
             Resultant.DeckHeight = _metersPerDeck;
-            Resultant.MaxBoundingBoxDims = new Vector2((int)(_length / _floorBBoxWidth), (int)(_berth / _floorBBoxWidth));
+            Resultant.MaxBoundingBoxDims = new Vector2((int) (_length/_floorBBoxWidth), (int) (_berth/_floorBBoxWidth));
         }
 
         //todo: break up this method into submethods for the sake of cleanliness.
@@ -457,13 +457,12 @@ internal struct HullGeometryInfo{
     public Vector3 CenterPoint;
     public BoundingBox[][] DeckFloorBoundingBoxes;
     public ShipGeometryBuffer[] DeckFloorBuffers;
+    public float DeckHeight;
     public Vector3[][] FloorVertexes;
     public ShipGeometryBuffer[] HullWallBuffers;
+    public Vector2 MaxBoundingBoxDims;
     public int NumDecks;
     public float WallResolution;
-    public float DeckHeight;
-
-    public Vector2 MaxBoundingBoxDims;
 }
 
 
