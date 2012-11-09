@@ -261,6 +261,7 @@ namespace Drydock.UI{
                 //now dispatch the external delegates
                 if (state.AllowLeftButtonInterpretation){
                     if (BoundingBox.Contains(state.MousePos.X, state.MousePos.Y)){
+                        state.AllowLeftButtonInterpretation = false;
                         if (state.LeftButtonClick){
                             if (OnLeftClickDispatcher != null){
                                 OnLeftClickDispatcher.Invoke(Identifier);
