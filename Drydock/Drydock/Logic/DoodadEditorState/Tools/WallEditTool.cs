@@ -136,84 +136,90 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
             #region update cursor
 
-            var nearMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 0);
-            var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);
+            if (state.AllowMouseMovementInterpretation) {
+                var nearMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 0);
+                var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);
 
-            //transform the mouse into world space
-            var nearPoint = Singleton.Device.Viewport.Unproject(
-                nearMouse,
-                Singleton.ProjectionMatrix,
-                state.ViewMatrix,
-                Matrix.Identity
-                );
+                //transform the mouse into world space
+                var nearPoint = Singleton.Device.Viewport.Unproject(
+                    nearMouse,
+                    Singleton.ProjectionMatrix,
+                    state.ViewMatrix,
+                    Matrix.Identity
+                    );
 
-            var farPoint = Singleton.Device.Viewport.Unproject(
-                farMouse,
-                Singleton.ProjectionMatrix,
-                state.ViewMatrix,
-                Matrix.Identity
-                );
+                var farPoint = Singleton.Device.Viewport.Unproject(
+                    farMouse,
+                    Singleton.ProjectionMatrix,
+                    state.ViewMatrix,
+                    Matrix.Identity
+                    );
 
-            var direction = farPoint - nearPoint;
-            direction.Normalize();
-            var ray = new Ray(nearPoint, direction);
+                var direction = farPoint - nearPoint;
+                direction.Normalize();
+                var ray = new Ray(nearPoint, direction);
 
 
-            float? ndist;
-            bool intersectionFound = false;
-            for (int i = 0; i < _deckFloorBoundingboxes[CurDeck.Value].Length; i++){
-                if ((ndist = ray.Intersects(_deckFloorBoundingboxes[CurDeck.Value][i])) != null){
-                    _cursorActive = true;
-                    var rayTermination = ray.Position + ray.Direction*(float) ndist;
+                float? ndist;
+                bool intersectionFound = false;
+                for (int i = 0; i < _deckFloorBoundingboxes[CurDeck.Value].Length; i++) {
+                    if ((ndist = ray.Intersects(_deckFloorBoundingboxes[CurDeck.Value][i])) != null) {
+                        _cursorActive = true;
+                        var rayTermination = ray.Position + ray.Direction * (float)ndist;
 
-                    var distList = new List<float>();
+                        var distList = new List<float>();
 
-                    for (int point = 0; point < _deckFloorVertexes[CurDeck.Value].Count(); point++){
-                        distList.Add(Vector3.Distance(rayTermination, _deckFloorVertexes[CurDeck.Value][point]));
-                    }
-                    float f = distList.Min();
+                        for (int point = 0; point < _deckFloorVertexes[CurDeck.Value].Count(); point++) {
+                            distList.Add(Vector3.Distance(rayTermination, _deckFloorVertexes[CurDeck.Value][point]));
+                        }
+                        float f = distList.Min();
 
-                    int ptIdx = distList.IndexOf(f);
+                        int ptIdx = distList.IndexOf(f);
 
-                    if (_deckFloorVertexes[CurDeck.Value].Contains(prevCursorPosition) && _isDrawing){
-                        var v1 = new Vector3(_deckFloorVertexes[CurDeck.Value][ptIdx].X, _deckFloorVertexes[CurDeck.Value][ptIdx].Y, StrokeOrigin.Z);
-                        var v2 = new Vector3(StrokeOrigin.X, _deckFloorVertexes[CurDeck.Value][ptIdx].Y, _deckFloorVertexes[CurDeck.Value][ptIdx].Z);
-                        if (state.KeyboardState.IsKeyDown(Keys.L)){
-                            int fa = 5;
+                        if (_deckFloorVertexes[CurDeck.Value].Contains(prevCursorPosition) && _isDrawing) {
+                            var v1 = new Vector3(_deckFloorVertexes[CurDeck.Value][ptIdx].X, _deckFloorVertexes[CurDeck.Value][ptIdx].Y, StrokeOrigin.Z);
+                            var v2 = new Vector3(StrokeOrigin.X, _deckFloorVertexes[CurDeck.Value][ptIdx].Y, _deckFloorVertexes[CurDeck.Value][ptIdx].Z);
+                            if (state.KeyboardState.IsKeyDown(Keys.L)) {
+                                int fa = 5;
+                            }
+
+                            if (!_deckFloorVertexes[CurDeck.Value].Contains(v1))
+                                break;
+                            if (!_deckFloorVertexes[CurDeck.Value].Contains(v2))
+                                break;
                         }
 
-                        if (!_deckFloorVertexes[CurDeck.Value].Contains(v1))
-                            break;
-                        if (!_deckFloorVertexes[CurDeck.Value].Contains(v2))
-                            break;
+
+                        _cursorPosition = _deckFloorVertexes[CurDeck.Value][ptIdx];
+                        var verts = new VertexPositionColor[2];
+                        verts[0] = new VertexPositionColor(
+                            new Vector3(
+                                _cursorPosition.X,
+                                _cursorPosition.Y + 0.03f,
+                                _cursorPosition.Z
+                                ),
+                            Color.White
+                            );
+                        verts[1] = new VertexPositionColor(
+                            new Vector3(
+                                _cursorPosition.X,
+                                _cursorPosition.Y + 10f,
+                                _cursorPosition.Z
+                                ),
+                            Color.White
+                            );
+                        _cursorBuff.Vertexbuffer.SetData(verts);
+                        _cursorBuff.IsEnabled = true;
+                        intersectionFound = true;
+                        break;
                     }
-
-
-                    _cursorPosition = _deckFloorVertexes[CurDeck.Value][ptIdx];
-                    var verts = new VertexPositionColor[2];
-                    verts[0] = new VertexPositionColor(
-                        new Vector3(
-                            _cursorPosition.X,
-                            _cursorPosition.Y + 0.03f,
-                            _cursorPosition.Z
-                            ),
-                        Color.White
-                        );
-                    verts[1] = new VertexPositionColor(
-                        new Vector3(
-                            _cursorPosition.X,
-                            _cursorPosition.Y + 10f,
-                            _cursorPosition.Z
-                            ),
-                        Color.White
-                        );
-                    _cursorBuff.Vertexbuffer.SetData(verts);
-                    _cursorBuff.IsEnabled = true;
-                    intersectionFound = true;
-                    break;
+                }
+                if (!intersectionFound) {
+                    _cursorBuff.IsEnabled = false;
+                    _cursorActive = false;
                 }
             }
-            if (!intersectionFound){
+            else{
                 _cursorBuff.IsEnabled = false;
                 _cursorActive = false;
             }
@@ -221,15 +227,16 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             #endregion
 
             #region handle mousedown
-
-            if (
-                state.LeftButtonState != state.PrevState.LeftButtonState &&
-                state.LeftButtonState == ButtonState.Pressed
-                && _cursorActive
-                ){
-                StrokeOrigin = _cursorPosition;
-                _isDrawing = true;
-                HandleCursorBegin();
+            if (state.AllowLeftButtonInterpretation){
+                if (
+                    state.LeftButtonState != state.PrevState.LeftButtonState &&
+                    state.LeftButtonState == ButtonState.Pressed
+                    && _cursorActive
+                    ){
+                    StrokeOrigin = _cursorPosition;
+                    _isDrawing = true;
+                    HandleCursorBegin();
+                }
             }
 
             #endregion
@@ -245,11 +252,13 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
             #region handle cursor up
 
-            if (_isDrawing && state.LeftButtonState == ButtonState.Released){
-                _isDrawing = false;
-                StrokeOrigin = new Vector3();
-                StrokeEnd = new Vector3();
-                HandleCursorEnd();
+            if (state.AllowLeftButtonInterpretation){
+                if (_isDrawing && state.LeftButtonState == ButtonState.Released){
+                    _isDrawing = false;
+                    StrokeOrigin = new Vector3();
+                    StrokeEnd = new Vector3();
+                    HandleCursorEnd();
+                }
             }
 
             #endregion
