@@ -245,7 +245,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
             #region handle cursor up
 
-            if (_cursorActive && _isDrawing && state.LeftButtonState == ButtonState.Released){
+            if (_isDrawing && state.LeftButtonState == ButtonState.Released){
                 _isDrawing = false;
                 StrokeOrigin = new Vector3();
                 StrokeEnd = new Vector3();
@@ -262,6 +262,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _isEnabled = true;
             _cursorBuff.IsEnabled = true;
             _guideGridBuffers[CurDeck.Value].IsEnabled = true;
+            OnEnable();
         }
 
         public void Disable(){
@@ -270,6 +271,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             }
             _isEnabled = false;
             _cursorBuff.IsEnabled = false;
+            OnDisable();
         }
 
         #endregion
@@ -289,6 +291,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected abstract void HandleCursorEnd();
         protected abstract void HandleCursorBegin();
         protected abstract void OnVisibleDeckChange();
+        protected abstract void OnEnable();
+        protected abstract void OnDisable();
     }
 
     #region wallidentifier

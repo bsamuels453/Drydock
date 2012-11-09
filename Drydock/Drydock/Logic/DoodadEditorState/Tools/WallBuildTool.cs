@@ -42,6 +42,14 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected override void OnVisibleDeckChange(){
         }
 
+        protected override void OnEnable(){
+            _tempWallBuffer.IsEnabled = true;
+        }
+
+        protected override void OnDisable(){
+            _tempWallBuffer.IsEnabled = false;
+        }
+
         void GenerateWallsFromStroke(){
             _tempWallIdentifiers.Clear();
             int strokeW = (int) ((StrokeEnd.Z - StrokeOrigin.Z)/WallResolution);

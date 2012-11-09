@@ -26,6 +26,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
         //todo: clean up all these fields, they should be passing between methods, not left here like global garbage
         List<Vector3[,]> _deckFloorMesh;
+
         List<List<List<Vector3>>> _deckVertexes; // deck->levels of deck vertexes->vertexes for each level 
         List<List<Vector3>> _layerVerts;
         float _length;

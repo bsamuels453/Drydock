@@ -118,5 +118,14 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected override void OnVisibleDeckChange(){
             _prevIdentifiers.Clear();
         }
+
+        protected override void OnEnable(){
+            _tempWallBuffer.IsEnabled = true;
+        }
+
+        protected override void OnDisable(){
+            _tempWallBuffer.IsEnabled = false;
+            _prevIdentifiers.Clear();
+        }
     }
 }
