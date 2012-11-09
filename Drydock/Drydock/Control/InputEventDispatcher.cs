@@ -26,6 +26,11 @@ namespace Drydock.Control{
         public static void Update(){
             //all this crap updates the CurrentControlState to whatever the hell is going on
 
+            //notice the conditions for whether fields such as AllowMouseMovementInterpretation should be true or not
+            //these were originally intended to reduce overhead for when no difference between current state and previous existed
+            //but they caused loads of problems. the actual bool state they were supposed to be set to has been commented out and set to true
+            //maybe fix in future if run out of updateinput allowance
+
             var curMouseState = Mouse.GetState();
             var curKeyboardState = Keyboard.GetState();
 
@@ -35,7 +40,8 @@ namespace Drydock.Control{
                 curControlState.AllowMouseMovementInterpretation = true;
             }
             else{
-                curControlState.AllowMouseMovementInterpretation = false;
+                curControlState.AllowMouseMovementInterpretation = true;
+                //curControlState.AllowMouseMovementInterpretation = false;
             }
             //mouse movement stuff needs to be updated every time, regardless of change
             curControlState.MousePos = new Point();
@@ -63,19 +69,22 @@ namespace Drydock.Control{
                 }
             }
             else
-                curControlState.AllowLeftButtonInterpretation = false;
+                curControlState.AllowLeftButtonInterpretation = true;
+                //curControlState.AllowLeftButtonInterpretation = false;
 
             if (_prevMouseState.RightButton != curMouseState.RightButton){
                 curControlState.AllowRightButtonInterpretation = true;
             }
             else
-                curControlState.AllowRightButtonInterpretation = false;
-
+                curControlState.AllowRightButtonInterpretation = true;
+                //curControlState.AllowRightButtonInterpretation = false;
+                
             if (_prevMouseState.ScrollWheelValue != curMouseState.ScrollWheelValue){
                 curControlState.AllowMouseScrollInterpretation = true;
             }
             else
-                curControlState.AllowMouseScrollInterpretation = false;
+                curControlState.AllowMouseScrollInterpretation = true;
+                //curControlState.AllowMouseScrollInterpretation = false;
 
             curControlState.KeyboardState = curKeyboardState;
 
