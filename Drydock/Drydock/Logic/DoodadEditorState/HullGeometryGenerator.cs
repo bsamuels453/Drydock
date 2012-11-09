@@ -301,7 +301,9 @@ namespace Drydock.Logic.DoodadEditorState{
                 var layerBBoxes = new List<BoundingBox>();
                 float yLayer = _deckFloorMesh[layer][0, 0].Y;
 
-                float boxCreatorPos = _deckFloorMesh[layer][1, 0].X;
+                float boxCreatorPos = 0;
+                while (boxCreatorPos < _deckFloorMesh[layer][1, 0].X)
+                    boxCreatorPos += _floorBBoxWidth;
 
                 while (boxCreatorPos < _deckFloorMesh[layer][1, 31].X){
                     int index = -1; //index of the first of the two set of vertexes to use when determining 
