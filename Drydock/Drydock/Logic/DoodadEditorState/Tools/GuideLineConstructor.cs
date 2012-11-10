@@ -1,20 +1,29 @@
-﻿using System;
+﻿#region
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Drydock.Control;
 using Drydock.Render;
+using Drydock.Utilities;
 using Drydock.Utilities.ReferenceTypes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Drydock.Logic.DoodadEditorState.Tools {
-    abstract class GuideLineConstructor {
-        protected readonly WireframeBuffer[] GuideGridBuffers;
-        protected readonly IntRefLambda CurDeck;
+#endregion
 
-        protected GuideLineConstructor(HullGeometryInfo hullInfo, IntRef visibleDecksRef) {
+namespace Drydock.Logic.DoodadEditorState.Tools{
+    internal abstract class GuideLineConstructor{
+        protected readonly IntRefLambda CurDeck;
+        protected readonly WireframeBuffer[] GuideGridBuffers;
+        readonly List<BoundingBox>[] _deckFloorBoundingboxes;
+        readonly List<Vector3>[] _deckFloorVertexes;
+        protected Vector3 CursorPosition;
+
+        protected GuideLineConstructor(HullGeometryInfo hullInfo, IntRef visibleDecksRef){
             CurDeck = new IntRefLambda(visibleDecksRef, input => hullInfo.NumDecks - input);
             GuideGridBuffers = new WireframeBuffer[hullInfo.NumDecks + 1];
+            _deckFloorBoundingboxes = hullInfo.DeckFloorBoundingBoxes;
+            _deckFloorVertexes = hullInfo.FloorVertexes;
 
             for (int i = 0; i < hullInfo.NumDecks + 1; i++){
                 #region indicies
@@ -69,7 +78,80 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
 
                 GuideGridBuffers[i].IsEnabled = false;
             }
-
         }
+
+        protected void BaseUpdateInput(ref ControlState state){
+            #region intersect stuff
+
+            if (state.AllowMouseMovementInterpretation){
+                var prevCursorPosition = CursorPosition;
+
+                var nearMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 0);
+                var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);
+
+                //transform the mouse into world space
+                var nearPoint = Singleton.Device.Viewport.Unproject(
+                    nearMouse,
+                    Singleton.ProjectionMatrix,
+                    state.ViewMatrix,
+                    Matrix.Identity
+                    );
+
+                var farPoint = Singleton.Device.Viewport.Unproject(
+                    farMouse,
+                    Singleton.ProjectionMatrix,
+                    state.ViewMatrix,
+                    Matrix.Identity
+                    );
+
+                var direction = farPoint - nearPoint;
+                direction.Normalize();
+                var ray = new Ray(nearPoint, direction);
+
+
+                float? ndist;
+                bool intersectionFound = false;
+                for (int i = 0; i < _deckFloorBoundingboxes[CurDeck.Value].Count; i++){
+                    if ((ndist = ray.Intersects(_deckFloorBoundingboxes[CurDeck.Value][i])) != null){
+                        EnableCursorGhost();
+                        var rayTermination = ray.Position + ray.Direction*(float) ndist;
+
+                        var distList = new List<float>();
+
+                        for (int point = 0; point < _deckFloorVertexes[CurDeck.Value].Count(); point++){
+                            distList.Add(Vector3.Distance(rayTermination, _deckFloorVertexes[CurDeck.Value][point]));
+                        }
+                        float f = distList.Min();
+
+                        int ptIdx = distList.IndexOf(f);
+
+                        if (!IsCursorValid(_deckFloorVertexes[CurDeck.Value][ptIdx], prevCursorPosition, _deckFloorVertexes[CurDeck.Value]))
+                            break;
+
+                        CursorPosition = _deckFloorVertexes[CurDeck.Value][ptIdx];
+                        if (CursorPosition != prevCursorPosition){
+                            UpdateCursorGhost();
+                        }
+
+                        intersectionFound = true;
+                        break;
+                    }
+                }
+                if (!intersectionFound){
+                    DisableCursorGhost();
+                }
+            }
+            else{
+                DisableCursorGhost();
+            }
+
+            #endregion
+        }
+
+        protected abstract void EnableCursorGhost();
+        protected abstract void DisableCursorGhost();
+        protected abstract void UpdateCursorGhost();
+
+        protected abstract bool IsCursorValid(Vector3 newCursorPos, Vector3 prevCursorPosition, List<Vector3> deckFloorVertexes);
     }
 }
