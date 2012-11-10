@@ -37,6 +37,7 @@ namespace Drydock.Logic.DoodadEditorState{
         //note that this entire geometry generator runs on the standard curve assumptions
         public HullGeometryGenerator(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo, int primHeightPerDeck){
             _primHeightPerDeck = primHeightPerDeck;
+            Resultant = new HullGeometryInfo();
             GenerateHull(backCurveInfo, sideCurveInfo, topCurveInfo);
             GenerateDecks();
             GenerateDeckWallBuffers();
@@ -295,7 +296,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
         void GenerateFloorBoundingBoxes(){
             //todo: break this down so it's reusable
-            var deckBoundingBoxes = new BoundingBox[_deckFloorMesh.Count][];
+            var deckBoundingBoxes = new List<BoundingBox>[_deckFloorMesh.Count];
 
             for (int layer = 0; layer < _deckFloorMesh.Count; layer++){
                 var layerBBoxes = new List<BoundingBox>();
@@ -376,7 +377,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
                     boxCreatorPos += _floorBBoxWidth;
                 }
-                deckBoundingBoxes[layer] = layerBBoxes.ToArray();
+                deckBoundingBoxes[layer] = layerBBoxes;
             }
             Resultant.DeckFloorBoundingBoxes = deckBoundingBoxes;
 
@@ -409,7 +410,7 @@ namespace Drydock.Logic.DoodadEditorState{
             Resultant.FloorVertexes =
                 (
                     from layer in wallSelectionPoints
-                    select layer.ToArray()
+                    select layer.ToList()
                 ).ToArray();
         }
     }
@@ -455,13 +456,12 @@ namespace Drydock.Logic.DoodadEditorState{
         */
 }
 
-//this is only used for data transfer between this class and hullgeometryhandler
-internal struct HullGeometryInfo{
+internal class HullGeometryInfo{
     public Vector3 CenterPoint;
-    public BoundingBox[][] DeckFloorBoundingBoxes;
+    public List<BoundingBox>[] DeckFloorBoundingBoxes;
     public ShipGeometryBuffer[] DeckFloorBuffers;
     public float DeckHeight;
-    public Vector3[][] FloorVertexes;
+    public List<Vector3>[] FloorVertexes;
     public ShipGeometryBuffer[] HullWallBuffers;
     public Vector2 MaxBoundingBoxDims;
     public int NumDecks;
