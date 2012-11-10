@@ -109,6 +109,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         #endregion
 
+        #region GuideLineConstructor overloads
+
         protected override void EnableCursorGhost(){
             _cursorBuff.IsEnabled = true;
             _cursorGhostActive = true;
@@ -157,6 +159,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             }
             return true;
         }
+
+        #endregion
 
         void VisibleDeckChange(IntRef caller, int oldVal, int newVal){
             if (_isEnabled){
