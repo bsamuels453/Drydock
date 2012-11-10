@@ -14,9 +14,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
     internal abstract class WallEditTool : GuideLineConstructor, IToolbarTool{
-        protected readonly ObjectBuffer<WallIdentifier>[] WallBuffers;
+        protected readonly ObjectBuffer<ObjectIdentifier>[] WallBuffers;
         protected readonly float WallHeight;
-        protected readonly List<WallIdentifier>[] WallIdentifiers;
+        protected readonly List<ObjectIdentifier>[] WallIdentifiers;
         protected readonly float WallResolution;
 
         #region fields for maintaining the wall editor environment
@@ -41,7 +41,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         #endregion
 
-        protected WallEditTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<WallIdentifier>[] wallBuffers, List<WallIdentifier>[] wallIdentifiers)
+        protected WallEditTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<ObjectIdentifier>[] wallBuffers, List<ObjectIdentifier>[] wallIdentifiers)
             : base(hullInfo, visibleDecksRef){
             #region set fields
 
@@ -183,45 +183,45 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
     #region wallidentifier
 
-    internal struct WallIdentifier : IEquatable<WallIdentifier>{
-        public readonly Vector3 EndPoint;
-        public readonly Vector3 StartPoint;
+    internal struct ObjectIdentifier : IEquatable<ObjectIdentifier>{
+        public readonly Vector3 RefPoint1;
+        public readonly Vector3 RefPoint2;
 
-        public WallIdentifier(Vector3 startPoint, Vector3 endPoint){
-            StartPoint = startPoint;
-            EndPoint = endPoint;
+        public ObjectIdentifier(Vector3 refPoint2, Vector3 refPoint1){
+            RefPoint2 = refPoint2;
+            RefPoint1 = refPoint1;
         }
 
         #region equality operators
 
-        public bool Equals(WallIdentifier other){
-            if (StartPoint == other.StartPoint && EndPoint == other.EndPoint)
+        public bool Equals(ObjectIdentifier other){
+            if (RefPoint2 == other.RefPoint2 && RefPoint1 == other.RefPoint1)
                 return true;
-            if (StartPoint == other.EndPoint && other.StartPoint == EndPoint)
-                return true;
-            return false;
-        }
-
-        public static bool operator ==(WallIdentifier wallid1, WallIdentifier wallid2){
-            if (wallid1.StartPoint == wallid2.StartPoint && wallid1.EndPoint == wallid2.EndPoint)
-                return true;
-            if (wallid1.StartPoint == wallid2.EndPoint && wallid2.EndPoint == wallid1.StartPoint)
+            if (RefPoint2 == other.RefPoint1 && other.RefPoint2 == RefPoint1)
                 return true;
             return false;
         }
 
-        public static bool operator !=(WallIdentifier wallid1, WallIdentifier wallid2){
-            if (wallid1.StartPoint == wallid2.StartPoint && wallid1.EndPoint == wallid2.EndPoint)
+        public static bool operator ==(ObjectIdentifier wallid1, ObjectIdentifier wallid2){
+            if (wallid1.RefPoint2 == wallid2.RefPoint2 && wallid1.RefPoint1 == wallid2.RefPoint1)
+                return true;
+            if (wallid1.RefPoint2 == wallid2.RefPoint1 && wallid2.RefPoint1 == wallid1.RefPoint2)
+                return true;
+            return false;
+        }
+
+        public static bool operator !=(ObjectIdentifier wallid1, ObjectIdentifier wallid2){
+            if (wallid1.RefPoint2 == wallid2.RefPoint2 && wallid1.RefPoint1 == wallid2.RefPoint1)
                 return false;
-            if (wallid1.StartPoint == wallid2.EndPoint && wallid2.EndPoint == wallid1.StartPoint)
+            if (wallid1.RefPoint2 == wallid2.RefPoint1 && wallid2.RefPoint1 == wallid1.RefPoint2)
                 return false;
             return true;
         }
 
         public override bool Equals(object obj){
             if (ReferenceEquals(null, obj)) return false;
-            if (obj.GetType() != typeof (WallIdentifier)) return false;
-            return Equals((WallIdentifier) obj);
+            if (obj.GetType() != typeof (ObjectIdentifier)) return false;
+            return Equals((ObjectIdentifier) obj);
         }
 
         #endregion
@@ -229,7 +229,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         public override int GetHashCode(){
             unchecked{
                 // ReSharper disable NonReadonlyFieldInGetHashCode
-                return (StartPoint.GetHashCode()*397) ^ EndPoint.GetHashCode();
+                return (RefPoint2.GetHashCode()*397) ^ RefPoint1.GetHashCode();
                 // ReSharper restore NonReadonlyFieldInGetHashCode
             }
         }

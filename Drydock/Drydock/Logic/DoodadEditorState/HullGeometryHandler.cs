@@ -17,8 +17,8 @@ namespace Drydock.Logic.DoodadEditorState{
     ///   this class handles the display of the prototype airship and all of its components
     /// </summary>
     internal class HullGeometryHandler : IInputUpdates{
-        public readonly ObjectBuffer<WallIdentifier>[] WallBuffers;
-        public readonly List<WallIdentifier>[] WallPositions;
+        public readonly ObjectBuffer<ObjectIdentifier>[] WallBuffers;
+        public readonly List<ObjectIdentifier>[] WallPositions;
         readonly Button _deckDownButton;
 
         readonly ShipGeometryBuffer[] _deckFloorBuffers;
@@ -37,9 +37,9 @@ namespace Drydock.Logic.DoodadEditorState{
             _numDecks = geometryInfo.NumDecks;
             VisibleDecks = new IntRef();
             VisibleDecks.Value = _numDecks;
-            WallPositions = new List<WallIdentifier>[_numDecks + 1];
+            WallPositions = new List<ObjectIdentifier>[_numDecks + 1];
             for (int i = 0; i < WallPositions.Length; i++){
-                WallPositions[i] = new List<WallIdentifier>();
+                WallPositions[i] = new List<ObjectIdentifier>();
             }
 
             _selectionBuff = new WireframeBuffer(12, 12, 6);
@@ -65,10 +65,10 @@ namespace Drydock.Logic.DoodadEditorState{
             _deckUpButton.OnLeftClickDispatcher += AddVisibleLevel;
             _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;
 
-            WallBuffers = new ObjectBuffer<WallIdentifier>[_numDecks + 1];
+            WallBuffers = new ObjectBuffer<ObjectIdentifier>[_numDecks + 1];
             for (int i = 0; i < WallBuffers.Count(); i++){
                 int potentialWalls = geometryInfo.FloorVertexes[i].Count()*2;
-                WallBuffers[i] = new ObjectBuffer<WallIdentifier>(potentialWalls, 10, 20, 30, "whiteborder");
+                WallBuffers[i] = new ObjectBuffer<ObjectIdentifier>(potentialWalls, 10, 20, 30, "whiteborder");
             }
         }
 

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Drydock.Logic.DoodadEditorState.Tools;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
@@ -459,7 +460,7 @@ namespace Drydock.Logic.DoodadEditorState{
 internal class HullGeometryInfo{
     public Vector3 CenterPoint;
     public List<BoundingBox>[] DeckFloorBoundingBoxes;
-    public ShipGeometryBuffer[] DeckFloorBuffers;
+    public ObjectBuffer<ObjectIdentifier>[] DeckFloorBuffers;
     public float DeckHeight;
     public List<Vector3>[] FloorVertexes;
     public ShipGeometryBuffer[] HullWallBuffers;
