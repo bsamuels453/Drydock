@@ -15,8 +15,7 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
-    internal abstract class WallEditTool : IToolbarTool{
-        protected readonly IntRefLambda CurDeck;
+    internal abstract class WallEditTool : GuideLineConstructor, IToolbarTool{
         protected readonly ObjectBuffer<WallIdentifier>[] WallBuffers;
         protected readonly float WallHeight;
         protected readonly List<WallIdentifier>[] WallIdentifiers;
@@ -24,9 +23,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         #region fields for maintaining the wall editor environment
 
-        readonly BoundingBox[][] _deckFloorBoundingboxes;
-        readonly Vector3[][] _deckFloorVertexes;
-        readonly WireframeBuffer[] _guideGridBuffers;
+        readonly List<BoundingBox>[] _deckFloorBoundingboxes;
+        readonly List<Vector3>[] _deckFloorVertexes;
 
         #endregion
 
@@ -47,7 +45,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         #endregion
 
-        protected WallEditTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<WallIdentifier>[] wallBuffers, List<WallIdentifier>[] wallIdentifiers){
+        protected WallEditTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<WallIdentifier>[] wallBuffers, List<WallIdentifier>[] wallIdentifiers) 
+            : base(hullInfo, visibleDecksRef){
             #region set fields
 
             _isEnabled = false;
@@ -57,74 +56,14 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             WallIdentifiers = wallIdentifiers;
             WallResolution = hullInfo.WallResolution;
             WallHeight = hullInfo.DeckHeight - 0.01f;
-            CurDeck = new IntRefLambda(visibleDecksRef, input => hullInfo.NumDecks - input);
+            
 
             #endregion
-
-            #region set buffer stuff
-
+        
             _cursorBuff = new WireframeBuffer(2, 2, 1);
             var selectionIndicies = new[]{0, 1};
             _cursorBuff.Indexbuffer.SetData(selectionIndicies);
             _cursorBuff.IsEnabled = false;
-
-            _guideGridBuffers = new WireframeBuffer[hullInfo.NumDecks + 1];
-
-            for (int i = 0; i < hullInfo.NumDecks + 1; i++){
-                #region indicies
-
-                int numBoxes = _deckFloorBoundingboxes[i].Count();
-                _guideGridBuffers[i] = new WireframeBuffer(8*numBoxes, 8*numBoxes, 4*numBoxes);
-                var guideDotIndicies = new int[8*numBoxes];
-                for (int si = 0; si < 8*numBoxes; si += 1){
-                    guideDotIndicies[si] = si;
-                }
-                _guideGridBuffers[i].Indexbuffer.SetData(guideDotIndicies);
-
-                #endregion
-
-                #region verticies
-
-                var verts = new VertexPositionColor[_deckFloorBoundingboxes[i].Count()*8];
-
-                int vertIndex = 0;
-
-                foreach (var boundingBox in _deckFloorBoundingboxes[i]){
-                    Vector3 v1, v2, v3, v4;
-                    //v4  v3
-                    //
-                    //v1  v2
-                    v1 = boundingBox.Min;
-                    v2 = new Vector3(boundingBox.Min.X, boundingBox.Min.Y, boundingBox.Max.Z);
-                    v3 = boundingBox.Max;
-                    v4 = new Vector3(boundingBox.Max.X, boundingBox.Min.Y, boundingBox.Min.Z);
-
-                    v1.Y += 0.03f;
-                    v2.Y += 0.03f;
-                    v3.Y += 0.03f;
-                    v4.Y += 0.03f;
-
-
-                    verts[vertIndex] = new VertexPositionColor(v1, Color.Gray);
-                    verts[vertIndex + 1] = new VertexPositionColor(v2, Color.Gray);
-                    verts[vertIndex + 2] = new VertexPositionColor(v2, Color.Gray);
-                    verts[vertIndex + 3] = new VertexPositionColor(v3, Color.Gray);
-
-                    verts[vertIndex + 4] = new VertexPositionColor(v3, Color.Gray);
-                    verts[vertIndex + 5] = new VertexPositionColor(v4, Color.Gray);
-                    verts[vertIndex + 6] = new VertexPositionColor(v4, Color.Gray);
-                    verts[vertIndex + 7] = new VertexPositionColor(v1, Color.Gray);
-
-                    vertIndex += 8;
-                }
-                _guideGridBuffers[i].Vertexbuffer.SetData(verts);
-
-                #endregion
-
-                _guideGridBuffers[i].IsEnabled = false;
-            }
-
-            #endregion
 
             visibleDecksRef.RefModCallback += VisibleDeckChange;
         }
@@ -162,7 +101,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
                 float? ndist;
                 bool intersectionFound = false;
-                for (int i = 0; i < _deckFloorBoundingboxes[CurDeck.Value].Length; i++) {
+                for (int i = 0; i < _deckFloorBoundingboxes[CurDeck.Value].Count; i++) {
                     if ((ndist = ray.Intersects(_deckFloorBoundingboxes[CurDeck.Value][i])) != null) {
                         _cursorActive = true;
                         var rayTermination = ray.Position + ray.Direction * (float)ndist;
@@ -179,9 +118,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                         if (_deckFloorVertexes[CurDeck.Value].Contains(prevCursorPosition) && _isDrawing) {
                             var v1 = new Vector3(_deckFloorVertexes[CurDeck.Value][ptIdx].X, _deckFloorVertexes[CurDeck.Value][ptIdx].Y, StrokeOrigin.Z);
                             var v2 = new Vector3(StrokeOrigin.X, _deckFloorVertexes[CurDeck.Value][ptIdx].Y, _deckFloorVertexes[CurDeck.Value][ptIdx].Z);
-                            if (state.KeyboardState.IsKeyDown(Keys.L)) {
-                                int fa = 5;
-                            }
 
                             if (!_deckFloorVertexes[CurDeck.Value].Contains(v1))
                                 break;
@@ -270,12 +206,12 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         public void Enable(){
             _isEnabled = true;
             _cursorBuff.IsEnabled = true;
-            _guideGridBuffers[CurDeck.Value].IsEnabled = true;
+            GuideGridBuffers[CurDeck.Value].IsEnabled = true;
             OnEnable();
         }
 
         public void Disable(){
-            foreach (var buffer in _guideGridBuffers){
+            foreach (var buffer in GuideGridBuffers){
                 buffer.IsEnabled = false;
             }
             _isEnabled = false;
@@ -287,11 +223,11 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         void VisibleDeckChange(IntRef caller, int oldVal, int newVal){
             if (_isEnabled){
-                foreach (var buffer in _guideGridBuffers){
+                foreach (var buffer in GuideGridBuffers){
                     buffer.IsEnabled = false;
                 }
 
-                _guideGridBuffers[CurDeck.Value].IsEnabled = true;
+                GuideGridBuffers[CurDeck.Value].IsEnabled = true;
                 OnVisibleDeckChange();
             }
         }
