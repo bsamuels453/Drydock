@@ -268,18 +268,39 @@ namespace Drydock.Logic.DoodadEditorState{
                 }
             }
 
-            var deckFloorbuffers = new ShipGeometryBuffer[_deckFloorMesh.Count];
+            var deckFloorbuffers = new ObjectBuffer<QuadIdentifier>[_deckFloorMesh.Count];
 
             //now set up the display buffer for each deck floor
             for (int i = 0; i < _deckFloorMesh.Count; i++){
                 VertexPositionNormalTexture[] floorVerticies = MeshHelper.CreateTexcoordedVertexList(4*_layerVerts[0].Count/2);
-                int[] foorIndicies = MeshHelper.CreateIndiceArray(4*_layerVerts[0].Count/2);
+                int[] floorIndicies = MeshHelper.CreateIndiceArray(4*_layerVerts[0].Count/2);
 
                 MeshHelper.ConvertMeshToVertList(_deckFloorMesh[i], floorNormals, ref floorVerticies);
+                deckFloorbuffers[i] = new ObjectBuffer<QuadIdentifier>(_layerVerts[0].Count*2, 2, 4, 6, "whiteborder");
 
-                deckFloorbuffers[i] = new ShipGeometryBuffer(foorIndicies.Length, floorVerticies.Length, foorIndicies.Length/3, "whiteborder");
-                deckFloorbuffers[i].Indexbuffer.SetData(foorIndicies);
-                deckFloorbuffers[i].Vertexbuffer.SetData(floorVerticies);
+                int vertIndex=0;
+                int indIndex=0;
+
+                for (int si = 0; si < _layerVerts[0].Count*2; si ++){
+                    var indicies = new int[6];
+                    var verticies = new VertexPositionNormalTexture[4];
+
+                    for (int vi = 0; vi < 4; vi++){
+                        verticies[vi] = floorVerticies[vi + vertIndex];
+                    }
+
+                    for (int ii = 0; ii < 6; ii++){
+                        indicies[ii] = floorIndicies[ii + indIndex];
+                        indicies[ii] -= vertIndex;
+                    }
+
+                    var identifier = new QuadIdentifier(floorVerticies[0].Position, floorVerticies[1].Position, floorVerticies[2].Position, floorVerticies[3].Position);
+
+                    vertIndex += 4;
+                    indIndex += 6;
+
+                    deckFloorbuffers[i].AddObject(identifier, indicies, verticies);
+                }
             }
 
             Resultant.DeckFloorBuffers = deckFloorbuffers;
@@ -415,7 +436,29 @@ namespace Drydock.Logic.DoodadEditorState{
                 ).ToArray();
         }
     }
+    internal class HullGeometryInfo {
+        public Vector3 CenterPoint;
+        public List<BoundingBox>[] DeckFloorBoundingBoxes;
+        public ObjectBuffer<QuadIdentifier>[] DeckFloorBuffers;
+        public float DeckHeight;
+        public List<Vector3>[] FloorVertexes;
+        public ShipGeometryBuffer[] HullWallBuffers;
+        public Vector2 MaxBoundingBoxDims;
+        public int NumDecks;
+        public float WallResolution;
+    }
 
+    internal struct QuadIdentifier : IEquatable<QuadIdentifier> {
+        public QuadIdentifier(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4) {
+
+
+        }
+
+
+        public bool Equals(QuadIdentifier other) {
+            throw new NotImplementedException();
+        }
+    }
 
     /*void GenerateFloorSelectionMesh(BoundingBox[][] referenceBoxes){
             Resultant.DeckFloorBoundingBoxes = SubdivideBoundingBoxes(referenceBoxes, _floorSelectionMeshWidth);
@@ -457,17 +500,7 @@ namespace Drydock.Logic.DoodadEditorState{
         */
 }
 
-internal class HullGeometryInfo{
-    public Vector3 CenterPoint;
-    public List<BoundingBox>[] DeckFloorBoundingBoxes;
-    public ObjectBuffer<ObjectIdentifier>[] DeckFloorBuffers;
-    public float DeckHeight;
-    public List<Vector3>[] FloorVertexes;
-    public ShipGeometryBuffer[] HullWallBuffers;
-    public Vector2 MaxBoundingBoxDims;
-    public int NumDecks;
-    public float WallResolution;
-}
+
 
 
 /*var floorBounding = new BoundingBox[_deckFloorMesh.Count][];

@@ -21,7 +21,7 @@ namespace Drydock.Logic.DoodadEditorState{
         public readonly List<ObjectIdentifier>[] WallPositions;
         readonly Button _deckDownButton;
 
-        readonly ShipGeometryBuffer[] _deckFloorBuffers;
+        readonly ObjectBuffer<QuadIdentifier>[] _deckFloorBuffers;
         readonly Button _deckUpButton;
         readonly ShipGeometryBuffer[] _hullBuffers;
 
