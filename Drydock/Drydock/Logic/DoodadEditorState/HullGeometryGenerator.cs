@@ -479,6 +479,13 @@ namespace Drydock.Logic.DoodadEditorState{
         public QuadIdentifier CloneWithOffset(Vector3 offset){
             return new QuadIdentifier(_points[0] + offset, _points[1] + offset, _points[2] + offset, _points[3] + offset);
         }
+
+        public BoundingBox GenerateBoundingBox(){
+            Debug.Assert(_points[0].X != _points[2].X);
+            Debug.Assert(_points[0].Z != _points[2].Z);
+
+            return new BoundingBox(_points[0], _points[2]);
+        }
     }
 
     /*void GenerateFloorSelectionMesh(BoundingBox[][] referenceBoxes){
