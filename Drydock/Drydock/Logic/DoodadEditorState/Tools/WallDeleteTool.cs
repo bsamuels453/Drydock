@@ -16,7 +16,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         public WallDeleteTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<ObjectIdentifier>[] wallBuffers, List<ObjectIdentifier>[] wallIdentifiers) :
             base(hullInfo, visibleDecksRef, wallBuffers, wallIdentifiers){
-            _tempWallBuffer = new ObjectBuffer<ObjectIdentifier>(5000, 10, 20, 30, "materials/redborder"){UpdateBufferManually = true};
+                _tempWallBuffer = new ObjectBuffer<ObjectIdentifier>(5000, 10, 20, 30, "WallDeleteMarqueeTex") { UpdateBufferManually = true };
             _prevIdentifiers = new List<ObjectIdentifier>();
         }
 

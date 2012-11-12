@@ -9,8 +9,8 @@ namespace Drydock.Render{
     internal abstract class StandardEffect : BaseBufferObject<VertexPositionNormalTexture>{
         protected StandardEffect(int numIndicies, int numVerticies, int numPrimitives, string textureName) :
             base(numIndicies, numVerticies, numPrimitives, PrimitiveType.TriangleList){
-            var texture = Singleton.ContentManager.Load<Texture2D>(textureName);
-            BufferEffect = Singleton.ContentManager.Load<Effect>("hlsl/StandardEffect").Clone();
+                var texture = Singleton.ContentManager.Load<Texture2D>(Singleton.ContentStrLookup[textureName]);
+            BufferEffect = Singleton.ContentManager.Load<Effect>(Singleton.ContentStrLookup["StandardEffect"]).Clone();
             BufferEffect.Parameters["Projection"].SetValue(Singleton.ProjectionMatrix);
             BufferEffect.Parameters["World"].SetValue(Matrix.Identity);
             BufferEffect.Parameters["Texture"].SetValue(texture);

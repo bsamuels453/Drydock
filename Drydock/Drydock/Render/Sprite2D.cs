@@ -26,7 +26,7 @@ namespace Drydock.Render{
         ///   constructor for a normal sprite
         /// </summary>
         public Sprite2D(string textureName, int x, int y, int width, int height, float depth = 0.5f, float opacity = 1, float spriteRepeatX = 1, float spriteRepeatY = 1){
-            _texture = Singleton.ContentManager.Load<Texture2D>(textureName);
+            _texture = Singleton.ContentManager.Load<Texture2D>(Singleton.ContentStrLookup[textureName]);
             _srcRect = new FloatingRectangle(0f, 0f, _texture.Height*spriteRepeatX, _texture.Width*spriteRepeatY);
             _destRect = new Rectangle();
             _isDisposed = false;

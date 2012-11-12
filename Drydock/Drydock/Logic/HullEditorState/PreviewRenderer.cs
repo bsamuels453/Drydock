@@ -10,8 +10,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Drydock.Logic.HullEditorState{
-    internal class PreviewRenderer : BodyCenteredCamera{
+namespace Drydock.Logic.HullEditorState {
+    internal class PreviewRenderer : BodyCenteredCamera {
         const int _meshVertexWidth = 64; //this is in primitives
         readonly BezierCurveCollection _backCurves;
         readonly ShipGeometryBuffer _geometryBuffer;
@@ -28,7 +28,7 @@ namespace Drydock.Logic.HullEditorState{
                      ScreenData.GetScreenValueY(0.5f),
                      ScreenData.GetScreenValueX(0.5f),
                      ScreenData.GetScreenValueY(0.5f)
-                     )){
+                     )) {
             _renderTarget = new RenderPanel(
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f),
@@ -37,13 +37,13 @@ namespace Drydock.Logic.HullEditorState{
                 );
             RenderPanel.BindRenderTarget(_renderTarget);
 
-            _indicies = MeshHelper.CreateIndiceArray((_meshVertexWidth)*(_meshVertexWidth));
-            _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth)*(_meshVertexWidth));
+            _indicies = MeshHelper.CreateIndiceArray((_meshVertexWidth) * (_meshVertexWidth));
+            _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth) * (_meshVertexWidth));
 
-            _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth)*(_meshVertexWidth)*2, "materials/whiteborder");
+            _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth) * (_meshVertexWidth) * 2, "HullEditorHullTex");
             _geometryBuffer.DiffuseDirection = new Vector3(0, -1, 1);
 
-            _mesh = new Vector3[_meshVertexWidth,_meshVertexWidth];
+            _mesh = new Vector3[_meshVertexWidth, _meshVertexWidth];
 
             _sideCurves = sideCurves;
             _topCurves = topCurves;
@@ -52,14 +52,14 @@ namespace Drydock.Logic.HullEditorState{
             _geometryBuffer.Indexbuffer.SetData(_indicies);
         }
 
-        public void Update(){
+        public void Update() {
             base.UpdateInput(ref InputEventDispatcher.CurrentControlState);
             _topCurves.GetParameterizedPoint(0, true);
 
             var topPts = new Vector2[_meshVertexWidth];
-            for (double i = 0; i < _meshVertexWidth; i++){
-                double t = i/((_meshVertexWidth - 1)*2);
-                topPts[(int) i] = _topCurves.GetParameterizedPoint(t);
+            for (double i = 0; i < _meshVertexWidth; i++) {
+                double t = i / ((_meshVertexWidth - 1) * 2);
+                topPts[(int)i] = _topCurves.GetParameterizedPoint(t);
             }
 
 
@@ -67,8 +67,8 @@ namespace Drydock.Logic.HullEditorState{
             float reflectionPoint = topPts[0].Y;
             var yDelta = new float[_meshVertexWidth];
 
-            for (int i = 0; i < _meshVertexWidth; i++){
-                yDelta[i] = Math.Abs(topPts[i].Y - reflectionPoint)*2/_meshVertexWidth;
+            for (int i = 0; i < _meshVertexWidth; i++) {
+                yDelta[i] = Math.Abs(topPts[i].Y - reflectionPoint) * 2 / _meshVertexWidth;
             }
 
 
@@ -84,27 +84,27 @@ namespace Drydock.Logic.HullEditorState{
 
             var sideIntersectionCache = new float[_meshVertexWidth];
 
-            for (int x = 0; x < _meshVertexWidth; x++){
+            for (int x = 0; x < _meshVertexWidth; x++) {
                 sideIntersectionCache[x] = sideIntersectGenerator.GetValueFromIndependent(topPts[x].X).Y;
             }
 
-            var maxY = (float) _backCurves.ToMetersY(_backCurves.MaxY);
-            var backCurvesMaxWidth = (float) (_backCurves.ToMetersX(_backCurves[_backCurves.Count - 1].CenterHandlePos.X) - _backCurves.ToMetersX(_backCurves[0].CenterHandlePos.X));
+            var maxY = (float)_backCurves.ToMetersY(_backCurves.MaxY);
+            var backCurvesMaxWidth = (float)(_backCurves.ToMetersX(_backCurves[_backCurves.Count - 1].CenterHandlePos.X) - _backCurves.ToMetersX(_backCurves[0].CenterHandlePos.X));
 
-            for (int x = 0; x < _meshVertexWidth; x++){
-                float scaleX = Math.Abs((reflectionPoint - topPts[x].Y)*2)/backCurvesMaxWidth;
-                float scaleY = sideIntersectionCache[x]/maxY;
+            for (int x = 0; x < _meshVertexWidth; x++) {
+                float scaleX = Math.Abs((reflectionPoint - topPts[x].Y) * 2) / backCurvesMaxWidth;
+                float scaleY = sideIntersectionCache[x] / maxY;
 
                 var bezierInfo = _backCurves.GetControllerInfo(scaleX, scaleY);
                 var crossIntersectGenerator = new BezierDependentGenerator(bezierInfo);
 
-                for (int z = 0; z < _meshVertexWidth/2; z++){
-                    Vector2 pos = crossIntersectGenerator.GetValueFromIndependent(yDelta[x]*(z));
-                    _mesh[x, z] = new Vector3(topPts[x].X, -pos.Y, topPts[x].Y + yDelta[x]*(z));
-                    _mesh[x, _meshVertexWidth - 1 - z] = new Vector3(topPts[x].X, -pos.Y, topPts[x].Y + yDelta[x]*(_meshVertexWidth - 1 - z));
+                for (int z = 0; z < _meshVertexWidth / 2; z++) {
+                    Vector2 pos = crossIntersectGenerator.GetValueFromIndependent(yDelta[x] * (z));
+                    _mesh[x, z] = new Vector3(topPts[x].X, -pos.Y, topPts[x].Y + yDelta[x] * (z));
+                    _mesh[x, _meshVertexWidth - 1 - z] = new Vector3(topPts[x].X, -pos.Y, topPts[x].Y + yDelta[x] * (_meshVertexWidth - 1 - z));
                 }
             }
-            var normals = new Vector3[_meshVertexWidth,_meshVertexWidth];
+            var normals = new Vector3[_meshVertexWidth, _meshVertexWidth];
 
             MeshHelper.GenerateMeshNormals(_mesh, ref normals);
             MeshHelper.ConvertMeshToVertList(_mesh, normals, ref _verticies);

@@ -253,11 +253,11 @@ namespace Drydock.Logic.DoodadEditorState{
                 MeshHelper.ConvertMeshToVertList(hullMesh, hullNormals, ref hullVerticies);
 
                 //now stick it in a buffer
-                hullBuffers[i] = new ShipGeometryBuffer(hullIndicies.Length, hullVerticies.Length, hullIndicies.Length/3, "materials/whiteborder", CullMode.CullClockwiseFace);
+                hullBuffers[i] = new ShipGeometryBuffer(hullIndicies.Length, hullVerticies.Length, hullIndicies.Length / 3, "DoodadEditorHullTex", CullMode.CullClockwiseFace);
                 hullBuffers[i].Indexbuffer.SetData(hullIndicies);
                 hullBuffers[i].Vertexbuffer.SetData(hullVerticies);
             }
-            Resultant.HullWallBuffers = hullBuffers;
+            Resultant.HullWallTexBuffers = hullBuffers;
         }
 
         void GenerateDeckFloorBuffers(){
@@ -276,7 +276,7 @@ namespace Drydock.Logic.DoodadEditorState{
                 int[] floorIndicies = MeshHelper.CreateIndiceArray(4*_layerVerts[0].Count/2);
 
                 MeshHelper.ConvertMeshToVertList(_deckFloorMesh[i], floorNormals, ref floorVerticies);
-                deckFloorbuffers[i] = new ObjectBuffer<QuadIdentifier>(_layerVerts[0].Count*2, 2, 4, 6, "materials/whiteborder");
+                deckFloorbuffers[i] = new ObjectBuffer<QuadIdentifier>(_layerVerts[0].Count * 2, 2, 4, 6, "DoodadEditorFloorTex");
 
                 int vertIndex = 0;
                 int indIndex = 0;
@@ -443,7 +443,7 @@ namespace Drydock.Logic.DoodadEditorState{
         public ObjectBuffer<QuadIdentifier>[] DeckFloorBuffers;
         public float DeckHeight;
         public List<Vector3>[] FloorVertexes;
-        public ShipGeometryBuffer[] HullWallBuffers;
+        public ShipGeometryBuffer[] HullWallTexBuffers;
         public Vector2 MaxBoundingBoxDims;
         public int NumDecks;
         public float WallResolution;

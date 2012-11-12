@@ -1,0 +1,22 @@
+{
+  "HullEditorHandleTex": "materials/whitebox",
+  "ButtonHighlightTex": "effects/highlighteffect",
+  "black": "effects/blackhighlight",
+  "UnboundButtonIcon": "icons/cross",
+  "DeckNavArrowDown": "icons/downarrow",
+  "DeckNavArrowUp": "icons/uparrow",
+  "HullWallTex": "materials/whiteborder",
+  "LadderBuildIcon": "icons/ladderbuildicon",
+  "WallBuildIcon": "icons/wallbuildicon",
+  "WallToolbarIcon": "icons/wallbuildicon",
+  "HullEditorBgTex": "materials/panelBG",
+  "StandardEffect": "hlsl/StandardEffect",
+  "WireframeEffect": "hlsl/WireframeEffect",
+  "HullEditorHullTex": "materials/whiteborder",
+  "DoodadEditorHullTex": "materials/whiteborder",
+  "DoodadEditorFloorTex": "materials/whiteborder",
+  "WallDeleteIcon": "icons/walldeleteicon",
+  "InternalWallTex": "materials/whiteborder",
+  "WallDeleteMarqueeTex": "materials/redborder",
+
+}

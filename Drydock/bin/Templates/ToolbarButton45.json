@@ -1,17 +1,17 @@
 {
   "Components": {
 	"HighlightComponent_HoverMask":{
-      "HighlightTexture": "effects/highlighteffect",
+      "HighlightTexture": "ButtonHighlightTex",
 	  "HighlightTrigger": "MouseEntryExit",
 	  "HighlightTexOpacity": 0.3
 	},
 	"HighlightComponent_ClickEffect":{
-      "HighlightTexture": "effects/blackhighlight",
+      "HighlightTexture": "black",
 	  "HighlightTrigger": "MousePressRelease",
 	  "HighlightTexOpacity": 0.7
 	},
 	"HighlightComponent_ClickHoldEffect":{
-      "HighlightTexture": "effects/blackhighlight",
+      "HighlightTexture": "black",
 	  "HighlightTrigger": "None",
 	  "HighlightTexOpacity": 0.7
 	}
@@ -22,5 +22,5 @@
   "Identifier": 0,
   "SpriteTexRepeatX": 1,
   "SpriteTexRepeatY": 1,
-  "TextureName": "icons/cross"
+  "TextureName": "UnboundButtonIcon"
 }

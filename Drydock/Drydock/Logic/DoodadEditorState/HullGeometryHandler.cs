@@ -32,7 +32,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
         public HullGeometryHandler(HullGeometryInfo geometryInfo){
             //CullMode.CullClockwiseFace
-            _hullBuffers = geometryInfo.HullWallBuffers;
+            _hullBuffers = geometryInfo.HullWallTexBuffers;
             _deckFloorBuffers = geometryInfo.DeckFloorBuffers;
             _numDecks = geometryInfo.NumDecks;
             VisibleDecks = new IntRef();
@@ -57,10 +57,10 @@ namespace Drydock.Logic.DoodadEditorState{
             var buttonGen = new ButtonGenerator("ToolbarButton64.json");
             buttonGen.X = 50;
             buttonGen.Y = 50;
-            buttonGen.TextureName = "icons/uparrow";
+            buttonGen.TextureName = "DeckNavArrowUp";
             _deckUpButton = buttonGen.GenerateButton();
             buttonGen.Y = 50 + 64;
-            buttonGen.TextureName = "icons/downarrow";
+            buttonGen.TextureName = "DeckNavArrowDown";
             _deckDownButton = buttonGen.GenerateButton();
             _deckUpButton.OnLeftClickDispatcher += AddVisibleLevel;
             _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;
@@ -68,7 +68,7 @@ namespace Drydock.Logic.DoodadEditorState{
             WallBuffers = new ObjectBuffer<ObjectIdentifier>[_numDecks + 1];
             for (int i = 0; i < WallBuffers.Count(); i++){
                 int potentialWalls = geometryInfo.FloorVertexes[i].Count()*2;
-                WallBuffers[i] = new ObjectBuffer<ObjectIdentifier>(potentialWalls, 10, 20, 30, "materials/whiteborder");
+                WallBuffers[i] = new ObjectBuffer<ObjectIdentifier>(potentialWalls, 10, 20, 30, "HullWallTex");
             }
         }
 
