@@ -20,7 +20,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         List<GhostedZoneData> _ghostedZoneData;
         bool _isEnabled;
-        List<GhostedZoneData> _tempGhostedZoneData;
+        GhostedZoneData _tempGhostedZoneData;
 
         public LadderBuildTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef)
             : base(hullInfo, visibleDecksRef){
@@ -31,7 +31,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _boundingBoxes = hullInfo.DeckFloorBoundingBoxes;
 
             _ghostedZoneData = new List<GhostedZoneData>();
-            _tempGhostedZoneData = new List<GhostedZoneData>();
             visibleDecksRef.RefModCallback += VisibleDeckChange;
         }
 
@@ -126,17 +125,53 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         #region Nested type: GhostedZoneData
 
         struct GhostedZoneData{
-            public readonly List<BoundingBox>[] DisabledBoundingBoxes;
-            public readonly List<Vector3>[] DisabledVertexes;
+            bool _areElementsEnabled;
 
-            public readonly BoundingBox LowerBounding;
-            public readonly BoundingBox UpperBounding;
+            readonly List<BoundingBox> _boundingBoxesRef;
+            readonly List<Vector3> _vertexesRef;
 
-            public GhostedZoneData(BoundingBox upperBounding, BoundingBox lowerBounding, List<Vector3>[] disabledVerts, List<BoundingBox>[] disabledBBoxes){
-                UpperBounding = upperBounding;
-                LowerBounding = lowerBounding;
-                DisabledVertexes = disabledVerts;
-                DisabledBoundingBoxes = disabledBBoxes;
+            readonly BoundingBox _lowerBounding;
+            readonly BoundingBox _upperBounding;
+
+            readonly List<Vector3> _extractedVertexes;
+            readonly List<BoundingBox> _extractedBBoxes; 
+
+            //unimpl
+            public GhostedZoneData(
+                BoundingBox upperBounding,
+                BoundingBox lowerBounding,
+                List<BoundingBox> boundingBoxes,
+                List<Vector3> floorVertexes
+                ){
+                _areElementsEnabled = true;
+
+                _upperBounding = upperBounding;
+                _lowerBounding = lowerBounding;
+
+                _boundingBoxesRef = boundingBoxes;
+                _vertexesRef = floorVertexes;
+
+                _extractedBBoxes = null;
+                _extractedVertexes = null;
+
+            }
+
+
+            public void EnableRelevantElements(){
+                if (!_areElementsEnabled){
+                    _areElementsEnabled = true;
+                    _vertexesRef.AddRange(_extractedVertexes);
+                    _boundingBoxesRef.AddRange(_extractedBBoxes);
+                }
+            }
+
+            public void DisableRelevantElements() {
+                if (_areElementsEnabled){
+                    _areElementsEnabled = false;
+                    var this_ = this;
+                    _vertexesRef.RemoveAll(input => this_._extractedVertexes.Contains(input));
+                    _boundingBoxesRef.RemoveAll(input => this_._boundingBoxesRef.Contains(input));
+                }
             }
         }
 
