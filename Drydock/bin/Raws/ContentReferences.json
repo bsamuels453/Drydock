@@ -1,22 +1,25 @@
 {
-  "HullEditorHandleTex": "materials/whitebox",
   "ButtonHighlightTex": "effects/highlighteffect",
   "black": "effects/blackhighlight",
-  "UnboundButtonIcon": "icons/cross",
-  "DeckNavArrowDown": "icons/downarrow",
-  "DeckNavArrowUp": "icons/uparrow",
+
+  "HullEditorHandleTex": "materials/whitebox",
+  "HullEditorBgTex": "materials/panelBG",
+  "HullEditorHullTex": "materials/whiteborder",
+  "WallDeleteMarqueeTex": "materials/redborder",
+  
   "HullWallTex": "materials/whiteborder",
+  "DoodadEditorHullTex": "materials/whiteborder",
+  "DoodadEditorFloorTex": "materials/whiteborder",
+  "InternalWallTex": "materials/whiteborder",
+  
+  "WallDeleteIcon": "icons/walldeleteicon",
   "LadderBuildIcon": "icons/ladderbuildicon",
   "WallBuildIcon": "icons/wallbuildicon",
   "WallToolbarIcon": "icons/wallbuildicon",
-  "HullEditorBgTex": "materials/panelBG",
+  "UnboundButtonIcon": "icons/cross",
+  "DeckNavArrowDown": "icons/downarrow",
+  "DeckNavArrowUp": "icons/uparrow",
+  
   "StandardEffect": "hlsl/StandardEffect",
   "WireframeEffect": "hlsl/WireframeEffect",
-  "HullEditorHullTex": "materials/whiteborder",
-  "DoodadEditorHullTex": "materials/whiteborder",
-  "DoodadEditorFloorTex": "materials/whiteborder",
-  "WallDeleteIcon": "icons/walldeleteicon",
-  "InternalWallTex": "materials/whiteborder",
-  "WallDeleteMarqueeTex": "materials/redborder",
-
 }
