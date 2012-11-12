@@ -230,7 +230,7 @@
     <Compile Include="Utilities\Interpolate.cs" />
     <Compile Include="Utilities\Pair.cs" />
     <Compile Include="Utilities\ReferenceTypes\IntRef.cs" />
-    <Compile Include="Utilities\Singleton.cs" />
+    <Compile Include="Singleton.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Drydock.Control;
 using Drydock.Render;
-using Drydock.Utilities;
 using Drydock.Utilities.ReferenceTypes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -30,13 +29,13 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         protected void GenerateGuideGrid(){
-            for (int i = 0; i < _numDecks + 1; i++) {
+            for (int i = 0; i < _numDecks + 1; i++){
                 #region indicies
 
                 int numBoxes = _deckFloorBoundingboxes[i].Count();
-                GuideGridBuffers[i] = new WireframeBuffer(8 * numBoxes, 8 * numBoxes, 4 * numBoxes);
-                var guideDotIndicies = new int[8 * numBoxes];
-                for (int si = 0; si < 8 * numBoxes; si += 1) {
+                GuideGridBuffers[i] = new WireframeBuffer(8*numBoxes, 8*numBoxes, 4*numBoxes);
+                var guideDotIndicies = new int[8*numBoxes];
+                for (int si = 0; si < 8*numBoxes; si += 1){
                     guideDotIndicies[si] = si;
                 }
                 GuideGridBuffers[i].Indexbuffer.SetData(guideDotIndicies);
@@ -45,11 +44,11 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
                 #region verticies
 
-                var verts = new VertexPositionColor[_deckFloorBoundingboxes[i].Count() * 8];
+                var verts = new VertexPositionColor[_deckFloorBoundingboxes[i].Count()*8];
 
                 int vertIndex = 0;
 
-                foreach (var boundingBox in _deckFloorBoundingboxes[i]) {
+                foreach (var boundingBox in _deckFloorBoundingboxes[i]){
                     Vector3 v1, v2, v3, v4;
                     //v4  v3
                     //

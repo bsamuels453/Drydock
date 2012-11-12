@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Drydock.Logic.DoodadEditorState.Tools;
 using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
@@ -277,10 +276,10 @@ namespace Drydock.Logic.DoodadEditorState{
                 int[] floorIndicies = MeshHelper.CreateIndiceArray(4*_layerVerts[0].Count/2);
 
                 MeshHelper.ConvertMeshToVertList(_deckFloorMesh[i], floorNormals, ref floorVerticies);
-                deckFloorbuffers[i] = new ObjectBuffer<QuadIdentifier>(_layerVerts[0].Count * 2, 2, 4, 6, "materials/whiteborder");
+                deckFloorbuffers[i] = new ObjectBuffer<QuadIdentifier>(_layerVerts[0].Count*2, 2, 4, 6, "materials/whiteborder");
 
-                int vertIndex=0;
-                int indIndex=0;
+                int vertIndex = 0;
+                int indIndex = 0;
 
                 for (int si = 0; si < _layerVerts[0].Count*2; si ++){
                     var indicies = new int[6];
@@ -437,7 +436,8 @@ namespace Drydock.Logic.DoodadEditorState{
                 ).ToArray();
         }
     }
-    internal class HullGeometryInfo {
+
+    internal class HullGeometryInfo{
         public Vector3 CenterPoint;
         public List<BoundingBox>[] DeckFloorBoundingBoxes;
         public ObjectBuffer<QuadIdentifier>[] DeckFloorBuffers;
@@ -452,26 +452,32 @@ namespace Drydock.Logic.DoodadEditorState{
     internal struct QuadIdentifier : IEquatable<QuadIdentifier>, IEnumerable{
         readonly Vector3[] _points;
 
-        public QuadIdentifier(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4) {
+        public QuadIdentifier(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4){
             _points = new Vector3[4];
             _points[0] = p1;
             _points[1] = p2;
             _points[2] = p3;
             _points[3] = p4;
-
         }
 
-        public QuadIdentifier CloneWithOffset(Vector3 offset){
-            return new QuadIdentifier(_points[0] + offset, _points[1] + offset, _points[2] + offset, _points[3] + offset);
-        }
-
-
-        public bool Equals(QuadIdentifier other) {
-            throw new NotImplementedException();
-        }
+        #region IEnumerable Members
 
         IEnumerator IEnumerable.GetEnumerator(){
             return _points.GetEnumerator();
+        }
+
+        #endregion
+
+        #region IEquatable<QuadIdentifier> Members
+
+        public bool Equals(QuadIdentifier other){
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        public QuadIdentifier CloneWithOffset(Vector3 offset){
+            return new QuadIdentifier(_points[0] + offset, _points[1] + offset, _points[2] + offset, _points[3] + offset);
         }
     }
 
@@ -514,9 +520,6 @@ namespace Drydock.Logic.DoodadEditorState{
         }
         */
 }
-
-
-
 
 /*var floorBounding = new BoundingBox[_deckFloorMesh.Count][];
 

@@ -70,21 +70,21 @@ namespace Drydock.Control{
             }
             else
                 curControlState.AllowLeftButtonInterpretation = true;
-                //curControlState.AllowLeftButtonInterpretation = false;
+            //curControlState.AllowLeftButtonInterpretation = false;
 
             if (_prevMouseState.RightButton != curMouseState.RightButton){
                 curControlState.AllowRightButtonInterpretation = true;
             }
             else
                 curControlState.AllowRightButtonInterpretation = true;
-                //curControlState.AllowRightButtonInterpretation = false;
-                
+            //curControlState.AllowRightButtonInterpretation = false;
+
             if (_prevMouseState.ScrollWheelValue != curMouseState.ScrollWheelValue){
                 curControlState.AllowMouseScrollInterpretation = true;
             }
             else
                 curControlState.AllowMouseScrollInterpretation = true;
-                //curControlState.AllowMouseScrollInterpretation = false;
+            //curControlState.AllowMouseScrollInterpretation = false;
 
             curControlState.KeyboardState = curKeyboardState;
 

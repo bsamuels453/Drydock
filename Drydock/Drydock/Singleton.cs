@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Drydock.Utilities{
+namespace Drydock{
     internal static class Singleton{
         public static ContentManager ContentManager;
         public static GraphicsDevice Device;

@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Drydock.UI;
-using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

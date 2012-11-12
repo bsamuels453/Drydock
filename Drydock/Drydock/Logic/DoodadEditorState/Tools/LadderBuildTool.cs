@@ -1,29 +1,29 @@
-﻿using System;
+﻿#region
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Drydock.Control;
 using Drydock.UI.Widgets;
 using Drydock.Utilities.ReferenceTypes;
 using Microsoft.Xna.Framework;
 
-namespace Drydock.Logic.DoodadEditorState.Tools {
-    class LadderBuildTool : GuideLineConstructor, IToolbarTool {
+#endregion
+
+namespace Drydock.Logic.DoodadEditorState.Tools{
+    internal class LadderBuildTool : GuideLineConstructor, IToolbarTool{
         const float _ladderWidth = 1f;
         const float _ladderLength = 1f;
 
         readonly float _deckHeight;
+        readonly List<Vector3>[] _floorVertexes;
         readonly int _numDecks;
+        List<BoundingBox>[] _boundingBoxes;
 
-        bool _isEnabled;
         List<GhostedZoneData> _ghostedZoneData;
+        bool _isEnabled;
         List<GhostedZoneData> _tempGhostedZoneData;
-        List<BoundingBox>[] _boundingBoxes; 
-        List<Vector3>[] _floorVertexes;
 
         public LadderBuildTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef)
             : base(hullInfo, visibleDecksRef){
-
             _deckHeight = hullInfo.DeckHeight;
             _numDecks = hullInfo.NumDecks;
 
@@ -34,6 +34,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
             _tempGhostedZoneData = new List<GhostedZoneData>();
             visibleDecksRef.RefModCallback += VisibleDeckChange;
         }
+
+        #region IToolbarTool Members
 
         public void UpdateInput(ref ControlState state){
             base.BaseUpdateInput(ref state);
@@ -48,11 +50,13 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
         }
 
         public void Disable(){
-            _isEnabled=false;
-            foreach (var buffer in GuideGridBuffers) {
+            _isEnabled = false;
+            foreach (var buffer in GuideGridBuffers){
                 buffer.IsEnabled = false;
             }
         }
+
+        #endregion
 
         protected override void EnableCursorGhost(){
             //throw new NotImplementedException();
@@ -98,20 +102,20 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
                 if (!_floorVertexes[topDeck].Contains(point))
                     return false;
             }
-            foreach (Vector3 point in bottom) {
+            foreach (Vector3 point in bottom){
                 if (!_floorVertexes[bottomDeck].Contains(point))
                     return false;
             }
 
             if (distToPt > _ladderLength)
                 return false;
-            
+
             return true;
         }
 
-        void VisibleDeckChange(IntRef caller, int oldVal, int newVal) {
-            if (_isEnabled) {
-                foreach (var buffer in GuideGridBuffers) {
+        void VisibleDeckChange(IntRef caller, int oldVal, int newVal){
+            if (_isEnabled){
+                foreach (var buffer in GuideGridBuffers){
                     buffer.IsEnabled = false;
                 }
 
@@ -119,19 +123,23 @@ namespace Drydock.Logic.DoodadEditorState.Tools {
             }
         }
 
-        struct GhostedZoneData{
-            public readonly List<Vector3>[] DisabledVertexes;
-            public readonly List<BoundingBox>[] DisabledBoundingBoxes;
+        #region Nested type: GhostedZoneData
 
-            public readonly BoundingBox UpperBounding;
+        struct GhostedZoneData{
+            public readonly List<BoundingBox>[] DisabledBoundingBoxes;
+            public readonly List<Vector3>[] DisabledVertexes;
+
             public readonly BoundingBox LowerBounding;
+            public readonly BoundingBox UpperBounding;
 
             public GhostedZoneData(BoundingBox upperBounding, BoundingBox lowerBounding, List<Vector3>[] disabledVerts, List<BoundingBox>[] disabledBBoxes){
                 UpperBounding = upperBounding;
                 LowerBounding = lowerBounding;
                 DisabledVertexes = disabledVerts;
                 DisabledBoundingBoxes = disabledBBoxes;
-            }        
+            }
         }
+
+        #endregion
     }
 }
