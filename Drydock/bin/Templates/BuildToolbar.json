@@ -3,8 +3,8 @@
   "ButtonSize": "45, 45",
   "BackgroundColor": "0, 0, 0, 0",
   "ButtonIcons": [
-    "wallbuildicon",
-    "walldeleteicon"
+    "icons/wallbuildicon",
+    "icons/walldeleteicon"
   ],
   "NumButtons": 2,
   "Orientation": "Vertical",

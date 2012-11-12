@@ -147,7 +147,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             }
         }
 
-        protected override bool IsCursorValid(Vector3 newCursorPos, Vector3 prevCursorPosition, List<Vector3> deckFloorVertexes){
+        protected override bool IsCursorValid(Vector3 newCursorPos, Vector3 prevCursorPosition, List<Vector3> deckFloorVertexes, float distToPt){
             if (deckFloorVertexes.Contains(prevCursorPosition) && _isDrawing){
                 var v1 = new Vector3(newCursorPos.X, newCursorPos.Y, StrokeOrigin.Z);
                 var v2 = new Vector3(StrokeOrigin.X, newCursorPos.Y, newCursorPos.Z);

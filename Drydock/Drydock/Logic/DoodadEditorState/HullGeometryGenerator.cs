@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -253,7 +254,7 @@ namespace Drydock.Logic.DoodadEditorState{
                 MeshHelper.ConvertMeshToVertList(hullMesh, hullNormals, ref hullVerticies);
 
                 //now stick it in a buffer
-                hullBuffers[i] = new ShipGeometryBuffer(hullIndicies.Length, hullVerticies.Length, hullIndicies.Length/3, "whiteborder", CullMode.CullClockwiseFace);
+                hullBuffers[i] = new ShipGeometryBuffer(hullIndicies.Length, hullVerticies.Length, hullIndicies.Length/3, "materials/whiteborder", CullMode.CullClockwiseFace);
                 hullBuffers[i].Indexbuffer.SetData(hullIndicies);
                 hullBuffers[i].Vertexbuffer.SetData(hullVerticies);
             }
@@ -276,7 +277,7 @@ namespace Drydock.Logic.DoodadEditorState{
                 int[] floorIndicies = MeshHelper.CreateIndiceArray(4*_layerVerts[0].Count/2);
 
                 MeshHelper.ConvertMeshToVertList(_deckFloorMesh[i], floorNormals, ref floorVerticies);
-                deckFloorbuffers[i] = new ObjectBuffer<QuadIdentifier>(_layerVerts[0].Count*2, 2, 4, 6, "whiteborder");
+                deckFloorbuffers[i] = new ObjectBuffer<QuadIdentifier>(_layerVerts[0].Count * 2, 2, 4, 6, "materials/whiteborder");
 
                 int vertIndex=0;
                 int indIndex=0;
@@ -448,15 +449,29 @@ namespace Drydock.Logic.DoodadEditorState{
         public float WallResolution;
     }
 
-    internal struct QuadIdentifier : IEquatable<QuadIdentifier> {
+    internal struct QuadIdentifier : IEquatable<QuadIdentifier>, IEnumerable{
+        readonly Vector3[] _points;
+
         public QuadIdentifier(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4) {
+            _points = new Vector3[4];
+            _points[0] = p1;
+            _points[1] = p2;
+            _points[2] = p3;
+            _points[3] = p4;
 
+        }
 
+        public QuadIdentifier CloneWithOffset(Vector3 offset){
+            return new QuadIdentifier(_points[0] + offset, _points[1] + offset, _points[2] + offset, _points[3] + offset);
         }
 
 
         public bool Equals(QuadIdentifier other) {
             throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator(){
+            return _points.GetEnumerator();
         }
     }
 

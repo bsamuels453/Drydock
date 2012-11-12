@@ -39,11 +39,17 @@ namespace Drydock.Logic.DoodadEditorState{
             #region construct toolbar
 
             _toolBar = new Toolbar("Templates/DoodadToolbar.json");
-            _toolBar.BindButtonToTool(0, new WallMenuTool(_hullInfo,
-                                                          _hullGeometryHandler.VisibleDecks,
-                                                          _hullGeometryHandler.WallBuffers,
-                                                          _hullGeometryHandler.WallPositions)
+            _toolBar.BindButtonToTool(0, new WallMenuTool(
+                                             _hullInfo,
+                                             _hullGeometryHandler.VisibleDecks,
+                                             _hullGeometryHandler.WallBuffers,
+                                             _hullGeometryHandler.WallPositions)
                 );
+
+            _toolBar.BindButtonToTool(1, new LadderBuildTool(
+                                             _hullInfo,
+                                             _hullGeometryHandler.VisibleDecks
+                                             ));
 
             #endregion
 
@@ -53,10 +59,6 @@ namespace Drydock.Logic.DoodadEditorState{
             #endregion
 
             _cameraController.SetCameraTarget(_hullInfo.CenterPoint);
-
-            #region set up events for the wrangled user interface stuff
-
-            #endregion
         }
 
         #region IGameState Members

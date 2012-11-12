@@ -57,10 +57,10 @@ namespace Drydock.Logic.DoodadEditorState{
             var buttonGen = new ButtonGenerator("ToolbarButton64.json");
             buttonGen.X = 50;
             buttonGen.Y = 50;
-            buttonGen.TextureName = "uparrow";
+            buttonGen.TextureName = "icons/uparrow";
             _deckUpButton = buttonGen.GenerateButton();
             buttonGen.Y = 50 + 64;
-            buttonGen.TextureName = "downarrow";
+            buttonGen.TextureName = "icons/downarrow";
             _deckDownButton = buttonGen.GenerateButton();
             _deckUpButton.OnLeftClickDispatcher += AddVisibleLevel;
             _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;
@@ -68,7 +68,7 @@ namespace Drydock.Logic.DoodadEditorState{
             WallBuffers = new ObjectBuffer<ObjectIdentifier>[_numDecks + 1];
             for (int i = 0; i < WallBuffers.Count(); i++){
                 int potentialWalls = geometryInfo.FloorVertexes[i].Count()*2;
-                WallBuffers[i] = new ObjectBuffer<ObjectIdentifier>(potentialWalls, 10, 20, 30, "whiteborder");
+                WallBuffers[i] = new ObjectBuffer<ObjectIdentifier>(potentialWalls, 10, 20, 30, "materials/whiteborder");
             }
         }
 

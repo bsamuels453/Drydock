@@ -42,70 +42,70 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AmbientEffect.fx">
+    <Compile Include="hlsl\AmbientEffect.fx">
       <Name>AmbientEffect</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SpriteFont.spritefont">
+    <Compile Include="fonts\SpriteFont.spritefont">
       <Name>SpriteFont</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="box.png">
+    <Compile Include="materials\box.png">
       <Name>box</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="black.png">
-      <Name>black</Name>
+    <Compile Include="effects\blackhighlight.png">
+      <Name>blackhighlight</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="red.png">
+    <Compile Include="materials\red.png">
       <Name>red</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="whitebox.png">
+    <Compile Include="materials\whitebox.png">
       <Name>whitebox</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="panelBG.png">
+    <Compile Include="materials\panelBG.png">
       <Name>panelBG</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="StandardEffect.fx">
+    <Compile Include="hlsl\StandardEffect.fx">
       <Name>StandardEffect</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="brown.png">
+    <Compile Include="materials\brown.png">
       <Name>brown</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="whiteborder.png">
+    <Compile Include="materials\whiteborder.png">
       <Name>whiteborder</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -113,66 +113,81 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="uparrow.png">
+    <Compile Include="icons\uparrow.png">
       <Name>uparrow</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="downarrow.png">
+    <Compile Include="icons\downarrow.png">
       <Name>downarrow</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="WireframeEffect.fx">
+    <Compile Include="hlsl\WireframeEffect.fx">
       <Name>WireframeEffect</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="wallbuildicon.png">
+    <Compile Include="icons\wallbuildicon.png">
       <Name>wallbuildicon</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cross.png">
+    <Compile Include="icons\cross.png">
       <Name>cross</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="highlighteffect.png">
+    <Compile Include="effects\highlighteffect.png">
       <Name>highlighteffect</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="blackdot.png">
+    <Compile Include="materials\blackdot.png">
       <Name>blackdot</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="walldeleteicon.png">
+    <Compile Include="icons\walldeleteicon.png">
       <Name>walldeleteicon</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="redborder.png">
+    <Compile Include="materials\redborder.png">
       <Name>redborder</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="icons\ladderbuildicon.png">
+      <Name>ladderbuildicon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="models\ladder.fbx">
+      <Name>ladder</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

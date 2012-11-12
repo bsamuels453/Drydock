@@ -11,7 +11,7 @@ namespace Drydock.Render{
         protected StandardEffect(int numIndicies, int numVerticies, int numPrimitives, string textureName) :
             base(numIndicies, numVerticies, numPrimitives, PrimitiveType.TriangleList){
             var texture = Singleton.ContentManager.Load<Texture2D>(textureName);
-            BufferEffect = Singleton.ContentManager.Load<Effect>("StandardEffect").Clone();
+            BufferEffect = Singleton.ContentManager.Load<Effect>("hlsl/StandardEffect").Clone();
             BufferEffect.Parameters["Projection"].SetValue(Singleton.ProjectionMatrix);
             BufferEffect.Parameters["World"].SetValue(Matrix.Identity);
             BufferEffect.Parameters["Texture"].SetValue(texture);

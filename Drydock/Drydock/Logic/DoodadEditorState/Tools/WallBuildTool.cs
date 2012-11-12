@@ -18,7 +18,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         public WallBuildTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<ObjectIdentifier>[] wallBuffers, List<ObjectIdentifier>[] wallIdentifiers) :
             base(hullInfo, visibleDecksRef, wallBuffers, wallIdentifiers){
-            _tempWallBuffer = new ObjectBuffer<ObjectIdentifier>(hullInfo.FloorVertexes[0].Count()*2, 10, 20, 30, "whiteborder"){UpdateBufferManually = true};
+            _tempWallBuffer = new ObjectBuffer<ObjectIdentifier>(hullInfo.FloorVertexes[0].Count()*2, 10, 20, 30, "materials/whiteborder"){UpdateBufferManually = true};
             _tempWallIdentifiers = new List<ObjectIdentifier>();
         }
 

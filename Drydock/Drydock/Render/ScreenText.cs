@@ -61,7 +61,7 @@ namespace Drydock.Render{
                 _isStringSlotAvail[i] = true;
             }
 
-            _font = content.Load<SpriteFont>("SpriteFont");
+            _font = content.Load<SpriteFont>("fonts/SpriteFont");
         }
 
         public static void Draw(SpriteBatch spriteBatch){

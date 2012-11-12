@@ -3,9 +3,9 @@
   "ButtonSize": "64, 64",
   "BackgroundColor": "0, 0, 0, 0",
   "ButtonIcons": [
-    "wallbuildicon",
-    "cross",
-    "cross"
+    "icons/wallbuildicon",
+    "icons/ladderbuildicon",
+    "icons/cross"
   ],
   "NumButtons": 3,
   "Orientation": "Vertical",
