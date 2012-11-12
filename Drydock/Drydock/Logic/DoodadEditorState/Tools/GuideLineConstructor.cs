@@ -17,6 +17,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected readonly WireframeBuffer[] GuideGridBuffers;
         readonly List<BoundingBox>[] _deckFloorBoundingboxes;
         readonly List<Vector3>[] _deckFloorVertexes;
+        readonly int _numDecks;
         protected Vector3 CursorPosition;
 
         protected GuideLineConstructor(HullGeometryInfo hullInfo, IntRef visibleDecksRef){
@@ -24,14 +25,18 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             GuideGridBuffers = new WireframeBuffer[hullInfo.NumDecks + 1];
             _deckFloorBoundingboxes = hullInfo.DeckFloorBoundingBoxes;
             _deckFloorVertexes = hullInfo.FloorVertexes;
+            _numDecks = hullInfo.NumDecks;
+            GenerateGuideGrid();
+        }
 
-            for (int i = 0; i < hullInfo.NumDecks + 1; i++){
+        protected void GenerateGuideGrid(){
+            for (int i = 0; i < _numDecks + 1; i++) {
                 #region indicies
 
-                int numBoxes = hullInfo.DeckFloorBoundingBoxes[i].Count();
-                GuideGridBuffers[i] = new WireframeBuffer(8*numBoxes, 8*numBoxes, 4*numBoxes);
-                var guideDotIndicies = new int[8*numBoxes];
-                for (int si = 0; si < 8*numBoxes; si += 1){
+                int numBoxes = _deckFloorBoundingboxes[i].Count();
+                GuideGridBuffers[i] = new WireframeBuffer(8 * numBoxes, 8 * numBoxes, 4 * numBoxes);
+                var guideDotIndicies = new int[8 * numBoxes];
+                for (int si = 0; si < 8 * numBoxes; si += 1) {
                     guideDotIndicies[si] = si;
                 }
                 GuideGridBuffers[i].Indexbuffer.SetData(guideDotIndicies);
@@ -40,11 +45,11 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
                 #region verticies
 
-                var verts = new VertexPositionColor[hullInfo.DeckFloorBoundingBoxes[i].Count()*8];
+                var verts = new VertexPositionColor[_deckFloorBoundingboxes[i].Count() * 8];
 
                 int vertIndex = 0;
 
-                foreach (var boundingBox in hullInfo.DeckFloorBoundingBoxes[i]){
+                foreach (var boundingBox in _deckFloorBoundingboxes[i]) {
                     Vector3 v1, v2, v3, v4;
                     //v4  v3
                     //
@@ -125,8 +130,10 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
                         int ptIdx = distList.IndexOf(f);
 
-                        if (!IsCursorValid(_deckFloorVertexes[CurDeck.Value][ptIdx], prevCursorPosition, _deckFloorVertexes[CurDeck.Value]))
+                        if (!IsCursorValid(_deckFloorVertexes[CurDeck.Value][ptIdx], prevCursorPosition, _deckFloorVertexes[CurDeck.Value], f)){
+                            DisableCursorGhost();
                             break;
+                        }
 
                         CursorPosition = _deckFloorVertexes[CurDeck.Value][ptIdx];
                         if (CursorPosition != prevCursorPosition){
@@ -152,6 +159,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected abstract void DisableCursorGhost();
         protected abstract void UpdateCursorGhost();
 
-        protected abstract bool IsCursorValid(Vector3 newCursorPos, Vector3 prevCursorPosition, List<Vector3> deckFloorVertexes);
+        protected abstract bool IsCursorValid(Vector3 newCursorPos, Vector3 prevCursorPosition, List<Vector3> deckFloorVertexes, float distToPt);
     }
 }
