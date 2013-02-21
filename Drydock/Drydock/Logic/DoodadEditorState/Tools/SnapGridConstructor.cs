@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
-    internal abstract class GuideLineConstructor{
+    internal abstract class SnapGridConstructor{
         protected readonly IntRefLambda CurDeck;
         protected readonly WireframeBuffer[] GuideGridBuffers;
         readonly List<BoundingBox>[] _deckFloorBoundingboxes;
@@ -19,7 +19,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         readonly int _numDecks;
         protected Vector3 CursorPosition;
 
-        protected GuideLineConstructor(HullGeometryInfo hullInfo, IntRef visibleDecksRef){
+        protected SnapGridConstructor(HullGeometryInfo hullInfo, IntRef visibleDecksRef){
             CurDeck = new IntRefLambda(visibleDecksRef, input => hullInfo.NumDecks - input);
             GuideGridBuffers = new WireframeBuffer[hullInfo.NumDecks + 1];
             _deckFloorBoundingboxes = hullInfo.DeckFloorBoundingBoxes;

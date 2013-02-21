@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework;
 #endregion
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
-    internal class LadderBuildTool : GuideLineConstructor, IToolbarTool{
+    internal class LadderBuildTool : SnapGridConstructor, IToolbarTool{
         const float _ladderWidthX = 1f;
         const float _ladderWidthZ = 1f;
         readonly float _gridWidth;

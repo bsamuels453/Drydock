@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
-    internal abstract class WallEditTool : GuideLineConstructor, IToolbarTool{
+    internal abstract class WallEditTool : SnapGridConstructor, IToolbarTool{
         protected readonly ObjectBuffer<ObjectIdentifier>[] WallBuffers;
         protected readonly float WallHeight;
         protected readonly List<ObjectIdentifier>[] WallIdentifiers;
@@ -109,7 +109,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         #endregion
 
-        #region GuideLineConstructor overloads
+        #region SnapGridConstructor overloads
 
         protected override void EnableCursorGhost(){
             _cursorBuff.IsEnabled = true;
