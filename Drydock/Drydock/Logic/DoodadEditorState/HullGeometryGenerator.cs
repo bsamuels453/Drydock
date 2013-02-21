@@ -14,7 +14,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Logic.DoodadEditorState{
     /// <summary>
-    ///   Generates the geometry for airship hulls. This differs from PreviewRenderer in that this class generates the geometry so that things like windows, portholes, or other extremities can be added easily without modifying/removing much of the geometry. In more mathematical terms, it means that the horizontal boundaries between adjacent quads are parallel to the XZ plane. This class can also take a few seconds to do its thing because it isnt going to be updating every tick like previewrenderer does. This code honestly shoudn't be in a class, but it's really too much to piggyback onto another class and would become much harder to read and maintain. Since this is essentially just a helper class, the process it performs has been broken down into a set of private functions that should help better describe what the hell it is doing. With that in mind, it can be assumed that this class basically acts like one big pure function that runs when it is constructed.
+    ///   Generates the geometry for airship hulls. This differs from PreviewRenderer in
+    /// that this class generates the geometry so that things like windows, portholes, or
+    /// other extremities can be added easily without modifying/removing much of the geometry.
+    /// In more mathematical terms, it means that the horizontal boundaries between adjacent
+    /// quads are parallel to the XZ plane. This class can also take a few seconds to do its
+    /// thing because it isnt going to be updating every tick like previewrenderer does.
     /// </summary>
     internal static class HullGeometryGenerator{
         //note: less than 1 deck breaks prolly
@@ -34,7 +39,7 @@ namespace Drydock.Logic.DoodadEditorState{
             var deckFloorMesh = GenerateDecks(genResults.LayerSilhouetteVerts, genResults.NumDecks, primHeightPerDeck);
             var hullBuffers = GenerateDeckWallBuffers(genResults.DeckSilhouetteVerts, normalGenResults.NormalMesh, genResults.NumDecks, primHeightPerDeck);
             var deckFloorBuffers = GenerateDeckFloorBuffers(genResults.LayerSilhouetteVerts, deckFloorMesh);
-            var boundingBoxResults = GenerateDeckBoundingBoxes(bBoxWidth, genResults.HorizontalPrimitives, deckFloorMesh);
+            var boundingBoxResults = GenerateDeckBoundingBoxes(bBoxWidth, deckFloorMesh);
 
             var resultant = new HullGeometryInfo();
             resultant.CenterPoint = normalGenResults.Centroid;
@@ -60,7 +65,6 @@ namespace Drydock.Logic.DoodadEditorState{
             var results = new GenerateHullResults();
 
             int numHorizontalPrimitives = 64;
-            results.HorizontalPrimitives = 64;
 
             float metersPerPrimitive = deckHeight/primitivesPerDeck;
             var sidePtGen = new BruteBezierGenerator(sideCurveInfo);
@@ -342,7 +346,8 @@ namespace Drydock.Logic.DoodadEditorState{
             return p;
         }
 
-        static BoundingBoxResult GenerateDeckBoundingBoxes(float floorBBoxWidth, int numHorizontalPrimitives, Vector3[][,] deckFloorMesh){
+        static BoundingBoxResult GenerateDeckBoundingBoxes(float floorBBoxWidth, Vector3[][,] deckFloorMesh){
+            int numHorizontalPrimitives = deckFloorMesh[0].GetLength(1);
             var ret = new BoundingBoxResult();
             var deckBoundingBoxes = new List<BoundingBox>[deckFloorMesh.Length];
 
@@ -489,7 +494,6 @@ namespace Drydock.Logic.DoodadEditorState{
         struct GenerateHullResults{
             public float Berth;
             public Vector3[][][] DeckSilhouetteVerts;
-            public int HorizontalPrimitives;
             public Vector3[][] LayerSilhouetteVerts;
             public float Length;
             public int NumDecks;
