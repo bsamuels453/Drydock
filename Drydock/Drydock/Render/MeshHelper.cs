@@ -66,6 +66,14 @@ namespace Drydock.Render{
             }
         }
 
+        public static void Encode2DListIntoArray(int meshWidth, int meshHeight, ref Vector3[,] mesh, Vector3[][] list) {
+            for (int x = 0; x < meshWidth; x++) {
+                for (int y = 0; y < meshHeight; y++) {
+                    mesh[x, y] = list[x][y];
+                }
+            }
+        }
+
         public static void GenerateMeshNormals(Vector3[,] mesh, ref Vector3[,] normals){
             for (int vertX = 0; vertX < mesh.GetLength(0) - 1; vertX++){
                 for (int vertZ = 0; vertZ < mesh.GetLength(1) - 1; vertZ++){
