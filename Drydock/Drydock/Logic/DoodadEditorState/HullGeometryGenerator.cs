@@ -16,42 +16,53 @@ namespace Drydock.Logic.DoodadEditorState{
     /// <summary>
     ///   Generates the geometry for airship hulls. This differs from PreviewRenderer in that this class generates the geometry so that things like windows, portholes, or other extremities can be added easily without modifying/removing much of the geometry. In more mathematical terms, it means that the horizontal boundaries between adjacent quads are parallel to the XZ plane. This class can also take a few seconds to do its thing because it isnt going to be updating every tick like previewrenderer does. This code honestly shoudn't be in a class, but it's really too much to piggyback onto another class and would become much harder to read and maintain. Since this is essentially just a helper class, the process it performs has been broken down into a set of private functions that should help better describe what the hell it is doing. With that in mind, it can be assumed that this class basically acts like one big pure function that runs when it is constructed.
     /// </summary>
-    internal class HullGeometryGenerator{
-        const float _metersPerDeck = 2.13f;
-        const int _numHorizontalPrimitives = 32; //welp
-        const float _floorBBoxWidth = 0.5f;
-        readonly int _primHeightPerDeck;
-        public HullGeometryInfo Resultant;
-        float _berth;
-
-
-        //todo: clean up all these fields, they should be passing between methods, not left here like global garbage
-        List<Vector3[,]> _deckFloorMesh;
-
-        List<List<List<Vector3>>> _deckVertexes; // deck->levels of deck vertexes->vertexes for each level 
-        List<List<Vector3>> _layerVerts;
-        float _length;
-        int _numDecks;
-        Vector3[,] _totalNormals;
-
+    internal static class HullGeometryGenerator{
         //note: less than 1 deck breaks prolly
         //note that this entire geometry generator runs on the standard curve assumptions
-        public HullGeometryGenerator(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo, int primHeightPerDeck){
-            _primHeightPerDeck = primHeightPerDeck;
-            Resultant = new HullGeometryInfo();
-            GenerateHull(backCurveInfo, sideCurveInfo, topCurveInfo);
-            GenerateDecks();
-            GenerateDeckWallBuffers();
-            GenerateDeckFloorBuffers();
-            GenerateFloorBoundingBoxes();
-            Resultant.WallResolution = _floorBBoxWidth;
-            Resultant.DeckHeight = _metersPerDeck;
-            Resultant.MaxBoundingBoxDims = new Vector2((int) (_length/_floorBBoxWidth), (int) (_berth/_floorBBoxWidth));
+        public static HullGeometryInfo GenerateShip(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo, int primHeightPerDeck){
+            const float deckHeight = 2.13f;
+            const float bBoxWidth = 0.5f;
+            var genResults = GenerateHull(new GenerateHullParams{
+                BackCurveInfo = backCurveInfo,
+                SideCurveInfo = sideCurveInfo,
+                TopCurveInfo = topCurveInfo,
+                DeckHeight = deckHeight,
+                PrimitivesPerDeck = primHeightPerDeck
+            }
+                );
+            var normalGenResults = GenerateHullNormals(genResults.LayerSilhouetteVerts);
+            var deckFloorMesh = GenerateDecks(genResults.LayerSilhouetteVerts, genResults.NumDecks, primHeightPerDeck);
+            var hullBuffers = GenerateDeckWallBuffers(genResults.DeckSilhouetteVerts, normalGenResults.NormalMesh, genResults.NumDecks, primHeightPerDeck);
+            var deckFloorBuffers = GenerateDeckFloorBuffers(genResults.LayerSilhouetteVerts, deckFloorMesh);
+            var boundingBoxResults = GenerateDeckBoundingBoxes(bBoxWidth, genResults.HorizontalPrimitives, deckFloorMesh);
+
+            var resultant = new HullGeometryInfo();
+            resultant.CenterPoint = normalGenResults.Centroid;
+            resultant.DeckFloorBoundingBoxes = boundingBoxResults.DeckBoundingBoxes;
+            resultant.DeckFloorBuffers = deckFloorBuffers;
+            resultant.FloorVertexes = boundingBoxResults.DeckVertexes;
+            resultant.HullWallTexBuffers = hullBuffers;
+            resultant.NumDecks = genResults.NumDecks;
+            resultant.WallResolution = bBoxWidth;
+            resultant.DeckHeight = deckHeight;
+            resultant.MaxBoundingBoxDims = new Vector2((int) (genResults.Length/bBoxWidth), (int) (genResults.Berth/bBoxWidth));
+            return resultant;
         }
 
         //todo: break up this method into submethods for the sake of cleanliness.
-        void GenerateHull(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo){
-            float metersPerPrimitive = _metersPerDeck/_primHeightPerDeck;
+
+        static GenerateHullResults GenerateHull(GenerateHullParams input){
+            var sideCurveInfo = input.SideCurveInfo;
+            var backCurveInfo = input.BackCurveInfo;
+            var topCurveInfo = input.TopCurveInfo;
+            float deckHeight = input.DeckHeight;
+            int primitivesPerDeck = input.PrimitivesPerDeck;
+            var results = new GenerateHullResults();
+
+            int numHorizontalPrimitives = 64;
+            results.HorizontalPrimitives = 64;
+
+            float metersPerPrimitive = deckHeight/primitivesPerDeck;
             var sidePtGen = new BruteBezierGenerator(sideCurveInfo);
 
             topCurveInfo.RemoveAt(0); //make this curve set pass vertical line test
@@ -62,21 +73,20 @@ namespace Drydock.Logic.DoodadEditorState{
 
             //get the draft and the berth
             float draft = sideCurveInfo[1].Pos.Y;
-            _berth = topCurveInfo[1].Pos.Y;
-            _length = sideCurveInfo[2].Pos.X;
-            _numDecks = (int) (draft/_metersPerDeck);
-            Resultant.NumDecks = _numDecks;
-            int numVerticalVertexes = _numDecks*_primHeightPerDeck + _primHeightPerDeck + 1;
+            results.Berth = topCurveInfo[1].Pos.Y;
+            results.Length = sideCurveInfo[2].Pos.X;
+            results.NumDecks = (int) (draft/deckHeight);
+            int numVerticalVertexes = results.NumDecks*primitivesPerDeck + primitivesPerDeck + 1;
 
             //get the y values for the hull
-            for (int i = 0; i < numVerticalVertexes - _primHeightPerDeck; i++){
+            for (int i = 0; i < numVerticalVertexes - primitivesPerDeck; i++){
                 geometryYvalues.Add(i*metersPerPrimitive);
             }
             float bottomDeck = geometryYvalues[geometryYvalues.Count - 1];
 
             //the bottom part of ship (false deck) will not have height of _metersPerDeck so we need to use a different value for metersPerPrimitive
-            float bottomPrimHeight = (draft - bottomDeck)/_primHeightPerDeck;
-            for (int i = 1; i <= _primHeightPerDeck; i++){
+            float bottomPrimHeight = (draft - bottomDeck)/primitivesPerDeck;
+            for (int i = 1; i <= primitivesPerDeck; i++){
                 geometryYvalues.Add(i*bottomPrimHeight + bottomDeck);
             }
 
@@ -93,6 +103,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
             var ySliceVerts = new List<List<Vector3>>(); //this list contains slices of the airship which contain all the vertexes for the specific layer of the airship
 
+
             //in the future we can parameterize x differently to comphensate for dramatic curves on the keel
             for (int y = 0; y < numVerticalVertexes; y++){
                 float xStart = xzHullIntercepts[y][0].X;
@@ -101,12 +112,12 @@ namespace Drydock.Logic.DoodadEditorState{
 
                 var strip = new List<Vector3>();
 
-                for (int x = 0; x < _numHorizontalPrimitives; x++){
+                for (int x = 0; x < numHorizontalPrimitives; x++){
                     var point = new Vector3();
                     point.Y = geometryYvalues[y];
 
                     //here is where x is parameterized, and converted into a relative x value
-                    float tx = x/(float) (_numHorizontalPrimitives - 1);
+                    float tx = x/(float) (numHorizontalPrimitives - 1);
                     float xPos = tx*xDiff + xStart;
                     //
 
@@ -115,7 +126,7 @@ namespace Drydock.Logic.DoodadEditorState{
                     point.X = keelIntersect.X;
 
                     var topIntersect = topPtGen.GetValueFromIndependent(xPos);
-                    float profileXScale = (topIntersect.Y - topCurveInfo[0].Pos.Y)/(_berth/2f);
+                    float profileXScale = (topIntersect.Y - topCurveInfo[0].Pos.Y)/(results.Berth/2f);
                     //float profileXScale = topIntersect.Y  / berth;
 
                     var scaledProfile = new List<BezierInfo>();
@@ -132,7 +143,7 @@ namespace Drydock.Logic.DoodadEditorState{
                     }
 
                     float diff = scaledProfile[0].Pos.X;
-                    if (x == _numHorizontalPrimitives - 1 || x == 0){
+                    if (x == numHorizontalPrimitives - 1 || x == 0){
                         diff = profileIntersect[0].X;
                     }
                     point.Z = profileIntersect[0].X - diff;
@@ -162,126 +173,141 @@ namespace Drydock.Logic.DoodadEditorState{
             var geometry = ySliceVerts;
 
             //reflect+dupe the geometry across the x axis to complete the opposite side of the ship
-            _layerVerts = new List<List<Vector3>>(geometry.Count);
+            results.LayerSilhouetteVerts = new Vector3[geometry.Count][];
             for (int i = 0; i < geometry.Count; i++){
-                _layerVerts.Add(new List<Vector3>(geometry[0].Count*2));
+                results.LayerSilhouetteVerts[i] = new Vector3[geometry[0].Count*2];
 
                 geometry[i].Reverse();
+                int destIdx = 0;
                 for (int si = 0; si < geometry[0].Count; si++){
-                    _layerVerts[i].Add(geometry[i][si]);
+                    results.LayerSilhouetteVerts[i][destIdx] = geometry[i][si];
+                    destIdx++;
                 }
                 geometry[i].Reverse();
                 for (int si = 0; si < geometry[0].Count; si++){
-                    _layerVerts[i].Add(new Vector3(geometry[i][si].X, geometry[i][si].Y, -geometry[i][si].Z));
+                    results.LayerSilhouetteVerts[i][destIdx] = new Vector3(geometry[i][si].X, geometry[i][si].Y, -geometry[i][si].Z);
+                    destIdx++;
                 }
             }
 
             //reflect the layers across the Y axis so that the opening is pointing up
-            foreach (var layerVert in _layerVerts){
-                for (int i = 0; i < layerVert.Count; i++){
+            foreach (var layerVert in results.LayerSilhouetteVerts){
+                for (int i = 0; i < layerVert.GetLength(0); i++){
                     layerVert[i] = new Vector3(layerVert[i].X, -layerVert[i].Y, layerVert[i].Z);
                 }
             }
 
             //this fixes the ordering of the lists so that normals generate correctly
-            foreach (List<Vector3> t in _layerVerts){
-                t.Reverse();
+            for (int i = 0; i < results.LayerSilhouetteVerts.GetLength(0); i++){
+                results.LayerSilhouetteVerts[i] = results.LayerSilhouetteVerts[i].Reverse().ToArray();
             }
 
             //now enumerate the ships layer verts into levels for each deck
-            _deckVertexes = new List<List<List<Vector3>>>(_numDecks + 1);
-            for (int i = 0; i < _numDecks; i++){
-                _deckVertexes.Add(new List<List<Vector3>>(_primHeightPerDeck));
+            results.DeckSilhouetteVerts = new Vector3[results.NumDecks + 1][][];
+            for (int i = 0; i < results.NumDecks; i++){
+                results.DeckSilhouetteVerts[i] = new Vector3[primitivesPerDeck + 1][];
 
-                for (int level = 0; level < _primHeightPerDeck + 1; level++){
-                    _deckVertexes[i].Add(_layerVerts[i*(_primHeightPerDeck) + level]);
+                for (int level = 0; level < primitivesPerDeck + 1; level++){
+                    results.DeckSilhouetteVerts[i][level] = results.LayerSilhouetteVerts[i*(primitivesPerDeck) + level];
                 }
             }
             //edge case for the final deck, the "bottom"
-            _deckVertexes.Add(new List<List<Vector3>>());
-            for (int level = _numDecks*_primHeightPerDeck; level < _layerVerts.Count; level++){
-                _deckVertexes[_deckVertexes.Count - 1].Add(_layerVerts[level]);
+            results.DeckSilhouetteVerts[results.NumDecks] = new Vector3[primitivesPerDeck + 1][];
+            for (int level = 0; level < primitivesPerDeck + 1; level++){
+                results.DeckSilhouetteVerts[results.NumDecks][level] = results.LayerSilhouetteVerts[results.NumDecks*(primitivesPerDeck) + level];
             }
-            GenerateHullNormals();
+            return results;
         }
 
-        void GenerateHullNormals(){
+        static GenerateNormalsResults GenerateHullNormals(Vector3[][] layerSVerts){
             //generate a normals array for the entire ship, rather than per-deck
-            var totalMesh = new Vector3[_layerVerts.Count,_layerVerts[0].Count];
-            _totalNormals = new Vector3[_layerVerts.Count,_layerVerts[0].Count];
-            MeshHelper.Encode2DListIntoArray(_layerVerts.Count, _layerVerts[0].Count, ref totalMesh, _layerVerts);
-            MeshHelper.GenerateMeshNormals(totalMesh, ref _totalNormals);
+            var totalMesh = new Vector3[layerSVerts.Length,layerSVerts[0].Length];
+            var retMesh = new Vector3[layerSVerts.Length,layerSVerts[0].Length];
+            MeshHelper.Encode2DListIntoArray(layerSVerts.Length, layerSVerts[0].Length, ref totalMesh, layerSVerts);
+            MeshHelper.GenerateMeshNormals(totalMesh, ref retMesh);
 
             //since we have generated totalmesh, might as well get the centerpoint now
-            GenerateCenterPoint(totalMesh);
+            var centroid = GenerateCenterPoint(totalMesh);
+
+            var ret = new GenerateNormalsResults();
+            ret.NormalMesh = retMesh;
+            ret.Centroid = centroid;
+
+            return ret;
         }
 
-        void GenerateDecks(){
-            _deckFloorMesh = new List<Vector3[,]>();
-            for (int deck = 0; deck < _numDecks + 1; deck++){
-                _deckFloorMesh.Add(new Vector3[3,_layerVerts[0].Count/2]);
-                for (int vert = 0; vert < _layerVerts[0].Count/2; vert++){
-                    _deckFloorMesh.Last()[0, vert] = _layerVerts[deck*_primHeightPerDeck][_layerVerts[0].Count/2 + vert];
+        static Vector3[][,] GenerateDecks(Vector3[][] layerSVerts, int numDecks, int primitivesPerDeck){
+            var retMesh = new Vector3[4][,];
+            int vertsInSilhouette = layerSVerts[0].Length;
+            for (int deck = 0; deck < numDecks + 1; deck++){
+                retMesh[deck] = new Vector3[3,vertsInSilhouette/2];
+                for (int vert = 0; vert < vertsInSilhouette/2; vert++){
+                    retMesh[deck][0, vert] = layerSVerts[deck*primitivesPerDeck][vertsInSilhouette/2 + vert];
 
-                    _deckFloorMesh.Last()[1, vert] = _layerVerts[deck*_primHeightPerDeck][_layerVerts[0].Count/2 + vert];
-                    _deckFloorMesh.Last()[2, vert] = _layerVerts[deck*_primHeightPerDeck][_layerVerts[0].Count/2 - vert - 1];
-                    _deckFloorMesh.Last()[1, vert].Z = 0;
+                    retMesh[deck][1, vert] = layerSVerts[deck*primitivesPerDeck][vertsInSilhouette/2 + vert];
+                    retMesh[deck][2, vert] = layerSVerts[deck*primitivesPerDeck][vertsInSilhouette/2 - vert - 1];
+                    retMesh[deck][1, vert].Z = 0;
 
-                    _deckFloorMesh.Last()[2, vert] = _layerVerts[deck*_primHeightPerDeck][_layerVerts[0].Count/2 - vert - 1];
+                    retMesh[deck][2, vert] = layerSVerts[deck*primitivesPerDeck][vertsInSilhouette/2 - vert - 1];
                 }
             }
+            return retMesh;
         }
 
-        void GenerateDeckWallBuffers(){
-            var hullBuffers = new ShipGeometryBuffer[_numDecks + 1];
-            //now set up the display buffer for each deck wall, also known as the ships hull
-            for (int i = 0; i < _deckVertexes.Count; i++){
-                var hullMesh = new Vector3[_primHeightPerDeck + 1,_deckVertexes[0][0].Count];
-                var hullNormals = new Vector3[_primHeightPerDeck + 1,_deckVertexes[0][0].Count];
-                int[] hullIndicies = MeshHelper.CreateIndiceArray((_primHeightPerDeck + 1)*_deckVertexes[0][0].Count);
-                VertexPositionNormalTexture[] hullVerticies = MeshHelper.CreateTexcoordedVertexList((_primHeightPerDeck + 1)*_deckVertexes[0][0].Count);
+        static ShipGeometryBuffer[] GenerateDeckWallBuffers(Vector3[][][] deckSVerts, Vector3[,] normalMesh, int numDecks, int primitivesPerDeck){
+            int vertsInSilhouette = deckSVerts[0][0].Length;
+
+            var hullBuffers = new ShipGeometryBuffer[numDecks + 1];
+            //now set up the display buffer for each deck's wall
+            for (int i = 0; i < deckSVerts.Length; i++){
+                var hullMesh = new Vector3[primitivesPerDeck + 1,vertsInSilhouette];
+                var hullNormals = new Vector3[primitivesPerDeck + 1,vertsInSilhouette];
+                int[] hullIndicies = MeshHelper.CreateIndiceArray((primitivesPerDeck + 1)*vertsInSilhouette);
+                VertexPositionNormalTexture[] hullVerticies = MeshHelper.CreateTexcoordedVertexList((primitivesPerDeck + 1)*vertsInSilhouette);
 
                 //get the hull normals for this part of the hull from the total normals
-                for (int x = 0; x < _primHeightPerDeck + 1; x++){
-                    for (int z = 0; z < _deckVertexes[0][0].Count; z++){
-                        hullNormals[x, z] = _totalNormals[i*_primHeightPerDeck + x, z];
+                for (int x = 0; x < primitivesPerDeck + 1; x++){
+                    for (int z = 0; z < vertsInSilhouette; z++){
+                        hullNormals[x, z] = normalMesh[i*primitivesPerDeck + x, z];
                     }
                 }
                 //convert the 2d list heightmap into a 2d array heightmap
-                MeshHelper.Encode2DListIntoArray(_primHeightPerDeck + 1, _deckVertexes[0][0].Count, ref hullMesh, _deckVertexes[i]);
+                MeshHelper.Encode2DListIntoArray(primitivesPerDeck + 1, vertsInSilhouette, ref hullMesh, deckSVerts[i]);
                 //take the 2d array of vertexes and 2d array of normals and stick them in the vertexpositionnormaltexture 
                 MeshHelper.ConvertMeshToVertList(hullMesh, hullNormals, ref hullVerticies);
 
                 //now stick it in a buffer
-                hullBuffers[i] = new ShipGeometryBuffer(hullIndicies.Length, hullVerticies.Length, hullIndicies.Length / 3, "DoodadEditorHullTex", CullMode.CullClockwiseFace);
+                hullBuffers[i] = new ShipGeometryBuffer(hullIndicies.Length, hullVerticies.Length, hullIndicies.Length/3, "DoodadEditorHullTex", CullMode.CullClockwiseFace);
                 hullBuffers[i].Indexbuffer.SetData(hullIndicies);
                 hullBuffers[i].Vertexbuffer.SetData(hullVerticies);
             }
-            Resultant.HullWallTexBuffers = hullBuffers;
+            return hullBuffers;
         }
 
-        void GenerateDeckFloorBuffers(){
-            var floorNormals = new Vector3[3,_layerVerts[0].Count/2];
+        static ObjectBuffer<QuadIdentifier>[] GenerateDeckFloorBuffers(Vector3[][] layerSVerts, Vector3[][,] deckFloorMesh){
+            int vertsInSilhouette = layerSVerts[0].Length;
+
+            var floorNormals = new Vector3[3,vertsInSilhouette/2];
             for (int x = 0; x < 3; x++){
-                for (int z = 0; z < _layerVerts[0].Count/2; z++){
+                for (int z = 0; z < vertsInSilhouette/2; z++){
                     floorNormals[x, z] = Vector3.Up;
                 }
             }
 
-            var deckFloorbuffers = new ObjectBuffer<QuadIdentifier>[_deckFloorMesh.Count];
+            var deckFloorbuffers = new ObjectBuffer<QuadIdentifier>[deckFloorMesh.Length];
 
             //now set up the display buffer for each deck floor
-            for (int i = 0; i < _deckFloorMesh.Count; i++){
-                VertexPositionNormalTexture[] floorVerticies = MeshHelper.CreateTexcoordedVertexList(4*_layerVerts[0].Count/2);
-                int[] floorIndicies = MeshHelper.CreateIndiceArray(4*_layerVerts[0].Count/2);
+            for (int i = 0; i < deckFloorMesh.Length; i++){
+                VertexPositionNormalTexture[] floorVerticies = MeshHelper.CreateTexcoordedVertexList(4*vertsInSilhouette/2);
+                int[] floorIndicies = MeshHelper.CreateIndiceArray(4*vertsInSilhouette/2);
 
-                MeshHelper.ConvertMeshToVertList(_deckFloorMesh[i], floorNormals, ref floorVerticies);
-                deckFloorbuffers[i] = new ObjectBuffer<QuadIdentifier>(_layerVerts[0].Count * 2, 2, 4, 6, "DoodadEditorFloorTex");
+                MeshHelper.ConvertMeshToVertList(deckFloorMesh[i], floorNormals, ref floorVerticies);
+                deckFloorbuffers[i] = new ObjectBuffer<QuadIdentifier>(vertsInSilhouette*2, 2, 4, 6, "DoodadEditorFloorTex");
 
                 int vertIndex = 0;
                 int indIndex = 0;
 
-                for (int si = 0; si < _layerVerts[0].Count*2; si ++){
+                for (int si = 0; si < vertsInSilhouette*2; si++){
                     var indicies = new int[6];
                     var verticies = new VertexPositionNormalTexture[4];
 
@@ -303,45 +329,45 @@ namespace Drydock.Logic.DoodadEditorState{
                 }
             }
 
-            Resultant.DeckFloorBuffers = deckFloorbuffers;
+            return deckFloorbuffers;
         }
 
-        void GenerateCenterPoint(Vector3[,] totalMesh){
+        static Vector3 GenerateCenterPoint(Vector3[,] totalMesh){
             var p = new Vector3();
 
             p += totalMesh[0, 0];
             p += totalMesh[totalMesh.GetLength(0) - 1, totalMesh.GetLength(1) - 1];
             p /= 4;
 
-            Resultant.CenterPoint = p;
+            return p;
         }
 
-        void GenerateFloorBoundingBoxes(){
-            //todo: break this down so it's reusable
-            var deckBoundingBoxes = new List<BoundingBox>[_deckFloorMesh.Count];
+        static BoundingBoxResult GenerateDeckBoundingBoxes(float floorBBoxWidth, int numHorizontalPrimitives, Vector3[][,] deckFloorMesh){
+            var ret = new BoundingBoxResult();
+            var deckBoundingBoxes = new List<BoundingBox>[deckFloorMesh.Length];
 
-            for (int layer = 0; layer < _deckFloorMesh.Count; layer++){
+            for (int layer = 0; layer < deckFloorMesh.Length; layer++){
                 var layerBBoxes = new List<BoundingBox>();
-                float yLayer = _deckFloorMesh[layer][0, 0].Y;
+                float yLayer = deckFloorMesh[layer][0, 0].Y;
 
                 float boxCreatorPos = 0;
-                while (boxCreatorPos < _deckFloorMesh[layer][1, 0].X)
-                    boxCreatorPos += _floorBBoxWidth;
+                while (boxCreatorPos < deckFloorMesh[layer][1, 0].X)
+                    boxCreatorPos += floorBBoxWidth;
 
-                while (boxCreatorPos < _deckFloorMesh[layer][1, 31].X){
+                while (boxCreatorPos < deckFloorMesh[layer][1, numHorizontalPrimitives - 1].X){
                     int index = -1; //index of the first of the two set of vertexes to use when determining 
-                    for (int i = 0; i < _numHorizontalPrimitives; i++){
-                        if (boxCreatorPos >= _deckFloorMesh[layer][1, i].X && boxCreatorPos < _deckFloorMesh[layer][1, i + 1].X){
+                    for (int i = 0; i < numHorizontalPrimitives; i++){
+                        if (boxCreatorPos >= deckFloorMesh[layer][1, i].X && boxCreatorPos < deckFloorMesh[layer][1, i + 1].X){
                             index = i;
                             break;
                         }
                     }
                     Debug.Assert(index != -1);
 
-                    float startX = _deckFloorMesh[layer][0, index].X;
-                    float endX = _deckFloorMesh[layer][0, index + 1].X;
-                    float startZ = _deckFloorMesh[layer][0, index].Z;
-                    float endZ = _deckFloorMesh[layer][0, index + 1].Z;
+                    float startX = deckFloorMesh[layer][0, index].X;
+                    float endX = deckFloorMesh[layer][0, index + 1].X;
+                    float startZ = deckFloorMesh[layer][0, index].Z;
+                    float endZ = deckFloorMesh[layer][0, index + 1].Z;
                     float zBounding1, zBounding2;
 
                     var interpolator = new Interpolate(
@@ -350,28 +376,28 @@ namespace Drydock.Logic.DoodadEditorState{
                         endX - startX
                         );
 
-                    if (boxCreatorPos + _floorBBoxWidth < endX){ //easy scenario where we only have to take one line into consideration when finding how many boxes wide should be
+                    if (boxCreatorPos + floorBBoxWidth < endX){ //easy scenario where we only have to take one line into consideration when finding how many boxes wide should be
                         zBounding1 = interpolator.GetLinearValue(boxCreatorPos - startX);
-                        zBounding2 = interpolator.GetLinearValue(boxCreatorPos + _floorBBoxWidth - startX);
+                        zBounding2 = interpolator.GetLinearValue(boxCreatorPos + floorBBoxWidth - startX);
                     }
                     else{
                         zBounding1 = interpolator.GetLinearValue(boxCreatorPos - startX);
-                        if (index + 2 != _numHorizontalPrimitives){
+                        if (index + 2 != numHorizontalPrimitives){
                             var interpolator2 = new Interpolate(
-                                _deckFloorMesh[layer][0, index + 1].Z,
-                                _deckFloorMesh[layer][0, index + 2].Z,
-                                _deckFloorMesh[layer][0, index + 2].X - _deckFloorMesh[layer][0, index + 1].X
+                                deckFloorMesh[layer][0, index + 1].Z,
+                                deckFloorMesh[layer][0, index + 2].Z,
+                                deckFloorMesh[layer][0, index + 2].X - deckFloorMesh[layer][0, index + 1].X
                                 );
 
-                            zBounding2 = interpolator2.GetLinearValue(boxCreatorPos + _floorBBoxWidth - _deckFloorMesh[layer][0, index + 1].X);
+                            zBounding2 = interpolator2.GetLinearValue(boxCreatorPos + floorBBoxWidth - deckFloorMesh[layer][0, index + 1].X);
                         }
                         else{
                             zBounding2 = 0;
                         }
                     }
 
-                    int zBoxes1 = (int) (zBounding1/_floorBBoxWidth);
-                    int zBoxes2 = (int) (zBounding2/_floorBBoxWidth);
+                    int zBoxes1 = (int) (zBounding1/floorBBoxWidth);
+                    int zBoxes2 = (int) (zBounding2/floorBBoxWidth);
 
                     int numZBoxes;
                     if (zBoxes1 < zBoxes2)
@@ -386,24 +412,24 @@ namespace Drydock.Logic.DoodadEditorState{
                                 new Vector3(
                                     boxCreatorPos,
                                     yLayer,
-                                    i*_floorBBoxWidth
+                                    i*floorBBoxWidth
                                     ),
                                 new Vector3(
-                                    boxCreatorPos + _floorBBoxWidth,
+                                    boxCreatorPos + floorBBoxWidth,
                                     yLayer,
-                                    (i + 1)*_floorBBoxWidth
+                                    (i + 1)*floorBBoxWidth
                                     )
                                 )
                             );
                     }
 
-                    boxCreatorPos += _floorBBoxWidth;
+                    boxCreatorPos += floorBBoxWidth;
                 }
                 deckBoundingBoxes[layer] = layerBBoxes;
             }
-            Resultant.DeckFloorBoundingBoxes = deckBoundingBoxes;
+            ret.DeckBoundingBoxes = deckBoundingBoxes;
 
-            var wallSelectionBoxes = Resultant.DeckFloorBoundingBoxes;
+            var wallSelectionBoxes = deckBoundingBoxes;
             var wallSelectionPoints = new List<List<Vector3>>();
             //generate vertexes of the bounding boxes
 
@@ -429,12 +455,56 @@ namespace Drydock.Logic.DoodadEditorState{
                 }*/
             }
 
-            Resultant.FloorVertexes =
+            ret.DeckVertexes =
                 (
                     from layer in wallSelectionPoints
                     select layer.ToList()
                 ).ToArray();
+            return ret;
         }
+
+        #region Nested type: BoundingBoxResult
+
+        struct BoundingBoxResult{
+            public List<BoundingBox>[] DeckBoundingBoxes;
+            public List<Vector3>[] DeckVertexes;
+        }
+
+        #endregion
+
+        #region Nested type: GenerateHullParams
+
+        struct GenerateHullParams{
+            public List<BezierInfo> BackCurveInfo;
+            public float DeckHeight;
+            public int PrimitivesPerDeck;
+            public List<BezierInfo> SideCurveInfo;
+            public List<BezierInfo> TopCurveInfo;
+        }
+
+        #endregion
+
+        #region Nested type: GenerateHullResults
+
+        struct GenerateHullResults{
+            public float Berth;
+            public Vector3[][][] DeckSilhouetteVerts;
+            public int HorizontalPrimitives;
+            public Vector3[][] LayerSilhouetteVerts;
+            public float Length;
+            public int NumDecks;
+        }
+
+        #endregion
+
+        #region Nested type: GenerateNormalsResults
+
+        struct GenerateNormalsResults{
+            public Vector3 Centroid;
+            public Vector3[,] NormalMesh;
+        }
+
+        #endregion
     }
 
     internal class HullGeometryInfo{
@@ -487,155 +557,4 @@ namespace Drydock.Logic.DoodadEditorState{
             return new BoundingBox(_points[0], _points[2]);
         }
     }
-
-    /*void GenerateFloorSelectionMesh(BoundingBox[][] referenceBoxes){
-            Resultant.DeckFloorBoundingBoxes = SubdivideBoundingBoxes(referenceBoxes, _floorSelectionMeshWidth);
-
-
-            Resultant.LowResFloorBoundingBoxes = SubdivideBoundingBoxes(referenceBoxes, _wallSelectionMeshWidth);
-            var wallSelectionBoxes = Resultant.LowResFloorBoundingBoxes;
-            var wallSelectionPoints = new List<List<Vector3>>();
-            //generate vertexes of the bounding boxes
-
-            for (int layer = 0; layer < wallSelectionBoxes.Count(); layer++){
-                wallSelectionPoints.Add(new List<Vector3>());
-                foreach (var box in wallSelectionBoxes[layer]){
-                    wallSelectionPoints.Last().Add(box.Min);
-                    wallSelectionPoints.Last().Add(box.Max);
-                    wallSelectionPoints.Last().Add(new Vector3(box.Max.X, box.Min.Y, box.Max.Z));
-                    wallSelectionPoints.Last().Add(new Vector3(box.Min.X, box.Max.Y, box.Max.Z));
-                }
-
-                //now we clear out all of the double entries
-                for (int box = 0; box < wallSelectionPoints[layer].Count(); box++){
-                    for (int otherBox = 0; otherBox < wallSelectionPoints[layer].Count(); otherBox++){
-                        if (box == otherBox)
-                            continue;
-
-                        if (wallSelectionPoints[layer][box] == wallSelectionPoints[layer][otherBox]){
-                            wallSelectionPoints[layer].RemoveAt(otherBox);
-                        }
-                    }
-                }
-            }
-
-            Resultant.FloorVertexes =
-                (
-                    from layer in wallSelectionPoints
-                    select layer.ToArray()
-                ).ToArray();
-        }
-        */
 }
-
-/*var floorBounding = new BoundingBox[_deckFloorMesh.Count][];
-
-for (int deck = 0; deck < _deckFloorMesh.Count; deck++){
-    floorBounding[deck] = new BoundingBox[_deckFloorMesh[0].GetLength(1) - 3];
-    int i = 0;
-    for (int z = 1; z < _deckFloorMesh[0].GetLength(1) - 2; z++){
-        Vector3 endBox;
-        Vector3 startBox;
-
-        //modify the starting point for the bounding box so it doesnt go outside the hull
-        if (_deckFloorMesh[deck][0, z].Z > _deckFloorMesh[deck][0, z - 1].Z)
-            startBox = _deckFloorMesh[deck][0, z];
-        else
-            startBox = new Vector3(_deckFloorMesh[deck][0, z].X, _deckFloorMesh[deck][0, z].Y, _deckFloorMesh[deck][0, z + 1].Z);
-
-
-        //modify the ending point for the bounding box so it doesnt go outside the hull
-        if (_deckFloorMesh[deck][2, z].Z < _deckFloorMesh[deck][2, z + 1].Z)
-            endBox = _deckFloorMesh[deck][2, z + 1];
-        else
-            endBox = new Vector3(_deckFloorMesh[deck][2, z + 1].X, _deckFloorMesh[deck][2, z + 1].Y, _deckFloorMesh[deck][2, z].Z);
-
-        floorBounding[deck][i] = new BoundingBox(startBox, endBox);
-        i++;
-    }
-}
- */
-
-
-/*
-//this function takes the previously generated bounding boxes as a reference, and generates the correct scale
-BoundingBox[][] SubdivideBoundingBoxes(BoundingBox[][] referenceBoxes, float tileWidth){
-    var floorSelectionBoxes = new List<List<BoundingBox>>();
-    var floorVertexes = new List<List<Vector3>>();
-
-    for (int layer = 0; layer < referenceBoxes.Count(); layer++){
-        floorSelectionBoxes.Add(new List<BoundingBox>());
-        floorVertexes.Add(new List<Vector3>());
-
-        float prevBoxEndX = referenceBoxes[layer][0].Min.X;
-        float hullEnd = referenceBoxes[layer][referenceBoxes[layer].Count() - 1].Max.X;
-        BoundingBox nextBox = new BoundingBox();
-        for (int boxIndex = 0; boxIndex < referenceBoxes[layer].Count(); boxIndex++){
-            BoundingBox curBox = referenceBoxes[layer][boxIndex];
-            if (boxIndex != referenceBoxes[layer].Count() - 1){
-                nextBox = referenceBoxes[layer][boxIndex + 1];
-            }
-
-            while (true){
-                //first check if this next row is going to be overlapping with another boundingbox reference
-                //if so, make the decision on whether this box should handle the restrictions for this row or if the next should
-                //make sure this doesn't run when the last box is being analyzed since it wont have a nextBox
-                if (prevBoxEndX + tileWidth > curBox.Max.X && boxIndex != referenceBoxes[layer].Count() - 1){
-                    if (curBox.Min.Z < nextBox.Min.Z){
-                        //we handle this row, but this loop will break after it's done
-                    }
-                    else{
-                        //this row can be restricted by the next box
-                        break;
-                    }
-                }
-
-                //this will prevent new boxes from being created that would extend past the final bounding box
-                if (boxIndex == referenceBoxes[layer].Count() - 1 && prevBoxEndX+tileWidth>curBox.Max.X){
-                    break;
-                }
-
-                //now create the row
-                int curZBoxes = (int) ((curBox.Min.Z - curBox.Max.Z)/tileWidth);
-                int zNumBoxes = curZBoxes;
-
-                float zStart = curBox.Max.Z;
-                for (int z = -zNumBoxes/2; z < zNumBoxes/2; z++){
-                    floorSelectionBoxes.Last().Add(
-                        new BoundingBox(
-                            new Vector3(
-                                prevBoxEndX,
-                                curBox.Max.Y,
-                                z*tileWidth
-                                ),
-                            new Vector3(
-                                prevBoxEndX + tileWidth,
-                                curBox.Max.Y,
-                                (z + 1)*tileWidth
-                                )
-                            )
-                        );
-
-                    //now add vertex points to that list
-                    floorVertexes.Last().Add(new Vector3(prevBoxEndX, curBox.Max.Y, z*tileWidth));
-                    if (z == (zNumBoxes/2 - 1)){
-                        floorVertexes.Last().Add(new Vector3(prevBoxEndX + tileWidth, curBox.Max.Y, z*tileWidth));
-                    }
-                    if (prevBoxEndX + tileWidth > hullEnd){
-                        floorVertexes.Last().Add(new Vector3(prevBoxEndX + tileWidth, curBox.Max.Y, (z + 1)*tileWidth));
-                    }
-
-                }
-                //make sure this reference box will be relevant for the next row, if not, break the loop
-                prevBoxEndX += tileWidth;
-                if (prevBoxEndX > curBox.Max.X)
-                    break;
-            }
-        }
-    }
-    return (
-               from layer in floorSelectionBoxes
-               select layer.ToArray()
-           ).ToArray();
-}
- */
