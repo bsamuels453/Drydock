@@ -32,8 +32,8 @@ namespace Drydock.Logic.DoodadEditorState{
             UIElementCollection.BindCollection(_uiElementCollection);
 
 
-            var geometryGenerator = new HullGeometryGenerator(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
-            _hullInfo = geometryGenerator.Resultant;
+            _hullInfo = HullGeometryGenerator.GenerateShip(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
+           
             _hullGeometryHandler = new HullGeometryHandler(_hullInfo);
 
             #region construct toolbar
