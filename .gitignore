@@ -26,6 +26,7 @@ Thumbs.db
 *.sbr
 TestProject3*/
 *.exe
+Bin*/
 *.application
 *.xnb
 *.exe.manifest

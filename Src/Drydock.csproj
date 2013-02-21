@@ -39,7 +39,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\x86\Debug</OutputPath>
+    <OutputPath>..\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -51,7 +51,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\x86\Release</OutputPath>
+    <OutputPath>..\Bin\</OutputPath>
     <DefineConstants>TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -74,7 +74,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Drydock Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\</OutputPath>
+    <OutputPath>..\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
@@ -94,7 +94,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Unit Testing Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Unit Testing Debug\</OutputPath>
+    <OutputPath>..\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
@@ -170,7 +170,7 @@
     <Compile Include="Logic\BodyCenteredCamera.cs" />
     <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
     <Compile Include="Logic\DoodadEditorState\HullGeometryHandler.cs" />
-    <Compile Include="Logic\DoodadEditorState\Tools\GuideLineConstructor.cs" />
+    <Compile Include="Logic\DoodadEditorState\Tools\SnapGridConstructor.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\LadderBuildTool.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\WallBuildTool.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\WallDeleteTool.cs" />
@@ -237,7 +237,7 @@
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DrydockContent\DrydockContent.contentproj">
+    <ProjectReference Include="..\Content\DrydockContent.contentproj">
       <Name>DrydockContent %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>
       <Project>{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}</Project>
