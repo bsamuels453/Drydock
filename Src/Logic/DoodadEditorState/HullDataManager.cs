@@ -120,7 +120,7 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         public void MoveDownOneDeck(){
-            if (CurDeck < NumDecks){
+            if (CurDeck < NumDecks - 1){
                 for (int i = 0; i < DeckBuffers.Count(); i++){
                     if (DeckBuffers[i].Enabled){
                         CurDeck++;
