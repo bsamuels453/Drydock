@@ -25,7 +25,7 @@ namespace Drydock.Logic.DoodadEditorState{
             for (int i = 0; i < HullData.NumDecks; i++){
                 #region indicies
 
-                int numBoxes = HullData.DeckFloorBoundingBoxes[i].Count();
+                int numBoxes = HullData.DeckBoundingBoxes[i].Count();
                 GuideGridBuffers[i] = new WireframeBuffer(8*numBoxes, 8*numBoxes, 4*numBoxes);
                 var guideDotIndicies = new int[8*numBoxes];
                 for (int si = 0; si < 8*numBoxes; si += 1){
@@ -37,11 +37,11 @@ namespace Drydock.Logic.DoodadEditorState{
 
                 #region verticies
 
-                var verts = new VertexPositionColor[HullData.DeckFloorBoundingBoxes[i].Count()*8];
+                var verts = new VertexPositionColor[HullData.DeckBoundingBoxes[i].Count()*8];
 
                 int vertIndex = 0;
 
-                foreach (var boundingBox in HullData.DeckFloorBoundingBoxes[i]){
+                foreach (var boundingBox in HullData.DeckBoundingBoxes[i]){
                     Vector3 v1, v2, v3, v4;
                     //v4  v3
                     //
@@ -108,26 +108,26 @@ namespace Drydock.Logic.DoodadEditorState{
 
                 float? ndist;
                 bool intersectionFound = false;
-                for (int i = 0; i < HullData.DeckFloorBoundingBoxes[HullData.CurDeck].Count; i++){
-                    if ((ndist = ray.Intersects(HullData.DeckFloorBoundingBoxes[HullData.CurDeck][i])) != null){
+                for (int i = 0; i < HullData.CurDeckBoundingBoxes.Count; i++) {
+                    if ((ndist = ray.Intersects(HullData.CurDeckBoundingBoxes[i])) != null) {
                         EnableCursorGhost();
                         var rayTermination = ray.Position + ray.Direction*(float) ndist;
 
                         var distList = new List<float>();
 
-                        for (int point = 0; point < HullData.FloorVertexes[HullData.CurDeck].Count(); point++){
-                            distList.Add(Vector3.Distance(rayTermination, HullData.FloorVertexes[HullData.CurDeck][point]));
+                        for (int point = 0; point < HullData.CurDeckVertexes.Count(); point++) {
+                            distList.Add(Vector3.Distance(rayTermination, HullData.CurDeckVertexes[point]));
                         }
                         float f = distList.Min();
 
                         int ptIdx = distList.IndexOf(f);
 
-                        if (!IsCursorValid(HullData.FloorVertexes[HullData.CurDeck][ptIdx], prevCursorPosition, HullData.FloorVertexes[HullData.CurDeck], f)){
+                        if (!IsCursorValid(HullData.CurDeckVertexes[ptIdx], prevCursorPosition, HullData.CurDeckVertexes, f)) {
                             DisableCursorGhost();
                             break;
                         }
 
-                        CursorPosition = HullData.FloorVertexes[HullData.CurDeck][ptIdx];
+                        CursorPosition = HullData.CurDeckVertexes[ptIdx];
                         if (CursorPosition != prevCursorPosition){
                             UpdateCursorGhost();
                         }

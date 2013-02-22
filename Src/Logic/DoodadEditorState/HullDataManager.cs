@@ -19,10 +19,10 @@ namespace Drydock.Logic.DoodadEditorState{
 
         public readonly Vector3 CenterPoint;
 
+        public readonly List<BoundingBox>[] DeckBoundingBoxes;
         public readonly ObjectBuffer<QuadIdentifier>[] DeckBuffers;
-        public readonly List<BoundingBox>[] DeckFloorBoundingBoxes;
         public readonly float DeckHeight;
-        public readonly List<Vector3>[] FloorVertexes;
+        public readonly List<Vector3>[] DeckVertexes;
         public readonly ShipGeometryBuffer[] HullBuffers;
         public readonly int NumDecks;
         public readonly ObjectBuffer<ObjectIdentifier>[] WallBuffers;
@@ -32,12 +32,11 @@ namespace Drydock.Logic.DoodadEditorState{
 
         public HullDataManager(HullGeometryInfo geometryInfo){
             NumDecks = geometryInfo.NumDecks;
-            CurDeck = 0;
             VisibleDecks = NumDecks;
             HullBuffers = geometryInfo.HullWallTexBuffers;
             DeckBuffers = geometryInfo.DeckFloorBuffers;
-            DeckFloorBoundingBoxes = geometryInfo.DeckFloorBoundingBoxes;
-            FloorVertexes = geometryInfo.FloorVertexes;
+            DeckBoundingBoxes = geometryInfo.DeckFloorBoundingBoxes;
+            DeckVertexes = geometryInfo.FloorVertexes;
             DeckHeight = geometryInfo.DeckHeight;
             WallResolution = geometryInfo.WallResolution;
             CenterPoint = geometryInfo.CenterPoint;
@@ -62,7 +61,16 @@ namespace Drydock.Logic.DoodadEditorState{
                 buffer.DiffuseDirection = new Vector3(0, -1, 1);
                 buffer.CullMode = CullMode.None;
             }
+            CurDeck = 0;
         }
+
+        //these will save from having to do array[curDeck] all the time elsewhere in the editor
+        public ObjectBuffer<QuadIdentifier> CurDeckBuffer { get; private set; }
+        public ObjectBuffer<ObjectIdentifier> CurWallBuffer { get; private set; }
+        public ShipGeometryBuffer CurHullBuffer { get; private set; }
+        public List<ObjectIdentifier> CurWallIdentifiers { get; private set; }
+        public List<BoundingBox> CurDeckBoundingBoxes { get; private set; }
+        public List<Vector3> CurDeckVertexes { get; private set; }
 
         public int VisibleDecks { get; private set; }
 
@@ -76,6 +84,14 @@ namespace Drydock.Logic.DoodadEditorState{
                 int oldDeck = _curDeck;
                 VisibleDecks += diff;
                 _curDeck = value;
+
+                CurDeckBuffer = DeckBuffers[_curDeck];
+                CurWallBuffer = WallBuffers[_curDeck];
+                CurHullBuffer = HullBuffers[_curDeck];
+                CurWallIdentifiers = WallIdentifiers[_curDeck];
+                CurDeckBoundingBoxes = DeckBoundingBoxes[_curDeck];
+                CurDeckVertexes = DeckVertexes[_curDeck];
+
                 if (OnCurDeckChange != null){
                     OnCurDeckChange.Invoke(oldDeck, _curDeck);
                 }

@@ -79,31 +79,31 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
             _tempWallBuffer.UpdateBuffers();
 
-            HullData.WallBuffers[HullData.CurDeck].UpdateBufferManually = true;
+            HullData.CurWallBuffer.UpdateBufferManually = true;
 
             foreach (var identifier in _prevIdentifiers){
-                HullData.WallBuffers[HullData.CurDeck].EnableObject(identifier);
+                HullData.CurWallBuffer.EnableObject(identifier);
             }
             foreach (var identifier in identifiers){
-                HullData.WallBuffers[HullData.CurDeck].DisableObject(identifier);
+                HullData.CurWallBuffer.DisableObject(identifier);
             }
 
-            HullData.WallBuffers[HullData.CurDeck].UpdateBuffers();
-            HullData.WallBuffers[HullData.CurDeck].UpdateBufferManually = false;
+            HullData.CurWallBuffer.UpdateBuffers();
+            HullData.CurWallBuffer.UpdateBufferManually = false;
 
             _prevIdentifiers = identifiers;
         }
 
         protected override void HandleCursorEnd(){
-            HullData.WallBuffers[HullData.CurDeck].UpdateBufferManually = true;
+            HullData.CurWallBuffer.UpdateBufferManually = true;
             foreach (var identifier in _prevIdentifiers){
-                HullData.WallBuffers[HullData.CurDeck].RemoveObject(identifier);
+                HullData.CurWallBuffer.RemoveObject(identifier);
             }
-            HullData.WallBuffers[HullData.CurDeck].UpdateBuffers();
-            HullData.WallBuffers[HullData.CurDeck].UpdateBufferManually = false;
+            HullData.CurWallBuffer.UpdateBuffers();
+            HullData.CurWallBuffer.UpdateBufferManually = false;
 
             foreach (var identifier in _prevIdentifiers){
-                HullData.WallIdentifiers[HullData.CurDeck].Remove(identifier);
+                HullData.CurWallIdentifiers.Remove(identifier);
             }
 
             _tempWallBuffer.ClearObjects();

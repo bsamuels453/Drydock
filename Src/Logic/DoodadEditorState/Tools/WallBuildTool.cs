@@ -18,7 +18,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         public WallBuildTool(HullDataManager hullData) :
             base(hullData){
             _tempWallBuffer = new ObjectBuffer<ObjectIdentifier>(
-                hullData.FloorVertexes[0].Count()*2,
+                hullData.DeckVertexes[0].Count()*2,
                 10,
                 20,
                 30,
@@ -33,13 +33,13 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         protected override void HandleCursorEnd(){
-            HullData.WallIdentifiers[HullData.CurDeck].AddRange(
+            HullData.CurWallIdentifiers.AddRange(
                 from id in _tempWallIdentifiers
-                where !HullData.WallIdentifiers[HullData.CurDeck].Contains(id)
+                where !HullData.CurWallIdentifiers.Contains(id)
                 select id
                 );
             _tempWallIdentifiers.Clear();
-            HullData.WallBuffers[HullData.CurDeck].AbsorbBuffer(_tempWallBuffer);
+            HullData.CurWallBuffer.AbsorbBuffer(_tempWallBuffer);
         }
 
         protected override void HandleCursorBegin(){
