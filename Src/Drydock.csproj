@@ -169,7 +169,7 @@
     <Compile Include="DebugTimer.cs" />
     <Compile Include="Logic\BodyCenteredCamera.cs" />
     <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
-    <Compile Include="Logic\DoodadEditorState\HullGeometryHandler.cs" />
+    <Compile Include="Logic\DoodadEditorState\DoodadUI.cs" />
     <Compile Include="Logic\DoodadEditorState\SnapGridConstructor.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\LadderBuildTool.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\WallBuildTool.cs" />

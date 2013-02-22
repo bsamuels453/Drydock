@@ -20,8 +20,8 @@ namespace Drydock.Logic.DoodadEditorState{
         protected Vector3 CursorPosition;
 
         protected SnapGridConstructor(HullGeometryInfo hullInfo, IntRef visibleDecksRef){
-            CurDeck = new IntRefLambda(visibleDecksRef, input => hullInfo.NumDecks - input);
-            GuideGridBuffers = new WireframeBuffer[hullInfo.NumDecks + 1];
+            CurDeck = new IntRefLambda(visibleDecksRef, input => (hullInfo.NumDecks) - input);
+            GuideGridBuffers = new WireframeBuffer[hullInfo.NumDecks];
             _deckFloorBoundingboxes = hullInfo.DeckFloorBoundingBoxes;
             _deckFloorVertexes = hullInfo.FloorVertexes;
             _numDecks = hullInfo.NumDecks;
@@ -29,7 +29,7 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         protected void GenerateGuideGrid(){
-            for (int i = 0; i < _numDecks + 1; i++){
+            for (int i = 0; i < _numDecks; i++){
                 #region indicies
 
                 int numBoxes = _deckFloorBoundingboxes[i].Count();

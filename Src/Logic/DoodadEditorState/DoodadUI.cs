@@ -16,7 +16,7 @@ namespace Drydock.Logic.DoodadEditorState{
     /// <summary>
     ///   this class handles the display of the prototype airship and all of its components
     /// </summary>
-    internal class HullGeometryHandler : IInputUpdates{
+    internal class DoodadUI : IInputUpdates{
         public readonly ObjectBuffer<ObjectIdentifier>[] WallBuffers;
         public readonly List<ObjectIdentifier>[] WallPositions;
         readonly Button _deckDownButton;
@@ -30,14 +30,14 @@ namespace Drydock.Logic.DoodadEditorState{
 
         public IntRef VisibleDecks;
 
-        public HullGeometryHandler(HullGeometryInfo geometryInfo){
+        public DoodadUI(HullGeometryInfo geometryInfo){
             //CullMode.CullClockwiseFace
             _hullBuffers = geometryInfo.HullWallTexBuffers;
             _deckFloorBuffers = geometryInfo.DeckFloorBuffers;
             _numDecks = geometryInfo.NumDecks;
             VisibleDecks = new IntRef();
             VisibleDecks.Value = _numDecks;
-            WallPositions = new List<ObjectIdentifier>[_numDecks + 1];
+            WallPositions = new List<ObjectIdentifier>[_numDecks];
             for (int i = 0; i < WallPositions.Length; i++){
                 WallPositions[i] = new List<ObjectIdentifier>();
             }
@@ -65,7 +65,7 @@ namespace Drydock.Logic.DoodadEditorState{
             _deckUpButton.OnLeftClickDispatcher += AddVisibleLevel;
             _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;
 
-            WallBuffers = new ObjectBuffer<ObjectIdentifier>[_numDecks + 1];
+            WallBuffers = new ObjectBuffer<ObjectIdentifier>[_numDecks];
             for (int i = 0; i < WallBuffers.Count(); i++){
                 int potentialWalls = geometryInfo.FloorVertexes[i].Count()*2;
                 WallBuffers[i] = new ObjectBuffer<ObjectIdentifier>(potentialWalls, 10, 20, 30, "HullWallTex");
@@ -80,7 +80,7 @@ namespace Drydock.Logic.DoodadEditorState{
         #endregion
 
         void AddVisibleLevel(int identifier){
-            if (VisibleDecks.Value != _numDecks){
+            if (VisibleDecks.Value != (_numDecks-1)){
                 //todo: linq this
                 var tempFloorBuff = _deckFloorBuffers.Reverse().ToArray();
                 var tempWallBuff = _hullBuffers.Reverse().ToArray();

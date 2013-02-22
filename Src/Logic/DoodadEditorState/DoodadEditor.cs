@@ -15,7 +15,7 @@ namespace Drydock.Logic.DoodadEditorState{
         const int _primsPerDeck = 3;
 
         readonly BodyCenteredCamera _cameraController;
-        readonly HullGeometryHandler _hullGeometryHandler;
+        readonly DoodadUI _doodadUI;
         readonly HullGeometryInfo _hullInfo;
         readonly RenderPanel _renderTarget;
         readonly Toolbar _toolBar;
@@ -34,21 +34,21 @@ namespace Drydock.Logic.DoodadEditorState{
 
             _hullInfo = HullGeometryGenerator.GenerateShip(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
            
-            _hullGeometryHandler = new HullGeometryHandler(_hullInfo);
+            _doodadUI = new DoodadUI(_hullInfo);
 
             #region construct toolbar
 
             _toolBar = new Toolbar("Templates/DoodadToolbar.json");
             _toolBar.BindButtonToTool(0, new WallMenuTool(
                                              _hullInfo,
-                                             _hullGeometryHandler.VisibleDecks,
-                                             _hullGeometryHandler.WallBuffers,
-                                             _hullGeometryHandler.WallPositions)
+                                             _doodadUI.VisibleDecks,
+                                             _doodadUI.WallBuffers,
+                                             _doodadUI.WallPositions)
                 );
 
             _toolBar.BindButtonToTool(1, new LadderBuildTool(
                                              _hullInfo,
-                                             _hullGeometryHandler.VisibleDecks
+                                             _doodadUI.VisibleDecks
                                              ));
 
             #endregion

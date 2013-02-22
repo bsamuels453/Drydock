@@ -78,8 +78,8 @@ namespace Drydock.Logic.DoodadEditorState{
             float draft = sideCurveInfo[1].Pos.Y;
             results.Berth = topCurveInfo[1].Pos.Y;
             results.Length = sideCurveInfo[2].Pos.X;
-            results.NumDecks = (int) (draft/deckHeight);
-            int numVerticalVertexes = results.NumDecks*primitivesPerDeck + primitivesPerDeck + 1;
+            results.NumDecks = (int)(draft / deckHeight) + 1;
+            int numVerticalVertexes = (results.NumDecks-1)*primitivesPerDeck + primitivesPerDeck + 1;
 
             //get the y values for the hull
             for (int i = 0; i < numVerticalVertexes - primitivesPerDeck; i++){
@@ -209,7 +209,7 @@ namespace Drydock.Logic.DoodadEditorState{
             }
 
             //now enumerate the ships layer verts into levels for each deck
-            results.DeckSilhouetteVerts = new Vector3[results.NumDecks + 1][][];
+            results.DeckSilhouetteVerts = new Vector3[results.NumDecks][][];
             for (int i = 0; i < results.NumDecks; i++){
                 results.DeckSilhouetteVerts[i] = new Vector3[primitivesPerDeck + 1][];
 
@@ -218,10 +218,10 @@ namespace Drydock.Logic.DoodadEditorState{
                 }
             }
             //edge case for the final deck, the "bottom"
-            results.DeckSilhouetteVerts[results.NumDecks] = new Vector3[primitivesPerDeck + 1][];
-            for (int level = 0; level < primitivesPerDeck + 1; level++){
-                results.DeckSilhouetteVerts[results.NumDecks][level] = results.LayerSilhouetteVerts[results.NumDecks*(primitivesPerDeck) + level];
-            }
+            //results.DeckSilhouetteVerts[results.NumDecks] = new Vector3[primitivesPerDeck + 1][];
+            //for (int level = 0; level < primitivesPerDeck + 1; level++){
+            //    results.DeckSilhouetteVerts[results.NumDecks][level] = results.LayerSilhouetteVerts[results.NumDecks*(primitivesPerDeck) + level];
+            //}
             return results;
         }
 
@@ -245,7 +245,7 @@ namespace Drydock.Logic.DoodadEditorState{
         static Vector3[][,] GenerateDeckPlates(Vector3[][] layerSVerts, int numDecks, int primitivesPerDeck){
             var retMesh = new Vector3[4][,];
             int vertsInSilhouette = layerSVerts[0].Length;
-            for (int deck = 0; deck < numDecks + 1; deck++){
+            for (int deck = 0; deck < numDecks; deck++){
                 retMesh[deck] = new Vector3[3,vertsInSilhouette/2];
                 for (int vert = 0; vert < vertsInSilhouette/2; vert++){
                     retMesh[deck][0, vert] = layerSVerts[deck*primitivesPerDeck][vertsInSilhouette/2 + vert];
@@ -262,9 +262,9 @@ namespace Drydock.Logic.DoodadEditorState{
 
         static ObjectBuffer<QuadIdentifier>[] GenerateDeckFloorMesh(Vector3[][][] deckSVerts, List<BoundingBox>[] deckBoundingBoxes, int numDecks){
             float boundingBoxWidth = Math.Abs(deckBoundingBoxes[0][0].Max.X - deckBoundingBoxes[0][0].Min.X);
-            var ret = new ObjectBuffer<QuadIdentifier>[numDecks + 1];
+            var ret = new ObjectBuffer<QuadIdentifier>[numDecks];
 
-            for (int deck = 0; deck < numDecks + 1; deck++){
+            for (int deck = 0; deck < numDecks; deck++){
                 var deckBBoxes = deckBoundingBoxes[deck];
                 Vector3[] deckSilhouette = deckSVerts[deck][0];
                 float y = deckSilhouette[0].Y;
@@ -390,7 +390,7 @@ namespace Drydock.Logic.DoodadEditorState{
         static ShipGeometryBuffer[] GenerateDeckWallBuffers(Vector3[][][] deckSVerts, Vector3[,] normalMesh, int numDecks, int primitivesPerDeck){
             int vertsInSilhouette = deckSVerts[0][0].Length;
 
-            var hullBuffers = new ShipGeometryBuffer[numDecks + 1];
+            var hullBuffers = new ShipGeometryBuffer[numDecks];
             //now set up the display buffer for each deck's wall
             for (int i = 0; i < deckSVerts.Length; i++){
                 var hullMesh = new Vector3[primitivesPerDeck + 1,vertsInSilhouette];
