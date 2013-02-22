@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drydock", "Drydock\Drydock\Drydock.csproj", "{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drydock", "Src\Drydock.csproj", "{2C25EAC0-D9B5-4450-942D-26DAF63F5A15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrydockContent", "Drydock\DrydockContent\DrydockContent.contentproj", "{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrydockContent", "Content\DrydockContent.contentproj", "{AAFF45AB-B0D7-4EE5-8A94-923606A1D0AF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6D600C13-C377-4AC3-941D-3DD3CA3BF8A7}"
 	ProjectSection(SolutionItems) = preProject
