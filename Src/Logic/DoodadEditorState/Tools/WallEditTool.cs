@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Drydock.Control;
 using Drydock.Render;
 using Drydock.UI.Widgets;
-using Drydock.Utilities.ReferenceTypes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,16 +13,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
     internal abstract class WallEditTool : SnapGridConstructor, IToolbarTool{
-        protected readonly ObjectBuffer<ObjectIdentifier>[] WallBuffers;
         protected readonly float WallHeight;
-        protected readonly List<ObjectIdentifier>[] WallIdentifiers;
         protected readonly float WallResolution;
-
-        #region fields for maintaining the wall editor environment
-
-        //readonly List<Vector3>[] _deckFloorVertexes;
-
-        #endregion
 
         #region fields for the cursor and temp walls constructed by it
 
@@ -36,38 +27,37 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected Vector3 StrokeEnd;
         protected Vector3 StrokeOrigin;
         bool _cursorGhostActive;
-        bool _isDrawing;
         bool _enabled;
+        bool _isDrawing;
 
         public bool Enabled{
             get { return _enabled; }
-            set {
+            set{
                 _enabled = value;
                 _cursorBuff.Enabled = value;
-                GuideGridBuffers[CurDeck.Value].Enabled = value;
+                GuideGridBuffers[HullData.CurDeck].Enabled = value;
 
                 if (value){
                     OnEnable();
                 }
-                else {
-                    foreach (var buffer in GuideGridBuffers) {
+                else{
+                    foreach (var buffer in GuideGridBuffers){
                         buffer.Enabled = false;
                     }
                     OnDisable();
                 }
             }
         }
+
         #endregion
 
-        protected WallEditTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<ObjectIdentifier>[] wallBuffers, List<ObjectIdentifier>[] wallIdentifiers)
-            : base(hullInfo, visibleDecksRef){
+        protected WallEditTool(HullDataManager hullData)
+            : base(hullData){
             #region set fields
 
             _enabled = false;
-            WallBuffers = wallBuffers;
-            WallIdentifiers = wallIdentifiers;
-            WallResolution = hullInfo.WallResolution;
-            WallHeight = hullInfo.DeckHeight - 0.01f;
+            WallResolution = hullData.WallResolution;
+            WallHeight = hullData.DeckHeight - 0.01f;
 
             #endregion
 
@@ -76,7 +66,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _cursorBuff.Indexbuffer.SetData(selectionIndicies);
             _cursorBuff.Enabled = false;
 
-            visibleDecksRef.RefModCallback += VisibleDeckChange;
+            hullData.OnCurDeckChange += VisibleDeckChange;
         }
 
         #region IToolbarTool Members
@@ -164,13 +154,13 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         #endregion
 
-        void VisibleDeckChange(IntRef caller, int oldVal, int newVal){
-            if (_enabled) {
+        void VisibleDeckChange(int oldVal, int newVal){
+            if (_enabled){
                 foreach (var buffer in GuideGridBuffers){
                     buffer.Enabled = false;
                 }
 
-                GuideGridBuffers[CurDeck.Value].Enabled = true;
+                GuideGridBuffers[HullData.CurDeck].Enabled = true;
                 OnVisibleDeckChange();
             }
         }
@@ -181,7 +171,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected abstract void OnVisibleDeckChange();
         protected abstract void OnEnable();
         protected abstract void OnDisable();
-
     }
 
     #region wallidentifier

@@ -2,10 +2,8 @@
 
 using System.Collections.Generic;
 using Drydock.Control;
-using Drydock.Logic.DoodadEditorState.Tools;
 using Drydock.Render;
 using Drydock.UI;
-using Drydock.UI.Widgets;
 using Drydock.Utilities;
 
 #endregion
@@ -16,9 +14,9 @@ namespace Drydock.Logic.DoodadEditorState{
 
         readonly BodyCenteredCamera _cameraController;
         readonly DoodadUI _doodadUI;
-        readonly HullGeometryInfo _hullInfo;
+        readonly HullDataManager _hullData;
         readonly RenderPanel _renderTarget;
-        readonly Toolbar _toolBar;
+
         readonly UIElementCollection _uiElementCollection;
 
         public DoodadEditor(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo){
@@ -32,33 +30,17 @@ namespace Drydock.Logic.DoodadEditorState{
             UIElementCollection.BindCollection(_uiElementCollection);
 
 
-            _hullInfo = HullGeometryGenerator.GenerateShip(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
-           
-            _doodadUI = new DoodadUI(_hullInfo);
+            var geometryInfo = HullGeometryGenerator.GenerateShip(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
+            _hullData = new HullDataManager(geometryInfo);
 
-            #region construct toolbar
-
-            _toolBar = new Toolbar("Templates/DoodadToolbar.json");
-            _toolBar.BindButtonToTool(0, new WallMenuTool(
-                                             _hullInfo,
-                                             _doodadUI.VisibleDecks,
-                                             _doodadUI.WallBuffers,
-                                             _doodadUI.WallPositions)
-                );
-
-            _toolBar.BindButtonToTool(1, new LadderBuildTool(
-                                             _hullInfo,
-                                             _doodadUI.VisibleDecks
-                                             ));
-
-            #endregion
+            _doodadUI = new DoodadUI(_hullData);
 
             RenderPanel.UnbindRenderTarget();
             UIElementCollection.UnbindCollection();
 
             #endregion
 
-            _cameraController.SetCameraTarget(_hullInfo.CenterPoint);
+            _cameraController.SetCameraTarget(_hullData.CenterPoint);
         }
 
         #region IGameState Members
@@ -69,7 +51,7 @@ namespace Drydock.Logic.DoodadEditorState{
             #region update input
 
             UIElementCollection.Collection.UpdateInput(ref state);
-            _toolBar.UpdateInput(ref state);
+            _doodadUI.UpdateInput(ref state);
             _cameraController.UpdateInput(ref state);
 
             #endregion
@@ -77,7 +59,7 @@ namespace Drydock.Logic.DoodadEditorState{
             #region update logic
 
             UIElementCollection.Collection.UpdateLogic(timeDelta);
-            _toolBar.UpdateLogic(timeDelta);
+            _doodadUI.UpdateLogic(timeDelta);
 
             #endregion
 

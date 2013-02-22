@@ -1,10 +1,7 @@
 ﻿#region
 
-using System.Collections.Generic;
 using Drydock.Control;
-using Drydock.Render;
 using Drydock.UI.Widgets;
-using Drydock.Utilities.ReferenceTypes;
 
 #endregion
 
@@ -12,28 +9,18 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
     internal class WallMenuTool : IToolbarTool{
         readonly Toolbar _toolbar;
 
-        public WallMenuTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<ObjectIdentifier>[] wallBuffers, List<ObjectIdentifier>[] wallIdentifiers){
+        public WallMenuTool(HullDataManager hullData){
             _toolbar = new Toolbar("Templates/BuildToolbar.json");
             _toolbar.Enabled = false;
 
             _toolbar.BindButtonToTool(
                 0,
-                new WallBuildTool(
-                    hullInfo,
-                    visibleDecksRef,
-                    wallBuffers,
-                    wallIdentifiers
-                    )
+                new WallBuildTool(hullData)
                 );
 
             _toolbar.BindButtonToTool(
                 1,
-                new WallDeleteTool(
-                    hullInfo,
-                    visibleDecksRef,
-                    wallBuffers,
-                    wallIdentifiers
-                    )
+                new WallDeleteTool(hullData)
                 );
         }
 
@@ -47,11 +34,11 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _toolbar.UpdateLogic(timeDelta);
         }
 
-        #endregion
-
         public bool Enabled{
             get { return _toolbar.Enabled; }
             set { _toolbar.Enabled = value; }
         }
+
+        #endregion
     }
 }

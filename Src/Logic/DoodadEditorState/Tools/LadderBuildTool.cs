@@ -1,14 +1,10 @@
 ﻿#region
 
-using System.Collections.Generic;
-using System.Diagnostics;
-using Drydock.Control;
-using Drydock.UI.Widgets;
-using Drydock.Utilities.ReferenceTypes;
-using Microsoft.Xna.Framework;
+
 
 #endregion
 
+/*
 namespace Drydock.Logic.DoodadEditorState.Tools{
     internal class LadderBuildTool : SnapGridConstructor, IToolbarTool{
         const float _ladderWidthX = 1f;
@@ -259,3 +255,4 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         #endregion
     }
 }
+*/

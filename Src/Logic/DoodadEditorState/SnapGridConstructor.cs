@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Drydock.Control;
 using Drydock.Render;
-using Drydock.Utilities.ReferenceTypes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -12,27 +11,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Logic.DoodadEditorState{
     internal abstract class SnapGridConstructor{
-        protected readonly IntRefLambda CurDeck;
         protected readonly WireframeBuffer[] GuideGridBuffers;
-        readonly List<BoundingBox>[] _deckFloorBoundingboxes;
-        readonly List<Vector3>[] _deckFloorVertexes;
-        readonly int _numDecks;
+        protected readonly HullDataManager HullData;
         protected Vector3 CursorPosition;
 
-        protected SnapGridConstructor(HullGeometryInfo hullInfo, IntRef visibleDecksRef){
-            CurDeck = new IntRefLambda(visibleDecksRef, input => (hullInfo.NumDecks) - input);
-            GuideGridBuffers = new WireframeBuffer[hullInfo.NumDecks];
-            _deckFloorBoundingboxes = hullInfo.DeckFloorBoundingBoxes;
-            _deckFloorVertexes = hullInfo.FloorVertexes;
-            _numDecks = hullInfo.NumDecks;
+        protected SnapGridConstructor(HullDataManager hullData){
+            HullData = hullData;
+            GuideGridBuffers = new WireframeBuffer[HullData.NumDecks];
             GenerateGuideGrid();
         }
 
         protected void GenerateGuideGrid(){
-            for (int i = 0; i < _numDecks; i++){
+            for (int i = 0; i < HullData.NumDecks; i++){
                 #region indicies
 
-                int numBoxes = _deckFloorBoundingboxes[i].Count();
+                int numBoxes = HullData.DeckFloorBoundingBoxes[i].Count();
                 GuideGridBuffers[i] = new WireframeBuffer(8*numBoxes, 8*numBoxes, 4*numBoxes);
                 var guideDotIndicies = new int[8*numBoxes];
                 for (int si = 0; si < 8*numBoxes; si += 1){
@@ -44,11 +37,11 @@ namespace Drydock.Logic.DoodadEditorState{
 
                 #region verticies
 
-                var verts = new VertexPositionColor[_deckFloorBoundingboxes[i].Count()*8];
+                var verts = new VertexPositionColor[HullData.DeckFloorBoundingBoxes[i].Count()*8];
 
                 int vertIndex = 0;
 
-                foreach (var boundingBox in _deckFloorBoundingboxes[i]){
+                foreach (var boundingBox in HullData.DeckFloorBoundingBoxes[i]){
                     Vector3 v1, v2, v3, v4;
                     //v4  v3
                     //
@@ -115,26 +108,26 @@ namespace Drydock.Logic.DoodadEditorState{
 
                 float? ndist;
                 bool intersectionFound = false;
-                for (int i = 0; i < _deckFloorBoundingboxes[CurDeck.Value].Count; i++){
-                    if ((ndist = ray.Intersects(_deckFloorBoundingboxes[CurDeck.Value][i])) != null){
+                for (int i = 0; i < HullData.DeckFloorBoundingBoxes[HullData.CurDeck].Count; i++){
+                    if ((ndist = ray.Intersects(HullData.DeckFloorBoundingBoxes[HullData.CurDeck][i])) != null){
                         EnableCursorGhost();
                         var rayTermination = ray.Position + ray.Direction*(float) ndist;
 
                         var distList = new List<float>();
 
-                        for (int point = 0; point < _deckFloorVertexes[CurDeck.Value].Count(); point++){
-                            distList.Add(Vector3.Distance(rayTermination, _deckFloorVertexes[CurDeck.Value][point]));
+                        for (int point = 0; point < HullData.FloorVertexes[HullData.CurDeck].Count(); point++){
+                            distList.Add(Vector3.Distance(rayTermination, HullData.FloorVertexes[HullData.CurDeck][point]));
                         }
                         float f = distList.Min();
 
                         int ptIdx = distList.IndexOf(f);
 
-                        if (!IsCursorValid(_deckFloorVertexes[CurDeck.Value][ptIdx], prevCursorPosition, _deckFloorVertexes[CurDeck.Value], f)){
+                        if (!IsCursorValid(HullData.FloorVertexes[HullData.CurDeck][ptIdx], prevCursorPosition, HullData.FloorVertexes[HullData.CurDeck], f)){
                             DisableCursorGhost();
                             break;
                         }
 
-                        CursorPosition = _deckFloorVertexes[CurDeck.Value][ptIdx];
+                        CursorPosition = HullData.FloorVertexes[HullData.CurDeck][ptIdx];
                         if (CursorPosition != prevCursorPosition){
                             UpdateCursorGhost();
                         }

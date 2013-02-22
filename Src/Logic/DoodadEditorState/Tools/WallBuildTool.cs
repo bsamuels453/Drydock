@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Drydock.Render;
-using Drydock.Utilities.ReferenceTypes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -16,9 +15,16 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         readonly List<ObjectIdentifier> _tempWallIdentifiers;
 
 
-        public WallBuildTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<ObjectIdentifier>[] wallBuffers, List<ObjectIdentifier>[] wallIdentifiers) :
-            base(hullInfo, visibleDecksRef, wallBuffers, wallIdentifiers){
-                _tempWallBuffer = new ObjectBuffer<ObjectIdentifier>(hullInfo.FloorVertexes[0].Count() * 2, 10, 20, 30, "InternalWallTex") { UpdateBufferManually = true };
+        public WallBuildTool(HullDataManager hullData) :
+            base(hullData){
+            _tempWallBuffer = new ObjectBuffer<ObjectIdentifier>(
+                hullData.FloorVertexes[0].Count()*2,
+                10,
+                20,
+                30,
+                "InternalWallTex")
+                              {UpdateBufferManually = true};
+
             _tempWallIdentifiers = new List<ObjectIdentifier>();
         }
 
@@ -27,13 +33,13 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         protected override void HandleCursorEnd(){
-            WallIdentifiers[CurDeck.Value].AddRange(
+            HullData.WallIdentifiers[HullData.CurDeck].AddRange(
                 from id in _tempWallIdentifiers
-                where !WallIdentifiers[CurDeck.Value].Contains(id)
+                where !HullData.WallIdentifiers[HullData.CurDeck].Contains(id)
                 select id
                 );
             _tempWallIdentifiers.Clear();
-            WallBuffers[CurDeck.Value].AbsorbBuffer(_tempWallBuffer);
+            HullData.WallBuffers[HullData.CurDeck].AbsorbBuffer(_tempWallBuffer);
         }
 
         protected override void HandleCursorBegin(){
