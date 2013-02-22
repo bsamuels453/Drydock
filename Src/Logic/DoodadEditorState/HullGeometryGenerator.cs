@@ -32,14 +32,18 @@ namespace Drydock.Logic.DoodadEditorState{
                 SideCurveInfo = sideCurveInfo,
                 TopCurveInfo = topCurveInfo,
                 DeckHeight = deckHeight,
+                BoundingBoxWidth = bBoxWidth,
                 PrimitivesPerDeck = primHeightPerDeck
             }
                 );
             var normalGenResults = GenerateHullNormals(genResults.LayerSilhouetteVerts);
-            var deckFloorMesh = GenerateDecks(genResults.LayerSilhouetteVerts, genResults.NumDecks, primHeightPerDeck);
+            var deckFloorPlates = GenerateDeckPlates(genResults.LayerSilhouetteVerts, genResults.NumDecks, primHeightPerDeck);
+            var boundingBoxResults = GenerateDeckBoundingBoxes(bBoxWidth, deckFloorPlates);
+
+            //var deckFloorBuffers = GenerateDeckFloorBuffers(deckFloorMesh);
             var hullBuffers = GenerateDeckWallBuffers(genResults.DeckSilhouetteVerts, normalGenResults.NormalMesh, genResults.NumDecks, primHeightPerDeck);
-            var deckFloorBuffers = GenerateDeckFloorBuffers(genResults.LayerSilhouetteVerts, deckFloorMesh);
-            var boundingBoxResults = GenerateDeckBoundingBoxes(bBoxWidth, deckFloorMesh);
+
+            var deckFloorBuffers = GenerateDeckFloorMesh(genResults.DeckSilhouetteVerts, boundingBoxResults.DeckBoundingBoxes, genResults.NumDecks, primHeightPerDeck);
 
             var resultant = new HullGeometryInfo();
             resultant.CenterPoint = normalGenResults.Centroid;
@@ -55,16 +59,14 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         //todo: break up this method into submethods for the sake of cleanliness.
-
         static GenerateHullResults GenerateHull(GenerateHullParams input){
             var sideCurveInfo = input.SideCurveInfo;
             var backCurveInfo = input.BackCurveInfo;
             var topCurveInfo = input.TopCurveInfo;
             float deckHeight = input.DeckHeight;
+            float boundingBoxWidth = input.BoundingBoxWidth;
             int primitivesPerDeck = input.PrimitivesPerDeck;
             var results = new GenerateHullResults();
-
-            int numHorizontalPrimitives = 64;
 
             float metersPerPrimitive = deckHeight/primitivesPerDeck;
             var sidePtGen = new BruteBezierGenerator(sideCurveInfo);
@@ -107,7 +109,10 @@ namespace Drydock.Logic.DoodadEditorState{
 
             var ySliceVerts = new List<List<Vector3>>(); //this list contains slices of the airship which contain all the vertexes for the specific layer of the airship
 
-
+            int numHorizontalPrimitives = (int)(results.Length / boundingBoxWidth + 1)/8;
+            if (numHorizontalPrimitives % 2 != 0){
+                numHorizontalPrimitives++;
+            }
             //in the future we can parameterize x differently to comphensate for dramatic curves on the keel
             for (int y = 0; y < numVerticalVertexes; y++){
                 float xStart = xzHullIntercepts[y][0].X;
@@ -240,22 +245,150 @@ namespace Drydock.Logic.DoodadEditorState{
             return ret;
         }
 
-        static Vector3[][,] GenerateDecks(Vector3[][] layerSVerts, int numDecks, int primitivesPerDeck){
+        static Vector3[][,] GenerateDeckPlates(Vector3[][] layerSVerts, int numDecks, int primitivesPerDeck) {
             var retMesh = new Vector3[4][,];
             int vertsInSilhouette = layerSVerts[0].Length;
             for (int deck = 0; deck < numDecks + 1; deck++){
                 retMesh[deck] = new Vector3[3,vertsInSilhouette/2];
                 for (int vert = 0; vert < vertsInSilhouette/2; vert++){
-                    retMesh[deck][0, vert] = layerSVerts[deck*primitivesPerDeck][vertsInSilhouette/2 + vert];
+                    retMesh[deck][0, vert] = layerSVerts[deck * primitivesPerDeck][vertsInSilhouette / 2 + vert];
 
-                    retMesh[deck][1, vert] = layerSVerts[deck*primitivesPerDeck][vertsInSilhouette/2 + vert];
-                    retMesh[deck][2, vert] = layerSVerts[deck*primitivesPerDeck][vertsInSilhouette/2 - vert - 1];
+                    retMesh[deck][1, vert] = layerSVerts[deck * primitivesPerDeck][vertsInSilhouette / 2 + vert];
+                    retMesh[deck][2, vert] = layerSVerts[deck * primitivesPerDeck][vertsInSilhouette / 2 - vert - 1];
                     retMesh[deck][1, vert].Z = 0;
 
-                    retMesh[deck][2, vert] = layerSVerts[deck*primitivesPerDeck][vertsInSilhouette/2 - vert - 1];
+                    retMesh[deck][2, vert] = layerSVerts[deck * primitivesPerDeck][vertsInSilhouette / 2 - vert - 1];
                 }
             }
             return retMesh;
+        }
+
+        static ObjectBuffer<QuadIdentifier>[] GenerateDeckFloorMesh(Vector3[][][] deckSVerts, List<BoundingBox>[] deckBoundingBoxes, int numDecks, int primitivesPerDeck) {
+            float boundingBoxWidth = Math.Abs(deckBoundingBoxes[0][0].Max.X - deckBoundingBoxes[0][0].Min.X);
+            var ret = new ObjectBuffer<QuadIdentifier>[numDecks + 1];
+
+            for (int deck = 0; deck < numDecks + 1; deck++) {
+                var deckBBoxes = deckBoundingBoxes[deck];
+                Vector3[] deckSilhouette = deckSVerts[deck][0];
+                float y = deckSilhouette[0].Y;
+                var buff = ret[deck];
+                var verts = new List<Vector3>();
+                //first, an outline is generated of the bounding box grid
+                var upperMaxima = new Dictionary<float, float>();
+                var lowerMaxima = new Dictionary<float, float>();//dontuse?
+                {
+                    for (float i = 0; i < deckSilhouette.Last().X; i += boundingBoxWidth) {
+                        upperMaxima.Add(i, 0);
+                        lowerMaxima.Add(i, 0);
+                    }
+                    foreach (var box in deckBoundingBoxes[deck]){
+                        if (Math.Abs(box.Max.Z) > upperMaxima[box.Max.X])
+                            upperMaxima[box.Max.X] = Math.Abs(box.Max.Z);
+                    }
+                    foreach (var box in deckBoundingBoxes[deck]) {
+                        if (Math.Abs(box.Min.Z) > lowerMaxima[box.Min.X])
+                            lowerMaxima[box.Min.X] = Math.Abs(box.Min.Z);
+                    }
+                }
+                //now the border-filler quads are generated. They are assigned ID of null.
+                //start at halfway point because of deckSilhouette reflection
+                int prevVert = deckSilhouette.Length/2;
+                int nextVert = prevVert+1;
+                float length = deckSilhouette[0].X;
+
+                //get the starting position for x
+                float x = boundingBoxWidth;
+                while (x < deckSilhouette[prevVert].X)
+                    x += boundingBoxWidth;
+
+                for (;  x < length; x += boundingBoxWidth) {//yolo
+
+                    var interpolator = new Interpolate(
+                        deckSilhouette[prevVert].Z,
+                        deckSilhouette[nextVert].Z,
+                        deckSilhouette[nextVert].X - deckSilhouette[prevVert].X
+                        );
+
+                    if (x > deckSilhouette[nextVert].X) {
+                        //split along boundary
+                        float prevX = x - boundingBoxWidth;
+                        float curX = deckSilhouette[nextVert].X;
+                        float prevFracX = prevX - deckSilhouette[prevVert].X;
+                        float fracX = deckSilhouette[nextVert].X - deckSilhouette[prevVert].X;
+                        float z0 = interpolator.GetLinearValue(prevFracX);
+                        float z1 = interpolator.GetLinearValue(fracX);
+                        verts.Add(new Vector3(prevX, y, lowerMaxima[prevX]));
+                        verts.Add(new Vector3(prevX, y, z0));
+                        verts.Add(new Vector3(curX, y, z1));
+                        verts.Add(new Vector3(curX, y, lowerMaxima[prevX]));
+                        prevVert++;
+                        nextVert++;
+                        float ppx = prevX;
+                        interpolator = new Interpolate(
+                            deckSilhouette[prevVert].Z,
+                            deckSilhouette[nextVert].Z,
+                            deckSilhouette[nextVert].X - deckSilhouette[prevVert].X
+                        );
+                        prevX = curX;
+                        prevFracX = 0;
+                        fracX = x - deckSilhouette[prevVert].X;
+                        z0 = interpolator.GetLinearValue(prevFracX);
+                        z1 = interpolator.GetLinearValue(fracX);
+                        verts.Add(new Vector3(prevX, y, lowerMaxima[ppx]));
+                        verts.Add(new Vector3(prevX, y, z0));
+                        verts.Add(new Vector3(x, y, z1));
+                        verts.Add(new Vector3(x, y, lowerMaxima[ppx]));
+                    }
+                    else {
+                        float prevX = x - boundingBoxWidth;
+                        float prevFracX = prevX - deckSilhouette[prevVert].X;
+                        float fracX = x - deckSilhouette[prevVert].X;
+                        float z0 = interpolator.GetLinearValue(prevFracX);
+                        float z1 = interpolator.GetLinearValue(fracX);
+                        verts.Add(new Vector3(prevX, y, lowerMaxima[prevX]));
+                        verts.Add(new Vector3(prevX, y, z0));
+                        verts.Add(new Vector3(x, y, z1));
+                        verts.Add(new Vector3(x, y, lowerMaxima[prevX]));
+                    }
+                }
+
+                buff = new ObjectBuffer<QuadIdentifier>(verts.Count + deckBBoxes.Count, 2, 4, 6, "DoodadEditorFloorTex");
+
+                //add border quads to objectbuffer
+                var idxWinding = new int[] { 0, 1, 2, 2, 3, 0 };
+                var vertli = new List<VertexPositionNormalTexture>();
+                for (int i = 0; i < verts.Count; i += 4){
+                    vertli.Clear();
+                    vertli.Add(new VertexPositionNormalTexture(verts[i], Vector3.Up, new Vector2(0,0)));
+                    vertli.Add(new VertexPositionNormalTexture(verts[i + 1], Vector3.Up, new Vector2(1, 0)));
+                    vertli.Add(new VertexPositionNormalTexture(verts[i + 2], Vector3.Up, new Vector2(1, 1)));
+                    vertli.Add(new VertexPositionNormalTexture(verts[i + 3], Vector3.Up, new Vector2(0, 1)));
+                    buff.AddObject(null, (int[])idxWinding.Clone(), vertli.ToArray());
+                    //reflect across Z axis
+                    vertli.Clear();
+                    var reflectVector = new Vector3(1, 1, -1);
+                    vertli.Add(new VertexPositionNormalTexture(verts[i] * reflectVector, Vector3.Up, new Vector2(0, 0)));
+                    vertli.Add(new VertexPositionNormalTexture(verts[i + 1] * reflectVector, Vector3.Up, new Vector2(1, 0)));
+                    vertli.Add(new VertexPositionNormalTexture(verts[i + 2] * reflectVector, Vector3.Up, new Vector2(1, 1)));
+                    vertli.Add(new VertexPositionNormalTexture(verts[i + 3] * reflectVector, Vector3.Up, new Vector2(0, 1)));
+                    buff.AddObject(null, (int[])idxWinding.Clone(), vertli.ToArray());
+                }
+
+                //add boundingbox defined quads to objectbuffer
+                foreach (var boundingBox in deckBBoxes){
+                    var min = boundingBox.Min;
+                    var xWidth = new Vector3(boundingBox.Max.X - boundingBox.Min.X, 0, 0);
+                    var zWidth = new Vector3(0, 0, boundingBox.Max.Z - boundingBox.Min.Z);
+                    vertli.Clear();
+                    vertli.Add(new VertexPositionNormalTexture(min, Vector3.Up, new Vector2(0, 0)));
+                    vertli.Add(new VertexPositionNormalTexture(min + xWidth, Vector3.Up, new Vector2(1, 0)));
+                    vertli.Add(new VertexPositionNormalTexture(min + xWidth + zWidth, Vector3.Up, new Vector2(1, 1)));
+                    vertli.Add(new VertexPositionNormalTexture(min + zWidth, Vector3.Up, new Vector2(0, 1)));
+                    buff.AddObject(new QuadIdentifier(min, min + xWidth, min + xWidth + zWidth, min + zWidth), (int[]) idxWinding.Clone(), vertli.ToArray());
+                }
+                ret[deck] = buff;
+            }
+            return ret;
         }
 
         static ShipGeometryBuffer[] GenerateDeckWallBuffers(Vector3[][][] deckSVerts, Vector3[,] normalMesh, int numDecks, int primitivesPerDeck){
@@ -288,8 +421,8 @@ namespace Drydock.Logic.DoodadEditorState{
             return hullBuffers;
         }
 
-        static ObjectBuffer<QuadIdentifier>[] GenerateDeckFloorBuffers(Vector3[][] layerSVerts, Vector3[][,] deckFloorMesh){
-            int vertsInSilhouette = layerSVerts[0].Length;
+        static ObjectBuffer<QuadIdentifier>[] GenerateDeckFloorBuffers(Vector3[][,] deckFloorMesh){
+            int vertsInSilhouette = deckFloorMesh[0].GetLength(1)*2;
 
             var floorNormals = new Vector3[3,vertsInSilhouette/2];
             for (int x = 0; x < 3; x++){
@@ -349,7 +482,7 @@ namespace Drydock.Logic.DoodadEditorState{
         static BoundingBoxResult GenerateDeckBoundingBoxes(float floorBBoxWidth, Vector3[][,] deckFloorMesh){
             int numHorizontalPrimitives = deckFloorMesh[0].GetLength(1);
             var ret = new BoundingBoxResult();
-            var deckBoundingBoxes = new List<BoundingBox>[deckFloorMesh.Length];
+            var deckBoundingBoxes = new List<BoundingBox>[deckFloorMesh.Length];//deckFloorMesh.Length = numdecks+1
 
             for (int layer = 0; layer < deckFloorMesh.Length; layer++){
                 var layerBBoxes = new List<BoundingBox>();
@@ -360,7 +493,7 @@ namespace Drydock.Logic.DoodadEditorState{
                     boxCreatorPos += floorBBoxWidth;
 
                 while (boxCreatorPos < deckFloorMesh[layer][1, numHorizontalPrimitives - 1].X){
-                    int index = -1; //index of the first of the two set of vertexes to use when determining 
+                    int index = -1; //index of the first of the two set of vertexes to use
                     for (int i = 0; i < numHorizontalPrimitives; i++){
                         if (boxCreatorPos >= deckFloorMesh[layer][1, i].X && boxCreatorPos < deckFloorMesh[layer][1, i + 1].X){
                             index = i;
@@ -482,6 +615,7 @@ namespace Drydock.Logic.DoodadEditorState{
         struct GenerateHullParams{
             public List<BezierInfo> BackCurveInfo;
             public float DeckHeight;
+            public float BoundingBoxWidth;
             public int PrimitivesPerDeck;
             public List<BezierInfo> SideCurveInfo;
             public List<BezierInfo> TopCurveInfo;
