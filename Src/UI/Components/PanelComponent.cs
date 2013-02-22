@@ -13,7 +13,7 @@ namespace Drydock.UI.Components{
         IUIInteractiveElement _owner;
 
         public PanelComponent(){
-            IsEnabled = true;
+            Enabled = true;
         }
 
         #region IAcceptLeftButtonPressEvent Members
@@ -49,7 +49,7 @@ namespace Drydock.UI.Components{
             ownerEventDispatcher.OnMouseScroll.Add(this);
         }
 
-        public bool IsEnabled { get; set; }
+        public bool Enabled { get; set; }
 
         public void Update(){
         }

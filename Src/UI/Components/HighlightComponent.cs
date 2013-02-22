@@ -25,7 +25,7 @@ namespace Drydock.UI.Components{
         readonly HighlightTrigger _highlightTrigger;
 
         Sprite2D _highlightSprite;
-        bool _isEnabled;
+        bool _Enabled;
         IUIInteractiveElement _owner;
 
         public HighlightComponent(string highlightTexture, HighlightTrigger highlightTrigger, float highlightTexOpacity = 0.3f, string identifier = ""){
@@ -33,13 +33,13 @@ namespace Drydock.UI.Components{
             _highlightTrigger = highlightTrigger;
             _highlightTexOpacity = highlightTexOpacity;
             Identifier = identifier;
-            _isEnabled = true;
+            _Enabled = true;
         }
 
         #region IAcceptLeftButtonPressEvent Members
 
         public void OnLeftButtonPress(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
-            if (IsEnabled){
+            if (Enabled){
                 if (_owner.ContainsMouse){
                     ProcHighlight();
                 }
@@ -54,7 +54,7 @@ namespace Drydock.UI.Components{
         #region IAcceptLeftButtonReleaseEvent Members
 
         public void OnLeftButtonRelease(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
-            if (IsEnabled){
+            if (Enabled){
                 UnprocHighlight();
             }
         }
@@ -64,7 +64,7 @@ namespace Drydock.UI.Components{
         #region IAcceptMouseMovementEvent Members
 
         public void OnMouseMovement(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
-            if (IsEnabled){
+            if (Enabled){
                 if (_owner.ContainsMouse){
                     ProcHighlight();
                 }
@@ -78,11 +78,11 @@ namespace Drydock.UI.Components{
 
         #region IUIComponent Members
 
-        public bool IsEnabled{
-            get { return _isEnabled; }
+        public bool Enabled{
+            get { return _Enabled; }
             set{
-                _isEnabled = value;
-                _highlightSprite.IsEnabled = value;
+                _Enabled = value;
+                _highlightSprite.Enabled = value;
             }
         }
 

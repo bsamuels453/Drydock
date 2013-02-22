@@ -32,13 +32,13 @@ namespace Drydock.UI.Widgets{
         public Button[] ToolbarButtons;
         IToolbarTool _activeTool;
 
-        bool _isEnabled;
+        bool _Enabled;
 
         public Toolbar(string path){
             var sr = new StreamReader(path);
             var str = sr.ReadToEnd();
             var ctorData = JsonConvert.DeserializeObject<ToolbarCtorData>(str);
-            _isEnabled = true;
+            _Enabled = true;
 
             #region some validity checks
 
@@ -102,13 +102,13 @@ namespace Drydock.UI.Widgets{
             #endregion
         }
 
-        public bool IsEnabled{
-            get { return _isEnabled; }
+        public bool Enabled{
+            get { return _Enabled; }
             set{
-                _isEnabled = value;
+                _Enabled = value;
                 ClearActiveTool();
                 foreach (var button in ToolbarButtons){
-                    button.IsEnabled = value;
+                    button.Enabled = value;
                 }
             }
         }
@@ -116,7 +116,7 @@ namespace Drydock.UI.Widgets{
         #region IInputUpdates Members
 
         public void UpdateInput(ref ControlState state){
-            if (IsEnabled){
+            if (Enabled){
                 _activeTool.UpdateInput(ref state);
             }
         }
@@ -126,7 +126,7 @@ namespace Drydock.UI.Widgets{
         #region ILogicUpdates Members
 
         public void UpdateLogic(double timeDelta){
-            if (IsEnabled){
+            if (Enabled){
                 _activeTool.UpdateLogic(timeDelta);
             }
         }
@@ -143,19 +143,19 @@ namespace Drydock.UI.Widgets{
             _activeTool = _nullTool;
             foreach (var button in ToolbarButtons){
                 button.GetComponent<HighlightComponent>("ClickHoldEffect").UnprocHighlight();
-                button.GetComponent<HighlightComponent>("HoverMask").IsEnabled = true;
+                button.GetComponent<HighlightComponent>("HoverMask").Enabled = true;
                 button.GetComponent<HighlightComponent>("HoverMask").UnprocHighlight();
             }
         }
 
         void HandleButtonClick(int identifier){
-            if (IsEnabled){
+            if (Enabled){
                 Debug.Assert(identifier < _buttonTools.Length);
 
                 ClearActiveTool();
                 _buttonTools[identifier].Enable();
                 ToolbarButtons[identifier].GetComponent<HighlightComponent>("ClickHoldEffect").ProcHighlight();
-                ToolbarButtons[identifier].GetComponent<HighlightComponent>("HoverMask").IsEnabled = false;
+                ToolbarButtons[identifier].GetComponent<HighlightComponent>("HoverMask").Enabled = false;
                 _activeTool = _buttonTools[identifier];
             }
         }

@@ -87,11 +87,11 @@ namespace Drydock.Logic.DoodadEditorState{
                 var tempWWallBuff = WallBuffers.Reverse().ToArray();
 
                 for (int i = 0; i < tempFloorBuff.Count(); i++){
-                    if (tempFloorBuff[i].IsEnabled == false){
+                    if (tempFloorBuff[i].Enabled == false){
                         VisibleDecks.Value++;
-                        tempFloorBuff[i].IsEnabled = true;
+                        tempFloorBuff[i].Enabled = true;
                         tempWallBuff[i].CullMode = CullMode.None;
-                        tempWWallBuff[i].IsEnabled = true;
+                        tempWWallBuff[i].Enabled = true;
                         break;
                     }
                 }
@@ -101,11 +101,11 @@ namespace Drydock.Logic.DoodadEditorState{
         void RemoveVisibleLevel(int identifier){
             if (VisibleDecks.Value != 0){
                 for (int i = 0; i < _deckFloorBuffers.Count(); i++){
-                    if (_deckFloorBuffers[i].IsEnabled){
+                    if (_deckFloorBuffers[i].Enabled){
                         VisibleDecks.Value--;
-                        _deckFloorBuffers[i].IsEnabled = false;
+                        _deckFloorBuffers[i].Enabled = false;
                         _hullBuffers[i].CullMode = CullMode.CullClockwiseFace;
-                        WallBuffers[i].IsEnabled = false;
+                        WallBuffers[i].Enabled = false;
                         break;
                     }
                 }

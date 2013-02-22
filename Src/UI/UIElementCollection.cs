@@ -54,7 +54,7 @@ namespace Drydock.UI{
         public void EnableComponents<TComponent>(){
             foreach (var element in _elements){
                 if (element.DoesComponentExist<TComponent>()){
-                    ((IUIComponent) (element.GetComponent<TComponent>())).IsEnabled = true; //()()()()()((())())
+                    ((IUIComponent) (element.GetComponent<TComponent>())).Enabled = true; //()()()()()((())())
                 }
             }
         }
@@ -62,7 +62,7 @@ namespace Drydock.UI{
         public void DisableComponents<TComponent>(){
             foreach (var element in _elements){
                 if (element.DoesComponentExist<TComponent>()){
-                    ((IUIComponent) (element.GetComponent<TComponent>())).IsEnabled = false;
+                    ((IUIComponent) (element.GetComponent<TComponent>())).Enabled = false;
                 }
             }
         }

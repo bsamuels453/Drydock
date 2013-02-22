@@ -27,7 +27,7 @@ namespace Drydock.UI{
         readonly int _identifier; //non-function based identifier that can be used to differentiate buttons
         readonly Sprite2D _sprite; //the button's sprite
         Vector2 _centPosition; //represents the approximate center of the button
-        bool _isEnabled;
+        bool _Enabled;
         string _texture;
 
         public Vector2 CentPosition{
@@ -95,13 +95,13 @@ namespace Drydock.UI{
         public event OnBasicMouseEvent OnLeftPressDispatcher;
         public event OnBasicMouseEvent OnLeftReleaseDispatcher;
 
-        public bool IsEnabled{
-            get { return _isEnabled; }
+        public bool Enabled{
+            get { return _Enabled; }
             set{
-                _isEnabled = value;
-                _sprite.IsEnabled = value;
+                _Enabled = value;
+                _sprite.Enabled = value;
                 foreach (var component in Components){
-                    component.IsEnabled = value;
+                    component.Enabled = value;
                 }
             }
         }
@@ -125,7 +125,7 @@ namespace Drydock.UI{
         //xxx why are these position coordinates all floats?
         public Button(float x, float y, float width, float height, DepthLevel depth, string textureName, float spriteTexRepeatX = DefaultTexRepeat, float spriteTexRepeatY = DefaultTexRepeat, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _identifier = identifier;
-            _isEnabled = true;
+            _Enabled = true;
 
             _iEventDispatcher = new ButtonEventDispatcher();
 
@@ -185,7 +185,7 @@ namespace Drydock.UI{
         }
 
         public void UpdateLogic(double timeDelta){
-            if (IsEnabled){
+            if (Enabled){
                 if (Components != null){
                     foreach (IUIComponent component in Components){
                         component.Update();
@@ -195,7 +195,7 @@ namespace Drydock.UI{
         }
 
         public void UpdateInput(ref ControlState state){
-            if (IsEnabled){
+            if (Enabled){
                 if (state.AllowLeftButtonInterpretation){
                     if (state.LeftButtonClick){
                         foreach (var @event in _iEventDispatcher.OnLeftButtonClick){

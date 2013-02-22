@@ -15,10 +15,10 @@ namespace Drydock.Render{
 
         protected Effect BufferEffect;
         protected RasterizerState BufferRasterizer;
-        public bool IsEnabled; //this shouldnt be a field xx
+        public bool Enabled; //this shouldnt be a field xx
 
         protected BaseBufferObject(int numIndicies, int numVerticies, int numPrimitives, PrimitiveType primitiveType){
-            IsEnabled = true;
+            Enabled = true;
             _numPrimitives = numPrimitives;
             _numIndicies = numIndicies;
             _primitiveType = primitiveType;
@@ -43,7 +43,7 @@ namespace Drydock.Render{
         #region IDrawableBuffer Members
 
         public void Draw(Matrix viewMatrix){
-            if (IsEnabled){
+            if (Enabled){
                 UpdateViewMatrix(viewMatrix);
                 Singleton.Device.RasterizerState = BufferRasterizer;
 

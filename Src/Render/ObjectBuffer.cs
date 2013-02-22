@@ -111,7 +111,7 @@ namespace Drydock.Render{
             if (objToEnable == null)
                 return false;
 
-            objToEnable.IsEnabled = true;
+            objToEnable.Enabled = true;
             objToEnable.Indicies.CopyTo(_indicies, objToEnable.ObjectOffset*_indiciesPerObject);
             if (!UpdateBufferManually){
                 base.Indexbuffer.SetData(_indicies);
@@ -129,7 +129,7 @@ namespace Drydock.Render{
             if (objToDisable == null)
                 return false;
 
-            objToDisable.IsEnabled = false;
+            objToDisable.Enabled = false;
             var indicies = new int[_indiciesPerObject];
             indicies.CopyTo(_indicies, objToDisable.ObjectOffset*_indiciesPerObject);
             if (!UpdateBufferManually){
@@ -173,11 +173,11 @@ namespace Drydock.Render{
             public readonly int[] Indicies;
             public readonly int ObjectOffset;
             public readonly VertexPositionNormalTexture[] Verticies;
-            public bool IsEnabled;
+            public bool Enabled;
             // ReSharper restore MemberCanBePrivate.Local
 
             public ObjectData(IEquatable<T> identifier, int objectOffset, int[] indicies, VertexPositionNormalTexture[] verticies){
-                IsEnabled = true;
+                Enabled = true;
                 Identifier = identifier;
                 ObjectOffset = objectOffset;
                 Indicies = indicies;

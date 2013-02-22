@@ -10,7 +10,7 @@ namespace Drydock.UI{
     internal delegate void OnBasicMouseEvent(int identifier);
 
     internal interface IUIInteractiveElement : IUIElement, IInputUpdates{
-        bool IsEnabled { get; set; }
+        bool Enabled { get; set; }
         bool ContainsMouse { get; set; }
 
         event OnBasicMouseEvent OnLeftClickDispatcher;

@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Drydock.Logic.DoodadEditorState.Tools{
+namespace Drydock.Logic.DoodadEditorState{
     internal abstract class SnapGridConstructor{
         protected readonly IntRefLambda CurDeck;
         protected readonly WireframeBuffer[] GuideGridBuffers;
@@ -80,7 +80,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
                 #endregion
 
-                GuideGridBuffers[i].IsEnabled = false;
+                GuideGridBuffers[i].Enabled = false;
             }
         }
 

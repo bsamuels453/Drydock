@@ -3,7 +3,7 @@
         /// <summary>
         ///   Disabling a component will cause it to ignore all public method calls, and ignore all event dispatches. Enabling a component will undo these changes. Components start enabled by default.
         /// </summary>
-        bool IsEnabled { get; set; }
+        bool Enabled { get; set; }
 
         string Identifier { get; }
 

@@ -41,7 +41,7 @@ namespace Drydock.UI.Components{
         readonly FadeTrigger _fadeTrigger;
         readonly float _fadeoutOpacity;
         float _fadeDuration;
-        bool _isEnabled;
+        bool _Enabled;
         bool _isFadingOut;
         bool _isInTransition;
         IUIElement _owner;
@@ -84,12 +84,12 @@ namespace Drydock.UI.Components{
             }
         }
 
-        public bool IsEnabled{
-            get { return _isEnabled; }
+        public bool Enabled{
+            get { return _Enabled; }
             set{
-                _isEnabled = value;
+                _Enabled = value;
                 var state = Mouse.GetState();
-                if (_isEnabled){ //reset the timer
+                if (_Enabled){ //reset the timer
                     _prevUpdateTimeIndex = DateTime.Now.Ticks;
                     //because the mouse may have left the bounding box while this component was disabled
                     if (!_owner.BoundingBox.Contains(state.X, state.Y)){
@@ -116,7 +116,7 @@ namespace Drydock.UI.Components{
             _prevUpdateTimeIndex = DateTime.Now.Ticks;
             _defaultState = defaultState;
             _fadeTrigger = trigger;
-            _isEnabled = true;
+            _Enabled = true;
             Identifier = identifier;
         }
 
@@ -124,7 +124,7 @@ namespace Drydock.UI.Components{
 
         public void OnMouseEntry(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
             UIElementCollection.Collection.DisableEntryHandlers = true;
-            if (IsEnabled){
+            if (Enabled){
                 _isInTransition = true;
                 _isFadingOut = false;
                 if (FadeStateChangeDispatcher != null){
@@ -139,7 +139,7 @@ namespace Drydock.UI.Components{
 
         public void OnMouseExit(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
             UIElementCollection.Collection.DisableEntryHandlers = false;
-            if (IsEnabled){
+            if (Enabled){
                 _isInTransition = true;
                 _isFadingOut = true;
                 if (FadeStateChangeDispatcher != null){
@@ -153,7 +153,7 @@ namespace Drydock.UI.Components{
         #region IUIComponent Members
 
         public void Update(){
-            if (IsEnabled){
+            if (Enabled){
                 if (_isInTransition){
                     long timeSinceLastUpdate = DateTime.Now.Ticks - _prevUpdateTimeIndex;
                     float step = timeSinceLastUpdate/_fadeDuration;
@@ -184,7 +184,7 @@ namespace Drydock.UI.Components{
 
         public void ForceFadeout(){
             UIElementCollection.Collection.DisableEntryHandlers = false;
-            if (IsEnabled){
+            if (Enabled){
                 _isInTransition = true;
                 _isFadingOut = true;
                 if (FadeStateChangeDispatcher != null){
@@ -195,7 +195,7 @@ namespace Drydock.UI.Components{
 
         public void ForceFadein(){
             UIElementCollection.Collection.DisableEntryHandlers = true;
-            if (IsEnabled){
+            if (Enabled){
                 _isInTransition = true;
                 _isFadingOut = false;
                 if (FadeStateChangeDispatcher != null){

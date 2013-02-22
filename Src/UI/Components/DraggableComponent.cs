@@ -15,7 +15,7 @@ namespace Drydock.UI.Components{
     ///   allows a UI element to be dragged. Required element to be IUIInteractiveComponent
     /// </summary>
     internal class DraggableComponent : IUIComponent, IAcceptLeftButtonPressEvent, IAcceptLeftButtonReleaseEvent, IAcceptMouseMovementEvent{
-        bool _isEnabled;
+        bool _Enabled;
         bool _isMoving;
         Vector2 _mouseOffset;
         IUIInteractiveElement _owner;
@@ -32,7 +32,7 @@ namespace Drydock.UI.Components{
 
         public void ComponentCtor(IUIElement owner, ButtonEventDispatcher ownerEventDispatcher){
             _owner = (IUIInteractiveElement) owner;
-            _isEnabled = true;
+            _Enabled = true;
             _isMoving = false;
             ownerEventDispatcher.OnLeftButtonPress.Add(this);
             ownerEventDispatcher.OnLeftButtonRelease.Add(this);
@@ -44,7 +44,7 @@ namespace Drydock.UI.Components{
         #region IAcceptLeftButtonPressEvent Members
 
         public void OnLeftButtonPress(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
-            if (!_isMoving && _isEnabled){
+            if (!_isMoving && _Enabled){
                 if (_owner.BoundingBox.Contains(mousePos.X, mousePos.Y)){
                     _isMoving = true;
                     UIElementCollection.Collection.DisableEntryHandlers = true;
@@ -70,7 +70,7 @@ namespace Drydock.UI.Components{
         #region IAcceptMouseMovementEvent Members
 
         public void OnMouseMovement(ref bool allowInterpretation, Point mousePos, Point prevMousePos){
-            if (_isMoving && _isEnabled){
+            if (_isMoving && _Enabled){
                 var oldX = (int) _owner.X;
                 var oldY = (int) _owner.Y;
                 var x = (int) (mousePos.X + _mouseOffset.X);
@@ -107,9 +107,9 @@ namespace Drydock.UI.Components{
 
         #region IUIComponent Members
 
-        public bool IsEnabled{
-            get { return _isEnabled; }
-            set { _isEnabled = value; }
+        public bool Enabled{
+            get { return _Enabled; }
+            set { _Enabled = value; }
         }
 
         public void Update(){

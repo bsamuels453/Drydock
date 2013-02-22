@@ -14,7 +14,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         public WallMenuTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<ObjectIdentifier>[] wallBuffers, List<ObjectIdentifier>[] wallIdentifiers){
             _toolbar = new Toolbar("Templates/BuildToolbar.json");
-            _toolbar.IsEnabled = false;
+            _toolbar.Enabled = false;
 
             _toolbar.BindButtonToTool(
                 0,
@@ -48,11 +48,11 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         public void Enable(){
-            _toolbar.IsEnabled = true;
+            _toolbar.Enabled = true;
         }
 
         public void Disable(){
-            _toolbar.IsEnabled = false;
+            _toolbar.Enabled = false;
         }
 
         #endregion

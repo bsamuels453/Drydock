@@ -43,11 +43,11 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         protected override void OnEnable(){
-            _tempWallBuffer.IsEnabled = true;
+            _tempWallBuffer.Enabled = true;
         }
 
         protected override void OnDisable(){
-            _tempWallBuffer.IsEnabled = false;
+            _tempWallBuffer.Enabled = false;
         }
 
         void GenerateWallsFromStroke(){

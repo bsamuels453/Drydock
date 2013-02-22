@@ -12,7 +12,7 @@ namespace Drydock.Render{
         readonly FloatingRectangle _srcRect;
         public float Depth;
         public int Height;
-        public bool IsEnabled;
+        public bool Enabled;
         public float Opacity;
         public int Width;
         public int X;
@@ -37,7 +37,7 @@ namespace Drydock.Render{
             Height = height;
             Depth = depth;
             Opacity = opacity;
-            IsEnabled = true;
+            Enabled = true;
         }
 
         #region IDrawableSprite Members
@@ -59,7 +59,7 @@ namespace Drydock.Render{
         }
 
         public void Draw(SpriteBatch batch, Vector2 renderTargOffset){
-            if (IsEnabled){
+            if (Enabled){
                 _destRect.X = X - (int) renderTargOffset.X;
                 _destRect.Y = Y - (int) renderTargOffset.Y;
                 _destRect.Width = Width;

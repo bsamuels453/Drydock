@@ -37,7 +37,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected Vector3 StrokeOrigin;
         bool _cursorGhostActive;
         bool _isDrawing;
-        bool _isEnabled;
+        bool _Enabled;
 
         #endregion
 
@@ -45,7 +45,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             : base(hullInfo, visibleDecksRef){
             #region set fields
 
-            _isEnabled = false;
+            _Enabled = false;
             WallBuffers = wallBuffers;
             WallIdentifiers = wallIdentifiers;
             WallResolution = hullInfo.WallResolution;
@@ -56,7 +56,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _cursorBuff = new WireframeBuffer(2, 2, 1);
             var selectionIndicies = new[]{0, 1};
             _cursorBuff.Indexbuffer.SetData(selectionIndicies);
-            _cursorBuff.IsEnabled = false;
+            _cursorBuff.Enabled = false;
 
             visibleDecksRef.RefModCallback += VisibleDeckChange;
         }
@@ -92,18 +92,18 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         public void Enable(){
-            _isEnabled = true;
-            _cursorBuff.IsEnabled = true;
-            GuideGridBuffers[CurDeck.Value].IsEnabled = true;
+            _Enabled = true;
+            _cursorBuff.Enabled = true;
+            GuideGridBuffers[CurDeck.Value].Enabled = true;
             OnEnable();
         }
 
         public void Disable(){
             foreach (var buffer in GuideGridBuffers){
-                buffer.IsEnabled = false;
+                buffer.Enabled = false;
             }
-            _isEnabled = false;
-            _cursorBuff.IsEnabled = false;
+            _Enabled = false;
+            _cursorBuff.Enabled = false;
             OnDisable();
         }
 
@@ -112,12 +112,12 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         #region SnapGridConstructor overloads
 
         protected override void EnableCursorGhost(){
-            _cursorBuff.IsEnabled = true;
+            _cursorBuff.Enabled = true;
             _cursorGhostActive = true;
         }
 
         protected override void DisableCursorGhost(){
-            _cursorBuff.IsEnabled = false;
+            _cursorBuff.Enabled = false;
             _cursorGhostActive = false;
         }
 
@@ -140,7 +140,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 Color.White
                 );
             _cursorBuff.Vertexbuffer.SetData(verts);
-            _cursorBuff.IsEnabled = true;
+            _cursorBuff.Enabled = true;
             if (_isDrawing){
                 StrokeEnd = CursorPosition;
                 HandleCursorChange();
@@ -163,12 +163,12 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         #endregion
 
         void VisibleDeckChange(IntRef caller, int oldVal, int newVal){
-            if (_isEnabled){
+            if (_Enabled){
                 foreach (var buffer in GuideGridBuffers){
-                    buffer.IsEnabled = false;
+                    buffer.Enabled = false;
                 }
 
-                GuideGridBuffers[CurDeck.Value].IsEnabled = true;
+                GuideGridBuffers[CurDeck.Value].Enabled = true;
                 OnVisibleDeckChange();
             }
         }
