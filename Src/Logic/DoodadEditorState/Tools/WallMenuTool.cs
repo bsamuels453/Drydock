@@ -47,14 +47,11 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _toolbar.UpdateLogic(timeDelta);
         }
 
-        public void Enable(){
-            _toolbar.Enabled = true;
-        }
-
-        public void Disable(){
-            _toolbar.Enabled = false;
-        }
-
         #endregion
+
+        public bool Enabled{
+            get { return _toolbar.Enabled; }
+            set { _toolbar.Enabled = value; }
+        }
     }
 }

@@ -16,14 +16,12 @@ namespace Drydock.UI.Widgets{
             //throw new NotImplementedException();
         }
 
-        public void Enable(){
-            //throw new NotImplementedException();
-        }
-
-        public void Disable(){
-            //throw new NotImplementedException();
-        }
 
         #endregion
+
+        public bool Enabled{
+            get { return false; }
+            set {  }
+        }
     }
 }

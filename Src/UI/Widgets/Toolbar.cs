@@ -139,7 +139,7 @@ namespace Drydock.UI.Widgets{
         }
 
         public void ClearActiveTool(){
-            _activeTool.Disable();
+            _activeTool.Enabled = false;
             _activeTool = _nullTool;
             foreach (var button in ToolbarButtons){
                 button.GetComponent<HighlightComponent>("ClickHoldEffect").UnprocHighlight();
@@ -153,7 +153,7 @@ namespace Drydock.UI.Widgets{
                 Debug.Assert(identifier < _buttonTools.Length);
 
                 ClearActiveTool();
-                _buttonTools[identifier].Enable();
+                _buttonTools[identifier].Enabled = true;
                 ToolbarButtons[identifier].GetComponent<HighlightComponent>("ClickHoldEffect").ProcHighlight();
                 ToolbarButtons[identifier].GetComponent<HighlightComponent>("HoverMask").Enabled = false;
                 _activeTool = _buttonTools[identifier];

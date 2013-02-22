@@ -6,7 +6,6 @@ using Drydock.Control;
 
 namespace Drydock.UI.Widgets{
     internal interface IToolbarTool : IInputUpdates, ILogicUpdates{
-        void Enable();
-        void Disable();
+        bool Enabled { get; set; }
     }
 }

@@ -21,7 +21,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         List<BoundingBox>[] _boundingBoxes;
 
         List<GhostedZone> _ghostedZoneData;
-        bool _Enabled;
+        public bool Enabled { get; set; }
+    
         readonly GhostedZone _upperTempGhostedZone;
         GhostedZone _lowerTempGhostedZone;
 
@@ -57,12 +58,12 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         public void Enable(){
-            _Enabled = true;
+            Enabled = true;
             GuideGridBuffers[CurDeck.Value].Enabled = true;
         }
 
         public void Disable(){
-            _Enabled = false;
+            Enabled = false;
             foreach (var buffer in GuideGridBuffers){
                 buffer.Enabled = false;
             }
@@ -183,7 +184,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         void VisibleDeckChange(IntRef caller, int oldVal, int newVal){
-            if (_Enabled){
+            if (Enabled){
                 foreach (var buffer in GuideGridBuffers){
                     buffer.Enabled = false;
                 }

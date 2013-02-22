@@ -37,15 +37,33 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected Vector3 StrokeOrigin;
         bool _cursorGhostActive;
         bool _isDrawing;
-        bool _Enabled;
+        bool _enabled;
 
+        public bool Enabled{
+            get { return _enabled; }
+            set {
+                _enabled = value;
+                _cursorBuff.Enabled = value;
+                GuideGridBuffers[CurDeck.Value].Enabled = value;
+
+                if (value){
+                    OnEnable();
+                }
+                else {
+                    foreach (var buffer in GuideGridBuffers) {
+                        buffer.Enabled = false;
+                    }
+                    OnDisable();
+                }
+            }
+        }
         #endregion
 
         protected WallEditTool(HullGeometryInfo hullInfo, IntRef visibleDecksRef, ObjectBuffer<ObjectIdentifier>[] wallBuffers, List<ObjectIdentifier>[] wallIdentifiers)
             : base(hullInfo, visibleDecksRef){
             #region set fields
 
-            _Enabled = false;
+            _enabled = false;
             WallBuffers = wallBuffers;
             WallIdentifiers = wallIdentifiers;
             WallResolution = hullInfo.WallResolution;
@@ -89,22 +107,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         public void UpdateLogic(double timeDelta){
-        }
-
-        public void Enable(){
-            _Enabled = true;
-            _cursorBuff.Enabled = true;
-            GuideGridBuffers[CurDeck.Value].Enabled = true;
-            OnEnable();
-        }
-
-        public void Disable(){
-            foreach (var buffer in GuideGridBuffers){
-                buffer.Enabled = false;
-            }
-            _Enabled = false;
-            _cursorBuff.Enabled = false;
-            OnDisable();
         }
 
         #endregion
@@ -163,7 +165,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         #endregion
 
         void VisibleDeckChange(IntRef caller, int oldVal, int newVal){
-            if (_Enabled){
+            if (_enabled) {
                 foreach (var buffer in GuideGridBuffers){
                     buffer.Enabled = false;
                 }
@@ -179,6 +181,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected abstract void OnVisibleDeckChange();
         protected abstract void OnEnable();
         protected abstract void OnDisable();
+
     }
 
     #region wallidentifier
