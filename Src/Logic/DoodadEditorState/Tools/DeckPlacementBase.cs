@@ -1,0 +1,314 @@
+﻿#region
+
+using System.Collections.Generic;
+using System.Linq;
+using Drydock.Control;
+using Drydock.Render;
+using Drydock.UI.Widgets;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+
+#endregion
+
+namespace Drydock.Logic.DoodadEditorState.Tools{
+    internal abstract class DeckPlacementBase : IToolbarTool{
+        protected readonly WireframeBuffer[] GuideGridBuffers;
+        protected readonly HullDataManager HullData;
+        protected readonly float GridResolution;
+
+        readonly WireframeBuffer _cursorBuff;
+        protected Vector3 CursorPosition;
+
+        protected Vector3 StrokeEnd;
+        protected Vector3 StrokeOrigin;
+        bool _cursorGhostActive;
+        bool _enabled;
+        bool _isDrawing;
+
+        public bool Enabled{
+            get { return _enabled; }
+            set{
+                _enabled = value;
+                _cursorBuff.Enabled = value;
+                GuideGridBuffers[HullData.CurDeck].Enabled = value;
+
+                if (value){
+                    OnEnable();
+                }
+                else{
+                    foreach (var buffer in GuideGridBuffers){
+                        buffer.Enabled = false;
+                    }
+                    OnDisable();
+                }
+            }
+        }
+
+        protected DeckPlacementBase(HullDataManager hullData, float resolution){
+            HullData = hullData;
+
+            //XXX resolution is not being reated properly, beware
+            _enabled = false;
+            GridResolution = resolution;
+
+            _cursorBuff = new WireframeBuffer(2, 2, 1);
+            var selectionIndicies = new[]{0, 1};
+            _cursorBuff.Indexbuffer.SetData(selectionIndicies);
+            _cursorBuff.Enabled = false;
+
+            hullData.OnCurDeckChange += VisibleDeckChange;
+
+            GuideGridBuffers = new WireframeBuffer[hullData.NumDecks];
+            GenerateGuideGrid();
+        }
+
+        #region IToolbarTool Members
+
+        public void UpdateInput(ref ControlState state){
+            #region intersect stuff
+
+            if (state.AllowMouseMovementInterpretation){
+                var prevCursorPosition = CursorPosition;
+
+                var nearMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 0);
+                var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);
+
+                //transform the mouse into world space
+                var nearPoint = Singleton.Device.Viewport.Unproject(
+                    nearMouse,
+                    Singleton.ProjectionMatrix,
+                    state.ViewMatrix,
+                    Matrix.Identity
+                    );
+
+                var farPoint = Singleton.Device.Viewport.Unproject(
+                    farMouse,
+                    Singleton.ProjectionMatrix,
+                    state.ViewMatrix,
+                    Matrix.Identity
+                    );
+
+                var direction = farPoint - nearPoint;
+                direction.Normalize();
+                var ray = new Ray(nearPoint, direction);
+
+
+                bool intersectionFound = false;
+                foreach (BoundingBox t in HullData.CurDeckBoundingBoxes){
+                    float? ndist;
+                    if ((ndist = ray.Intersects(t)) != null){
+                        EnableCursorGhost();
+                        var rayTermination = ray.Position + ray.Direction*(float) ndist;
+
+                        var distList = new List<float>();
+
+                        for (int point = 0; point < HullData.CurDeckVertexes.Count(); point++){
+                            distList.Add(Vector3.Distance(rayTermination, HullData.CurDeckVertexes[point]));
+                        }
+                        float f = distList.Min();
+
+                        int ptIdx = distList.IndexOf(f);
+
+                        if (!IsCursorValid(HullData.CurDeckVertexes[ptIdx], prevCursorPosition, HullData.CurDeckVertexes, f)){
+                            DisableCursorGhost();
+                            break;
+                        }
+
+                        CursorPosition = HullData.CurDeckVertexes[ptIdx];
+                        if (CursorPosition != prevCursorPosition){
+                            UpdateCursorGhost();
+                            if (_isDrawing){
+                                HandleCursorChange();
+                            }
+                        }
+
+                        intersectionFound = true;
+                        break;
+                    }
+                }
+                if (!intersectionFound){
+                    DisableCursorGhost();
+                }
+            }
+            else{
+                DisableCursorGhost();
+            }
+
+            #endregion
+
+            if (state.AllowLeftButtonInterpretation){
+                if (
+                    state.LeftButtonState != state.PrevState.LeftButtonState &&
+                    state.LeftButtonState == ButtonState.Pressed
+                    && _cursorGhostActive
+                    ){
+                    StrokeOrigin = CursorPosition;
+                    _isDrawing = true;
+                    HandleCursorBegin();
+                }
+            }
+
+            if (state.AllowLeftButtonInterpretation){
+                if (_isDrawing && state.LeftButtonState == ButtonState.Released){
+                    _isDrawing = false;
+                    StrokeOrigin = new Vector3();
+                    StrokeEnd = new Vector3();
+                    HandleCursorEnd();
+                }
+            }
+        }
+
+        public void UpdateLogic(double timeDelta){
+        }
+
+        #endregion
+
+        //xxx refactor resolution
+        bool IsCursorValid(Vector3 newCursorPos, Vector3 prevCursorPosition, List<Vector3> deckFloorVertexes, float distToPt){
+            if (deckFloorVertexes.Contains(prevCursorPosition) && _isDrawing){
+                var v1 = new Vector3(newCursorPos.X, newCursorPos.Y, StrokeOrigin.Z);
+                var v2 = new Vector3(StrokeOrigin.X, newCursorPos.Y, newCursorPos.Z);
+
+                if (!deckFloorVertexes.Contains(v1))
+                    return false;
+                if (!deckFloorVertexes.Contains(v2))
+                    return false;
+            }
+            return true;
+        }
+
+        //xxx refactor resolution
+        void GenerateGuideGrid(){
+            for (int i = 0; i < HullData.NumDecks; i++){
+                #region indicies
+
+                int numBoxes = HullData.DeckBoundingBoxes[i].Count();
+                GuideGridBuffers[i] = new WireframeBuffer(8*numBoxes, 8*numBoxes, 4*numBoxes);
+                var guideDotIndicies = new int[8*numBoxes];
+                for (int si = 0; si < 8*numBoxes; si += 1){
+                    guideDotIndicies[si] = si;
+                }
+                GuideGridBuffers[i].Indexbuffer.SetData(guideDotIndicies);
+
+                #endregion
+
+                #region verticies
+
+                var verts = new VertexPositionColor[HullData.DeckBoundingBoxes[i].Count()*8];
+
+                int vertIndex = 0;
+
+                foreach (var boundingBox in HullData.DeckBoundingBoxes[i]){
+                    Vector3 v1, v2, v3, v4;
+                    //v4  v3
+                    //
+                    //v1  v2
+                    v1 = boundingBox.Min;
+                    v2 = new Vector3(boundingBox.Min.X, boundingBox.Min.Y, boundingBox.Max.Z);
+                    v3 = boundingBox.Max;
+                    v4 = new Vector3(boundingBox.Max.X, boundingBox.Min.Y, boundingBox.Min.Z);
+
+                    v1.Y += 0.03f;
+                    v2.Y += 0.03f;
+                    v3.Y += 0.03f;
+                    v4.Y += 0.03f;
+
+
+                    verts[vertIndex] = new VertexPositionColor(v1, Color.Gray);
+                    verts[vertIndex + 1] = new VertexPositionColor(v2, Color.Gray);
+                    verts[vertIndex + 2] = new VertexPositionColor(v2, Color.Gray);
+                    verts[vertIndex + 3] = new VertexPositionColor(v3, Color.Gray);
+
+                    verts[vertIndex + 4] = new VertexPositionColor(v3, Color.Gray);
+                    verts[vertIndex + 5] = new VertexPositionColor(v4, Color.Gray);
+                    verts[vertIndex + 6] = new VertexPositionColor(v4, Color.Gray);
+                    verts[vertIndex + 7] = new VertexPositionColor(v1, Color.Gray);
+
+                    vertIndex += 8;
+                }
+                GuideGridBuffers[i].Vertexbuffer.SetData(verts);
+
+                #endregion
+
+                GuideGridBuffers[i].Enabled = false;
+            }
+        }
+
+        protected virtual void EnableCursorGhost(){
+            _cursorBuff.Enabled = true;
+            _cursorGhostActive = true;
+        }
+
+        protected virtual void DisableCursorGhost(){
+            _cursorBuff.Enabled = false;
+            _cursorGhostActive = false;
+        }
+
+        protected virtual void UpdateCursorGhost(){
+            var verts = new VertexPositionColor[2];
+            verts[0] = new VertexPositionColor(
+                new Vector3(
+                    CursorPosition.X,
+                    CursorPosition.Y + 0.03f,
+                    CursorPosition.Z
+                    ),
+                Color.White
+                );
+            verts[1] = new VertexPositionColor(
+                new Vector3(
+                    CursorPosition.X,
+                    CursorPosition.Y + 10f,
+                    CursorPosition.Z
+                    ),
+                Color.White
+                );
+            _cursorBuff.Vertexbuffer.SetData(verts);
+            _cursorBuff.Enabled = true;
+            if (_isDrawing){
+                StrokeEnd = CursorPosition;
+            }
+        }
+
+        void VisibleDeckChange(int oldVal, int newVal){
+            if (_enabled){
+                foreach (var buffer in GuideGridBuffers){
+                    buffer.Enabled = false;
+                }
+
+                GuideGridBuffers[HullData.CurDeck].Enabled = true;
+                OnCurDeckChange();
+            }
+        }
+
+        /// <summary>
+        ///   Called when the cursor moves between selection nodes.
+        /// </summary>
+        protected abstract void HandleCursorChange();
+
+        /// <summary>
+        ///   Called at the end of the "drawing" period when user releases mouse button.
+        /// </summary>
+        protected abstract void HandleCursorEnd();
+
+        /// <summary>
+        ///   Called when mouse cursor is held down and "drawing" begins.
+        /// </summary>
+        protected abstract void HandleCursorBegin();
+
+        /// <summary>
+        ///   Called when the CurDeck changes.
+        /// </summary>
+        protected abstract void OnCurDeckChange();
+
+        /// <summary>
+        ///   Called when the child needs to be enabled.
+        /// </summary>
+        protected abstract void OnEnable();
+
+        /// <summary>
+        ///   Called when the child needs to be disabled.
+        /// </summary>
+        protected abstract void OnDisable();
+    }
+}

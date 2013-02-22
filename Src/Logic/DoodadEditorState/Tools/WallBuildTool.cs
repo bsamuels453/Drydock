@@ -10,13 +10,13 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
-    internal class WallBuildTool : WallEditTool{
+    internal class WallBuildTool : DeckPlacementBase{
         readonly ObjectBuffer<ObjectIdentifier> _tempWallBuffer;
         readonly List<ObjectIdentifier> _tempWallIdentifiers;
-
+        readonly float _wallHeight;
 
         public WallBuildTool(HullDataManager hullData) :
-            base(hullData){
+            base(hullData, hullData.WallResolution){
             _tempWallBuffer = new ObjectBuffer<ObjectIdentifier>(
                 hullData.DeckVertexes[0].Count()*2,
                 10,
@@ -26,6 +26,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                               {UpdateBufferManually = true};
 
             _tempWallIdentifiers = new List<ObjectIdentifier>();
+            _wallHeight = hullData.DeckHeight - 0.01f;
         }
 
         protected override void HandleCursorChange(){
@@ -45,7 +46,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected override void HandleCursorBegin(){
         }
 
-        protected override void OnVisibleDeckChange(){
+        protected override void OnCurDeckChange(){
         }
 
         protected override void OnEnable(){
@@ -58,8 +59,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         void GenerateWallsFromStroke(){
             _tempWallIdentifiers.Clear();
-            int strokeW = (int) ((StrokeEnd.Z - StrokeOrigin.Z)/WallResolution);
-            int strokeH = (int) ((StrokeEnd.X - StrokeOrigin.X)/WallResolution);
+            int strokeW = (int) ((StrokeEnd.Z - StrokeOrigin.Z)/GridResolution);
+            int strokeH = (int) ((StrokeEnd.X - StrokeOrigin.X)/GridResolution);
 
             _tempWallBuffer.ClearObjects();
             int wDir;
@@ -78,18 +79,18 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             for (int i = 0; i < Math.Abs(strokeW); i++){
                 int[] indicies;
                 VertexPositionNormalTexture[] verticies;
-                var origin = new Vector3(StrokeOrigin.X, StrokeOrigin.Y, StrokeOrigin.Z + WallResolution*i*wDir);
-                MeshHelper.GenerateCube(out verticies, out indicies, origin, wallWidth, WallHeight, WallResolution*wDir);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + WallResolution*wDir));
+                var origin = new Vector3(StrokeOrigin.X, StrokeOrigin.Y, StrokeOrigin.Z + GridResolution*i*wDir);
+                MeshHelper.GenerateCube(out verticies, out indicies, origin, wallWidth, _wallHeight, GridResolution*wDir);
+                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + GridResolution*wDir));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 _tempWallIdentifiers.Add(identifier);
             }
             for (int i = 0; i < Math.Abs(strokeW); i++){
                 int[] indicies;
                 VertexPositionNormalTexture[] verticies;
-                var origin = new Vector3(StrokeEnd.X, StrokeOrigin.Y, StrokeOrigin.Z + WallResolution*i*wDir);
-                MeshHelper.GenerateCube(out verticies, out indicies, origin, wallWidth, WallHeight, WallResolution*wDir);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + WallResolution*wDir));
+                var origin = new Vector3(StrokeEnd.X, StrokeOrigin.Y, StrokeOrigin.Z + GridResolution*i*wDir);
+                MeshHelper.GenerateCube(out verticies, out indicies, origin, wallWidth, _wallHeight, GridResolution*wDir);
+                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + GridResolution*wDir));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 _tempWallIdentifiers.Add(identifier);
             }
@@ -97,18 +98,18 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             for (int i = 0; i < Math.Abs(strokeH); i++){
                 int[] indicies;
                 VertexPositionNormalTexture[] verticies;
-                var origin = new Vector3(StrokeOrigin.X + WallResolution*i*hDir, StrokeOrigin.Y, StrokeOrigin.Z);
-                MeshHelper.GenerateCube(out verticies, out indicies, origin, WallResolution*hDir, WallHeight, wallWidth);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X + WallResolution*hDir, origin.Y, origin.Z));
+                var origin = new Vector3(StrokeOrigin.X + GridResolution*i*hDir, StrokeOrigin.Y, StrokeOrigin.Z);
+                MeshHelper.GenerateCube(out verticies, out indicies, origin, GridResolution*hDir, _wallHeight, wallWidth);
+                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X + GridResolution*hDir, origin.Y, origin.Z));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 _tempWallIdentifiers.Add(identifier);
             }
             for (int i = 0; i < Math.Abs(strokeH); i++){
                 int[] indicies;
                 VertexPositionNormalTexture[] verticies;
-                var origin = new Vector3(StrokeOrigin.X + WallResolution*i*hDir, StrokeOrigin.Y, StrokeEnd.Z);
-                MeshHelper.GenerateCube(out verticies, out indicies, origin, WallResolution*hDir, WallHeight, wallWidth);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X + WallResolution*hDir, origin.Y, origin.Z));
+                var origin = new Vector3(StrokeOrigin.X + GridResolution*i*hDir, StrokeOrigin.Y, StrokeEnd.Z);
+                MeshHelper.GenerateCube(out verticies, out indicies, origin, GridResolution*hDir, _wallHeight, wallWidth);
+                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X + GridResolution*hDir, origin.Y, origin.Z));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 _tempWallIdentifiers.Add(identifier);
             }
@@ -116,4 +117,60 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _tempWallBuffer.UpdateBuffers();
         }
     }
+
+    #region wallidentifier
+
+    internal struct ObjectIdentifier : IEquatable<ObjectIdentifier>{
+        public readonly Vector3 RefPoint1;
+        public readonly Vector3 RefPoint2;
+
+        public ObjectIdentifier(Vector3 refPoint2, Vector3 refPoint1){
+            RefPoint2 = refPoint2;
+            RefPoint1 = refPoint1;
+        }
+
+        #region equality operators
+
+        public bool Equals(ObjectIdentifier other){
+            if (RefPoint2 == other.RefPoint2 && RefPoint1 == other.RefPoint1)
+                return true;
+            if (RefPoint2 == other.RefPoint1 && other.RefPoint2 == RefPoint1)
+                return true;
+            return false;
+        }
+
+        public static bool operator ==(ObjectIdentifier wallid1, ObjectIdentifier wallid2){
+            if (wallid1.RefPoint2 == wallid2.RefPoint2 && wallid1.RefPoint1 == wallid2.RefPoint1)
+                return true;
+            if (wallid1.RefPoint2 == wallid2.RefPoint1 && wallid2.RefPoint1 == wallid1.RefPoint2)
+                return true;
+            return false;
+        }
+
+        public static bool operator !=(ObjectIdentifier wallid1, ObjectIdentifier wallid2){
+            if (wallid1.RefPoint2 == wallid2.RefPoint2 && wallid1.RefPoint1 == wallid2.RefPoint1)
+                return false;
+            if (wallid1.RefPoint2 == wallid2.RefPoint1 && wallid2.RefPoint1 == wallid1.RefPoint2)
+                return false;
+            return true;
+        }
+
+        public override bool Equals(object obj){
+            if (ReferenceEquals(null, obj)) return false;
+            if (obj.GetType() != typeof (ObjectIdentifier)) return false;
+            return Equals((ObjectIdentifier) obj);
+        }
+
+        #endregion
+
+        public override int GetHashCode(){
+            unchecked{
+                // ReSharper disable NonReadonlyFieldInGetHashCode
+                return (RefPoint2.GetHashCode()*397) ^ RefPoint1.GetHashCode();
+                // ReSharper restore NonReadonlyFieldInGetHashCode
+            }
+        }
+    }
+
+    #endregion
 }

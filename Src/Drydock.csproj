@@ -171,11 +171,10 @@
     <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
     <Compile Include="Logic\DoodadEditorState\DoodadUI.cs" />
     <Compile Include="Logic\DoodadEditorState\HullDataManager.cs" />
-    <Compile Include="Logic\DoodadEditorState\SnapGridConstructor.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\LadderBuildTool.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\WallBuildTool.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\WallDeleteTool.cs" />
-    <Compile Include="Logic\DoodadEditorState\Tools\WallEditTool.cs" />
+    <Compile Include="Logic\DoodadEditorState\Tools\DeckPlacementBase.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\WallMenuTool.cs" />
     <Compile Include="Render\ObjectBuffer.cs" />
     <Compile Include="Render\StandardEffect.cs" />
