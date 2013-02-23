@@ -12,22 +12,24 @@ namespace Drydock.Render{
     /// </summary>
     /// <typeparam name="T"></typeparam>
     internal class ObjectModelBuffer<T> : IDrawableBuffer where T : IEquatable<T>{
-        //key=identifier
         readonly bool[] _isSlotOccupied;
         readonly int _maxObjects;
-        readonly List<ObjectData> _objectData; 
+        readonly List<ObjectData> _objectData;
+        Matrix _globalTransform;
 
         public ObjectModelBuffer(int maxObjects){
             _objectData = new List<ObjectData>();
             _maxObjects = maxObjects;
             _isSlotOccupied = new bool[maxObjects];
+            _globalTransform = Matrix.Identity;
+            RenderPanel.Add(this);
         }
 
-        public void AddObject(IEquatable<T> identifier, Model model){
+        public void AddObject(IEquatable<T> identifier, Model model, Matrix transform){
             int index = -1;
             for (int i = 0; i < _maxObjects; i++){
                 if (_isSlotOccupied[i] == false){
-                    _objectData.Add(new ObjectData(identifier, i, model));
+                    _objectData.Add(new ObjectData(identifier, i, transform, model));
                     _isSlotOccupied[i] = true;
                     index = i;
                     break;
@@ -85,6 +87,10 @@ namespace Drydock.Render{
             return true;
         }
 
+        public void TransformAll(Vector3 transform){
+            _globalTransform = Matrix.CreateTranslation(transform);
+        }
+
         /// <summary>
         ///   really cool method that will take another objectbuffer and absorb its objects into this objectbuffer. also clears the other buffer afterwards.
         /// </summary>
@@ -97,7 +103,7 @@ namespace Drydock.Render{
                 }
                 if (isDuplicate)
                     continue;
-                AddObject(objectData.Identifier, objectData.Model);
+                AddObject(objectData.Identifier, objectData.Model, objectData.Transform);
             }
             buffer.ClearObjects();
         }
@@ -109,14 +115,16 @@ namespace Drydock.Render{
             public readonly IEquatable<T> Identifier;
             public readonly Model Model;
             public readonly int ObjectOffset;
+            public readonly Matrix Transform;
             public bool Enabled;
             // ReSharper restore MemberCanBePrivate.Local
 
-            public ObjectData(IEquatable<T> identifier, int objectOffset, Model model){
+            public ObjectData(IEquatable<T> identifier, int objectOffset, Matrix transform, Model model){
                 Enabled = true;
                 Identifier = identifier;
                 ObjectOffset = objectOffset;
                 Model = model;
+                Transform = transform;
             }
         }
 
@@ -124,9 +132,14 @@ namespace Drydock.Render{
 
         public void Draw(Matrix viewMatrix){
             foreach (var obj in _objectData){
+                if (!obj.Enabled)
+                    continue;
                 foreach (var mesh in obj.Model.Meshes){
-                    foreach (var effect in mesh.Effects){
-                        effect.Parameters["View"].SetValue(viewMatrix);
+                    foreach (BasicEffect effect in mesh.Effects){
+                        effect.EnableDefaultLighting();
+                        effect.World =obj.Transform * _globalTransform;
+                        effect.View = viewMatrix;
+                        effect.Projection = Singleton.ProjectionMatrix;
                     }
                     mesh.Draw();
                 }
