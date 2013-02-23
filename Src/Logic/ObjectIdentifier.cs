@@ -7,14 +7,12 @@ using Microsoft.Xna.Framework;
 
 namespace Drydock.Logic{
     internal class ObjectIdentifier : IEquatable<ObjectIdentifier>{
-        public readonly int Deck;
         public readonly ObjectType ObjectType;
         public readonly Vector3 Position;
 
-        public ObjectIdentifier(ObjectType objectType, Vector3 position, int deck){
+        public ObjectIdentifier(ObjectType objectType, Vector3 position){
             ObjectType = objectType;
             Position = position;
-            Deck = deck;
         }
 
         #region IEquatable<ObjectIdentifier> Members
@@ -27,6 +25,8 @@ namespace Drydock.Logic{
     }
 
     internal enum ObjectType{
-        Ladder
+        Ladder,
+        Deckboard,
+        Misc
     }
 }
