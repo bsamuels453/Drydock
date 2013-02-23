@@ -23,6 +23,12 @@ namespace Drydock.Render{
         public new VertexBuffer Vertexbuffer{
             get { return base.Vertexbuffer; }
         }
+
+        public void Dispose(){
+            base.Indexbuffer.Dispose();
+            base.Vertexbuffer.Dispose();
+            Enabled = false;
+        }
     }
 
     /*internal struct Vertex3 : IVertexType{
