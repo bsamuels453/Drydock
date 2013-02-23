@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Drydock.Logic;
 using Microsoft.Xna.Framework.Graphics;
 
 #endregion
@@ -70,7 +71,7 @@ namespace Drydock.Render{
             }
         }
 
-        public void RemoveObject(IEquatable<T> identifier){
+        public void RemoveObject(T identifier){
             ObjectData objectToRemove = (
                                             from obj in _objectData
                                             where obj.Identifier.Equals(identifier)
@@ -119,7 +120,7 @@ namespace Drydock.Render{
             return true;
         }
 
-        public bool DisableObject(IEquatable<T> identifier){
+        public bool DisableObject(T identifier){
             ObjectData objToDisable = null;
             foreach (var obj in _objectData){
                 if (obj.Identifier.Equals(identifier)){
