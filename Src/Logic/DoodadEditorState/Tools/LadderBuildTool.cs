@@ -9,8 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
     internal class LadderBuildTool : DeckPlacementBase{
-        const float _ladderWidthX = 1f;
-        const float _ladderWidthZ = 1f;
+        const float _ladderWidth = 1f;
         const float _gridWidth=0.5f;
 
         readonly HullDataManager _hullData;
@@ -19,8 +18,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         public LadderBuildTool(HullDataManager hullData)
             : base(hullData, hullData.WallResolution, 2) {
             // ReSharper disable CompareOfFloatsByEqualityOperator
-            Debug.Assert(_ladderWidthX % _gridWidth == 0);
-            Debug.Assert(_ladderWidthZ % _gridWidth == 0);
+            Debug.Assert(_ladderWidth % _gridWidth == 0);
             // ReSharper restore CompareOfFloatsByEqualityOperator
             _hullData = hullData;
 
@@ -46,12 +44,26 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         protected override void HandleCursorRelease(){
-            var identifier = new ObjectIdentifier(ObjectType.Ladder, CursorPosition, _hullData.CurDeck);
+            var identifier = new ObjectIdentifier(ObjectType.Ladder, CursorPosition);
             Matrix trans = Matrix.CreateRotationX((float)-Math.PI / 2) * Matrix.CreateRotationY((float)-Math.PI / 2) * Matrix.CreateTranslation(CursorPosition);
             _hullData.CurObjBuffer.AddObject(identifier, Singleton.ContentManager.Load<Model>("models/ladder"), trans);
+
+            var quadsToHide = new List<ObjectIdentifier>();
+            for (float x = 0; x < _ladderWidth; x += _gridWidth){
+                for (float z = 0; z < _ladderWidth; z += _gridWidth){
+                    var min = CursorPosition + new Vector3(x, _hullData.DeckHeight, z);
+                    quadsToHide.Add(new ObjectIdentifier(ObjectType.Deckboard, min));
+                }
+            }
+            if (HullData.CurDeck != 0){
+                foreach (var quad in quadsToHide){
+                    bool b = _hullData.DeckBuffers[_hullData.CurDeck - 1].DisableObject(quad);
+                    Debug.Assert(b);
+                }
+            }
         }
 
-        protected override void HandleCursorDown(){
+        protected override void HandleCursorDown() {
 
         }
 
