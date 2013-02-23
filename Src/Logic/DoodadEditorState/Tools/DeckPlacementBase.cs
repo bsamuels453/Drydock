@@ -111,6 +111,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     float? ndist;
                     if ((ndist = ray.Intersects(t)) != null){
                         EnableCursorGhost();
+                        _cursorGhostActive = true;
                         var rayTermination = ray.Position + ray.Direction*(float) ndist;
 
                         var distList = new List<float>();
@@ -123,6 +124,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                         int ptIdx = distList.IndexOf(f);
 
                         if (!IsCursorValid(HullData.CurDeckVertexes[ptIdx], prevCursorPosition, HullData.CurDeckVertexes, f)){
+                            _cursorGhostActive = false;
                             DisableCursorGhost();
                             break;
                         }
@@ -155,7 +157,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     ){
                     StrokeOrigin = CursorPosition;
                     _isDrawing = true;
-                    HandleCursorBegin();
+                    HandleCursorDown();
+                    _cursorGhostActive = false;
                 }
             }
 
@@ -164,7 +167,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     _isDrawing = false;
                     StrokeOrigin = new Vector3();
                     StrokeEnd = new Vector3();
-                    HandleCursorEnd();
+                    HandleCursorRelease();
                 }
             }
         }
@@ -262,12 +265,12 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         protected virtual void EnableCursorGhost(){
             _cursorBuff.Enabled = true;
-            _cursorGhostActive = true;
+            
         }
 
         protected virtual void DisableCursorGhost(){
             _cursorBuff.Enabled = false;
-            _cursorGhostActive = false;
+            
         }
 
         protected virtual void UpdateCursorGhost(){
@@ -314,12 +317,12 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         /// <summary>
         ///   Called at the end of the "drawing" period when user releases mouse button.
         /// </summary>
-        protected abstract void HandleCursorEnd();
+        protected abstract void HandleCursorRelease();
 
         /// <summary>
-        ///   Called when mouse cursor is held down and "drawing" begins.
+        ///   Called when mouse cursor is clicked
         /// </summary>
-        protected abstract void HandleCursorBegin();
+        protected abstract void HandleCursorDown();
 
         /// <summary>
         ///   Called when the CurDeck changes.

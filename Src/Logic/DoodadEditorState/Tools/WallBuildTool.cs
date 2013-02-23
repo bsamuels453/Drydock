@@ -34,7 +34,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 GenerateWallsFromStroke();
         }
 
-        protected override void HandleCursorEnd(){
+        protected override void HandleCursorRelease(){
             HullData.CurWallIdentifiers.AddRange(
                 from id in _tempWallIdentifiers
                 where !HullData.CurWallIdentifiers.Contains(id)
@@ -44,7 +44,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             HullData.CurWallBuffer.AbsorbBuffer(_tempWallBuffer);
         }
 
-        protected override void HandleCursorBegin(){
+        protected override void HandleCursorDown(){
         }
 
         protected override void OnCurDeckChange(){

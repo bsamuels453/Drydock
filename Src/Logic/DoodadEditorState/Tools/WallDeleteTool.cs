@@ -96,7 +96,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _prevIdentifiers = identifiers;
         }
 
-        protected override void HandleCursorEnd(){
+        protected override void HandleCursorRelease(){
             HullData.CurWallBuffer.UpdateBufferManually = true;
             foreach (var identifier in _prevIdentifiers){
                 HullData.CurWallBuffer.RemoveObject(identifier);
@@ -112,7 +112,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _prevIdentifiers.Clear();
         }
 
-        protected override void HandleCursorBegin(){
+        protected override void HandleCursorDown(){
             //throw new NotImplementedException();
         }
 
