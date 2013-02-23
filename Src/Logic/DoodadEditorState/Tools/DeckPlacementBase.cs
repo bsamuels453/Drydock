@@ -207,11 +207,14 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         }
 
         //todo: refactor gridResolution
-        void GenerateGuideGrid(){
+        protected void GenerateGuideGrid(){
             for (int i = 0; i < HullData.NumDecks; i++){
                 #region indicies
 
                 int numBoxes = HullData.DeckBoundingBoxes[i].Count();
+                if (GuideGridBuffers[i] != null){
+                    GuideGridBuffers[i].Dispose();
+                }
                 GuideGridBuffers[i] = new WireframeBuffer(8*numBoxes, 8*numBoxes, 4*numBoxes);
                 var guideDotIndicies = new int[8*numBoxes];
                 for (int si = 0; si < 8*numBoxes; si += 1){
@@ -261,6 +264,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
                 GuideGridBuffers[i].Enabled = false;
             }
+            VisibleDeckChange(-1, HullData.CurDeck);
         }
 
         protected virtual void EnableCursorGhost(){

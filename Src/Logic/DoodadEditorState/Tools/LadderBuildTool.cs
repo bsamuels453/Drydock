@@ -49,10 +49,14 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _hullData.CurObjBuffer.AddObject(identifier, Singleton.ContentManager.Load<Model>("models/ladder"), trans);
 
             var quadsToHide = new List<ObjectIdentifier>();
+            var upperBoxesToHide = new List<BoundingBox>();
+            var lowerBoxesToHide = new List<BoundingBox>();
             for (float x = 0; x < _ladderWidth; x += _gridWidth){
                 for (float z = 0; z < _ladderWidth; z += _gridWidth){
                     var min = CursorPosition + new Vector3(x, _hullData.DeckHeight, z);
                     quadsToHide.Add(new ObjectIdentifier(ObjectType.Deckboard, min));
+                    upperBoxesToHide.Add(new BoundingBox(min,min + new Vector3(_gridWidth, 0, _gridWidth)));
+                    lowerBoxesToHide.Add(new BoundingBox(CursorPosition + new Vector3(x, 0, z), CursorPosition + new Vector3(x + _gridWidth, 0, z + _gridWidth)));
                 }
             }
             if (HullData.CurDeck != 0){
@@ -60,7 +64,14 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     bool b = _hullData.DeckBuffers[_hullData.CurDeck - 1].DisableObject(quad);
                     Debug.Assert(b);
                 }
+                foreach (var bbox in upperBoxesToHide) {
+                    _hullData.DeckBoundingBoxes[_hullData.CurDeck - 1].Remove(bbox);
+                }
             }
+            foreach (var bbox in lowerBoxesToHide) {
+                _hullData.DeckBoundingBoxes[_hullData.CurDeck].Remove(bbox);
+            }
+            GenerateGuideGrid();
         }
 
         protected override void HandleCursorDown() {
