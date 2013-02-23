@@ -12,6 +12,7 @@ namespace Drydock.Render{
     /// </summary>
     /// <typeparam name="T"></typeparam>
     internal class ObjectModelBuffer<T> : IDrawableBuffer where T : IEquatable<T>{
+        public bool Enabled;
         readonly bool[] _isSlotOccupied;
         readonly int _maxObjects;
         readonly List<ObjectData> _objectData;
@@ -22,6 +23,7 @@ namespace Drydock.Render{
             _maxObjects = maxObjects;
             _isSlotOccupied = new bool[maxObjects];
             _globalTransform = Matrix.Identity;
+            Enabled = true;
             RenderPanel.Add(this);
         }
 
@@ -131,6 +133,8 @@ namespace Drydock.Render{
         #endregion
 
         public void Draw(Matrix viewMatrix){
+            if (!Enabled)
+                return;
             foreach (var obj in _objectData){
                 if (!obj.Enabled)
                     continue;

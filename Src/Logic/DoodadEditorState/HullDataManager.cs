@@ -27,7 +27,7 @@ namespace Drydock.Logic.DoodadEditorState{
         public readonly int NumDecks;
         public readonly ObjectBuffer<WallSegmentIdentifier>[] WallBuffers;
         public readonly List<WallSegmentIdentifier>[] WallIdentifiers;
-        public readonly ObjectModelBuffer<ObjectIdentifier>[] ObjectBuffers; 
+        public readonly ObjectModelBuffer<ObjectIdentifier>[] ObjectBuffers;
         public readonly float WallResolution;
         int _curDeck;
 
@@ -43,6 +43,11 @@ namespace Drydock.Logic.DoodadEditorState{
             CenterPoint = geometryInfo.CenterPoint;
 
             ObjectBuffers = new ObjectModelBuffer<ObjectIdentifier>[NumDecks];
+
+            for (int i = 0; i < ObjectBuffers.Count(); i++) {
+                ObjectBuffers[i] = new ObjectModelBuffer<ObjectIdentifier>(100);
+            }
+
             WallBuffers = new ObjectBuffer<WallSegmentIdentifier>[NumDecks];
             for (int i = 0; i < WallBuffers.Count(); i++){
                 int potentialWalls = geometryInfo.FloorVertexes[i].Count()*2;
@@ -94,6 +99,14 @@ namespace Drydock.Logic.DoodadEditorState{
                 CurDeckBoundingBoxes = DeckBoundingBoxes[_curDeck];
                 CurDeckVertexes = DeckVertexes[_curDeck];
                 CurObjBuffer = ObjectBuffers[_curDeck];
+
+                foreach (var buffer in ObjectBuffers){
+                    buffer.Enabled = false;
+                }
+
+                for (int i = _curDeck; i < NumDecks; i++){
+                    ObjectBuffers[i].Enabled = true;
+                }
 
                 if (OnCurDeckChange != null){
                     OnCurDeckChange.Invoke(oldDeck, _curDeck);
