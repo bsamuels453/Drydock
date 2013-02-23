@@ -56,6 +56,7 @@ namespace Drydock.Render{
             }
             _panelSpriteBatch.End();
             Singleton.Device.DepthStencilState = _universalDepthStencil;
+
             foreach (var buffer in _buffers){
                 buffer.Draw(viewMatrix);
             }
@@ -84,7 +85,7 @@ namespace Drydock.Render{
         }
 
         public static void UnbindRenderTarget(){
-            _curRenderPanel = null;
+            //_curRenderPanel = null;
         }
 
         public static void Init(){

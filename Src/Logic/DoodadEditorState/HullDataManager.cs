@@ -19,39 +19,44 @@ namespace Drydock.Logic.DoodadEditorState{
 
         public readonly Vector3 CenterPoint;
 
-        public readonly ObjectBuffer<QuadIdentifier>[] DeckBuffers;
-        public readonly List<BoundingBox>[] DeckFloorBoundingBoxes;
+        public readonly List<BoundingBox>[] DeckBoundingBoxes;
+        public readonly ObjectBuffer<ObjectIdentifier>[] DeckBuffers;
         public readonly float DeckHeight;
-        public readonly List<Vector3>[] FloorVertexes;
+        public readonly List<Vector3>[] DeckVertexes;
         public readonly ShipGeometryBuffer[] HullBuffers;
         public readonly int NumDecks;
-        public readonly ObjectBuffer<ObjectIdentifier>[] WallBuffers;
-        public readonly List<ObjectIdentifier>[] WallIdentifiers;
+        public readonly ObjectBuffer<WallSegmentIdentifier>[] WallBuffers;
+        public readonly List<WallSegmentIdentifier>[] WallIdentifiers;
+        public readonly ObjectModelBuffer<ObjectIdentifier>[] ObjectBuffers;
         public readonly float WallResolution;
         int _curDeck;
 
         public HullDataManager(HullGeometryInfo geometryInfo){
             NumDecks = geometryInfo.NumDecks;
-            CurDeck = 0;
             VisibleDecks = NumDecks;
             HullBuffers = geometryInfo.HullWallTexBuffers;
             DeckBuffers = geometryInfo.DeckFloorBuffers;
-            DeckFloorBoundingBoxes = geometryInfo.DeckFloorBoundingBoxes;
-            FloorVertexes = geometryInfo.FloorVertexes;
+            DeckBoundingBoxes = geometryInfo.DeckFloorBoundingBoxes;
+            DeckVertexes = geometryInfo.FloorVertexes;
             DeckHeight = geometryInfo.DeckHeight;
             WallResolution = geometryInfo.WallResolution;
             CenterPoint = geometryInfo.CenterPoint;
 
+            ObjectBuffers = new ObjectModelBuffer<ObjectIdentifier>[NumDecks];
 
-            WallBuffers = new ObjectBuffer<ObjectIdentifier>[NumDecks];
-            for (int i = 0; i < WallBuffers.Count(); i++){
-                int potentialWalls = geometryInfo.FloorVertexes[i].Count()*2;
-                WallBuffers[i] = new ObjectBuffer<ObjectIdentifier>(potentialWalls, 10, 20, 30, "HullWallTex");
+            for (int i = 0; i < ObjectBuffers.Count(); i++) {
+                ObjectBuffers[i] = new ObjectModelBuffer<ObjectIdentifier>(100);
             }
 
-            WallIdentifiers = new List<ObjectIdentifier>[NumDecks];
+            WallBuffers = new ObjectBuffer<WallSegmentIdentifier>[NumDecks];
+            for (int i = 0; i < WallBuffers.Count(); i++){
+                int potentialWalls = geometryInfo.FloorVertexes[i].Count()*2;
+                WallBuffers[i] = new ObjectBuffer<WallSegmentIdentifier>(potentialWalls, 10, 20, 30, "HullWallTex");
+            }
+
+            WallIdentifiers = new List<WallSegmentIdentifier>[NumDecks];
             for (int i = 0; i < WallIdentifiers.Length; i++){
-                WallIdentifiers[i] = new List<ObjectIdentifier>();
+                WallIdentifiers[i] = new List<WallSegmentIdentifier>();
             }
 
             //override default lighting
@@ -62,7 +67,17 @@ namespace Drydock.Logic.DoodadEditorState{
                 buffer.DiffuseDirection = new Vector3(0, -1, 1);
                 buffer.CullMode = CullMode.None;
             }
+            CurDeck = 0;
         }
+
+        //these will save from having to do array[curDeck] all the time elsewhere in the editor
+        public ObjectBuffer<ObjectIdentifier> CurDeckBuffer { get; private set; }
+        public ObjectBuffer<WallSegmentIdentifier> CurWallBuffer { get; private set; }
+        public ShipGeometryBuffer CurHullBuffer { get; private set; }
+        public List<WallSegmentIdentifier> CurWallIdentifiers { get; private set; }
+        public List<BoundingBox> CurDeckBoundingBoxes { get; private set; }
+        public List<Vector3> CurDeckVertexes { get; private set; }
+        public ObjectModelBuffer<ObjectIdentifier> CurObjBuffer { get; private set; }
 
         public int VisibleDecks { get; private set; }
 
@@ -76,6 +91,23 @@ namespace Drydock.Logic.DoodadEditorState{
                 int oldDeck = _curDeck;
                 VisibleDecks += diff;
                 _curDeck = value;
+
+                CurDeckBuffer = DeckBuffers[_curDeck];
+                CurWallBuffer = WallBuffers[_curDeck];
+                CurHullBuffer = HullBuffers[_curDeck];
+                CurWallIdentifiers = WallIdentifiers[_curDeck];
+                CurDeckBoundingBoxes = DeckBoundingBoxes[_curDeck];
+                CurDeckVertexes = DeckVertexes[_curDeck];
+                CurObjBuffer = ObjectBuffers[_curDeck];
+
+                foreach (var buffer in ObjectBuffers){
+                    buffer.Enabled = false;
+                }
+
+                for (int i = _curDeck; i < NumDecks; i++){
+                    ObjectBuffers[i].Enabled = true;
+                }
+
                 if (OnCurDeckChange != null){
                     OnCurDeckChange.Invoke(oldDeck, _curDeck);
                 }
@@ -104,7 +136,7 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         public void MoveDownOneDeck(){
-            if (CurDeck < NumDecks){
+            if (CurDeck < NumDecks - 1){
                 for (int i = 0; i < DeckBuffers.Count(); i++){
                     if (DeckBuffers[i].Enabled){
                         CurDeck++;

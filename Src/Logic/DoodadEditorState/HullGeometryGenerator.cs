@@ -260,9 +260,9 @@ namespace Drydock.Logic.DoodadEditorState{
             return retMesh;
         }
 
-        static ObjectBuffer<QuadIdentifier>[] GenerateDeckFloorMesh(Vector3[][][] deckSVerts, List<BoundingBox>[] deckBoundingBoxes, int numDecks){
+        static ObjectBuffer<ObjectIdentifier>[] GenerateDeckFloorMesh(Vector3[][][] deckSVerts, List<BoundingBox>[] deckBoundingBoxes, int numDecks) {
             float boundingBoxWidth = Math.Abs(deckBoundingBoxes[0][0].Max.X - deckBoundingBoxes[0][0].Min.X);
-            var ret = new ObjectBuffer<QuadIdentifier>[numDecks];
+            var ret = new ObjectBuffer<ObjectIdentifier>[numDecks];
 
             for (int deck = 0; deck < numDecks; deck++){
                 var deckBBoxes = deckBoundingBoxes[deck];
@@ -348,9 +348,10 @@ namespace Drydock.Logic.DoodadEditorState{
                     }
                 }
 
-                var buff = new ObjectBuffer<QuadIdentifier>(verts.Count + deckBBoxes.Count, 2, 4, 6, "DoodadEditorFloorTex");
+                var buff = new ObjectBuffer<ObjectIdentifier>(verts.Count + deckBBoxes.Count, 2, 4, 6, "DoodadEditorFloorTex");
 
                 //add border quads to objectbuffer
+                var nullidentifier = new ObjectIdentifier(ObjectType.Misc, Vector3.Zero);
                 var idxWinding = new[]{0, 1, 2, 2, 3, 0};
                 var vertli = new List<VertexPositionNormalTexture>();
                 for (int i = 0; i < verts.Count; i += 4){
@@ -359,7 +360,7 @@ namespace Drydock.Logic.DoodadEditorState{
                     vertli.Add(new VertexPositionNormalTexture(verts[i + 1], Vector3.Up, new Vector2(1, 0)));
                     vertli.Add(new VertexPositionNormalTexture(verts[i + 2], Vector3.Up, new Vector2(1, 1)));
                     vertli.Add(new VertexPositionNormalTexture(verts[i + 3], Vector3.Up, new Vector2(0, 1)));
-                    buff.AddObject(null, (int[]) idxWinding.Clone(), vertli.ToArray());
+                    buff.AddObject(nullidentifier, (int[])idxWinding.Clone(), vertli.ToArray());
                     //reflect across Z axis
                     vertli.Clear();
                     var reflectVector = new Vector3(1, 1, -1);
@@ -367,7 +368,7 @@ namespace Drydock.Logic.DoodadEditorState{
                     vertli.Add(new VertexPositionNormalTexture(verts[i + 1]*reflectVector, Vector3.Up, new Vector2(1, 0)));
                     vertli.Add(new VertexPositionNormalTexture(verts[i + 2]*reflectVector, Vector3.Up, new Vector2(1, 1)));
                     vertli.Add(new VertexPositionNormalTexture(verts[i + 3]*reflectVector, Vector3.Up, new Vector2(0, 1)));
-                    buff.AddObject(null, (int[]) idxWinding.Clone(), vertli.ToArray());
+                    buff.AddObject(nullidentifier, (int[])idxWinding.Clone(), vertli.ToArray());
                 }
 
                 //add boundingbox defined quads to objectbuffer
@@ -380,7 +381,7 @@ namespace Drydock.Logic.DoodadEditorState{
                     vertli.Add(new VertexPositionNormalTexture(min + xWidth, Vector3.Up, new Vector2(1, 0)));
                     vertli.Add(new VertexPositionNormalTexture(min + xWidth + zWidth, Vector3.Up, new Vector2(1, 1)));
                     vertli.Add(new VertexPositionNormalTexture(min + zWidth, Vector3.Up, new Vector2(0, 1)));
-                    buff.AddObject(new QuadIdentifier(min, min + xWidth, min + xWidth + zWidth, min + zWidth), (int[]) idxWinding.Clone(), vertli.ToArray());
+                    buff.AddObject(new ObjectIdentifier(ObjectType.Deckboard, min), (int[])idxWinding.Clone(), vertli.ToArray());
                 }
                 ret[deck] = buff;
             }
@@ -524,7 +525,7 @@ namespace Drydock.Logic.DoodadEditorState{
                 foreach (var box in wallSelectionBoxes[layer]){
                     wallSelectionPoints.Last().Add(box.Min);
                     wallSelectionPoints.Last().Add(box.Max);
-                    wallSelectionPoints.Last().Add(new Vector3(box.Max.X, box.Min.Y, box.Max.Z));
+                    wallSelectionPoints.Last().Add(new Vector3(box.Max.X, box.Max.Y, box.Min.Z));
                     wallSelectionPoints.Last().Add(new Vector3(box.Min.X, box.Max.Y, box.Max.Z));
                 }
 
@@ -596,53 +597,12 @@ namespace Drydock.Logic.DoodadEditorState{
     internal class HullGeometryInfo{
         public Vector3 CenterPoint;
         public List<BoundingBox>[] DeckFloorBoundingBoxes;
-        public ObjectBuffer<QuadIdentifier>[] DeckFloorBuffers;
+        public ObjectBuffer<ObjectIdentifier>[] DeckFloorBuffers;
         public float DeckHeight;
         public List<Vector3>[] FloorVertexes;
         public ShipGeometryBuffer[] HullWallTexBuffers;
         public Vector2 MaxBoundingBoxDims;
         public int NumDecks;
         public float WallResolution;
-    }
-
-    internal struct QuadIdentifier : IEquatable<QuadIdentifier>, IEnumerable{
-        readonly Vector3[] _points;
-
-        public QuadIdentifier(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4){
-            _points = new Vector3[4];
-            _points[0] = p1;
-            _points[1] = p2;
-            _points[2] = p3;
-            _points[3] = p4;
-        }
-
-        #region IEnumerable Members
-
-        IEnumerator IEnumerable.GetEnumerator(){
-            return _points.GetEnumerator();
-        }
-
-        #endregion
-
-        #region IEquatable<QuadIdentifier> Members
-
-        public bool Equals(QuadIdentifier other){
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        public QuadIdentifier CloneWithOffset(Vector3 offset){
-            return new QuadIdentifier(_points[0] + offset, _points[1] + offset, _points[2] + offset, _points[3] + offset);
-        }
-
-        public BoundingBox GenerateBoundingBox(){
-            // ReSharper disable CompareOfFloatsByEqualityOperator
-            Debug.Assert(_points[0].X != _points[2].X);
-            Debug.Assert(_points[0].Z != _points[2].Z);
-            // ReSharper restore CompareOfFloatsByEqualityOperator
-
-            return new BoundingBox(_points[0], _points[2]);
-        }
     }
 }
