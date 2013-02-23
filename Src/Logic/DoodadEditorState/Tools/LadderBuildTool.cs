@@ -45,10 +45,14 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected override void HandleCursorChange(bool isDrawing){   
         }
 
-        protected override void HandleCursorEnd(){
+        protected override void HandleCursorRelease(){
+            var identifier = new ObjectIdentifier(ObjectType.Ladder, CursorPosition, _hullData.CurDeck);
+            Matrix trans = Matrix.CreateRotationX((float)-Math.PI / 2) * Matrix.CreateRotationY((float)-Math.PI / 2) * Matrix.CreateTranslation(CursorPosition);
+            _hullData.CurObjBuffer.AddObject(identifier, Singleton.ContentManager.Load<Model>("models/ladder"), trans);
         }
 
-        protected override void HandleCursorBegin(){
+        protected override void HandleCursorDown(){
+
         }
 
         protected override void OnCurDeckChange(){
