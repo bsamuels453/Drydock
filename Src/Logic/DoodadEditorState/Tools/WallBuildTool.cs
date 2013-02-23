@@ -29,8 +29,9 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _wallHeight = hullData.DeckHeight - 0.01f;
         }
 
-        protected override void HandleCursorChange(){
-            GenerateWallsFromStroke();
+        protected override void HandleCursorChange(bool isDrawing){
+            if(isDrawing)
+                GenerateWallsFromStroke();
         }
 
         protected override void HandleCursorEnd(){

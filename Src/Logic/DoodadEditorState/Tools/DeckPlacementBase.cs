@@ -130,9 +130,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                         CursorPosition = HullData.CurDeckVertexes[ptIdx];
                         if (CursorPosition != prevCursorPosition){
                             UpdateCursorGhost();
-                            if (_isDrawing){
-                                HandleCursorChange();
-                            }
+                            HandleCursorChange(_isDrawing);
                         }
 
                         intersectionFound = true;
@@ -311,7 +309,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         /// <summary>
         ///   Called when the cursor moves between selection nodes.
         /// </summary>
-        protected abstract void HandleCursorChange();
+        protected abstract void HandleCursorChange(bool isDrawing);
 
         /// <summary>
         ///   Called at the end of the "drawing" period when user releases mouse button.

@@ -19,7 +19,9 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _prevIdentifiers = new List<WallSegmentIdentifier>();
         }
 
-        protected override void HandleCursorChange(){
+        protected override void HandleCursorChange(bool isDrawing){
+            if (!isDrawing)
+                return;
             _tempWallBuffer.ClearObjects();
             int strokeW = (int) ((StrokeEnd.Z - StrokeOrigin.Z)/GridResolution);
             int strokeH = (int) ((StrokeEnd.X - StrokeOrigin.X)/GridResolution);
