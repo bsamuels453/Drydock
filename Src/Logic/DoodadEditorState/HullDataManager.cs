@@ -25,8 +25,8 @@ namespace Drydock.Logic.DoodadEditorState{
         public readonly List<Vector3>[] DeckVertexes;
         public readonly ShipGeometryBuffer[] HullBuffers;
         public readonly int NumDecks;
-        public readonly ObjectBuffer<ObjectIdentifier>[] WallBuffers;
-        public readonly List<ObjectIdentifier>[] WallIdentifiers;
+        public readonly ObjectBuffer<WallSegmentIdentifier>[] WallBuffers;
+        public readonly List<WallSegmentIdentifier>[] WallIdentifiers;
         public readonly float WallResolution;
         int _curDeck;
 
@@ -42,15 +42,15 @@ namespace Drydock.Logic.DoodadEditorState{
             CenterPoint = geometryInfo.CenterPoint;
 
 
-            WallBuffers = new ObjectBuffer<ObjectIdentifier>[NumDecks];
+            WallBuffers = new ObjectBuffer<WallSegmentIdentifier>[NumDecks];
             for (int i = 0; i < WallBuffers.Count(); i++){
                 int potentialWalls = geometryInfo.FloorVertexes[i].Count()*2;
-                WallBuffers[i] = new ObjectBuffer<ObjectIdentifier>(potentialWalls, 10, 20, 30, "HullWallTex");
+                WallBuffers[i] = new ObjectBuffer<WallSegmentIdentifier>(potentialWalls, 10, 20, 30, "HullWallTex");
             }
 
-            WallIdentifiers = new List<ObjectIdentifier>[NumDecks];
+            WallIdentifiers = new List<WallSegmentIdentifier>[NumDecks];
             for (int i = 0; i < WallIdentifiers.Length; i++){
-                WallIdentifiers[i] = new List<ObjectIdentifier>();
+                WallIdentifiers[i] = new List<WallSegmentIdentifier>();
             }
 
             //override default lighting
@@ -66,9 +66,9 @@ namespace Drydock.Logic.DoodadEditorState{
 
         //these will save from having to do array[curDeck] all the time elsewhere in the editor
         public ObjectBuffer<QuadIdentifier> CurDeckBuffer { get; private set; }
-        public ObjectBuffer<ObjectIdentifier> CurWallBuffer { get; private set; }
+        public ObjectBuffer<WallSegmentIdentifier> CurWallBuffer { get; private set; }
         public ShipGeometryBuffer CurHullBuffer { get; private set; }
-        public List<ObjectIdentifier> CurWallIdentifiers { get; private set; }
+        public List<WallSegmentIdentifier> CurWallIdentifiers { get; private set; }
         public List<BoundingBox> CurDeckBoundingBoxes { get; private set; }
         public List<Vector3> CurDeckVertexes { get; private set; }
 

@@ -8,7 +8,7 @@ using Drydock.UI.Widgets;
 namespace Drydock.Logic.DoodadEditorState.Tools{
     internal class WallMenuTool : IToolbarTool{
         readonly Toolbar _toolbar;
-
+        //todo: break this and put it in doodadui
         public WallMenuTool(HullDataManager hullData){
             _toolbar = new Toolbar("Templates/BuildToolbar.json");
             _toolbar.Enabled = false;

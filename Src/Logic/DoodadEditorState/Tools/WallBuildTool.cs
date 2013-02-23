@@ -11,13 +11,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
     internal class WallBuildTool : DeckPlacementBase{
-        readonly ObjectBuffer<ObjectIdentifier> _tempWallBuffer;
-        readonly List<ObjectIdentifier> _tempWallIdentifiers;
+        readonly ObjectBuffer<WallSegmentIdentifier> _tempWallBuffer;
+        readonly List<WallSegmentIdentifier> _tempWallIdentifiers;
         readonly float _wallHeight;
 
         public WallBuildTool(HullDataManager hullData) :
             base(hullData, hullData.WallResolution){
-            _tempWallBuffer = new ObjectBuffer<ObjectIdentifier>(
+            _tempWallBuffer = new ObjectBuffer<WallSegmentIdentifier>(
                 hullData.DeckVertexes[0].Count()*2,
                 10,
                 20,
@@ -25,7 +25,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 "InternalWallTex")
                               {UpdateBufferManually = true};
 
-            _tempWallIdentifiers = new List<ObjectIdentifier>();
+            _tempWallIdentifiers = new List<WallSegmentIdentifier>();
             _wallHeight = hullData.DeckHeight - 0.01f;
         }
 
@@ -81,7 +81,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 VertexPositionNormalTexture[] verticies;
                 var origin = new Vector3(StrokeOrigin.X, StrokeOrigin.Y, StrokeOrigin.Z + GridResolution*i*wDir);
                 MeshHelper.GenerateCube(out verticies, out indicies, origin, wallWidth, _wallHeight, GridResolution*wDir);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + GridResolution*wDir));
+                var identifier = new WallSegmentIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + GridResolution*wDir));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 _tempWallIdentifiers.Add(identifier);
             }
@@ -90,7 +90,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 VertexPositionNormalTexture[] verticies;
                 var origin = new Vector3(StrokeEnd.X, StrokeOrigin.Y, StrokeOrigin.Z + GridResolution*i*wDir);
                 MeshHelper.GenerateCube(out verticies, out indicies, origin, wallWidth, _wallHeight, GridResolution*wDir);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + GridResolution*wDir));
+                var identifier = new WallSegmentIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + GridResolution*wDir));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 _tempWallIdentifiers.Add(identifier);
             }
@@ -100,7 +100,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 VertexPositionNormalTexture[] verticies;
                 var origin = new Vector3(StrokeOrigin.X + GridResolution*i*hDir, StrokeOrigin.Y, StrokeOrigin.Z);
                 MeshHelper.GenerateCube(out verticies, out indicies, origin, GridResolution*hDir, _wallHeight, wallWidth);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X + GridResolution*hDir, origin.Y, origin.Z));
+                var identifier = new WallSegmentIdentifier(origin, new Vector3(origin.X + GridResolution*hDir, origin.Y, origin.Z));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 _tempWallIdentifiers.Add(identifier);
             }
@@ -109,7 +109,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 VertexPositionNormalTexture[] verticies;
                 var origin = new Vector3(StrokeOrigin.X + GridResolution*i*hDir, StrokeOrigin.Y, StrokeEnd.Z);
                 MeshHelper.GenerateCube(out verticies, out indicies, origin, GridResolution*hDir, _wallHeight, wallWidth);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X + GridResolution*hDir, origin.Y, origin.Z));
+                var identifier = new WallSegmentIdentifier(origin, new Vector3(origin.X + GridResolution*hDir, origin.Y, origin.Z));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 _tempWallIdentifiers.Add(identifier);
             }
@@ -120,18 +120,18 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
     #region wallidentifier
 
-    internal struct ObjectIdentifier : IEquatable<ObjectIdentifier>{
+    internal struct WallSegmentIdentifier : IEquatable<WallSegmentIdentifier>{
         public readonly Vector3 RefPoint1;
         public readonly Vector3 RefPoint2;
 
-        public ObjectIdentifier(Vector3 refPoint2, Vector3 refPoint1){
+        public WallSegmentIdentifier(Vector3 refPoint2, Vector3 refPoint1){
             RefPoint2 = refPoint2;
             RefPoint1 = refPoint1;
         }
 
         #region equality operators
 
-        public bool Equals(ObjectIdentifier other){
+        public bool Equals(WallSegmentIdentifier other){
             if (RefPoint2 == other.RefPoint2 && RefPoint1 == other.RefPoint1)
                 return true;
             if (RefPoint2 == other.RefPoint1 && other.RefPoint2 == RefPoint1)
@@ -139,7 +139,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             return false;
         }
 
-        public static bool operator ==(ObjectIdentifier wallid1, ObjectIdentifier wallid2){
+        public static bool operator ==(WallSegmentIdentifier wallid1, WallSegmentIdentifier wallid2){
             if (wallid1.RefPoint2 == wallid2.RefPoint2 && wallid1.RefPoint1 == wallid2.RefPoint1)
                 return true;
             if (wallid1.RefPoint2 == wallid2.RefPoint1 && wallid2.RefPoint1 == wallid1.RefPoint2)
@@ -147,7 +147,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             return false;
         }
 
-        public static bool operator !=(ObjectIdentifier wallid1, ObjectIdentifier wallid2){
+        public static bool operator !=(WallSegmentIdentifier wallid1, WallSegmentIdentifier wallid2){
             if (wallid1.RefPoint2 == wallid2.RefPoint2 && wallid1.RefPoint1 == wallid2.RefPoint1)
                 return false;
             if (wallid1.RefPoint2 == wallid2.RefPoint1 && wallid2.RefPoint1 == wallid1.RefPoint2)
@@ -157,8 +157,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         public override bool Equals(object obj){
             if (ReferenceEquals(null, obj)) return false;
-            if (obj.GetType() != typeof (ObjectIdentifier)) return false;
-            return Equals((ObjectIdentifier) obj);
+            if (obj.GetType() != typeof (WallSegmentIdentifier)) return false;
+            return Equals((WallSegmentIdentifier) obj);
         }
 
         #endregion

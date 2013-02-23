@@ -10,13 +10,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
     internal class WallDeleteTool : DeckPlacementBase{
-        readonly ObjectBuffer<ObjectIdentifier> _tempWallBuffer;
-        List<ObjectIdentifier> _prevIdentifiers;
+        readonly ObjectBuffer<WallSegmentIdentifier> _tempWallBuffer;
+        List<WallSegmentIdentifier> _prevIdentifiers;
 
         public WallDeleteTool(HullDataManager hullData) :
             base(hullData, hullData.WallResolution){
-            _tempWallBuffer = new ObjectBuffer<ObjectIdentifier>(5000, 10, 20, 30, "WallDeleteMarqueeTex"){UpdateBufferManually = true};
-            _prevIdentifiers = new List<ObjectIdentifier>();
+            _tempWallBuffer = new ObjectBuffer<WallSegmentIdentifier>(5000, 10, 20, 30, "WallDeleteMarqueeTex"){UpdateBufferManually = true};
+            _prevIdentifiers = new List<WallSegmentIdentifier>();
         }
 
         protected override void HandleCursorChange(){
@@ -35,7 +35,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             else
                 hDir = -1;
 
-            var identifiers = new List<ObjectIdentifier>();
+            var identifiers = new List<WallSegmentIdentifier>();
             //generate width walls
             const float wallWidth = 0.1f;
             const float height = 0.01f;
@@ -44,7 +44,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 VertexPositionNormalTexture[] verticies;
                 var origin = new Vector3(StrokeOrigin.X, StrokeOrigin.Y, StrokeOrigin.Z + GridResolution*i*wDir);
                 MeshHelper.GenerateCube(out verticies, out indicies, origin, wallWidth, height, GridResolution*wDir);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + GridResolution*wDir));
+                var identifier = new WallSegmentIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + GridResolution*wDir));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 identifiers.Add(identifier);
             }
@@ -53,7 +53,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 VertexPositionNormalTexture[] verticies;
                 var origin = new Vector3(StrokeEnd.X, StrokeOrigin.Y, StrokeOrigin.Z + GridResolution*i*wDir);
                 MeshHelper.GenerateCube(out verticies, out indicies, origin, wallWidth, height, GridResolution*wDir);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + GridResolution*wDir));
+                var identifier = new WallSegmentIdentifier(origin, new Vector3(origin.X, origin.Y, origin.Z + GridResolution*wDir));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 identifiers.Add(identifier);
             }
@@ -63,7 +63,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 VertexPositionNormalTexture[] verticies;
                 var origin = new Vector3(StrokeOrigin.X + GridResolution*i*hDir, StrokeOrigin.Y, StrokeOrigin.Z);
                 MeshHelper.GenerateCube(out verticies, out indicies, origin, GridResolution*hDir, height, wallWidth);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X + GridResolution*hDir, origin.Y, origin.Z));
+                var identifier = new WallSegmentIdentifier(origin, new Vector3(origin.X + GridResolution*hDir, origin.Y, origin.Z));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 identifiers.Add(identifier);
             }
@@ -72,7 +72,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 VertexPositionNormalTexture[] verticies;
                 var origin = new Vector3(StrokeOrigin.X + GridResolution*i*hDir, StrokeOrigin.Y, StrokeEnd.Z);
                 MeshHelper.GenerateCube(out verticies, out indicies, origin, GridResolution*hDir, height, wallWidth);
-                var identifier = new ObjectIdentifier(origin, new Vector3(origin.X + GridResolution*hDir, origin.Y, origin.Z));
+                var identifier = new WallSegmentIdentifier(origin, new Vector3(origin.X + GridResolution*hDir, origin.Y, origin.Z));
                 _tempWallBuffer.AddObject(identifier, indicies, verticies);
                 identifiers.Add(identifier);
             }
