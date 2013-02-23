@@ -32,10 +32,10 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             set{
                 _enabled = value;
                 _cursorBuff.Enabled = value;
-                GuideGridBuffers[HullData.CurDeck].Enabled = value;
 
                 if (value){
                     OnEnable();
+                    GuideGridBuffers[HullData.CurDeck].Enabled = true;
                 }
                 else{
                     foreach (var buffer in GuideGridBuffers){
