@@ -18,6 +18,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected readonly float GridResolution;
 
         readonly WireframeBuffer _cursorBuff;
+        readonly int _selectionResolution;
         protected Vector3 CursorPosition;
 
         protected Vector3 StrokeEnd;
@@ -45,12 +46,23 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             }
         }
 
-        protected DeckPlacementBase(HullDataManager hullData, float resolution){
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hullData"></param>
+        /// <param name="gridResolution">not functioning properly</param>
+        /// <param name="selectionResolution">how many grid tiles wide the selection marquee is intended to be. Set to -1 for selection type to be set to vertexes, rather than tiles.</param>
+        protected DeckPlacementBase(HullDataManager hullData, float gridResolution, int selectionResolution=-1){
             HullData = hullData;
-
-            //XXX resolution is not being reated properly, beware
+            if(selectionResolution>0)
+                _selectionResolution = selectionResolution+1;
+            else
+                _selectionResolution = selectionResolution;
+            
+            
+            //XXX gridResolution is not being reated properly, beware
             _enabled = false;
-            GridResolution = resolution;
+            GridResolution = gridResolution;
 
             _cursorBuff = new WireframeBuffer(2, 2, 1);
             var selectionIndicies = new[]{0, 1};
@@ -93,7 +105,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 direction.Normalize();
                 var ray = new Ray(nearPoint, direction);
 
-
+                //xx eventually might want to dissect this with comments
                 bool intersectionFound = false;
                 foreach (BoundingBox t in HullData.CurDeckBoundingBoxes){
                     float? ndist;
@@ -164,21 +176,36 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         #endregion
 
-        //xxx refactor resolution
         bool IsCursorValid(Vector3 newCursorPos, Vector3 prevCursorPosition, List<Vector3> deckFloorVertexes, float distToPt){
-            if (deckFloorVertexes.Contains(prevCursorPosition) && _isDrawing){
-                var v1 = new Vector3(newCursorPos.X, newCursorPos.Y, StrokeOrigin.Z);
-                var v2 = new Vector3(StrokeOrigin.X, newCursorPos.Y, newCursorPos.Z);
+            if (_selectionResolution == -1){
+                //vertex selection/wall drawing
+                if (deckFloorVertexes.Contains(prevCursorPosition) && _isDrawing){
+                    var v1 = new Vector3(newCursorPos.X, newCursorPos.Y, StrokeOrigin.Z);
+                    var v2 = new Vector3(StrokeOrigin.X, newCursorPos.Y, newCursorPos.Z);
 
-                if (!deckFloorVertexes.Contains(v1))
-                    return false;
-                if (!deckFloorVertexes.Contains(v2))
-                    return false;
+                    if (!deckFloorVertexes.Contains(v1))
+                        return false;
+                    if (!deckFloorVertexes.Contains(v2))
+                        return false;
+                }
+                return true;
             }
-            return true;
+
+            //object placement
+            bool validCursor = true;
+            for (int x = 0; x < _selectionResolution; x++){
+                for (int z = 0; z < _selectionResolution; z++){
+                    var vert = newCursorPos + new Vector3(x*GridResolution, 0, z*GridResolution);
+                    if (!deckFloorVertexes.Contains(vert)){
+                        validCursor = false;
+                        break;
+                    }
+                }
+            }
+            return validCursor;
         }
 
-        //xxx refactor resolution
+        //todo: refactor gridResolution
         void GenerateGuideGrid(){
             for (int i = 0; i < HullData.NumDecks; i++){
                 #region indicies
