@@ -524,7 +524,7 @@ namespace Drydock.Logic.DoodadEditorState{
                 foreach (var box in wallSelectionBoxes[layer]){
                     wallSelectionPoints.Last().Add(box.Min);
                     wallSelectionPoints.Last().Add(box.Max);
-                    wallSelectionPoints.Last().Add(new Vector3(box.Max.X, box.Min.Y, box.Max.Z));
+                    wallSelectionPoints.Last().Add(new Vector3(box.Max.X, box.Max.Y, box.Min.Z));
                     wallSelectionPoints.Last().Add(new Vector3(box.Min.X, box.Max.Y, box.Max.Z));
                 }
 
