@@ -39,10 +39,9 @@ namespace Drydock.Logic.DoodadEditorState{
                                              hullData)
                 );
 
-            /*_toolBar.BindButtonToTool(1, new LadderBuildTool(
-                                             geometryInfo,
-                                             VisibleDecks
-                                             ));*/
+            _toolBar.BindButtonToTool(1, new LadderBuildTool(
+                                             hullData
+                                             ));
         }
 
         #region IInputUpdates Members
