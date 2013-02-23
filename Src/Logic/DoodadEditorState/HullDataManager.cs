@@ -20,7 +20,7 @@ namespace Drydock.Logic.DoodadEditorState{
         public readonly Vector3 CenterPoint;
 
         public readonly List<BoundingBox>[] DeckBoundingBoxes;
-        public readonly ObjectBuffer<QuadIdentifier>[] DeckBuffers;
+        public readonly ObjectBuffer<ObjectIdentifier>[] DeckBuffers;
         public readonly float DeckHeight;
         public readonly List<Vector3>[] DeckVertexes;
         public readonly ShipGeometryBuffer[] HullBuffers;
@@ -71,7 +71,7 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         //these will save from having to do array[curDeck] all the time elsewhere in the editor
-        public ObjectBuffer<QuadIdentifier> CurDeckBuffer { get; private set; }
+        public ObjectBuffer<ObjectIdentifier> CurDeckBuffer { get; private set; }
         public ObjectBuffer<WallSegmentIdentifier> CurWallBuffer { get; private set; }
         public ShipGeometryBuffer CurHullBuffer { get; private set; }
         public List<WallSegmentIdentifier> CurWallIdentifiers { get; private set; }
