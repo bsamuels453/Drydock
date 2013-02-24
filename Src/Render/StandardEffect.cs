@@ -7,16 +7,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal abstract class StandardEffect : BaseBufferObject<VertexPositionNormalTexture>{
-        protected StandardEffect(int numIndicies, int numVerticies, int numPrimitives, string textureName) :
+        protected StandardEffect(int numIndicies, int numVerticies, int numPrimitives, string settingsFileName) :
             base(numIndicies, numVerticies, numPrimitives, PrimitiveType.TriangleList){
-                var texture = Gbl.LoadContent<Texture2D>(textureName);
-                BufferEffect = Gbl.LoadContent<Effect>("Shader_StandardEffect").Clone();
+            
+            Gbl.SetShaderParams(settingsFileName, out BufferEffect);
             BufferEffect.Parameters["Projection"].SetValue(Gbl.ProjectionMatrix);
             BufferEffect.Parameters["World"].SetValue(Matrix.Identity);
-            BufferEffect.Parameters["Texture"].SetValue(texture);
-            BufferEffect.Parameters["AmbientIntensity"].SetValue(1);
-            BufferEffect.Parameters["DiffuseIntensity"].SetValue(1);
-            BufferEffect.Parameters["DiffuseLightDirection"].SetValue(new Vector3(0, -1, 1));
         }
 
         public CullMode CullMode{

@@ -348,7 +348,7 @@ namespace Drydock.Logic.DoodadEditorState{
                     }
                 }
 
-                var buff = new ObjectBuffer<ObjectIdentifier>(verts.Count + deckBBoxes.Count, 2, 4, 6, "UI_DoodadEditorFloorTex");
+                var buff = new ObjectBuffer<ObjectIdentifier>(verts.Count + deckBBoxes.Count, 2, 4, 6, "DeckFloor");
 
                 //add border quads to objectbuffer
                 var nullidentifier = new ObjectIdentifier(ObjectType.Misc, Vector3.Zero);
@@ -411,7 +411,7 @@ namespace Drydock.Logic.DoodadEditorState{
                 MeshHelper.ConvertMeshToVertList(hullMesh, hullNormals, ref hullVerticies);
 
                 //now stick it in a buffer
-                hullBuffers[i] = new ShipGeometryBuffer(hullIndicies.Length, hullVerticies.Length, hullIndicies.Length/3, "UI_DoodadEditorHullTex", CullMode.CullClockwiseFace);
+                hullBuffers[i] = new ShipGeometryBuffer(hullIndicies.Length, hullVerticies.Length, hullIndicies.Length/3, "HullEffect", CullMode.CullClockwiseFace);
                 hullBuffers[i].Indexbuffer.SetData(hullIndicies);
                 hullBuffers[i].Vertexbuffer.SetData(hullVerticies);
             }

@@ -22,8 +22,8 @@ namespace Drydock.Render{
 
         public bool UpdateBufferManually;
 
-        public ObjectBuffer(int maxObjects, int primitivesPerObject, int verticiesPerObject, int indiciesPerObject, string textureName) :
-            base(indiciesPerObject*maxObjects, verticiesPerObject*maxObjects, primitivesPerObject*maxObjects, textureName){
+        public ObjectBuffer(int maxObjects, int primitivesPerObject, int verticiesPerObject, int indiciesPerObject, string settingsFileName) :
+            base(indiciesPerObject*maxObjects, verticiesPerObject*maxObjects, primitivesPerObject*maxObjects, settingsFileName){
             BufferRasterizer = new RasterizerState{CullMode = CullMode.None};
 
             _objectData = new List<ObjectData>();

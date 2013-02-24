@@ -22,7 +22,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 10,
                 20,
                 30,
-                "UI_InternalWallTex")
+                "InternalWalls")
                               {UpdateBufferManually = true};
 
             _tempWallIdentifiers = new List<WallSegmentIdentifier>();

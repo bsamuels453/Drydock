@@ -51,7 +51,7 @@ namespace Drydock.Logic.DoodadEditorState {
             WallBuffers = new ObjectBuffer<WallSegmentIdentifier>[NumDecks];
             for (int i = 0; i < WallBuffers.Count(); i++) {
                 int potentialWalls = geometryInfo.FloorVertexes[i].Count() * 2;
-                WallBuffers[i] = new ObjectBuffer<WallSegmentIdentifier>(potentialWalls, 10, 20, 30, "UI_HullWallTex");
+                WallBuffers[i] = new ObjectBuffer<WallSegmentIdentifier>(potentialWalls, 10, 20, 30, "InternalWalls");
             }
 
             WallIdentifiers = new List<WallSegmentIdentifier>[NumDecks];

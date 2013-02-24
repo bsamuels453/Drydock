@@ -6,8 +6,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal class ShipGeometryBuffer : StandardEffect{
-        public ShipGeometryBuffer(int numIndicies, int numVerticies, int numPrimitives, string textureName, CullMode cullMode = CullMode.None)
-            : base(numIndicies, numVerticies, numPrimitives, textureName){
+        public ShipGeometryBuffer(int numIndicies, int numVerticies, int numPrimitives, string settingsFileName, CullMode cullMode = CullMode.None)
+            : base(numIndicies, numVerticies, numPrimitives, settingsFileName){
             BufferRasterizer = new RasterizerState();
             BufferRasterizer.CullMode = cullMode;
         }

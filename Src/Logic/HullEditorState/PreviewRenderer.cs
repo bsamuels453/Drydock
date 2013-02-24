@@ -40,7 +40,7 @@ namespace Drydock.Logic.HullEditorState {
             _indicies = MeshHelper.CreateIndiceArray((_meshVertexWidth) * (_meshVertexWidth));
             _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth) * (_meshVertexWidth));
 
-            _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth) * (_meshVertexWidth) * 2, "UI_HullEditorHullTex");
+            _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth) * (_meshVertexWidth) * 2, "HullEffect");
             _geometryBuffer.DiffuseDirection = new Vector3(0, -1, 1);
 
             _mesh = new Vector3[_meshVertexWidth, _meshVertexWidth];
