@@ -10,7 +10,7 @@ namespace Drydock.Render{
         protected StandardEffect(int numIndicies, int numVerticies, int numPrimitives, string settingsFileName) :
             base(numIndicies, numVerticies, numPrimitives, PrimitiveType.TriangleList){
             
-            Gbl.SetShaderParams(settingsFileName, out BufferEffect);
+            Gbl.LoadShader(settingsFileName, out BufferEffect);
             BufferEffect.Parameters["Projection"].SetValue(Gbl.ProjectionMatrix);
             BufferEffect.Parameters["World"].SetValue(Matrix.Identity);
         }

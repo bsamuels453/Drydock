@@ -244,7 +244,7 @@ namespace Drydock{
                 if (alphanumerics.Any()){
                     if (name == "Shader")
                         continue;
-                    //it's a string, and in the context of shaders, strings always coorespond with texture names
+                    //it's a string, and in the context of shader settings, strings always coorespond with texture names
                     var texture = LoadContent<Texture2D>(configVal);
                     effect.Parameters[name].SetValue(texture);
                     continue;
