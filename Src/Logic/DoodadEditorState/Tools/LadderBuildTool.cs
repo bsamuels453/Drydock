@@ -24,7 +24,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
             _ghostedLadderModel = new ObjectModelBuffer<int>(1);
             Matrix trans = Matrix.CreateRotationX((float)-Math.PI / 2) * Matrix.CreateRotationY((float)-Math.PI / 2);
-            _ghostedLadderModel.AddObject(0, Singleton.ContentManager.Load<Model>("models/ladder"), trans);
+            _ghostedLadderModel.AddObject(0, Gbl.ContentManager.Load<Model>("models/ladder"), trans);
             _ghostedLadderModel.DisableObject(0);
         }
 
@@ -46,7 +46,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         protected override void HandleCursorRelease(){
             var identifier = new ObjectIdentifier(ObjectType.Ladder, CursorPosition);
             Matrix trans = Matrix.CreateRotationX((float)-Math.PI / 2) * Matrix.CreateRotationY((float)-Math.PI / 2) * Matrix.CreateTranslation(CursorPosition);
-            _hullData.CurObjBuffer.AddObject(identifier, Singleton.ContentManager.Load<Model>("models/ladder"), trans);
+            _hullData.CurObjBuffer.AddObject(identifier, Gbl.ContentManager.Load<Model>("models/ladder"), trans);
 
             var quadsToHide = new List<ObjectIdentifier>();
             var upperBoxesToHide = new List<BoundingBox>();

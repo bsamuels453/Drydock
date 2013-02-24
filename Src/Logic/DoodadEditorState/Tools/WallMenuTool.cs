@@ -1,7 +1,9 @@
 ﻿#region
 
 using Drydock.Control;
+using Drydock.Render;
 using Drydock.UI.Widgets;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -9,8 +11,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
     internal class WallMenuTool : IToolbarTool{
         readonly Toolbar _toolbar;
         //todo: break this and put it in doodadui
-        public WallMenuTool(HullDataManager hullData){
-            _toolbar = new Toolbar("Templates/BuildToolbar.json");
+        public WallMenuTool(HullDataManager hullData, RenderTarget target){
+            _toolbar = new Toolbar(target, "Templates/BuildToolbar.json");
             _toolbar.Enabled = false;
 
             _toolbar.BindButtonToTool(
@@ -26,7 +28,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         #region IToolbarTool Members
 
-        public void UpdateInput(ref ControlState state){
+        public void UpdateInput(ref InputState state){
             _toolbar.UpdateInput(ref state);
         }
 
@@ -38,7 +40,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             get { return _toolbar.Enabled; }
             set { _toolbar.Enabled = value; }
         }
-
         #endregion
     }
 }

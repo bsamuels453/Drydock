@@ -12,6 +12,7 @@ namespace Drydock.Render{
         readonly int _numIndicies;
         readonly int _numPrimitives;
         readonly PrimitiveType _primitiveType;
+        bool _isDisposed;
 
         protected Effect BufferEffect;
         protected RasterizerState BufferRasterizer;
@@ -24,20 +25,19 @@ namespace Drydock.Render{
             _primitiveType = primitiveType;
 
             Indexbuffer = new IndexBuffer(
-                Singleton.Device,
+                Gbl.Device,
                 typeof (int),
                 numIndicies,
                 BufferUsage.None
                 );
 
             Vertexbuffer = new VertexBuffer(
-                Singleton.Device,
+                Gbl.Device,
                 typeof (T),
                 numVerticies,
                 BufferUsage.None
                 );
-
-            RenderPanel.Add(this);
+            RenderTarget.Buffers.Add(this);
         }
 
         #region IDrawableBuffer Members
@@ -45,27 +45,26 @@ namespace Drydock.Render{
         public void Draw(Matrix viewMatrix){
             if (Enabled){
                 UpdateViewMatrix(viewMatrix);
-                Singleton.Device.RasterizerState = BufferRasterizer;
+                Gbl.Device.RasterizerState = BufferRasterizer;
 
                 foreach (EffectPass pass in BufferEffect.CurrentTechnique.Passes){
                     pass.Apply();
-                    Singleton.Device.Indices = Indexbuffer;
-                    Singleton.Device.SetVertexBuffer(Vertexbuffer);
-                    Singleton.Device.DrawIndexedPrimitives(_primitiveType, 0, 0, _numIndicies, 0, _numPrimitives);
+                    Gbl.Device.Indices = Indexbuffer;
+                    Gbl.Device.SetVertexBuffer(Vertexbuffer);
+                    Gbl.Device.DrawIndexedPrimitives(_primitiveType, 0, 0, _numIndicies, 0, _numPrimitives);
                 }
-                Singleton.Device.SetVertexBuffer(null);
+                Gbl.Device.SetVertexBuffer(null);
             }
         }
 
         #endregion
 
-        /*public void Dispose(){
+        public void Dispose(){
             if (!_isDisposed){
-                _bufferRenderTarget.Remove(this);
-                _bufferRenderTarget = null;
+                //RenderTarget.Buffers.Remove(this);
                 _isDisposed = true;
             }
-        }*/
+        }
 
         public void UpdateViewMatrix(Matrix viewMatrix){
             BufferEffect.Parameters["View"].SetValue(viewMatrix);
@@ -73,7 +72,7 @@ namespace Drydock.Render{
 
 
         ~BaseBufferObject(){
-            //Dispose();
+            Dispose();
         }
     }
 }

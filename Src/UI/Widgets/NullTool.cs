@@ -1,6 +1,7 @@
 ﻿#region
 
 using Drydock.Control;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -8,7 +9,7 @@ namespace Drydock.UI.Widgets{
     internal class NullTool : IToolbarTool{
         #region IToolbarTool Members
 
-        public void UpdateInput(ref ControlState state){
+        public void UpdateInput(ref InputState state){
             //throw new NotImplementedException();
         }
 
@@ -22,6 +23,10 @@ namespace Drydock.UI.Widgets{
         public bool Enabled{
             get { return false; }
             set {  }
+        }
+
+        public void Draw(Matrix viewMatrix){
+            
         }
     }
 }

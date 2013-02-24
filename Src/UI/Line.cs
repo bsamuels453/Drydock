@@ -108,7 +108,7 @@ namespace Drydock.UI{
 
         #region ctor
 
-        public Line(Vector2 v1, Vector2 v2, Color color, DepthLevel depth, int identifier = DefaultIdentifier, IUIComponent[] components = null){
+        public Line(RenderTarget target, Vector2 v1, Vector2 v2, Color color, DepthLevel depth, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _lineSprite = new Line2D(this, color);
             _point1 = v1;
             _point2 = v2;
@@ -151,7 +151,6 @@ namespace Drydock.UI{
         #endregion
 
         #region IUIElement Members
-
         public TComponent GetComponent<TComponent>(string identifier = null){
             if (Components != null){
                 foreach (IUIComponent component in Components){
@@ -203,6 +202,7 @@ namespace Drydock.UI{
     }
 
     internal class LineGenerator{
+        public RenderTarget Target;
         public Color? Color;
         public Dictionary<string, JObject> Components;
         public DepthLevel? Depth;
@@ -211,6 +211,7 @@ namespace Drydock.UI{
         public Vector2? V2;
 
         public LineGenerator(){
+            Target = null;
             Components = null;
             Color = null;
             Depth = null;
@@ -243,7 +244,8 @@ namespace Drydock.UI{
 
         public Line GenerateLine(){
             //make sure we have all the data required
-            if (Depth == null ||
+            if (Target == null ||
+                Depth == null ||
                 V1 == null ||
                 V2 == null ||
                 Color == null ||
@@ -264,6 +266,7 @@ namespace Drydock.UI{
                 identifier = Button.DefaultIdentifier;
 
             return new Line(
+                Target,
                 (Vector2) V1,
                 (Vector2) V2,
                 (Color) Color,

@@ -42,152 +42,134 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="hlsl\AmbientEffect.fx">
-      <Name>AmbientEffect</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="fonts\SpriteFont.spritefont">
+    <Compile Include="Fonts\SpriteFont.spritefont">
       <Name>SpriteFont</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="materials\box.png">
-      <Name>box</Name>
+    <Compile Include="Icons\cross.png">
+      <Name>cross</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="effects\blackhighlight.png">
-      <Name>blackhighlight</Name>
+    <Compile Include="Icons\downarrow.png">
+      <Name>downarrow</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="materials\red.png">
-      <Name>red</Name>
+    <Compile Include="Icons\ladderbuildicon.png">
+      <Name>ladderbuildicon</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="materials\whitebox.png">
-      <Name>whitebox</Name>
+    <Compile Include="Icons\uparrow.png">
+      <Name>uparrow</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="materials\panelBG.png">
-      <Name>panelBG</Name>
+    <Compile Include="Icons\wallbuildicon.png">
+      <Name>wallbuildicon</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="hlsl\StandardEffect.fx">
-      <Name>StandardEffect</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="materials\brown.png">
-      <Name>brown</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="materials\whiteborder.png">
-      <Name>whiteborder</Name>
+    <Compile Include="Icons\walldeleteicon.png">
+      <Name>walldeleteicon</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="icons\uparrow.png">
-      <Name>uparrow</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="icons\downarrow.png">
-      <Name>downarrow</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="hlsl\WireframeEffect.fx">
-      <Name>WireframeEffect</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="icons\wallbuildicon.png">
-      <Name>wallbuildicon</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="icons\cross.png">
-      <Name>cross</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="effects\highlighteffect.png">
-      <Name>highlighteffect</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="materials\blackdot.png">
+    <Compile Include="Materials\blackdot.png">
       <Name>blackdot</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="icons\walldeleteicon.png">
-      <Name>walldeleteicon</Name>
+    <Compile Include="Materials\blackhighlight.png">
+      <Name>blackhighlight</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="materials\redborder.png">
+    <Compile Include="Materials\box.png">
+      <Name>box</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
+    </Compile>
+    <Compile Include="Materials\brown.png">
+      <Name>brown</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
+    </Compile>
+    <Compile Include="Materials\highlighteffect.png">
+      <Name>highlighteffect</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
+    </Compile>
+    <Compile Include="Materials\panelBG.png">
+      <Name>panelBG</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
+    </Compile>
+    <Compile Include="Materials\red.png">
+      <Name>red</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
+    </Compile>
+    <Compile Include="Materials\redborder.png">
       <Name>redborder</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="icons\ladderbuildicon.png">
-      <Name>ladderbuildicon</Name>
+    <Compile Include="Materials\whiteborder.png">
+      <Name>whiteborder</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
+    </Compile>
+    <Compile Include="Materials\whitebox.png">
+      <Name>whitebox</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Compile Include="models\ladder.fbx">
+    <Compile Include="Models\ladder.fbx">
       <Name>ladder</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Shaders\AmbientEffect.fx">
+      <Name>AmbientEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Shaders\StandardEffect.fx">
+      <Name>StandardEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Shaders\WireframeEffect.fx">
+      <Name>WireframeEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

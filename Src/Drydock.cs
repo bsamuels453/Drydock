@@ -13,7 +13,6 @@ namespace Drydock{
         readonly GraphicsDeviceManager _graphics;
         public ContentManager ContentManager;
         // private EditorLogic _editorLogic;
-
         public Drydock(){
             Content.RootDirectory = "Content";
             _graphics = new GraphicsDeviceManager(this){
@@ -25,10 +24,21 @@ namespace Drydock{
 
         protected override void Initialize(){
             ContentManager = Content;
-            Singleton.ContentManager = ContentManager;
-            Renderer.Init(_graphics.GraphicsDevice, Content);
-            GamestateManager.Init();
-            GamestateManager.SetGameState(new HullEditor());
+            Gbl.ContentManager = ContentManager;
+            Gbl.Device = _graphics.GraphicsDevice;
+            Gbl.ContentManager = Content;
+            Gbl.ScreenSize = new Point(1200, 800);
+            var aspectRatio = Gbl.Device.Viewport.Bounds.Width / (float)Gbl.Device.Viewport.Bounds.Height;
+            Gbl.ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+                fieldOfView: 3.14f / 4,
+                aspectRatio: aspectRatio,
+                nearPlaneDistance: 1,
+                farPlaneDistance: 50000
+                );
+            ScreenData.Init(1200, 800);
+            GamestateManager.AddGameState(new HullEditor());
+
+
 
             IsMouseVisible = true;
 
@@ -39,7 +49,7 @@ namespace Drydock{
         }
 
         protected override void UnloadContent(){
-            GamestateManager.ClearGameState();
+            Gbl.CommitHashChanges();
         }
 
 
@@ -50,8 +60,9 @@ namespace Drydock{
         }
 
         protected override void Draw(GameTime gameTime){
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            Renderer.Draw();
+            RenderTarget.BeginDraw();
+            GamestateManager.Draw();
+            RenderTarget.EndDraw();
             base.Draw(gameTime);
         }
     }

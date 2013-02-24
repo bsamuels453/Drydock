@@ -126,7 +126,6 @@ namespace Drydock.UI{
         public Button(float x, float y, float width, float height, DepthLevel depth, string textureName, float spriteTexRepeatX = DefaultTexRepeat, float spriteTexRepeatY = DefaultTexRepeat, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _identifier = identifier;
             _Enabled = true;
-
             _iEventDispatcher = new ButtonEventDispatcher();
 
             _centPosition = new Vector2();
@@ -194,7 +193,7 @@ namespace Drydock.UI{
             }
         }
 
-        public void UpdateInput(ref ControlState state){
+        public void UpdateInput(ref InputState state){
             if (Enabled){
                 if (state.AllowLeftButtonInterpretation){
                     if (state.LeftButtonClick){
@@ -291,6 +290,7 @@ namespace Drydock.UI{
 
     internal class ButtonGenerator{
         public Dictionary<string, JObject> Components;
+        public RenderTarget Target;
         public DepthLevel? Depth;
         public float? Height;
         public int? Identifier;

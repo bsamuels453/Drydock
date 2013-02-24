@@ -17,7 +17,7 @@ namespace Drydock.Logic.HullEditorState {
         readonly ShipGeometryBuffer _geometryBuffer;
         readonly int[] _indicies;
         readonly Vector3[,] _mesh;
-        readonly RenderPanel _renderTarget;
+        readonly RenderTarget _renderTarget;
         readonly BezierCurveCollection _sideCurves;
         readonly BezierCurveCollection _topCurves;
         VertexPositionNormalTexture[] _verticies;
@@ -29,18 +29,18 @@ namespace Drydock.Logic.HullEditorState {
                      ScreenData.GetScreenValueX(0.5f),
                      ScreenData.GetScreenValueY(0.5f)
                      )) {
-            _renderTarget = new RenderPanel(
+
+            _renderTarget = new RenderTarget(
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f),
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f)
                 );
-            RenderPanel.BindRenderTarget(_renderTarget);
-
+            _renderTarget.Bind();
             _indicies = MeshHelper.CreateIndiceArray((_meshVertexWidth) * (_meshVertexWidth));
             _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth) * (_meshVertexWidth));
 
-            _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth) * (_meshVertexWidth) * 2, "HullEditorHullTex");
+            _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth) * (_meshVertexWidth) * 2, "UI_HullEditorHullTex");
             _geometryBuffer.DiffuseDirection = new Vector3(0, -1, 1);
 
             _mesh = new Vector3[_meshVertexWidth, _meshVertexWidth];
@@ -50,10 +50,22 @@ namespace Drydock.Logic.HullEditorState {
             _backCurves = backCurves;
 
             _geometryBuffer.Indexbuffer.SetData(_indicies);
+            _renderTarget.Unbind();
         }
 
-        public void Update() {
-            base.UpdateInput(ref InputEventDispatcher.CurrentControlState);
+
+        public void Draw() {
+            Gbl.Device.Clear(Color.CornflowerBlue);
+            var viewMatrix = Matrix.CreateLookAt(base.CameraPosition, base.CameraTarget, Vector3.Up);
+            _renderTarget.Draw(viewMatrix, Color.CornflowerBlue);
+        }
+
+        public void Dispose(){
+            _renderTarget.Dispose();
+        }
+
+        public void Update(ref InputState state) {
+            base.UpdateInput(ref state);
             _topCurves.GetParameterizedPoint(0, true);
 
             var topPts = new Vector2[_meshVertexWidth];

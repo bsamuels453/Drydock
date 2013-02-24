@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Drydock.Render{
     internal interface IDrawableSprite{
         Texture2D Texture { get; set; }
-        void Draw(SpriteBatch spriteBatch, Vector2 renderTargOffset);
+        void Draw();
         void SetTextureFromString(string textureName);
         void Dispose();
     }

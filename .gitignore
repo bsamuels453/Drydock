@@ -32,6 +32,7 @@ Bin*/
 *.exe.manifest
 *.pdb
 *.dll
+Content*/
 *.CodeAnalysisLog.xml
 *.lastcodeanalysissucceeded
 obj*/

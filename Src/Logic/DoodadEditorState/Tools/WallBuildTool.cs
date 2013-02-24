@@ -16,13 +16,13 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         readonly float _wallHeight;
 
         public WallBuildTool(HullDataManager hullData) :
-            base(hullData, hullData.WallResolution){
+            base(hullData, hullData.WallResolution) {
             _tempWallBuffer = new ObjectBuffer<WallSegmentIdentifier>(
                 hullData.DeckVertexes[0].Count()*2,
                 10,
                 20,
                 30,
-                "InternalWallTex")
+                "UI_InternalWallTex")
                               {UpdateBufferManually = true};
 
             _tempWallIdentifiers = new List<WallSegmentIdentifier>();

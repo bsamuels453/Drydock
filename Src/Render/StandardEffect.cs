@@ -9,9 +9,9 @@ namespace Drydock.Render{
     internal abstract class StandardEffect : BaseBufferObject<VertexPositionNormalTexture>{
         protected StandardEffect(int numIndicies, int numVerticies, int numPrimitives, string textureName) :
             base(numIndicies, numVerticies, numPrimitives, PrimitiveType.TriangleList){
-                var texture = Singleton.ContentManager.Load<Texture2D>(Singleton.ContentStrLookup[textureName]);
-            BufferEffect = Singleton.ContentManager.Load<Effect>(Singleton.ContentStrLookup["StandardEffect"]).Clone();
-            BufferEffect.Parameters["Projection"].SetValue(Singleton.ProjectionMatrix);
+                var texture = Gbl.LoadContent<Texture2D>(textureName);
+                BufferEffect = Gbl.LoadContent<Effect>("Shader_StandardEffect").Clone();
+            BufferEffect.Parameters["Projection"].SetValue(Gbl.ProjectionMatrix);
             BufferEffect.Parameters["World"].SetValue(Matrix.Identity);
             BufferEffect.Parameters["Texture"].SetValue(texture);
             BufferEffect.Parameters["AmbientIntensity"].SetValue(1);

@@ -5,6 +5,7 @@ using System.Linq;
 using Drydock.Control;
 using Drydock.Render;
 using Drydock.UI.Widgets;
+using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -49,6 +50,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="manager"> </param>
         /// <param name="hullData"></param>
         /// <param name="gridResolution">not functioning properly</param>
         /// <param name="selectionResolution">how many grid tiles wide the selection marquee is intended to be. Set to -1 for selection type to be set to vertexes, rather than tiles.</param>
@@ -69,6 +71,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _cursorBuff.Indexbuffer.SetData(selectionIndicies);
             _cursorBuff.Enabled = false;
 
+
             hullData.OnCurDeckChange += VisibleDeckChange;
 
             GuideGridBuffers = new WireframeBuffer[hullData.NumDecks];
@@ -77,7 +80,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         #region IToolbarTool Members
 
-        public void UpdateInput(ref ControlState state){
+        public void UpdateInput(ref InputState state){
             #region intersect stuff
 
             if (state.AllowMouseMovementInterpretation){
@@ -86,18 +89,23 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 var nearMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 0);
                 var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);
 
+                var camPos = (Vector3)GamestateManager.QuerySharedData(SharedStateData.PlayerPosition);
+                var camTarg = (Vector3)GamestateManager.QuerySharedData(SharedStateData.CameraTarget);
+
+                var viewMatrix = Matrix.CreateLookAt(camPos, camTarg, Vector3.Up);
+
                 //transform the mouse into world space
-                var nearPoint = Singleton.Device.Viewport.Unproject(
+                var nearPoint = Gbl.Device.Viewport.Unproject(
                     nearMouse,
-                    Singleton.ProjectionMatrix,
-                    state.ViewMatrix,
+                    Gbl.ProjectionMatrix,
+                    viewMatrix,
                     Matrix.Identity
                     );
 
-                var farPoint = Singleton.Device.Viewport.Unproject(
+                var farPoint = Gbl.Device.Viewport.Unproject(
                     farMouse,
-                    Singleton.ProjectionMatrix,
-                    state.ViewMatrix,
+                    Gbl.ProjectionMatrix,
+                    viewMatrix,
                     Matrix.Identity
                     );
 
@@ -221,6 +229,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     guideDotIndicies[si] = si;
                 }
                 GuideGridBuffers[i].Indexbuffer.SetData(guideDotIndicies);
+                GuideGridBuffers[i].SetAlpha(0.07f);
+                GuideGridBuffers[i].SetColor(new Vector3(0,0,0));
 
                 #endregion
 

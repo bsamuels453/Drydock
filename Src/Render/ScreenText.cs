@@ -65,7 +65,7 @@ namespace Drydock.Render{
         }
 
         public static void Draw(SpriteBatch spriteBatch){
-            spriteBatch.Begin();
+            //spriteBatch.Begin();
             for (int i = 0; i < _maxStringsDisplayable; i++){
                 if (_isStringSlotAvail[i] == false){
                     spriteBatch.DrawString(
@@ -76,7 +76,7 @@ namespace Drydock.Render{
                         );
                 }
             }
-            spriteBatch.End();
+            //spriteBatch.End();
         }
 
         static int AddString(string str, int x, int y){

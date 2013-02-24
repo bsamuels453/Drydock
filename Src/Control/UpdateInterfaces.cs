@@ -4,6 +4,6 @@
     }
 
     internal interface IInputUpdates{
-        void UpdateInput(ref ControlState state);
+        void UpdateInput(ref InputState state);
     }
 }

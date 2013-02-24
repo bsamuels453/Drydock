@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Drydock.Render{
     internal class Line2D : IDrawableSprite{
         readonly Line _parent;
-        readonly RenderPanel _renderPanel;
         //Color _color;
         bool _isDisposed;
         Texture2D _texture;
@@ -18,20 +17,18 @@ namespace Drydock.Render{
 
         public Line2D(Line parent, Color color){
             _isDisposed = false;
-
-            _texture = new Texture2D(Singleton.Device, 1, 1, false, SurfaceFormat.Color);
+            _texture = new Texture2D(Gbl.Device, 1, 1, false, SurfaceFormat.Color);
             _texture.SetData(new[]{color});
             _parent = parent;
-            _renderPanel = RenderPanel.Add(this);
-            //_color = color;
+            RenderTarget.Sprites.Add(this);
         }
 
         #region IDrawableSprite Members
 
-        public void Draw(SpriteBatch batch, Vector2 renderTargOffset){
-            batch.Draw(
+        public void Draw(){
+            RenderTarget.CurSpriteBatch.Draw(
                 _texture,
-                _parent.OriginPoint - renderTargOffset,
+                _parent.OriginPoint,
                 null,
                 Color.White*_parent.Opacity,
                 _parent.Angle,
@@ -53,7 +50,7 @@ namespace Drydock.Render{
 
         public void Dispose(){
             if (!_isDisposed){
-                _renderPanel.Remove(this);
+                RenderTarget.Sprites.Remove(this);
                 _isDisposed = true;
             }
         }
@@ -62,7 +59,6 @@ namespace Drydock.Render{
 
         ~Line2D(){
             if (!_isDisposed){
-                _renderPanel.Remove(this);
                 _isDisposed = true;
             }
         }

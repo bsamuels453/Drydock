@@ -6,12 +6,13 @@ using Drydock.Render;
 using Drydock.UI;
 using Drydock.UI.Components;
 using Drydock.Utilities;
+using Microsoft.Xna.Framework;
 
 #endregion
 
 namespace Drydock.Logic.HullEditorState{
 
-    #region namespace panel stuff
+    #region namespace target stuff
 
     internal delegate void TranslateDragToExtern(object caller, ref float dx, ref float dy, bool doClampCheck);
 
@@ -32,20 +33,20 @@ namespace Drydock.Logic.HullEditorState{
 
     #endregion
 
-    #region abstract panel class
+    #region abstract target class
 
     internal abstract class HullEditorPanel{
         protected readonly Button Background;
         protected readonly FloatingRectangle BoundingBox;
         public BezierCurveCollection Curves;
-        protected RenderPanel PanelRenderTarget;
+        protected RenderTarget RenderTarget;
 
         protected HullEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration, PanelAlias panelType){
             BoundingBox = new FloatingRectangle(x, y, width, height);
-            PanelRenderTarget = new RenderPanel(x, y, width, height, DepthLevel.Medium);
-            RenderPanel.BindRenderTarget(PanelRenderTarget);
-
+            RenderTarget = new RenderTarget();
+            RenderTarget.Bind();
             Curves = new BezierCurveCollection(
+                target: RenderTarget,
                 defaultConfig: defaultCurveConfiguration,
                 areaToFill: new FloatingRectangle(
                     x + width*0.1f,
@@ -63,12 +64,13 @@ namespace Drydock.Logic.HullEditorState{
                     width: width,
                     height: height,
                     depth: DepthLevel.Background,
-                    textureName: "HullEditorBgTex",
+                    textureName: "UI_HullEditorBgTex",
                     spriteTexRepeatX: width/(Curves.PixelsPerMeter*1),
                     spriteTexRepeatY: height/(Curves.PixelsPerMeter*1),
                     components: new IUIComponent[]{new PanelComponent()}
                     );
             Update();
+            RenderTarget.Unbind();
         }
 
         protected abstract void DisposeChild();
@@ -106,6 +108,14 @@ namespace Drydock.Logic.HullEditorState{
             if (y > BoundingBox.Y + BoundingBox.Height || y < BoundingBox.Y){
                 y = oldY;
             }
+        }
+
+        public void Draw(){
+            RenderTarget.Draw(new Matrix(), Color.Transparent);
+        }
+
+        public void Dispose(){
+            RenderTarget.Dispose();
         }
 
         public void Update(){
@@ -161,7 +171,7 @@ namespace Drydock.Logic.HullEditorState{
         public TopEditorPanel TopPanel;
 
         public SideEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration)
-            : base(x, y, width, height, defaultCurveConfiguration, PanelAlias.Side){
+            : base(x, y, width, height, defaultCurveConfiguration, PanelAlias.Side) {
             foreach (var curve in Curves){
                 curve.Handle.TranslateToExtern = ProcExternalDrag;
             }
@@ -219,7 +229,7 @@ namespace Drydock.Logic.HullEditorState{
         public SideEditorPanel SidePanel;
 
         public TopEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration)
-            : base(x, y, width, height, defaultCurveConfiguration, PanelAlias.Top){
+            : base(x, y, width, height, defaultCurveConfiguration, PanelAlias.Top) {
             Curves[0].Handle.TranslateToExtern = ProcExternalDrag;
             Curves[Curves.Count - 1].Handle.TranslateToExtern = ProcExternalDrag;
             Curves[Curves.Count/2].Handle.TranslateToExtern = ProcExternalDrag;
@@ -276,7 +286,7 @@ namespace Drydock.Logic.HullEditorState{
         public TopEditorPanel TopPanel;
 
         public BackEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration)
-            : base(x, y, width, height, defaultCurveConfiguration, PanelAlias.Back){
+            : base(x, y, width, height, defaultCurveConfiguration, PanelAlias.Back) {
             Curves[0].Handle.TranslateToExtern = ProcExternalDrag;
             Curves[Curves.Count - 1].Handle.TranslateToExtern = ProcExternalDrag;
             Curves[Curves.Count/2].Handle.TranslateToExtern = ProcExternalDrag;

@@ -2,8 +2,10 @@
 
 using Drydock.Control;
 using Drydock.Logic.DoodadEditorState.Tools;
+using Drydock.Render;
 using Drydock.UI;
 using Drydock.UI.Widgets;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -18,35 +20,32 @@ namespace Drydock.Logic.DoodadEditorState{
 
         readonly Toolbar _toolBar;
 
-        public DoodadUI(HullDataManager hullData){
+        public DoodadUI(HullDataManager hullData, RenderTarget target){
             _hullData = hullData;
 
             var buttonGen = new ButtonGenerator("ToolbarButton64.json");
+            buttonGen.Target = target;
             buttonGen.X = 50;
             buttonGen.Y = 50;
-            buttonGen.TextureName = "DeckNavArrowUp";
+            buttonGen.TextureName = "UI_DeckNavArrowUp";
             _deckUpButton = buttonGen.GenerateButton();
             buttonGen.Y = 50 + 64;
-            buttonGen.TextureName = "DeckNavArrowDown";
+            buttonGen.TextureName = "UI_DeckNavArrowDown";
             _deckDownButton = buttonGen.GenerateButton();
             _deckUpButton.OnLeftClickDispatcher += AddVisibleLevel;
             _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;
 
 
-            _toolBar = new Toolbar("Templates/DoodadToolbar.json");
+            _toolBar = new Toolbar(target, "Templates/DoodadToolbar.json");
 
-            _toolBar.BindButtonToTool(0, new WallMenuTool(
-                                             hullData)
-                );
+            _toolBar.BindButtonToTool(0, new WallMenuTool(hullData, target));
 
-            _toolBar.BindButtonToTool(1, new LadderBuildTool(
-                                             hullData
-                                             ));
+            _toolBar.BindButtonToTool(1, new LadderBuildTool(hullData));
         }
 
         #region IInputUpdates Members
 
-        public void UpdateInput(ref ControlState state){
+        public void UpdateInput(ref InputState state){
             _toolBar.UpdateInput(ref state);
         }
 
