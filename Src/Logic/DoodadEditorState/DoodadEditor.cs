@@ -23,7 +23,7 @@ namespace Drydock.Logic.DoodadEditorState{
         public DoodadEditor(GamestateManager mgr, List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo){
             _renderTarget = new RenderTarget(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
             _uiElementCollection = new UIElementCollection();
-            _cameraController = new BodyCenteredCamera(mgr);
+            _cameraController = new BodyCenteredCamera();
 
             #region construct UI and any UI-related tools
 

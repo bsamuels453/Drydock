@@ -42,7 +42,7 @@ namespace Drydock.Logic.HullEditorState{
 
         protected HullEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration, PanelAlias panelType){
             BoundingBox = new FloatingRectangle(x, y, width, height);
-            RenderTarget = new RenderTarget(x, y, width, height);
+            RenderTarget = new RenderTarget();
 
             Curves = new BezierCurveCollection(
                 target: RenderTarget,

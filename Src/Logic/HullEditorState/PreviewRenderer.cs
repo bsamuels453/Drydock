@@ -23,13 +23,13 @@ namespace Drydock.Logic.HullEditorState {
         VertexPositionNormalTexture[] _verticies;
 
         public PreviewRenderer(GamestateManager mgr, BezierCurveCollection sideCurves, BezierCurveCollection topCurves, BezierCurveCollection backCurves) :
-            base(mgr,
-            new Rectangle(
+            base(new Rectangle(
                      ScreenData.GetScreenValueX(0.5f),
                      ScreenData.GetScreenValueY(0.5f),
                      ScreenData.GetScreenValueX(0.5f),
                      ScreenData.GetScreenValueY(0.5f)
                      )) {
+
             _renderTarget = new RenderTarget(
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f),
@@ -51,6 +51,16 @@ namespace Drydock.Logic.HullEditorState {
 
             _geometryBuffer.Indexbuffer.SetData(_indicies);
         }
+
+
+        public void Draw() {
+            _renderTarget.Bind();
+            Gbl.Device.Clear(Color.CornflowerBlue);
+            var viewMatrix = Matrix.CreateLookAt(base.CameraPosition, base.CameraTarget, Vector3.Up);
+            _geometryBuffer.Draw(viewMatrix);
+            _renderTarget.Unbind();
+        }
+
 
         public void Update(ref InputState state) {
             base.UpdateInput(ref state);
