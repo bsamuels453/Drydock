@@ -184,7 +184,8 @@ namespace Drydock{
             return scriptText;
         }
 
-        public static void SetShaderParams(string shaderName, Effect effect){
+        public static void LoadShader(string shaderName, out Effect effect){
+            effect = null;
             var configs = new List<string>();
             var configValues = new List<string>();
             foreach (var valuePair in RawLookup){
@@ -195,6 +196,16 @@ namespace Drydock{
                     configs.Add(valuePair.Key.Substring(shaderName.Count() + 1));
                     configValues.Add(valuePair.Value);
                 }
+            }
+
+            for (int i = 0; i < configs.Count; i++){
+                if (configs[i] == "Shader"){
+                    effect = LoadContent<Effect>(configValues[i]).Clone();
+                    break;
+                }
+            }
+            if (effect == null){
+                throw new Exception("Shader not specified for " + shaderName);
             }
 
             //figure out its datatype
@@ -231,6 +242,8 @@ namespace Drydock{
                                     where char.IsLetter(value)
                                     select value;
                 if (alphanumerics.Any()){
+                    if (name == "Shader")
+                        continue;
                     //it's a string, and in the context of shaders, strings always coorespond with texture names
                     var texture = LoadContent<Texture2D>(configVal);
                     effect.Parameters[name].SetValue(texture);
