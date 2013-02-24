@@ -21,26 +21,20 @@ namespace Drydock.Logic.DoodadEditorState{
 
         readonly UIElementCollection _uiElementCollection;
 
-        public DoodadEditor(GamestateManager mgr, List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo){
+        public DoodadEditor(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo){
             _renderTarget = new RenderTarget(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
+            _renderTarget.Bind();
             _uiElementCollection = new UIElementCollection();
-            _cameraController = new BodyCenteredCamera(mgr);
-
-            #region construct UI and any UI-related tools
+            _cameraController = new BodyCenteredCamera();
 
             UIElementCollection.BindCollection(_uiElementCollection);
-
-
             var geometryInfo = HullGeometryGenerator.GenerateShip(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
             _hullData = new HullDataManager(geometryInfo);
-
-            _doodadUI = new DoodadUI(_hullData, _renderTarget, mgr);
-
+            _doodadUI = new DoodadUI(_hullData, _renderTarget);
             UIElementCollection.UnbindCollection();
 
-            #endregion
-
             _cameraController.SetCameraTarget(_hullData.CenterPoint);
+            _renderTarget.Unbind();
         }
 
         public void Dispose(){
@@ -48,6 +42,7 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         public void Update(InputState state, double timeDelta){
+            _renderTarget.Bind();
             UIElementCollection.BindCollection(_uiElementCollection);
 
             #region update input
@@ -66,27 +61,12 @@ namespace Drydock.Logic.DoodadEditorState{
             #endregion
 
             UIElementCollection.UnbindCollection();
+            _renderTarget.Unbind();
         }
 
         public void Draw(){
             var viewMatrix = Matrix.CreateLookAt(_cameraController.CameraPosition, _cameraController.CameraTarget, Vector3.Up);
-
-
-            _renderTarget.Bind();
-            _doodadUI.Draw(viewMatrix);
-            foreach (var buffer in _hullData.DeckBuffers){
-                buffer.Draw(viewMatrix);
-            }
-            foreach (var buffer in _hullData.ObjectBuffers) {
-                buffer.Draw(viewMatrix);
-            }
-            foreach (var buffer in _hullData.HullBuffers) {
-                buffer.Draw(viewMatrix);
-            }
-            foreach (var buffer in _hullData.WallBuffers) {
-                buffer.Draw(viewMatrix);
-            }
-            _renderTarget.Unbind();
+            _renderTarget.Draw(viewMatrix, Color.CornflowerBlue);
         }
     }
 }

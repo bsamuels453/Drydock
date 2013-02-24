@@ -20,7 +20,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         readonly WireframeBuffer _cursorBuff;
         readonly int _selectionResolution;
-        readonly GamestateManager _manager;
         protected Vector3 CursorPosition;
 
         protected Vector3 StrokeEnd;
@@ -48,13 +47,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             }
         }
 
-        public void Draw(Matrix viewMatrix){
-            foreach (var buffer in GuideGridBuffers){
-                buffer.Draw(viewMatrix);
-            }
-            _cursorBuff.Draw(viewMatrix);
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -62,8 +54,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         /// <param name="hullData"></param>
         /// <param name="gridResolution">not functioning properly</param>
         /// <param name="selectionResolution">how many grid tiles wide the selection marquee is intended to be. Set to -1 for selection type to be set to vertexes, rather than tiles.</param>
-        protected DeckPlacementBase(GamestateManager manager, HullDataManager hullData, float gridResolution, int selectionResolution=-1){
-            _manager = manager;
+        protected DeckPlacementBase(HullDataManager hullData, float gridResolution, int selectionResolution=-1){
             HullData = hullData;
             if(selectionResolution>0)
                 _selectionResolution = selectionResolution+1;
@@ -79,6 +70,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             var selectionIndicies = new[]{0, 1};
             _cursorBuff.Indexbuffer.SetData(selectionIndicies);
             _cursorBuff.Enabled = false;
+
 
             hullData.OnCurDeckChange += VisibleDeckChange;
 
@@ -96,9 +88,9 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
                 var nearMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 0);
                 var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);
-                
-                var camPos = (Vector3)_manager.QuerySharedData(SharedStateData.PlayerPosition);
-                var camTarg = (Vector3)_manager.QuerySharedData(SharedStateData.CameraTarget);
+
+                var camPos = (Vector3)GamestateManager.QuerySharedData(SharedStateData.PlayerPosition);
+                var camTarg = (Vector3)GamestateManager.QuerySharedData(SharedStateData.CameraTarget);
 
                 var viewMatrix = Matrix.CreateLookAt(camPos, camTarg, Vector3.Up);
 
@@ -237,6 +229,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     guideDotIndicies[si] = si;
                 }
                 GuideGridBuffers[i].Indexbuffer.SetData(guideDotIndicies);
+                GuideGridBuffers[i].SetAlpha(0.07f);
+                GuideGridBuffers[i].SetColor(new Vector3(0,0,0));
 
                 #endregion
 

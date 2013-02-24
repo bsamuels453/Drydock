@@ -13,9 +13,6 @@ namespace Drydock{
         readonly GraphicsDeviceManager _graphics;
         public ContentManager ContentManager;
         // private EditorLogic _editorLogic;
-        GamestateManager _gamestateManager;
-
-
         public Drydock(){
             Content.RootDirectory = "Content";
             _graphics = new GraphicsDeviceManager(this){
@@ -39,8 +36,7 @@ namespace Drydock{
                 farPlaneDistance: 50000
                 );
             ScreenData.Init(1200, 800);
-            _gamestateManager = new GamestateManager();
-            _gamestateManager.AddGameState(new HullEditor(_gamestateManager));
+            GamestateManager.AddGameState(new HullEditor());
 
 
 
@@ -58,14 +54,14 @@ namespace Drydock{
 
 
         protected override void Update(GameTime gameTime){
-            _gamestateManager.Update();
+            GamestateManager.Update();
             //Thread.Sleep(10);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime){
             RenderTarget.BeginDraw();
-            _gamestateManager.Draw();
+            GamestateManager.Draw();
             RenderTarget.EndDraw();
             base.Draw(gameTime);
         }

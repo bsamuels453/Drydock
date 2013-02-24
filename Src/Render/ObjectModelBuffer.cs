@@ -17,6 +17,7 @@ namespace Drydock.Render{
         readonly int _maxObjects;
         readonly List<ObjectData> _objectData;
         Matrix _globalTransform;
+        bool _disposed;
 
         public ObjectModelBuffer(int maxObjects){
             _objectData = new List<ObjectData>();
@@ -24,6 +25,7 @@ namespace Drydock.Render{
             _isSlotOccupied = new bool[maxObjects];
             _globalTransform = Matrix.Identity;
             Enabled = true;
+            RenderTarget.Buffers.Add(this);
         }
 
         public void AddObject(IEquatable<T> identifier, Model model, Matrix transform){
@@ -147,6 +149,17 @@ namespace Drydock.Render{
                     mesh.Draw();
                 }
             }
+        }
+
+        public void Dispose(){
+            if (!_disposed){
+                //RenderTarget.Buffers.Remove(this);
+                _disposed = true;
+            }
+        }
+
+        ~ObjectModelBuffer(){
+            Dispose();
         }
     }
 }

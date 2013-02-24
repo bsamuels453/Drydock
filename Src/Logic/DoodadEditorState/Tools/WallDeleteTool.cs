@@ -13,8 +13,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         readonly ObjectBuffer<WallSegmentIdentifier> _tempWallBuffer;
         List<WallSegmentIdentifier> _prevIdentifiers;
 
-        public WallDeleteTool(HullDataManager hullData, GamestateManager manager) :
-            base(manager, hullData, hullData.WallResolution) {
+        public WallDeleteTool(HullDataManager hullData) :
+            base(hullData, hullData.WallResolution) {
                 _tempWallBuffer = new ObjectBuffer<WallSegmentIdentifier>(5000, 10, 20, 30, "UI_WallDeleteMarqueeTex") { UpdateBufferManually = true };
             _prevIdentifiers = new List<WallSegmentIdentifier>();
         }

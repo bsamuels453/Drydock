@@ -109,7 +109,7 @@ namespace Drydock.UI{
         #region ctor
 
         public Line(RenderTarget target, Vector2 v1, Vector2 v2, Color color, DepthLevel depth, int identifier = DefaultIdentifier, IUIComponent[] components = null){
-            _lineSprite = new Line2D(target, this, color);
+            _lineSprite = new Line2D(this, color);
             _point1 = v1;
             _point2 = v2;
             Depth = (float) depth/10;
@@ -151,11 +151,6 @@ namespace Drydock.UI{
         #endregion
 
         #region IUIElement Members
-
-        public void Draw(){
-            _lineSprite.Draw();
-        }
-
         public TComponent GetComponent<TComponent>(string identifier = null){
             if (Components != null){
                 foreach (IUIComponent component in Components){

@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal class Sprite2D : IDrawableSprite{
-        readonly SpriteBatch _spriteBatch;
         readonly FloatingRectangle _srcRect;
         public float Depth;
         public int Height;
@@ -25,8 +24,7 @@ namespace Drydock.Render{
         /// <summary>
         ///   constructor for a normal sprite
         /// </summary>
-        public Sprite2D(RenderTarget target, string textureName, int x, int y, int width, int height, float depth = 0.5f, float opacity = 1, float spriteRepeatX = 1, float spriteRepeatY = 1){
-            _spriteBatch = target.SpriteBatch;
+        public Sprite2D(string textureName, int x, int y, int width, int height, float depth = 0.5f, float opacity = 1, float spriteRepeatX = 1, float spriteRepeatY = 1){
             _texture = Gbl.LoadContent<Texture2D>(textureName);
             _srcRect = new FloatingRectangle(0f, 0f, _texture.Height*spriteRepeatX, _texture.Width*spriteRepeatY);
             _destRect = new Rectangle();
@@ -38,6 +36,7 @@ namespace Drydock.Render{
             Depth = depth;
             Opacity = opacity;
             Enabled = true;
+            RenderTarget.Sprites.Add(this);
         }
 
         #region IDrawableSprite Members
@@ -50,6 +49,7 @@ namespace Drydock.Render{
         public void Dispose(){
             if (!_isDisposed){
                 _isDisposed = true;
+                RenderTarget.Sprites.Remove(this);
             }
         }
 
@@ -63,7 +63,7 @@ namespace Drydock.Render{
                 _destRect.Y = Y;
                 _destRect.Width = Width;
                 _destRect.Height = Height;
-                _spriteBatch.Draw(
+                RenderTarget.CurSpriteBatch.Draw(
                     _texture,
                     _destRect,
                     (Rectangle?) _srcRect,

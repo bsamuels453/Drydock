@@ -22,10 +22,7 @@ namespace Drydock.Logic.HullEditorState{
         readonly SideEditorPanel _sidepanel;
         readonly TopEditorPanel _toppanel;
 
-        readonly GamestateManager _manager;
-
-        public HullEditor(GamestateManager mgr){
-            _manager = mgr;
+        public HullEditor(){
             _elementCollection = new UIElementCollection();
             UIElementCollection.BindCollection(_elementCollection);
 
@@ -42,7 +39,7 @@ namespace Drydock.Logic.HullEditorState{
             _backpanel.TopPanel = _toppanel;
             _backpanel.SidePanel = _sidepanel;
 
-            _previewRenderer = new PreviewRenderer(mgr, _sidepanel.Curves, _toppanel.Curves, _backpanel.Curves);
+            _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves, _backpanel.Curves);
 
             UIElementCollection.UnbindCollection();
         }
@@ -58,8 +55,8 @@ namespace Drydock.Logic.HullEditorState{
                 var backInfo = _backpanel.Curves.GetControllerInfo();
                 var topInfo = _toppanel.Curves.GetControllerInfo();
 
-                _manager.ClearAllStates();
-                _manager.AddGameState(new DoodadEditor(_manager, backInfo, sideInfo, topInfo));
+                GamestateManager.ClearAllStates();
+                GamestateManager.AddGameState(new DoodadEditor(backInfo, sideInfo, topInfo));
             }
         }
 

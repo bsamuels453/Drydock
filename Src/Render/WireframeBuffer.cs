@@ -29,6 +29,14 @@ namespace Drydock.Render{
             base.Vertexbuffer.Dispose();
             Enabled = false;
         }
+
+        public void SetColor(Vector3 color){
+            BufferEffect.Parameters["Color"].SetValue(color);
+        }
+
+        public void SetAlpha(float color) {
+            BufferEffect.Parameters["Alpha"].SetValue(color);
+        }
     }
 
     /*internal struct Vertex3 : IVertexType{

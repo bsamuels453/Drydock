@@ -13,7 +13,6 @@ namespace Drydock.UI{
     internal interface IUIInteractiveElement : IUIElement, IInputUpdates{
         bool Enabled { get; set; }
         bool ContainsMouse { get; set; }
-        RenderTarget RenderTarget { get; }
 
         event OnBasicMouseEvent OnLeftClickDispatcher;
         event OnBasicMouseEvent OnLeftPressDispatcher;

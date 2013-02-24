@@ -13,19 +13,19 @@ namespace Drydock.Logic {
         PlayerPosition,
         CameraTarget
     }
-    internal class GamestateManager {
-        readonly InputHandler _inputHandler;
+    static internal class GamestateManager {
+        static readonly InputHandler _inputHandler;
 
-        readonly List<IGameState> _activeStates;
-        readonly Dictionary<SharedStateData, object> _sharedData;
+        static readonly List<IGameState> _activeStates;
+        static readonly Dictionary<SharedStateData, object> _sharedData;
 
-        public GamestateManager() {
+        static GamestateManager() {
             _activeStates = new List<IGameState>();
             _inputHandler = new InputHandler();
             _sharedData = new Dictionary<SharedStateData, object>();//todo-optimize: might be able to make this into a list instead
         }
 
-        public void ClearAllStates() {
+        static public void ClearAllStates() {
             foreach (var state in _activeStates) {
                 state.Dispose();
             }
@@ -33,41 +33,41 @@ namespace Drydock.Logic {
             _activeStates.Clear();
         }
 
-        public void ClearState(IGameState state) {
+        static public void Draw(){
+            foreach (var state in _activeStates){
+                state.Draw();
+            }
+        }
+
+        static public void ClearState(IGameState state) {
             _activeStates.Remove(state);
             state.Dispose();
         }
 
-        public object QuerySharedData(SharedStateData identifier) {
+        static public object QuerySharedData(SharedStateData identifier) {
             return _sharedData[identifier];
         }
 
-        public void AddSharedData(SharedStateData identifier, object data) {
+        static public void AddSharedData(SharedStateData identifier, object data) {
             _sharedData.Add(identifier, data);
         }
 
-        public void ModifySharedData(SharedStateData identifier, object data) {
+        static public void ModifySharedData(SharedStateData identifier, object data) {
             _sharedData[identifier] = data;
         }
 
-        public void DeleteSharedData(SharedStateData identifier) {
+        static public void DeleteSharedData(SharedStateData identifier) {
             _sharedData.Remove(identifier);
         }
 
-        public void AddGameState(IGameState newState) {
+        static public void AddGameState(IGameState newState) {
             _activeStates.Add(newState);
         }
 
-        public void Update(){
+        static public void Update(){
             _inputHandler.Update();
             for (int i = 0; i < _activeStates.Count; i++){
                 _activeStates[i].Update(_inputHandler.CurrentInputState, 0);
-            }
-        }
-
-        public void Draw() {
-            foreach (var state in _activeStates) {
-                state.Draw();
             }
         }
     }

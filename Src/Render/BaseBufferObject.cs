@@ -12,6 +12,7 @@ namespace Drydock.Render{
         readonly int _numIndicies;
         readonly int _numPrimitives;
         readonly PrimitiveType _primitiveType;
+        bool _isDisposed;
 
         protected Effect BufferEffect;
         protected RasterizerState BufferRasterizer;
@@ -36,6 +37,7 @@ namespace Drydock.Render{
                 numVerticies,
                 BufferUsage.None
                 );
+            RenderTarget.Buffers.Add(this);
         }
 
         #region IDrawableBuffer Members
@@ -57,13 +59,12 @@ namespace Drydock.Render{
 
         #endregion
 
-        /*public void Dispose(){
+        public void Dispose(){
             if (!_isDisposed){
-                _bufferRenderTarget.Remove(this);
-                _bufferRenderTarget = null;
+                //RenderTarget.Buffers.Remove(this);
                 _isDisposed = true;
             }
-        }*/
+        }
 
         public void UpdateViewMatrix(Matrix viewMatrix){
             BufferEffect.Parameters["View"].SetValue(viewMatrix);
@@ -71,7 +72,7 @@ namespace Drydock.Render{
 
 
         ~BaseBufferObject(){
-            //Dispose();
+            Dispose();
         }
     }
 }

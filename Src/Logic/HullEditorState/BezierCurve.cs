@@ -272,20 +272,6 @@ namespace Drydock.Logic.HullEditorState{
 
         #endregion
 
-        public void Draw(){
-            if (_nextLines != null){
-                foreach (var line in _nextLines){
-                    line.Draw();
-                }
-            }
-            if (_prevLines != null){
-                foreach (var line in _prevLines){
-                    line.Draw();
-                }
-            }
-            Handle.Draw();
-        }
-
         public void Update(){
             float t, dt;
             Vector2 firstPos, secondPos;

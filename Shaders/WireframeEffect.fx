@@ -1,6 +1,8 @@
 float4x4 World;
 float4x4 View;
 float4x4 Projection;
+float3 Color = (1,1,1);
+float Alpha = 1;
 
 ////////////////////////////////////////////
 /////////////////VERTEX SHADER//////////////
@@ -34,10 +36,10 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 	//COLORING///
 	/////////////
 	float4 pixelColor;
-	pixelColor.r=0.07;
-	pixelColor.g=0.07;
-	pixelColor.b=0.07;
-	pixelColor.a = 0.1;
+	pixelColor.r=Color.r;
+	pixelColor.g=Color.g;
+	pixelColor.b=Color.b;
+	pixelColor.a = Alpha;
 	return pixelColor;
 }
 

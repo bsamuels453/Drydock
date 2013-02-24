@@ -91,17 +91,9 @@ namespace Drydock.UI{
             get { return _boundingBox; }
         }
 
-        public RenderTarget RenderTarget {get;set;}
-
         public event OnBasicMouseEvent OnLeftClickDispatcher;
         public event OnBasicMouseEvent OnLeftPressDispatcher;
         public event OnBasicMouseEvent OnLeftReleaseDispatcher;
-        public void Draw(){
-            _sprite.Draw();
-            foreach (var component in Components){
-                component.Draw();
-            }
-        }
 
         public bool Enabled{
             get { return _Enabled; }
@@ -131,15 +123,14 @@ namespace Drydock.UI{
         #region ctor
 
         //xxx why are these position coordinates all floats?
-        public Button(RenderTarget target, float x, float y, float width, float height, DepthLevel depth, string textureName, float spriteTexRepeatX = DefaultTexRepeat, float spriteTexRepeatY = DefaultTexRepeat, int identifier = DefaultIdentifier, IUIComponent[] components = null){
+        public Button(float x, float y, float width, float height, DepthLevel depth, string textureName, float spriteTexRepeatX = DefaultTexRepeat, float spriteTexRepeatY = DefaultTexRepeat, int identifier = DefaultIdentifier, IUIComponent[] components = null){
             _identifier = identifier;
             _Enabled = true;
-            RenderTarget = target;
             _iEventDispatcher = new ButtonEventDispatcher();
 
             _centPosition = new Vector2();
             _boundingBox = new FloatingRectangle(x, y, width, height);
-            _sprite = new Sprite2D(target, textureName, (int) x, (int) y, (int) width, (int) height, (float) depth/10, 1, spriteTexRepeatX, spriteTexRepeatY);
+            _sprite = new Sprite2D(textureName, (int) x, (int) y, (int) width, (int) height, (float) depth/10, 1, spriteTexRepeatX, spriteTexRepeatY);
 
             _centPosition.X = _boundingBox.X + _boundingBox.Width/2;
             _centPosition.Y = _boundingBox.Y + _boundingBox.Height/2;
@@ -312,7 +303,6 @@ namespace Drydock.UI{
 
         public ButtonGenerator(){
             Components = null;
-            Target = null;
             Depth = null;
             Height = null;
             Width = null;
@@ -355,8 +345,7 @@ namespace Drydock.UI{
 
         public Button GenerateButton(){
             //make sure we have all the data required
-            if (Target == null ||
-                X == null ||
+            if (X == null ||
                 Y == null ||
                 Width == null ||
                 Height == null ||
@@ -391,7 +380,6 @@ namespace Drydock.UI{
                 identifier = Button.DefaultIdentifier;
 
             return new Button(
-                Target,
                 (float) X,
                 (float) Y,
                 (float) Width,

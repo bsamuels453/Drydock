@@ -176,10 +176,6 @@ namespace Drydock.UI.Components{
             }
         }
 
-        public void Draw(){
-            
-        }
-
         public string Identifier { get; private set; }
 
         #endregion

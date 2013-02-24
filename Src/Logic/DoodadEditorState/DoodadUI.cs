@@ -20,7 +20,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
         readonly Toolbar _toolBar;
 
-        public DoodadUI(HullDataManager hullData, RenderTarget target, GamestateManager manager){
+        public DoodadUI(HullDataManager hullData, RenderTarget target){
             _hullData = hullData;
 
             var buttonGen = new ButtonGenerator("ToolbarButton64.json");
@@ -38,9 +38,9 @@ namespace Drydock.Logic.DoodadEditorState{
 
             _toolBar = new Toolbar(target, "Templates/DoodadToolbar.json");
 
-            _toolBar.BindButtonToTool(0, new WallMenuTool(hullData, target, manager));
+            _toolBar.BindButtonToTool(0, new WallMenuTool(hullData, target));
 
-            _toolBar.BindButtonToTool(1, new LadderBuildTool(hullData, manager));
+            _toolBar.BindButtonToTool(1, new LadderBuildTool(hullData));
         }
 
         #region IInputUpdates Members
@@ -58,12 +58,6 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         #endregion
-
-        public void Draw(Matrix viewMatrix){
-            _deckDownButton.Draw();
-            _deckUpButton.Draw();
-            _toolBar.Draw(viewMatrix);
-        }
 
         void AddVisibleLevel(int identifier){
             _hullData.MoveUpOneDeck();

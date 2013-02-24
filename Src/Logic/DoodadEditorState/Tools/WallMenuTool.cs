@@ -11,18 +11,18 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
     internal class WallMenuTool : IToolbarTool{
         readonly Toolbar _toolbar;
         //todo: break this and put it in doodadui
-        public WallMenuTool(HullDataManager hullData, RenderTarget target, GamestateManager manager){
+        public WallMenuTool(HullDataManager hullData, RenderTarget target){
             _toolbar = new Toolbar(target, "Templates/BuildToolbar.json");
             _toolbar.Enabled = false;
 
             _toolbar.BindButtonToTool(
                 0,
-                new WallBuildTool(hullData, manager)
+                new WallBuildTool(hullData)
                 );
 
             _toolbar.BindButtonToTool(
                 1,
-                new WallDeleteTool(hullData, manager)
+                new WallDeleteTool(hullData)
                 );
         }
 
@@ -40,11 +40,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             get { return _toolbar.Enabled; }
             set { _toolbar.Enabled = value; }
         }
-
-        public void Draw(Matrix viewMatrix){
-            _toolbar.Draw(viewMatrix);
-        }
-
         #endregion
     }
 }

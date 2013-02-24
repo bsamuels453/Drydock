@@ -153,12 +153,6 @@ namespace Drydock.Logic.HullEditorState{
             }
         }
 
-        public void Draw(){
-            foreach (var curve in _curveList){
-                curve.Draw();
-            }
-        }
-
         public void Update(){
             foreach (var curve in _curveList){
                 curve.Update();

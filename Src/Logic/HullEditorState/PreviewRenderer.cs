@@ -22,9 +22,8 @@ namespace Drydock.Logic.HullEditorState {
         readonly BezierCurveCollection _topCurves;
         VertexPositionNormalTexture[] _verticies;
 
-        public PreviewRenderer(GamestateManager mgr, BezierCurveCollection sideCurves, BezierCurveCollection topCurves, BezierCurveCollection backCurves) :
-            base(mgr,
-            new Rectangle(
+        public PreviewRenderer(BezierCurveCollection sideCurves, BezierCurveCollection topCurves, BezierCurveCollection backCurves) :
+            base(new Rectangle(
                      ScreenData.GetScreenValueX(0.5f),
                      ScreenData.GetScreenValueY(0.5f),
                      ScreenData.GetScreenValueX(0.5f),
@@ -37,7 +36,7 @@ namespace Drydock.Logic.HullEditorState {
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f)
                 );
-
+            _renderTarget.Bind();
             _indicies = MeshHelper.CreateIndiceArray((_meshVertexWidth) * (_meshVertexWidth));
             _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth) * (_meshVertexWidth));
 
@@ -51,15 +50,14 @@ namespace Drydock.Logic.HullEditorState {
             _backCurves = backCurves;
 
             _geometryBuffer.Indexbuffer.SetData(_indicies);
+            _renderTarget.Unbind();
         }
 
 
         public void Draw() {
-            _renderTarget.Bind();
             Gbl.Device.Clear(Color.CornflowerBlue);
             var viewMatrix = Matrix.CreateLookAt(base.CameraPosition, base.CameraTarget, Vector3.Up);
-            _geometryBuffer.Draw(viewMatrix);
-            _renderTarget.Unbind();
+            _renderTarget.Draw(viewMatrix, Color.CornflowerBlue);
         }
 
         public void Dispose(){

@@ -219,7 +219,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Drydock.cs" />
-    <Compile Include="Render\EnvironmentBatch.cs" />
     <Compile Include="Render\ScreenData.cs" />
     <Compile Include="Render\ScreenText.cs" />
     <Compile Include="Render\TextBatch.cs" />

@@ -6,6 +6,7 @@ using Drydock.Render;
 using Drydock.UI;
 using Drydock.UI.Components;
 using Drydock.Utilities;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -43,7 +44,7 @@ namespace Drydock.Logic.HullEditorState{
         protected HullEditorPanel(int x, int y, int width, int height, string defaultCurveConfiguration, PanelAlias panelType){
             BoundingBox = new FloatingRectangle(x, y, width, height);
             RenderTarget = new RenderTarget();
-
+            RenderTarget.Bind();
             Curves = new BezierCurveCollection(
                 target: RenderTarget,
                 defaultConfig: defaultCurveConfiguration,
@@ -58,7 +59,6 @@ namespace Drydock.Logic.HullEditorState{
             UIElementCollection.Collection.AddDragConstraintCallback(ClampChildElements);
             Background =
                 new Button(
-                    target: RenderTarget,
                     x: x,
                     y: y,
                     width: width,
@@ -70,6 +70,7 @@ namespace Drydock.Logic.HullEditorState{
                     components: new IUIComponent[]{new PanelComponent()}
                     );
             Update();
+            RenderTarget.Unbind();
         }
 
         protected abstract void DisposeChild();
@@ -110,10 +111,7 @@ namespace Drydock.Logic.HullEditorState{
         }
 
         public void Draw(){
-            RenderTarget.Bind();
-            Curves.Draw();
-            Background.Draw();
-            RenderTarget.Unbind();
+            RenderTarget.Draw(new Matrix(), Color.Transparent);
         }
 
         public void Dispose(){

@@ -115,15 +115,6 @@ namespace Drydock.UI.Widgets{
             }
         }
 
-        public void Draw(Matrix viewMatrix){
-            foreach (var button in ToolbarButtons){
-                button.Draw();
-            }
-            foreach (var tool in _buttonTools){
-                tool.Draw(viewMatrix);
-            }
-        }
-
         #region IInputUpdates Members
 
         public void UpdateInput(ref InputState state){

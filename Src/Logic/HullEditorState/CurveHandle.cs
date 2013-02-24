@@ -96,15 +96,6 @@ namespace Drydock.Logic.HullEditorState{
             InterlinkButtonEvents();
         }
 
-        public void Draw(){
-            _centerButton.Draw();
-            _nextButton.Draw();
-            _nextLine.Draw();
-            _prevButton.Draw();
-            _prevLine.Draw();
-
-        }
-
         public void Dispose(){
             /*_centerButton.Dispose();
             _nextButton.Dispose();
