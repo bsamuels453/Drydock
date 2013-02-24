@@ -17,14 +17,17 @@ namespace Drydock.Logic {
         float _cameraDistance;
         float _cameraPhi;
         float _cameraTheta;
-        protected Vector3 CameraPosition;
-        protected Vector3 CameraTarget;
+        public Vector3 CameraPosition;
+        public Vector3 CameraTarget;
+        GamestateManager _manager;
 
         /// <summary>
         ///   default constructor makes it recieve from entire screen
         /// </summary>
+        /// <param name="manager"> </param>
         /// <param name="boundingBox"> </param>
-        public BodyCenteredCamera(Rectangle? boundingBox = null) {
+        public BodyCenteredCamera(GamestateManager manager, Rectangle? boundingBox = null) {
+            _manager = manager;
             _cameraPhi = 1.2f;
             _cameraTheta = 1.93f;
             _cameraDistance = 60;
@@ -34,6 +37,8 @@ namespace Drydock.Logic {
             else {
                 _boundingBox = new Rectangle(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
             }
+            _manager.AddSharedData(SharedStateData.CameraTarget, CameraTarget);
+            _manager.AddSharedData(SharedStateData.PlayerPosition, CameraPosition);
         }
 
         public void SetCameraTarget(Vector3 target) {
@@ -42,6 +47,8 @@ namespace Drydock.Logic {
             CameraPosition.X = (float)(_cameraDistance * Math.Sin(_cameraPhi) * Math.Cos(_cameraTheta)) + CameraTarget.X;
             CameraPosition.Z = (float)(_cameraDistance * Math.Sin(_cameraPhi) * Math.Sin(_cameraTheta)) + CameraTarget.Z;
             CameraPosition.Y = (float)(_cameraDistance * Math.Cos(_cameraPhi)) + CameraTarget.Y;
+
+            _manager.ModifySharedData(SharedStateData.PlayerPosition, CameraPosition);
         }
 
         public void UpdateInput(ref InputState state){
@@ -90,6 +97,8 @@ namespace Drydock.Logic {
                         int f = 4;
                     }
                 }
+                _manager.ModifySharedData(SharedStateData.PlayerPosition, CameraPosition);
+                _manager.ModifySharedData(SharedStateData.CameraTarget, CameraTarget);
             }
 
 

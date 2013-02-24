@@ -2,8 +2,10 @@
 
 using Drydock.Control;
 using Drydock.Logic.DoodadEditorState.Tools;
+using Drydock.Render;
 using Drydock.UI;
 using Drydock.UI.Widgets;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -18,10 +20,11 @@ namespace Drydock.Logic.DoodadEditorState{
 
         readonly Toolbar _toolBar;
 
-        public DoodadUI(HullDataManager hullData){
+        public DoodadUI(HullDataManager hullData, RenderTarget target, GamestateManager manager){
             _hullData = hullData;
 
             var buttonGen = new ButtonGenerator("ToolbarButton64.json");
+            buttonGen.Target = target;
             buttonGen.X = 50;
             buttonGen.Y = 50;
             buttonGen.TextureName = "UI_DeckNavArrowUp";
@@ -33,15 +36,11 @@ namespace Drydock.Logic.DoodadEditorState{
             _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;
 
 
-            _toolBar = new Toolbar("Templates/DoodadToolbar.json");
+            _toolBar = new Toolbar(target, "Templates/DoodadToolbar.json");
 
-            _toolBar.BindButtonToTool(0, new WallMenuTool(
-                                             hullData)
-                );
+            _toolBar.BindButtonToTool(0, new WallMenuTool(hullData, target, manager));
 
-            _toolBar.BindButtonToTool(1, new LadderBuildTool(
-                                             hullData
-                                             ));
+            _toolBar.BindButtonToTool(1, new LadderBuildTool(hullData, manager));
         }
 
         #region IInputUpdates Members
@@ -60,10 +59,10 @@ namespace Drydock.Logic.DoodadEditorState{
 
         #endregion
 
-        void Draw(){
+        public void Draw(Matrix viewMatrix){
             _deckDownButton.Draw();
             _deckUpButton.Draw();
-            _toolBar.Draw();
+            _toolBar.Draw(viewMatrix);
         }
 
         void AddVisibleLevel(int identifier){

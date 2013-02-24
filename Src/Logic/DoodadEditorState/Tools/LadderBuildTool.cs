@@ -15,8 +15,8 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         readonly HullDataManager _hullData;
         readonly ObjectModelBuffer<int> _ghostedLadderModel;  
 
-        public LadderBuildTool(HullDataManager hullData)
-            : base(hullData, hullData.WallResolution, 2) {
+        public LadderBuildTool(HullDataManager hullData, GamestateManager manager)
+            : base(manager, hullData, hullData.WallResolution, 2) {
             // ReSharper disable CompareOfFloatsByEqualityOperator
             Debug.Assert(_ladderWidth % _gridWidth == 0);
             // ReSharper restore CompareOfFloatsByEqualityOperator

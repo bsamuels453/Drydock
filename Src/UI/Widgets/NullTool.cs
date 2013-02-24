@@ -1,6 +1,7 @@
 ﻿#region
 
 using Drydock.Control;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -22,6 +23,10 @@ namespace Drydock.UI.Widgets{
         public bool Enabled{
             get { return false; }
             set {  }
+        }
+
+        public void Draw(Matrix viewMatrix){
+            
         }
     }
 }

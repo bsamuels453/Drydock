@@ -6,6 +6,7 @@ using Drydock.Logic.Drydock.Logic;
 using Drydock.Render;
 using Drydock.UI;
 using Drydock.Utilities;
+using Microsoft.Xna.Framework;
 
 #endregion
 
@@ -23,7 +24,7 @@ namespace Drydock.Logic.DoodadEditorState{
         public DoodadEditor(GamestateManager mgr, List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo){
             _renderTarget = new RenderTarget(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
             _uiElementCollection = new UIElementCollection();
-            _cameraController = new BodyCenteredCamera();
+            _cameraController = new BodyCenteredCamera(mgr);
 
             #region construct UI and any UI-related tools
 
@@ -33,7 +34,7 @@ namespace Drydock.Logic.DoodadEditorState{
             var geometryInfo = HullGeometryGenerator.GenerateShip(backCurveInfo, sideCurveInfo, topCurveInfo, _primsPerDeck);
             _hullData = new HullDataManager(geometryInfo);
 
-            _doodadUI = new DoodadUI(_hullData);
+            _doodadUI = new DoodadUI(_hullData, _renderTarget, mgr);
 
             UIElementCollection.UnbindCollection();
 
@@ -42,9 +43,11 @@ namespace Drydock.Logic.DoodadEditorState{
             _cameraController.SetCameraTarget(_hullData.CenterPoint);
         }
 
-        #region IGameState Members
+        public void Dispose(){
+            throw new System.NotImplementedException();
+        }
 
-        public void Update(ref InputState state, double timeDelta){
+        public void Update(InputState state, double timeDelta){
             UIElementCollection.BindCollection(_uiElementCollection);
 
             #region update input
@@ -65,18 +68,25 @@ namespace Drydock.Logic.DoodadEditorState{
             UIElementCollection.UnbindCollection();
         }
 
-        #endregion
-
-        public void Dispose(){
-            throw new System.NotImplementedException();
-        }
-
-        public void Update(InputState state, double timeDelta){
-            throw new System.NotImplementedException();
-        }
-
         public void Draw(){
-            throw new System.NotImplementedException();
+            var viewMatrix = Matrix.CreateLookAt(_cameraController.CameraPosition, _cameraController.CameraTarget, Vector3.Up);
+
+
+            _renderTarget.Bind();
+            _doodadUI.Draw(viewMatrix);
+            foreach (var buffer in _hullData.DeckBuffers){
+                buffer.Draw(viewMatrix);
+            }
+            foreach (var buffer in _hullData.ObjectBuffers) {
+                buffer.Draw(viewMatrix);
+            }
+            foreach (var buffer in _hullData.HullBuffers) {
+                buffer.Draw(viewMatrix);
+            }
+            foreach (var buffer in _hullData.WallBuffers) {
+                buffer.Draw(viewMatrix);
+            }
+            _renderTarget.Unbind();
         }
     }
 }

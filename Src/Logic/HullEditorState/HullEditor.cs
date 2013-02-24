@@ -213,7 +213,10 @@ namespace Drydock.Logic.HullEditorState{
         #endregion
 
         public void Dispose(){
-            //throw new System.NotImplementedException();
+            _previewRenderer.Dispose();
+            _sidepanel.Dispose();
+            _backpanel.Dispose();
+            _toppanel.Dispose();
         }
 
         public void Update(InputState state, double timeDelta){

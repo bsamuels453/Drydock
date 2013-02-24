@@ -19,7 +19,6 @@ namespace Drydock.UI{
         event OnBasicMouseEvent OnLeftPressDispatcher;
         event OnBasicMouseEvent OnLeftReleaseDispatcher;
 
-        void Draw();
     }
 
     #region internal event handling interfaces

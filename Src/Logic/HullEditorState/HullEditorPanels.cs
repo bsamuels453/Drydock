@@ -116,6 +116,10 @@ namespace Drydock.Logic.HullEditorState{
             RenderTarget.Unbind();
         }
 
+        public void Dispose(){
+            RenderTarget.Dispose();
+        }
+
         public void Update(){
             Curves.Update();
         }

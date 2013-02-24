@@ -11,7 +11,7 @@ using Drydock.Logic.Drydock.Logic;
 namespace Drydock.Logic {
     internal enum SharedStateData {
         PlayerPosition,
-        PlayerLook
+        CameraTarget
     }
     internal class GamestateManager {
         readonly InputHandler _inputHandler;
@@ -29,6 +29,7 @@ namespace Drydock.Logic {
             foreach (var state in _activeStates) {
                 state.Dispose();
             }
+            _sharedData.Clear();
             _activeStates.Clear();
         }
 
@@ -57,10 +58,10 @@ namespace Drydock.Logic {
             _activeStates.Add(newState);
         }
 
-        public void Update() {
+        public void Update(){
             _inputHandler.Update();
-            foreach (var state in _activeStates) {
-                state.Update(_inputHandler.CurrentInputState, 0);
+            for (int i = 0; i < _activeStates.Count; i++){
+                _activeStates[i].Update(_inputHandler.CurrentInputState, 0);
             }
         }
 

@@ -48,13 +48,22 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             }
         }
 
+        public void Draw(Matrix viewMatrix){
+            foreach (var buffer in GuideGridBuffers){
+                buffer.Draw(viewMatrix);
+            }
+            _cursorBuff.Draw(viewMatrix);
+        }
+
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="manager"> </param>
         /// <param name="hullData"></param>
         /// <param name="gridResolution">not functioning properly</param>
         /// <param name="selectionResolution">how many grid tiles wide the selection marquee is intended to be. Set to -1 for selection type to be set to vertexes, rather than tiles.</param>
-        protected DeckPlacementBase(HullDataManager hullData, float gridResolution, int selectionResolution=-1){
+        protected DeckPlacementBase(GamestateManager manager, HullDataManager hullData, float gridResolution, int selectionResolution=-1){
+            _manager = manager;
             HullData = hullData;
             if(selectionResolution>0)
                 _selectionResolution = selectionResolution+1;
@@ -89,9 +98,9 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);
                 
                 var camPos = (Vector3)_manager.QuerySharedData(SharedStateData.PlayerPosition);
-                var camLook = (Angle3)_manager.QuerySharedData(SharedStateData.PlayerLook);
+                var camTarg = (Vector3)_manager.QuerySharedData(SharedStateData.CameraTarget);
 
-                var viewMatrix = RenderHelper.CalculateViewMatrix(camPos, camLook);
+                var viewMatrix = Matrix.CreateLookAt(camPos, camTarg, Vector3.Up);
 
                 //transform the mouse into world space
                 var nearPoint = Gbl.Device.Viewport.Unproject(

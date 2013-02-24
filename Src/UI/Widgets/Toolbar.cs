@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using Drydock.Control;
+using Drydock.Render;
 using Drydock.UI.Components;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -34,7 +35,7 @@ namespace Drydock.UI.Widgets{
 
         bool _Enabled;
 
-        public Toolbar(string path){
+        public Toolbar(RenderTarget target, string path){
             var sr = new StreamReader(path);
             var str = sr.ReadToEnd();
             var ctorData = JsonConvert.DeserializeObject<ToolbarCtorData>(str);
@@ -63,6 +64,7 @@ namespace Drydock.UI.Widgets{
             #region create the buttons
 
             var buttonGen = new ButtonGenerator(ctorData.ButtonTemplate);
+            buttonGen.Target = target;
             ToolbarButtons = new Button[ctorData.NumButtons];
 
             int xPos = _position.X;
@@ -113,9 +115,12 @@ namespace Drydock.UI.Widgets{
             }
         }
 
-        public void Draw(){
+        public void Draw(Matrix viewMatrix){
             foreach (var button in ToolbarButtons){
                 button.Draw();
+            }
+            foreach (var tool in _buttonTools){
+                tool.Draw(viewMatrix);
             }
         }
 
