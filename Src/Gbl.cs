@@ -59,27 +59,31 @@ namespace Drydock{
                 directoriesToSearch.AddRange(Directory.GetDirectories(dir).ToList());
                 directories.Add(dir);
             }
+            try {
+                foreach (string directory in directories) {
+                    string[] files = Directory.GetFiles(directory);
+                    foreach (string file in files) {
+                        var sr = new StreamReader(file);
 
-            foreach (string directory in directories){
-                string[] files = Directory.GetFiles(directory);
-                foreach (string file in files) {
-                    var sr = new StreamReader(file);
+                        var newConfigVals = JsonConvert.DeserializeObject<Dictionary<string, string>>(sr.ReadToEnd());
+                        sr.Close();
 
-                    var newConfigVals = JsonConvert.DeserializeObject<Dictionary<string, string>>(sr.ReadToEnd());
-                    sr.Close();
+                        string prefix = newConfigVals["InternalAbbreviation"] + "_";
+                        newConfigVals.Remove("InternalAbbreviation");
 
-                    string prefix = newConfigVals["InternalAbbreviation"] + "_";
-                    newConfigVals.Remove("InternalAbbreviation");
-
-                    foreach (var configVal in newConfigVals) {
-                        try {
-                            RawLookup.Add(prefix + configVal.Key, configVal.Value);
-                        }
-                        catch (Exception e){
-                            int f = 4;
+                        foreach (var configVal in newConfigVals) {
+                            try {
+                                RawLookup.Add(prefix + configVal.Key, configVal.Value);
+                            }
+                            catch (Exception e) {
+                                int f = 4;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception e){
+               int g = 5;
             }
         }
 
@@ -166,7 +170,7 @@ namespace Drydock{
                     obj = JsonConvert.DeserializeObject<T>(objValue);
                 }
                 catch (Exception ee) {
-                    obj = JsonFallbackParser.Parse<T>(objValue);
+                    obj = VectorParser.Parse<T>(objValue);
                 }
                 return obj;
             }
@@ -178,6 +182,73 @@ namespace Drydock{
             string scriptText = sr.ReadToEnd();
             sr.Close();
             return scriptText;
+        }
+
+        public static ShaderParam[] LoadShaderParams(string shaderName){
+            var configs = new List<string>();
+            var configValues = new List<string>();
+            foreach (var valuePair in RawLookup){
+                if (valuePair.Key.Contains(shaderName)){
+                    configs.Add(valuePair.Key.Substring(shaderName.Count()+1));
+                    configValues.Add(valuePair.Value);
+                }
+            }
+
+            var retConfigs = new List<ShaderParam>();
+
+            //figure out its datatype
+            for (int i = 0; i < configs.Count; i++){
+                string name = configs[i];
+                string configVal = configValues[i];
+
+                if (configVal.Contains(",")) {
+                    //it's a vector
+                    var commas = from value in configVal
+                                 where value == ','
+                                 select value;
+                    int commaCount = commas.Count();
+                    object parsedVector;
+                    Type type;
+                    switch (commaCount){
+                        case 1:
+                            type = typeof(Vector2);
+                            parsedVector = VectorParser.Parse<Vector2>(configVal);
+                            break;
+                        case 2:
+                            type = typeof(Vector3);
+                            parsedVector = VectorParser.Parse<Vector3>(configVal);
+                            break;
+                        case 3:
+                            type = typeof(Vector4);
+                            parsedVector = VectorParser.Parse<Vector4>(configVal);
+                            break;
+                        default:
+                            throw new Exception("vector4 is the largest dimension of vector supported");
+                    }
+                    retConfigs.Add(new ShaderParam(name, parsedVector, type));
+                    continue;
+                }
+                //figure out if it's a string
+                var alphanumerics = from value in configVal
+                                    where char.IsLetter(value)
+                                    select value;
+                if (alphanumerics.Any()){
+                    //it's a string
+                    retConfigs.Add(new ShaderParam(name, configVal, typeof(string)));
+                    continue;
+                }
+
+                if(configVal.Contains(".")){
+                    //it's a float
+                    retConfigs.Add(new ShaderParam(name, float.Parse(configVal), typeof(float)));
+                    continue;
+                }
+
+                //assume its an integer
+                retConfigs.Add(new ShaderParam(name, int.Parse(configVal), typeof(int)));
+            }
+
+            return retConfigs.ToArray();
         }
 
         public static ReadOnlyCollection<byte[]> LoadBinary(string str) {
@@ -212,6 +283,17 @@ namespace Drydock{
                 }
             }
             return curDir + "\\" + directory;
+        }
+
+        public struct ShaderParam{
+            public string Name;
+            public object Parameter;
+            public Type Type;
+            public ShaderParam(string name, object param, Type type){
+                Name = name;
+                Parameter = param;
+                Type = type;
+            }
         }
     }
 }
