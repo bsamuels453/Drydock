@@ -36,8 +36,6 @@ namespace Drydock.Render{
                 numVerticies,
                 BufferUsage.None
                 );
-
-            RenderPanel.Add(this);
         }
 
         #region IDrawableBuffer Members

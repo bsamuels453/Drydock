@@ -46,7 +46,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
         #region IInputUpdates Members
 
-        public void UpdateInput(ref ControlState state){
+        public void UpdateInput(ref InputState state){
             _toolBar.UpdateInput(ref state);
         }
 
@@ -59,6 +59,12 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         #endregion
+
+        void Draw(){
+            _deckDownButton.Draw();
+            _deckUpButton.Draw();
+            _toolBar.Draw();
+        }
 
         void AddVisibleLevel(int identifier){
             _hullData.MoveUpOneDeck();

@@ -1,6 +1,7 @@
 ﻿#region
 
 using Drydock.Control;
+using Drydock.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -12,10 +13,13 @@ namespace Drydock.UI{
     internal interface IUIInteractiveElement : IUIElement, IInputUpdates{
         bool Enabled { get; set; }
         bool ContainsMouse { get; set; }
+        RenderTarget RenderTarget { get; }
 
         event OnBasicMouseEvent OnLeftClickDispatcher;
         event OnBasicMouseEvent OnLeftPressDispatcher;
         event OnBasicMouseEvent OnLeftReleaseDispatcher;
+
+        void Draw();
     }
 
     #region internal event handling interfaces

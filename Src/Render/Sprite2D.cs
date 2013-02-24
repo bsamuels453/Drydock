@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drydock.Render{
     internal class Sprite2D : IDrawableSprite{
-        readonly RenderPanel _renderPanel;
+        readonly SpriteBatch _spriteBatch;
         readonly FloatingRectangle _srcRect;
         public float Depth;
         public int Height;
@@ -25,12 +25,12 @@ namespace Drydock.Render{
         /// <summary>
         ///   constructor for a normal sprite
         /// </summary>
-        public Sprite2D(string textureName, int x, int y, int width, int height, float depth = 0.5f, float opacity = 1, float spriteRepeatX = 1, float spriteRepeatY = 1){
+        public Sprite2D(RenderTarget target, string textureName, int x, int y, int width, int height, float depth = 0.5f, float opacity = 1, float spriteRepeatX = 1, float spriteRepeatY = 1){
+            _spriteBatch = target.SpriteBatch;
             _texture = Gbl.LoadContent<Texture2D>(textureName);
             _srcRect = new FloatingRectangle(0f, 0f, _texture.Height*spriteRepeatX, _texture.Width*spriteRepeatY);
             _destRect = new Rectangle();
             _isDisposed = false;
-            _renderPanel = RenderPanel.Add(this);
             X = x;
             Y = y;
             Width = width;
@@ -49,7 +49,6 @@ namespace Drydock.Render{
 
         public void Dispose(){
             if (!_isDisposed){
-                _renderPanel.Remove(this);
                 _isDisposed = true;
             }
         }
@@ -58,13 +57,13 @@ namespace Drydock.Render{
             _texture = Gbl.ContentManager.Load<Texture2D>(textureName);
         }
 
-        public void Draw(SpriteBatch batch, Vector2 renderTargOffset){
+        public void Draw(){
             if (Enabled){
-                _destRect.X = X - (int) renderTargOffset.X;
-                _destRect.Y = Y - (int) renderTargOffset.Y;
+                _destRect.X = X;
+                _destRect.Y = Y;
                 _destRect.Width = Width;
                 _destRect.Height = Height;
-                batch.Draw(
+                _spriteBatch.Draw(
                     _texture,
                     _destRect,
                     (Rectangle?) _srcRect,
@@ -81,7 +80,6 @@ namespace Drydock.Render{
 
         ~Sprite2D(){
             if (!_isDisposed){
-                _renderPanel.Remove(this);
                 _isDisposed = true;
             }
         }

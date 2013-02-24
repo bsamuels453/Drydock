@@ -13,6 +13,8 @@ namespace Drydock{
         readonly GraphicsDeviceManager _graphics;
         public ContentManager ContentManager;
         // private EditorLogic _editorLogic;
+        GamestateManager _gamestateManager;
+
 
         public Drydock(){
             Content.RootDirectory = "Content";
@@ -26,9 +28,21 @@ namespace Drydock{
         protected override void Initialize(){
             ContentManager = Content;
             Gbl.ContentManager = ContentManager;
-            Renderer.Init(_graphics.GraphicsDevice, Content);
-            GamestateManager.Init();
-            GamestateManager.SetGameState(new HullEditor());
+            Gbl.Device = _graphics.GraphicsDevice;
+            Gbl.ContentManager = Content;
+            Gbl.ScreenSize = new Point(1200, 800);
+            var aspectRatio = Gbl.Device.Viewport.Bounds.Width / (float)Gbl.Device.Viewport.Bounds.Height;
+            Gbl.ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+                fieldOfView: 3.14f / 4,
+                aspectRatio: aspectRatio,
+                nearPlaneDistance: 1,
+                farPlaneDistance: 50000
+                );
+            ScreenData.Init(1200, 800);
+            _gamestateManager = new GamestateManager();
+            _gamestateManager.AddGameState(new HullEditor(_gamestateManager));
+
+
 
             IsMouseVisible = true;
 
@@ -39,19 +53,20 @@ namespace Drydock{
         }
 
         protected override void UnloadContent(){
-            GamestateManager.ClearGameState();
+            Gbl.CommitHashChanges();
         }
 
 
         protected override void Update(GameTime gameTime){
-            GamestateManager.Update();
+            _gamestateManager.Update();
             //Thread.Sleep(10);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime){
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            Renderer.Draw();
+            RenderTarget.BeginDraw();
+            _gamestateManager.Draw();
+            RenderTarget.EndDraw();
             base.Draw(gameTime);
         }
     }

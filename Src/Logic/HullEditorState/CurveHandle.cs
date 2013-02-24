@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using Drydock.Render;
 using Drydock.UI;
 using Drydock.UI.Components;
 using Microsoft.Xna.Framework;
@@ -45,8 +46,7 @@ namespace Drydock.Logic.HullEditorState{
         /// <param name="pos"> </param>
         /// <param name="prevComponent"> </param>
         /// <param name="nextComponent"> </param>
-        public CurveHandle(ButtonGenerator buttonTemplate, LineGenerator lineTemplate, Vector2 pos, Vector2 prevComponent, Vector2 nextComponent){
-            buttonTemplate = new ButtonGenerator("HullEditorHandle.json");
+        public CurveHandle(ButtonGenerator buttonTemplate, LineGenerator lineTemplate, Vector2 pos, Vector2 prevComponent, Vector2 nextComponent) {
             buttonTemplate.Identifier = (int) HandleType.Center;
             buttonTemplate.X = pos.X;
             buttonTemplate.Y = pos.Y;
@@ -94,6 +94,15 @@ namespace Drydock.Logic.HullEditorState{
 
 
             InterlinkButtonEvents();
+        }
+
+        public void Draw(){
+            _centerButton.Draw();
+            _nextButton.Draw();
+            _nextLine.Draw();
+            _prevButton.Draw();
+            _prevLine.Draw();
+
         }
 
         public void Dispose(){

@@ -24,7 +24,6 @@ namespace Drydock.Render{
             _isSlotOccupied = new bool[maxObjects];
             _globalTransform = Matrix.Identity;
             Enabled = true;
-            RenderPanel.Add(this);
         }
 
         public void AddObject(IEquatable<T> identifier, Model model, Matrix transform){

@@ -164,7 +164,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
-    <Compile Include="Control\InputEventDispatcher.cs" />
+    <Compile Include="Control\InputHandler.cs" />
+    <Compile Include="Control\InputSTate.cs" />
     <Compile Include="Control\UpdateInterfaces.cs" />
     <Compile Include="DebugTimer.cs" />
     <Compile Include="JsonFallbackParser.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Logic\DoodadEditorState\Tools\WallDeleteTool.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\DeckPlacementBase.cs" />
     <Compile Include="Logic\DoodadEditorState\Tools\WallMenuTool.cs" />
+    <Compile Include="Logic\IGameState.cs" />
     <Compile Include="Logic\ObjectIdentifier.cs" />
     <Compile Include="Render\ObjectBuffer.cs" />
     <Compile Include="Render\ObjectModelBuffer.cs" />
@@ -193,14 +195,10 @@
     <Compile Include="Logic\HullEditorState\HullEditorPanels.cs" />
     <Compile Include="Logic\DoodadEditorState\HullGeometryGenerator.cs" />
     <Compile Include="Logic\HullEditorState\PreviewRenderer.cs" />
-    <Compile Include="Logic\TestState\Component.cs" />
-    <Compile Include="Logic\TestState\Entity.cs" />
-    <Compile Include="Logic\TestState\EntityData.cs" />
-    <Compile Include="Logic\TestState\TestState.cs" />
     <Compile Include="Render\BaseBufferObject.cs" />
     <Compile Include="Render\IDrawable.cs" />
     <Compile Include="Render\MeshHelper.cs" />
-    <Compile Include="Render\RenderPanel.cs" />
+    <Compile Include="Render\RenderTarget.cs" />
     <Compile Include="Render\ShipGeometryBuffer.cs" />
     <Compile Include="Render\WireframeBuffer.cs" />
     <Compile Include="UI\Button.cs" />
@@ -214,6 +212,7 @@
     <Compile Include="UI\IUIInteractiveElement.cs" />
     <Compile Include="UI\Line.cs" />
     <Compile Include="UI\UIElementCollection.cs" />
+    <Compile Include="Utilities\Angle3.cs" />
     <Compile Include="Utilities\Bezier.cs" />
     <Compile Include="Render\Line2D.cs" />
     <Compile Include="Render\Sprite2D.cs" />
@@ -221,7 +220,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Drydock.cs" />
     <Compile Include="Render\EnvironmentBatch.cs" />
-    <Compile Include="Render\Renderer.cs" />
     <Compile Include="Render\ScreenData.cs" />
     <Compile Include="Render\ScreenText.cs" />
     <Compile Include="Render\TextBatch.cs" />
@@ -234,6 +232,7 @@
     <Compile Include="Utilities\Pair.cs" />
     <Compile Include="Utilities\ReferenceTypes\IntRef.cs" />
     <Compile Include="Gbl.cs" />
+    <Compile Include="Utilities\RenderHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

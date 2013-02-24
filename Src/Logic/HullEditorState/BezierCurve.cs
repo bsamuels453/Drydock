@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Drydock.Render;
 using Drydock.UI;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
@@ -223,7 +224,7 @@ namespace Drydock.Logic.HullEditorState{
 
         #region ctor and disposal
 
-        public BezierCurve(float offsetX, float offsetY, CurveInitalizeData initData){
+        public BezierCurve(RenderTarget target, float offsetX, float offsetY, CurveInitalizeData initData){
             float initX = initData.HandlePosX + offsetX;
             float initY = initData.HandlePosY + offsetY;
 
@@ -237,6 +238,7 @@ namespace Drydock.Logic.HullEditorState{
             _lineTemplate.V2 = Vector2.Zero;
             _lineTemplate.Color = Color.White;
             _lineTemplate.Depth = DepthLevel.Low;
+            _lineTemplate.Target = target;
 
             Vector2 component1 = Common.GetComponentFromAngle(initData.Angle, initData.Length1);
             Vector2 component2 = Common.GetComponentFromAngle((float) (initData.Angle - Math.PI), initData.Length2); // minus math.pi to reverse direction
@@ -244,9 +246,10 @@ namespace Drydock.Logic.HullEditorState{
             #region stuff for generating ui elements
 
             var buttonTemplate = new ButtonGenerator("HullEditorHandle.json");
+            buttonTemplate.Target = target;
 
             var lineTemplate = new LineGenerator("HullEditorLine.json");
-
+            lineTemplate.Target = target;
             Handle = new CurveHandle(buttonTemplate, lineTemplate, new Vector2(initX, initY), component1, component2);
 
             #endregion
@@ -268,6 +271,20 @@ namespace Drydock.Logic.HullEditorState{
         }
 
         #endregion
+
+        public void Draw(){
+            if (_nextLines != null){
+                foreach (var line in _nextLines){
+                    line.Draw();
+                }
+            }
+            if (_prevLines != null){
+                foreach (var line in _prevLines){
+                    line.Draw();
+                }
+            }
+            Handle.Draw();
+        }
 
         public void Update(){
             float t, dt;

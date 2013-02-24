@@ -8,7 +8,7 @@ namespace Drydock.UI.Widgets{
     internal class NullTool : IToolbarTool{
         #region IToolbarTool Members
 
-        public void UpdateInput(ref ControlState state){
+        public void UpdateInput(ref InputState state){
             //throw new NotImplementedException();
         }
 

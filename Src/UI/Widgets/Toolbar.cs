@@ -113,9 +113,15 @@ namespace Drydock.UI.Widgets{
             }
         }
 
+        public void Draw(){
+            foreach (var button in ToolbarButtons){
+                button.Draw();
+            }
+        }
+
         #region IInputUpdates Members
 
-        public void UpdateInput(ref ControlState state){
+        public void UpdateInput(ref InputState state){
             if (Enabled){
                 _activeTool.UpdateInput(ref state);
             }

@@ -17,25 +17,25 @@ namespace Drydock.Logic.HullEditorState {
         readonly ShipGeometryBuffer _geometryBuffer;
         readonly int[] _indicies;
         readonly Vector3[,] _mesh;
-        readonly RenderPanel _renderTarget;
+        readonly RenderTarget _renderTarget;
         readonly BezierCurveCollection _sideCurves;
         readonly BezierCurveCollection _topCurves;
         VertexPositionNormalTexture[] _verticies;
 
-        public PreviewRenderer(BezierCurveCollection sideCurves, BezierCurveCollection topCurves, BezierCurveCollection backCurves) :
-            base(new Rectangle(
+        public PreviewRenderer(GamestateManager mgr, BezierCurveCollection sideCurves, BezierCurveCollection topCurves, BezierCurveCollection backCurves) :
+            base(mgr,
+            new Rectangle(
                      ScreenData.GetScreenValueX(0.5f),
                      ScreenData.GetScreenValueY(0.5f),
                      ScreenData.GetScreenValueX(0.5f),
                      ScreenData.GetScreenValueY(0.5f)
                      )) {
-            _renderTarget = new RenderPanel(
+            _renderTarget = new RenderTarget(
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f),
                 ScreenData.GetScreenValueX(0.5f),
                 ScreenData.GetScreenValueY(0.5f)
                 );
-            RenderPanel.BindRenderTarget(_renderTarget);
 
             _indicies = MeshHelper.CreateIndiceArray((_meshVertexWidth) * (_meshVertexWidth));
             _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth) * (_meshVertexWidth));
@@ -52,8 +52,8 @@ namespace Drydock.Logic.HullEditorState {
             _geometryBuffer.Indexbuffer.SetData(_indicies);
         }
 
-        public void Update() {
-            base.UpdateInput(ref InputEventDispatcher.CurrentControlState);
+        public void Update(ref InputState state) {
+            base.UpdateInput(ref state);
             _topCurves.GetParameterizedPoint(0, true);
 
             var topPts = new Vector2[_meshVertexWidth];

@@ -5,6 +5,7 @@ using System.Linq;
 using Drydock.Control;
 using Drydock.Render;
 using Drydock.UI.Widgets;
+using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -19,6 +20,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         readonly WireframeBuffer _cursorBuff;
         readonly int _selectionResolution;
+        readonly GamestateManager _manager;
         protected Vector3 CursorPosition;
 
         protected Vector3 StrokeEnd;
@@ -77,7 +79,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         #region IToolbarTool Members
 
-        public void UpdateInput(ref ControlState state){
+        public void UpdateInput(ref InputState state){
             #region intersect stuff
 
             if (state.AllowMouseMovementInterpretation){
@@ -85,19 +87,24 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
                 var nearMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 0);
                 var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);
+                
+                var camPos = (Vector3)_manager.QuerySharedData(SharedStateData.PlayerPosition);
+                var camLook = (Angle3)_manager.QuerySharedData(SharedStateData.PlayerLook);
+
+                var viewMatrix = RenderHelper.CalculateViewMatrix(camPos, camLook);
 
                 //transform the mouse into world space
                 var nearPoint = Gbl.Device.Viewport.Unproject(
                     nearMouse,
                     Gbl.ProjectionMatrix,
-                    state.ViewMatrix,
+                    viewMatrix,
                     Matrix.Identity
                     );
 
                 var farPoint = Gbl.Device.Viewport.Unproject(
                     farMouse,
                     Gbl.ProjectionMatrix,
-                    state.ViewMatrix,
+                    viewMatrix,
                     Matrix.Identity
                     );
 

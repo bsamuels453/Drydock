@@ -26,7 +26,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         #region IToolbarTool Members
 
-        public void UpdateInput(ref ControlState state){
+        public void UpdateInput(ref InputState state){
             _toolbar.UpdateInput(ref state);
         }
 

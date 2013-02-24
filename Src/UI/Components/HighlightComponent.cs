@@ -107,10 +107,14 @@ namespace Drydock.UI.Components{
             }
 
             //create sprite
-            _highlightSprite = new Sprite2D(_highlightTexture, (int) _owner.X, (int) _owner.Y, (int) _owner.Width, (int) _owner.Height, _owner.Depth - 0.01f, 0);
+            _highlightSprite = new Sprite2D(_owner.RenderTarget, _highlightTexture, (int) _owner.X, (int) _owner.Y, (int) _owner.Width, (int) _owner.Height, _owner.Depth - 0.01f, 0);
         }
 
         public void Update(){
+        }
+
+        public void Draw(){
+            _highlightSprite.Draw();
         }
 
         public string Identifier { get; private set; }

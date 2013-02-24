@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Drydock.Control;
+using Drydock.Logic.Drydock.Logic;
 using Drydock.Render;
 using Drydock.UI;
 using Drydock.Utilities;
@@ -15,18 +16,17 @@ namespace Drydock.Logic.DoodadEditorState{
         readonly BodyCenteredCamera _cameraController;
         readonly DoodadUI _doodadUI;
         readonly HullDataManager _hullData;
-        readonly RenderPanel _renderTarget;
+        readonly RenderTarget _renderTarget;
 
         readonly UIElementCollection _uiElementCollection;
 
-        public DoodadEditor(List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo){
-            _renderTarget = new RenderPanel(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
+        public DoodadEditor(GamestateManager mgr, List<BezierInfo> backCurveInfo, List<BezierInfo> sideCurveInfo, List<BezierInfo> topCurveInfo){
+            _renderTarget = new RenderTarget(0, 0, ScreenData.ScreenWidth, ScreenData.ScreenHeight);
             _uiElementCollection = new UIElementCollection();
-            _cameraController = new BodyCenteredCamera();
+            _cameraController = new BodyCenteredCamera(mgr);
 
             #region construct UI and any UI-related tools
 
-            RenderPanel.BindRenderTarget(_renderTarget);
             UIElementCollection.BindCollection(_uiElementCollection);
 
 
@@ -35,7 +35,6 @@ namespace Drydock.Logic.DoodadEditorState{
 
             _doodadUI = new DoodadUI(_hullData);
 
-            RenderPanel.UnbindRenderTarget();
             UIElementCollection.UnbindCollection();
 
             #endregion
@@ -45,7 +44,7 @@ namespace Drydock.Logic.DoodadEditorState{
 
         #region IGameState Members
 
-        public void Update(ref ControlState state, double timeDelta){
+        public void Update(ref InputState state, double timeDelta){
             UIElementCollection.BindCollection(_uiElementCollection);
 
             #region update input
@@ -67,5 +66,17 @@ namespace Drydock.Logic.DoodadEditorState{
         }
 
         #endregion
+
+        public void Dispose(){
+            throw new System.NotImplementedException();
+        }
+
+        public void Update(InputState state, double timeDelta){
+            throw new System.NotImplementedException();
+        }
+
+        public void Draw(){
+            throw new System.NotImplementedException();
+        }
     }
 }

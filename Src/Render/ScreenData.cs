@@ -1,4 +1,5 @@
 ﻿namespace Drydock.Render{
+    //todo: replace this with Gbl.ScreenSize
     internal static class ScreenData{
         public static int ScreenWidth;
         public static int ScreenHeight;

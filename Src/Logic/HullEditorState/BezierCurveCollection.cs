@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Drydock.Render;
 using Drydock.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -15,6 +16,7 @@ namespace Drydock.Logic.HullEditorState{
 
         public readonly float PixelsPerMeter;
         readonly List<BezierCurve> _curveList;
+        readonly RenderTarget _target;
 
         public double MaxX;
         public double MaxY;
@@ -27,7 +29,8 @@ namespace Drydock.Logic.HullEditorState{
 
         #endregion
 
-        public BezierCurveCollection(string defaultConfig, FloatingRectangle areaToFill, PanelAlias panelType){
+        public BezierCurveCollection(RenderTarget target, string defaultConfig, FloatingRectangle areaToFill, PanelAlias panelType){
+            _target =target;
             var reader = XmlReader.Create(defaultConfig);
             reader.ReadToFollowing("NumControllers");
             int numControllers = int.Parse(reader.ReadString());
@@ -68,7 +71,7 @@ namespace Drydock.Logic.HullEditorState{
             }
 
             for (int i = 0; i < numControllers; i++){
-                _curveList.Add(new BezierCurve(0, 0, curveInitData[i]));
+                _curveList.Add(new BezierCurve(_target, 0, 0, curveInitData[i]));
             }
             for (int i = 1; i < numControllers - 1; i++){
                 _curveList[i].SetPrevCurve(_curveList[i - 1]);
@@ -147,6 +150,12 @@ namespace Drydock.Logic.HullEditorState{
                         );
 
                     break;
+            }
+        }
+
+        public void Draw(){
+            foreach (var curve in _curveList){
+                curve.Draw();
             }
         }
 

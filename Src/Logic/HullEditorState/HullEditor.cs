@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml;
 using Drydock.Control;
 using Drydock.Logic.DoodadEditorState;
+using Drydock.Logic.Drydock.Logic;
 using Drydock.Render;
 using Drydock.UI;
 using Microsoft.Xna.Framework;
@@ -17,49 +18,38 @@ namespace Drydock.Logic.HullEditorState{
         readonly BackEditorPanel _backpanel;
         readonly UIElementCollection _elementCollection;
 
-        readonly PreviewRenderer _previewRenderer;
+        //readonly PreviewRenderer _previewRenderer;
         readonly SideEditorPanel _sidepanel;
         readonly TopEditorPanel _toppanel;
 
-        public HullEditor(){
+        readonly GamestateManager _manager;
+
+        public HullEditor(GamestateManager mgr){
+            _manager = mgr;
             _elementCollection = new UIElementCollection();
             UIElementCollection.BindCollection(_elementCollection);
 
             _sidepanel = new SideEditorPanel(0, 0, ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "save/side.xml");
-            _toppanel = new TopEditorPanel(0, ScreenData.GetScreenValueY(0.5f), ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "save/top.xml");
+            //_toppanel = new TopEditorPanel(0, ScreenData.GetScreenValueY(0.5f), ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "save/top.xml");
+            //_backpanel = new BackEditorPanel(ScreenData.GetScreenValueX(0.5f), 0, ScreenData.GetScreenValueX(0.25f), ScreenData.GetScreenValueY(0.5f), "save/back.xml");
+            _toppanel = new TopEditorPanel(0, 400, ScreenData.GetScreenValueX(0.5f), ScreenData.GetScreenValueY(0.5f), "save/top.xml");
             _backpanel = new BackEditorPanel(ScreenData.GetScreenValueX(0.5f), 0, ScreenData.GetScreenValueX(0.25f), ScreenData.GetScreenValueY(0.5f), "save/back.xml");
 
-            _sidepanel.BackPanel = _backpanel;
-            _sidepanel.TopPanel = _toppanel;
+            //_sidepanel.BackPanel = _backpanel;
+            //_sidepanel.TopPanel = _toppanel;
 
             _toppanel.BackPanel = _backpanel;
-            _toppanel.SidePanel = _sidepanel;
+            //_toppanel.SidePanel = _sidepanel;
 
             _backpanel.TopPanel = _toppanel;
-            _backpanel.SidePanel = _sidepanel;
+            //_backpanel.SidePanel = _sidepanel;
 
-            _previewRenderer = new PreviewRenderer(_sidepanel.Curves, _toppanel.Curves, _backpanel.Curves);
+            //_previewRenderer = new PreviewRenderer(mgr, _sidepanel.Curves, _toppanel.Curves, _backpanel.Curves);
 
             UIElementCollection.UnbindCollection();
         }
 
-        #region IGameState Members
-
-        public void Update(ref ControlState state, double timeDelta){
-            UIElementCollection.BindCollection(_elementCollection);
-            _sidepanel.Update();
-            _toppanel.Update();
-            _backpanel.Update();
-            _previewRenderer.Update();
-            UIElementCollection.Collection.UpdateInput(ref state);
-            UIElementCollection.Collection.UpdateLogic(timeDelta);
-            UIElementCollection.UnbindCollection();
-            HandleEditorKeyboardInput(ref state);
-        }
-
-        #endregion
-
-        void HandleEditorKeyboardInput(ref ControlState state){
+        void HandleEditorKeyboardInput(ref InputState state){
             if (state.KeyboardState.IsKeyDown(Keys.LeftControl) && state.KeyboardState.IsKeyDown(Keys.S)){
                 SaveCurves("save/");
             }
@@ -69,8 +59,8 @@ namespace Drydock.Logic.HullEditorState{
                 var backInfo = _backpanel.Curves.GetControllerInfo();
                 var topInfo = _toppanel.Curves.GetControllerInfo();
 
-                GamestateManager.ClearGameState();
-                GamestateManager.SetGameState(new DoodadEditor(backInfo, sideInfo, topInfo));
+                _manager.ClearAllStates();
+                _manager.AddGameState(new DoodadEditor(_manager, backInfo, sideInfo, topInfo));
             }
         }
 
@@ -222,5 +212,27 @@ namespace Drydock.Logic.HullEditorState{
         }
 
         #endregion
+
+        public void Dispose(){
+            //throw new System.NotImplementedException();
+        }
+
+        public void Update(InputState state, double timeDelta){
+            UIElementCollection.BindCollection(_elementCollection);
+            _sidepanel.Update();
+            _toppanel.Update();
+            _backpanel.Update();
+            //_previewRenderer.Update(ref state);
+            UIElementCollection.Collection.UpdateInput(ref state);
+            UIElementCollection.Collection.UpdateLogic(timeDelta);
+            UIElementCollection.UnbindCollection();
+            HandleEditorKeyboardInput(ref state);
+        }
+
+        public void Draw(){
+            _sidepanel.Draw();
+            _toppanel.Draw();
+            _backpanel.Draw();
+        }
     }
 }

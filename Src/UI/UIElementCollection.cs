@@ -41,7 +41,7 @@ namespace Drydock.UI{
 
         #region IInputUpdates Members
 
-        public void UpdateInput(ref ControlState state){
+        public void UpdateInput(ref InputState state){
             for (int i = 0; i < _layerSortedIElements.Count; i++){
                 _layerSortedIElements[i].UpdateInput(ref state);
             }
