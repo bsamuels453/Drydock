@@ -46,18 +46,39 @@ namespace Drydock{
         static Gbl() {
             CheckHashes();
             RawLookup = new Dictionary<string, string>();
-            var files = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Config\\");
-            foreach (var file in files) {
-                var sr = new StreamReader(file);
 
-                var newConfigVals = JsonConvert.DeserializeObject<Dictionary<string, string>>(sr.ReadToEnd());
-                sr.Close();
+            List<string> directories = new List<string>();
+            List<string> directoriesToSearch = new List<string>();
 
-                string prefix = newConfigVals["InternalAbbreviation"] + "_";
-                newConfigVals.Remove("InternalAbbreviation");
+            string currentDirectory = Directory.GetCurrentDirectory() + "\\Config\\";
+            directoriesToSearch.Add(currentDirectory);
+            
+            while (directoriesToSearch.Count > 0) {
+                string dir = directoriesToSearch[0];
+                directoriesToSearch.RemoveAt(0);
+                directoriesToSearch.AddRange(Directory.GetDirectories(dir).ToList());
+                directories.Add(dir);
+            }
 
-                foreach (var configVal in newConfigVals) {
-                    RawLookup.Add(prefix + configVal.Key, configVal.Value);
+            foreach (string directory in directories){
+                string[] files = Directory.GetFiles(directory);
+                foreach (string file in files) {
+                    var sr = new StreamReader(file);
+
+                    var newConfigVals = JsonConvert.DeserializeObject<Dictionary<string, string>>(sr.ReadToEnd());
+                    sr.Close();
+
+                    string prefix = newConfigVals["InternalAbbreviation"] + "_";
+                    newConfigVals.Remove("InternalAbbreviation");
+
+                    foreach (var configVal in newConfigVals) {
+                        try {
+                            RawLookup.Add(prefix + configVal.Key, configVal.Value);
+                        }
+                        catch (Exception e){
+                            int f = 4;
+                        }
+                    }
                 }
             }
         }
