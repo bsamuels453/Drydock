@@ -63,7 +63,7 @@ namespace Drydock.Logic.HullEditorState{
                     width: width,
                     height: height,
                     depth: DepthLevel.Background,
-                    textureName: "HullEditorBgTex",
+                    textureName: "UI_HullEditorBgTex",
                     spriteTexRepeatX: width/(Curves.PixelsPerMeter*1),
                     spriteTexRepeatY: height/(Curves.PixelsPerMeter*1),
                     components: new IUIComponent[]{new PanelComponent()}

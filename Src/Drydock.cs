@@ -25,7 +25,7 @@ namespace Drydock{
 
         protected override void Initialize(){
             ContentManager = Content;
-            Singleton.ContentManager = ContentManager;
+            Gbl.ContentManager = ContentManager;
             Renderer.Init(_graphics.GraphicsDevice, Content);
             GamestateManager.Init();
             GamestateManager.SetGameState(new HullEditor());

@@ -24,10 +24,10 @@ namespace Drydock.Logic.DoodadEditorState{
             var buttonGen = new ButtonGenerator("ToolbarButton64.json");
             buttonGen.X = 50;
             buttonGen.Y = 50;
-            buttonGen.TextureName = "DeckNavArrowUp";
+            buttonGen.TextureName = "UI_DeckNavArrowUp";
             _deckUpButton = buttonGen.GenerateButton();
             buttonGen.Y = 50 + 64;
-            buttonGen.TextureName = "DeckNavArrowDown";
+            buttonGen.TextureName = "UI_DeckNavArrowDown";
             _deckDownButton = buttonGen.GenerateButton();
             _deckUpButton.OnLeftClickDispatcher += AddVisibleLevel;
             _deckDownButton.OnLeftClickDispatcher += RemoveVisibleLevel;

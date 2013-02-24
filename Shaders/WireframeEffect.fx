@@ -8,13 +8,11 @@ float4x4 Projection;
 struct VertexShaderInput
 {
     float4 Position : POSITION0;
-	float4 Color : COLOR0;
 };
 
 struct VertexShaderOutput
 {
     float4 Position : POSITION0;
-	float4 Color : COLOR0;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
@@ -24,7 +22,6 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     float4 worldPosition = mul(input.Position, World);
     float4 viewPosition = mul(worldPosition, View);
     output.Position = mul(viewPosition, Projection);
-	output.Color = input.Color;
     return output;
 }
 
@@ -33,7 +30,15 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 ////////////////////////////////////////////
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-	return input.Color;
+	/////////////
+	//COLORING///
+	/////////////
+	float4 pixelColor;
+	pixelColor.r=0.07;
+	pixelColor.g=0.07;
+	pixelColor.b=0.07;
+	pixelColor.a = 0.1;
+	return pixelColor;
 }
 
 technique Standard

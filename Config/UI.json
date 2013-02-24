@@ -1,0 +1,22 @@
+{
+	"InternalAbbreviation": "UI",
+	
+	"black": "Materials/blackhighlight",
+	"ButtonHighlightTex": "Materials/highlighteffect",
+	"SpriteFont" : "Fonts/SpriteFont",
+	"WallDeleteIcon": "Icons/walldeleteicon",
+	"LadderBuildIcon": "Icons/ladderbuildicon",
+	"WallBuildIcon": "Icons/wallbuildicon",
+	"WallToolbarIcon": "Icons/wallbuildicon",
+	"UnboundButtonIcon": "Icons/cross",
+	"DeckNavArrowDown": "Icons/downarrow",
+	"DeckNavArrowUp": "Icons/uparrow",
+	"HullEditorHandleTex": "Materials/whitebox",
+	"HullEditorBgTex": "Materials/panelBG",
+	"HullEditorHullTex": "Materials/whiteborder",
+	"WallDeleteMarqueeTex": "Materials/redborder",
+	"HullWallTex": "Materials/whiteborder",
+	"DoodadEditorHullTex": "Materials/whiteborder",
+	"DoodadEditorFloorTex": "Materials/whiteborder",
+	"InternalWallTex": "Materials/whiteborder"
+}

@@ -19,7 +19,7 @@ namespace Drydock.Render{
         public Line2D(Line parent, Color color){
             _isDisposed = false;
 
-            _texture = new Texture2D(Singleton.Device, 1, 1, false, SurfaceFormat.Color);
+            _texture = new Texture2D(Gbl.Device, 1, 1, false, SurfaceFormat.Color);
             _texture.SetData(new[]{color});
             _parent = parent;
             _renderPanel = RenderPanel.Add(this);

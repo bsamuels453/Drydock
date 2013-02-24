@@ -143,7 +143,7 @@ namespace Drydock.Render{
                         effect.EnableDefaultLighting();
                         effect.World =obj.Transform * _globalTransform;
                         effect.View = viewMatrix;
-                        effect.Projection = Singleton.ProjectionMatrix;
+                        effect.Projection = Gbl.ProjectionMatrix;
                     }
                     mesh.Draw();
                 }

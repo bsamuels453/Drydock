@@ -87,16 +87,16 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 var farMouse = new Vector3(state.MousePos.X, state.MousePos.Y, 1);
 
                 //transform the mouse into world space
-                var nearPoint = Singleton.Device.Viewport.Unproject(
+                var nearPoint = Gbl.Device.Viewport.Unproject(
                     nearMouse,
-                    Singleton.ProjectionMatrix,
+                    Gbl.ProjectionMatrix,
                     state.ViewMatrix,
                     Matrix.Identity
                     );
 
-                var farPoint = Singleton.Device.Viewport.Unproject(
+                var farPoint = Gbl.Device.Viewport.Unproject(
                     farMouse,
-                    Singleton.ProjectionMatrix,
+                    Gbl.ProjectionMatrix,
                     state.ViewMatrix,
                     Matrix.Identity
                     );

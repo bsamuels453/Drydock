@@ -10,9 +10,9 @@ namespace Drydock.Render{
         public WireframeBuffer(int numIndicies, int numVerticies, int numPrimitives) : base(numIndicies, numVerticies, numPrimitives, PrimitiveType.LineList){
             BufferRasterizer = new RasterizerState();
             BufferRasterizer.CullMode = CullMode.None;
-            BufferEffect = Singleton.ContentManager.Load<Effect>(Singleton.ContentStrLookup["WireframeEffect"]).Clone();
+            BufferEffect = Gbl.LoadContent<Effect>("Shader_WireframeEffect").Clone();
 
-            BufferEffect.Parameters["Projection"].SetValue(Singleton.ProjectionMatrix);
+            BufferEffect.Parameters["Projection"].SetValue(Gbl.ProjectionMatrix);
             BufferEffect.Parameters["World"].SetValue(Matrix.Identity);
         }
 

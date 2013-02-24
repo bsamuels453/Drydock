@@ -18,7 +18,7 @@ namespace Drydock.Render{
         public static void Init(GraphicsDevice device, ContentManager content){
             ScreenText.Init(content);
             Device = device;
-            Singleton.Device = device;
+            Gbl.Device = device;
 
             CameraTarget = new Vector3();
             CameraPosition = new Vector3();
@@ -30,7 +30,7 @@ namespace Drydock.Render{
                 nearPlaneDistance: 1,
                 farPlaneDistance: 500
                 );
-            Singleton.ProjectionMatrix = _projectionMatrix;
+            Gbl.ProjectionMatrix = _projectionMatrix;
 
             ScreenData.Init(Device.Viewport.Bounds.Width, Device.Viewport.Bounds.Height);
             _batch = new SpriteBatch(device);

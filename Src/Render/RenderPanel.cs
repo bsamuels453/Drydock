@@ -20,7 +20,7 @@ namespace Drydock.Render{
         Texture2D _renderedPanel;
 
         public RenderPanel(int x, int y, int width, int height, DepthLevel depth = DepthLevel.Medium){
-            _panelSpriteBatch = new SpriteBatch(Singleton.Device);
+            _panelSpriteBatch = new SpriteBatch(Gbl.Device);
             _sprites = new List<IDrawableSprite>();
             _buffers = new List<IDrawableBuffer>();
 
@@ -28,7 +28,7 @@ namespace Drydock.Render{
 
             _renderPanels.Add(this);
 
-            _renderTarget = new RenderTarget2D(Singleton.Device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            _renderTarget = new RenderTarget2D(Gbl.Device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
 
             _position = new Vector2(x, y);
             BoundingBox = new Rectangle(x, y, width, height);
@@ -47,22 +47,22 @@ namespace Drydock.Render{
         }
 
         void DrawToTarget(Matrix viewMatrix){
-            Singleton.Device.SetRenderTarget(_renderTarget);
-            Singleton.Device.Clear(Color.CornflowerBlue);
+            Gbl.Device.SetRenderTarget(_renderTarget);
+            Gbl.Device.Clear(Color.CornflowerBlue);
             //_panelSpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
             _panelSpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
             foreach (var sprite in _sprites){
                 sprite.Draw(_panelSpriteBatch, _position);
             }
             _panelSpriteBatch.End();
-            Singleton.Device.DepthStencilState = _universalDepthStencil;
+            Gbl.Device.DepthStencilState = _universalDepthStencil;
 
             foreach (var buffer in _buffers){
                 buffer.Draw(viewMatrix);
             }
 
             _renderedPanel = _renderTarget;
-            Singleton.Device.SetRenderTarget(null);
+            Gbl.Device.SetRenderTarget(null);
         }
 
         public void Remove(IDrawableSprite sprite){
@@ -90,7 +90,7 @@ namespace Drydock.Render{
 
         public static void Init(){
             _renderPanels = new List<RenderPanel>();
-            _spriteBatch = new SpriteBatch(Singleton.Device);
+            _spriteBatch = new SpriteBatch(Gbl.Device);
             _universalDepthStencil = new DepthStencilState();
             _universalDepthStencil.DepthBufferEnable = true;
             _universalDepthStencil.DepthBufferWriteEnable = true;
