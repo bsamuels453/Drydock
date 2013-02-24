@@ -184,17 +184,18 @@ namespace Drydock{
             return scriptText;
         }
 
-        public static ShaderParam[] LoadShaderParams(string shaderName){
+        public static void SetShaderParams(string shaderName, Effect effect){
             var configs = new List<string>();
             var configValues = new List<string>();
             foreach (var valuePair in RawLookup){
-                if (valuePair.Key.Contains(shaderName)){
-                    configs.Add(valuePair.Key.Substring(shaderName.Count()+1));
+                if (valuePair.Key.Length < shaderName.Length+1)
+                    continue;
+                string sub = valuePair.Key.Substring(0, shaderName.Count());
+                if (sub.Contains(shaderName)) {
+                    configs.Add(valuePair.Key.Substring(shaderName.Count() + 1));
                     configValues.Add(valuePair.Value);
                 }
             }
-
-            var retConfigs = new List<ShaderParam>();
 
             //figure out its datatype
             for (int i = 0; i < configs.Count; i++){
@@ -207,25 +208,22 @@ namespace Drydock{
                                  where value == ','
                                  select value;
                     int commaCount = commas.Count();
-                    object parsedVector;
-                    Type type;
                     switch (commaCount){
                         case 1:
-                            type = typeof(Vector2);
-                            parsedVector = VectorParser.Parse<Vector2>(configVal);
+                            var vec2 = VectorParser.Parse<Vector2>(configVal);
+                            effect.Parameters[name].SetValue(vec2);
                             break;
                         case 2:
-                            type = typeof(Vector3);
-                            parsedVector = VectorParser.Parse<Vector3>(configVal);
+                            var vec3 = VectorParser.Parse<Vector3>(configVal);
+                            effect.Parameters[name].SetValue(vec3);
                             break;
                         case 3:
-                            type = typeof(Vector4);
-                            parsedVector = VectorParser.Parse<Vector4>(configVal);
+                            var vec4 = VectorParser.Parse<Vector4>(configVal);
+                            effect.Parameters[name].SetValue(vec4);
                             break;
                         default:
                             throw new Exception("vector4 is the largest dimension of vector supported");
                     }
-                    retConfigs.Add(new ShaderParam(name, parsedVector, type));
                     continue;
                 }
                 //figure out if it's a string
@@ -233,22 +231,21 @@ namespace Drydock{
                                     where char.IsLetter(value)
                                     select value;
                 if (alphanumerics.Any()){
-                    //it's a string
-                    retConfigs.Add(new ShaderParam(name, configVal, typeof(string)));
+                    //it's a string, and in the context of shaders, strings always coorespond with texture names
+                    var texture = LoadContent<Texture2D>(configVal);
+                    effect.Parameters[name].SetValue(texture);
                     continue;
                 }
 
                 if(configVal.Contains(".")){
                     //it's a float
-                    retConfigs.Add(new ShaderParam(name, float.Parse(configVal), typeof(float)));
+                    effect.Parameters[name].SetValue(float.Parse(configVal));
                     continue;
                 }
 
                 //assume its an integer
-                retConfigs.Add(new ShaderParam(name, int.Parse(configVal), typeof(int)));
+                effect.Parameters[name].SetValue(int.Parse(configVal));
             }
-
-            return retConfigs.ToArray();
         }
 
         public static ReadOnlyCollection<byte[]> LoadBinary(string str) {
@@ -283,17 +280,6 @@ namespace Drydock{
                 }
             }
             return curDir + "\\" + directory;
-        }
-
-        public struct ShaderParam{
-            public string Name;
-            public object Parameter;
-            public Type Type;
-            public ShaderParam(string name, object param, Type type){
-                Name = name;
-                Parameter = param;
-                Type = type;
-            }
         }
     }
 }
