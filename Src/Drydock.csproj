@@ -182,7 +182,6 @@
     <Compile Include="Logic\ObjectIdentifier.cs" />
     <Compile Include="Render\ObjectBuffer.cs" />
     <Compile Include="Render\ObjectModelBuffer.cs" />
-    <Compile Include="Render\StandardEffect.cs" />
     <Compile Include="UI\Components\HighlightComponent.cs" />
     <Compile Include="UI\Widgets\Toolbar.cs" />
     <Compile Include="UI\Widgets\IToolbarTool.cs" />
@@ -195,12 +194,11 @@
     <Compile Include="Logic\HullEditorState\HullEditorPanels.cs" />
     <Compile Include="Logic\DoodadEditorState\HullGeometryGenerator.cs" />
     <Compile Include="Logic\HullEditorState\PreviewRenderer.cs" />
-    <Compile Include="Render\BaseBufferObject.cs" />
+    <Compile Include="Render\BaseGeometryBuffer.cs" />
     <Compile Include="Render\IDrawable.cs" />
     <Compile Include="Render\MeshHelper.cs" />
     <Compile Include="Render\RenderTarget.cs" />
-    <Compile Include="Render\ShipGeometryBuffer.cs" />
-    <Compile Include="Render\WireframeBuffer.cs" />
+    <Compile Include="Render\GeometryBuffer.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="UI\Components\DraggableComponent.cs" />
     <Compile Include="UI\Components\FadeComponent.cs" />

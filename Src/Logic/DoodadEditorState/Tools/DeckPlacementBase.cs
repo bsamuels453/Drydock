@@ -14,11 +14,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Drydock.Logic.DoodadEditorState.Tools{
     internal abstract class DeckPlacementBase : IToolbarTool{
-        protected readonly WireframeBuffer[] GuideGridBuffers;
+        protected readonly GeometryBuffer<VertexPositionColor>[] GuideGridBuffers;
         protected readonly HullDataManager HullData;
         protected readonly float GridResolution;
 
-        readonly WireframeBuffer _cursorBuff;
+        readonly GeometryBuffer<VertexPositionColor> _cursorBuff;
         readonly int _selectionResolution;
         protected Vector3 CursorPosition;
 
@@ -50,7 +50,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="manager"> </param>
         /// <param name="hullData"></param>
         /// <param name="gridResolution">not functioning properly</param>
         /// <param name="selectionResolution">how many grid tiles wide the selection marquee is intended to be. Set to -1 for selection type to be set to vertexes, rather than tiles.</param>
@@ -66,15 +65,15 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             _enabled = false;
             GridResolution = gridResolution;
 
-            _cursorBuff = new WireframeBuffer(2, 2, 1);
+            _cursorBuff = new GeometryBuffer<VertexPositionColor>(2, 2, 1, "Wireframe", PrimitiveType.LineList);
             var selectionIndicies = new[]{0, 1};
-            _cursorBuff.Indexbuffer.SetData(selectionIndicies);
+            _cursorBuff.IndexBuffer.SetData(selectionIndicies);
             _cursorBuff.Enabled = false;
-
+            _cursorBuff.ShaderParams["Alpha"].SetValue(1);
 
             hullData.OnCurDeckChange += VisibleDeckChange;
 
-            GuideGridBuffers = new WireframeBuffer[hullData.NumDecks];
+            GuideGridBuffers = new GeometryBuffer<VertexPositionColor>[hullData.NumDecks];
             GenerateGuideGrid();
         }
 
@@ -223,14 +222,12 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                 if (GuideGridBuffers[i] != null){
                     GuideGridBuffers[i].Dispose();
                 }
-                GuideGridBuffers[i] = new WireframeBuffer(8*numBoxes, 8*numBoxes, 4*numBoxes);
+                GuideGridBuffers[i] = new GeometryBuffer<VertexPositionColor>(8 * numBoxes, 8 * numBoxes, 4 * numBoxes, "Wireframe", PrimitiveType.LineList);
                 var guideDotIndicies = new int[8*numBoxes];
                 for (int si = 0; si < 8*numBoxes; si += 1){
                     guideDotIndicies[si] = si;
                 }
-                GuideGridBuffers[i].Indexbuffer.SetData(guideDotIndicies);
-                GuideGridBuffers[i].SetAlpha(0.07f);
-                GuideGridBuffers[i].SetColor(new Vector3(0,0,0));
+                GuideGridBuffers[i].IndexBuffer.SetData(guideDotIndicies);
 
                 #endregion
 
@@ -268,7 +265,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
                     vertIndex += 8;
                 }
-                GuideGridBuffers[i].Vertexbuffer.SetData(verts);
+                GuideGridBuffers[i].VertexBuffer.SetData(verts);
 
                 #endregion
 
@@ -305,7 +302,7 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
                     ),
                 Color.White
                 );
-            _cursorBuff.Vertexbuffer.SetData(verts);
+            _cursorBuff.VertexBuffer.SetData(verts);
             _cursorBuff.Enabled = true;
             if (_isDrawing){
                 StrokeEnd = CursorPosition;

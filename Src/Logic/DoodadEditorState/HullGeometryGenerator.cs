@@ -388,10 +388,10 @@ namespace Drydock.Logic.DoodadEditorState{
             return ret;
         }
 
-        static ShipGeometryBuffer[] GenerateDeckWallBuffers(Vector3[][][] deckSVerts, Vector3[,] normalMesh, int numDecks, int primitivesPerDeck){
+        static GeometryBuffer<VertexPositionNormalTexture>[] GenerateDeckWallBuffers(Vector3[][][] deckSVerts, Vector3[,] normalMesh, int numDecks, int primitivesPerDeck) {
             int vertsInSilhouette = deckSVerts[0][0].Length;
 
-            var hullBuffers = new ShipGeometryBuffer[numDecks];
+            var hullBuffers = new GeometryBuffer<VertexPositionNormalTexture>[numDecks];
             //now set up the display buffer for each deck's wall
             for (int i = 0; i < deckSVerts.Length; i++){
                 var hullMesh = new Vector3[primitivesPerDeck + 1,vertsInSilhouette];
@@ -411,9 +411,14 @@ namespace Drydock.Logic.DoodadEditorState{
                 MeshHelper.ConvertMeshToVertList(hullMesh, hullNormals, ref hullVerticies);
 
                 //now stick it in a buffer
-                hullBuffers[i] = new ShipGeometryBuffer(hullIndicies.Length, hullVerticies.Length, hullIndicies.Length/3, "HullEffect", CullMode.CullClockwiseFace);
-                hullBuffers[i].Indexbuffer.SetData(hullIndicies);
-                hullBuffers[i].Vertexbuffer.SetData(hullVerticies);
+                hullBuffers[i] = new GeometryBuffer<VertexPositionNormalTexture>(
+                    hullIndicies.Length,
+                    hullVerticies.Length,
+                    hullIndicies.Length / 3,
+                    "HullEffect"
+                );
+                hullBuffers[i].IndexBuffer.SetData(hullIndicies);
+                hullBuffers[i].VertexBuffer.SetData(hullVerticies);
             }
             return hullBuffers;
         }
@@ -600,7 +605,7 @@ namespace Drydock.Logic.DoodadEditorState{
         public ObjectBuffer<ObjectIdentifier>[] DeckFloorBuffers;
         public float DeckHeight;
         public List<Vector3>[] FloorVertexes;
-        public ShipGeometryBuffer[] HullWallTexBuffers;
+        public GeometryBuffer<VertexPositionNormalTexture>[] HullWallTexBuffers;
         public Vector2 MaxBoundingBoxDims;
         public int NumDecks;
         public float WallResolution;
