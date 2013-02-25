@@ -168,7 +168,7 @@
     <Compile Include="Control\InputSTate.cs" />
     <Compile Include="Control\UpdateInterfaces.cs" />
     <Compile Include="DebugTimer.cs" />
-    <Compile Include="JsonFallbackParser.cs" />
+    <Compile Include="VectorParser.cs" />
     <Compile Include="Logic\BodyCenteredCamera.cs" />
     <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
     <Compile Include="Logic\DoodadEditorState\DoodadUI.cs" />
@@ -182,7 +182,6 @@
     <Compile Include="Logic\ObjectIdentifier.cs" />
     <Compile Include="Render\ObjectBuffer.cs" />
     <Compile Include="Render\ObjectModelBuffer.cs" />
-    <Compile Include="Render\StandardEffect.cs" />
     <Compile Include="UI\Components\HighlightComponent.cs" />
     <Compile Include="UI\Widgets\Toolbar.cs" />
     <Compile Include="UI\Widgets\IToolbarTool.cs" />
@@ -195,12 +194,11 @@
     <Compile Include="Logic\HullEditorState\HullEditorPanels.cs" />
     <Compile Include="Logic\DoodadEditorState\HullGeometryGenerator.cs" />
     <Compile Include="Logic\HullEditorState\PreviewRenderer.cs" />
-    <Compile Include="Render\BaseBufferObject.cs" />
+    <Compile Include="Render\BaseGeometryBuffer.cs" />
     <Compile Include="Render\IDrawable.cs" />
     <Compile Include="Render\MeshHelper.cs" />
     <Compile Include="Render\RenderTarget.cs" />
-    <Compile Include="Render\ShipGeometryBuffer.cs" />
-    <Compile Include="Render\WireframeBuffer.cs" />
+    <Compile Include="Render\GeometryBuffer.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="UI\Components\DraggableComponent.cs" />
     <Compile Include="UI\Components\FadeComponent.cs" />
@@ -281,8 +279,7 @@
     <PostBuildEvent>xcopy /s /y $(SolutionDir)\Config $(SolutionDir)\bin\Config
 xcopy /s /y $(SolutionDir)\Data $(SolutionDir)\bin\Data
 xcopy /s /y $(SolutionDir)\Templates $(SolutionDir)\bin\Templates
-xcopy /s /y $(SolutionDir)\Scripts $(SolutionDir)\bin\Scripts
-xcopy /s /y $(SolutionDir)\Shaders $(SolutionDir)\Content\Shaders</PostBuildEvent>
+xcopy /s /y $(SolutionDir)\Scripts $(SolutionDir)\bin\Scripts</PostBuildEvent>
   </PropertyGroup>
   <!--
       To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,0 +1,6 @@
+{
+	"InternalAbbreviation": "Shader",
+	"StandardEffect": "Shaders/StandardEffect",
+	"WireframeEffect": "Shaders/WireframeEffect",
+	"TintedModelEffect": "Shaders/TintedModel"
+}

@@ -10,7 +10,7 @@ namespace Drydock {
     /// <summary>
     /// this helper class serves as a base to parse values that json is known to fuck up deserializing
     /// </summary>
-    static class JsonFallbackParser {
+    static class VectorParser {
         static public T Parse<T>(string s) {
             Type t = typeof(T);
             if (t == typeof(Vector4)) {
@@ -18,6 +18,9 @@ namespace Drydock {
             }
             if (t == typeof(Vector3)) {
                 return ParseVec3<T>(s);
+            }
+            if (t == typeof(Vector2)){
+                return ParseVec2<T>(s);
             }
             throw new Exception("JsonFallbackParser recieved a type which it cannot deserialize");
         }
@@ -43,6 +46,16 @@ namespace Drydock {
                 float.Parse(split[0]),
                 float.Parse(split[1]),
                 float.Parse(split[2])
+                );
+            return (T)Convert.ChangeType(v, typeof(T));
+        }
+        static T ParseVec2<T>(string s) {
+            var split = s.Split(',');
+            Debug.Assert(split.Count() == 3);
+
+            Vector2 v = new Vector2(
+                float.Parse(split[0]),
+                float.Parse(split[1])
                 );
             return (T)Convert.ChangeType(v, typeof(T));
         }

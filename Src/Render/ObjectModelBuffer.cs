@@ -18,8 +18,10 @@ namespace Drydock.Render{
         readonly List<ObjectData> _objectData;
         Matrix _globalTransform;
         bool _disposed;
+        readonly Effect _shader;
 
-        public ObjectModelBuffer(int maxObjects){
+        public ObjectModelBuffer(int maxObjects, string shader){
+            Gbl.LoadShader(shader, out _shader);
             _objectData = new List<ObjectData>();
             _maxObjects = maxObjects;
             _isSlotOccupied = new bool[maxObjects];
@@ -32,6 +34,11 @@ namespace Drydock.Render{
             int index = -1;
             for (int i = 0; i < _maxObjects; i++){
                 if (_isSlotOccupied[i] == false){
+                    foreach (var meshes in model.Meshes){
+                        foreach (var part in meshes.MeshParts){
+                            part.Effect = _shader;
+                        }
+                    }
                     _objectData.Add(new ObjectData(identifier, i, transform, model));
                     _isSlotOccupied[i] = true;
                     index = i;
@@ -111,6 +118,10 @@ namespace Drydock.Render{
             buffer.ClearObjects();
         }
 
+        public EffectParameterCollection ShaderParams {
+            get { return _shader.Parameters; }
+        }
+
         #region Nested type: ObjectData
 
         class ObjectData{
@@ -140,11 +151,10 @@ namespace Drydock.Render{
                 if (!obj.Enabled)
                     continue;
                 foreach (var mesh in obj.Model.Meshes){
-                    foreach (BasicEffect effect in mesh.Effects){
-                        effect.EnableDefaultLighting();
-                        effect.World =obj.Transform * _globalTransform;
-                        effect.View = viewMatrix;
-                        effect.Projection = Gbl.ProjectionMatrix;
+                    foreach (var effect in mesh.Effects){
+                        effect.Parameters["Projection"].SetValue(Gbl.ProjectionMatrix);
+                        effect.Parameters["World"].SetValue(obj.Transform * _globalTransform);
+                        effect.Parameters["View"].SetValue(viewMatrix);
                     }
                     mesh.Draw();
                 }

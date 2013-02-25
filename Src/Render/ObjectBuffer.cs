@@ -10,8 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace Drydock.Render{
-    internal class ObjectBuffer<T> : StandardEffect where T : IEquatable<T>{
-        //key=identifier
+    internal class ObjectBuffer<TIdentifier> : BaseGeometryBuffer<VertexPositionNormalTexture> where TIdentifier : IEquatable<TIdentifier> {
         readonly int[] _indicies;
         readonly int _indiciesPerObject;
         readonly bool[] _isSlotOccupied;
@@ -22,9 +21,9 @@ namespace Drydock.Render{
 
         public bool UpdateBufferManually;
 
-        public ObjectBuffer(int maxObjects, int primitivesPerObject, int verticiesPerObject, int indiciesPerObject, string textureName) :
-            base(indiciesPerObject*maxObjects, verticiesPerObject*maxObjects, primitivesPerObject*maxObjects, textureName){
-            BufferRasterizer = new RasterizerState{CullMode = CullMode.None};
+        public ObjectBuffer(int maxObjects, int primitivesPerObject, int verticiesPerObject, int indiciesPerObject, string settingsFileName) :
+            base(indiciesPerObject*maxObjects, verticiesPerObject*maxObjects, primitivesPerObject*maxObjects, settingsFileName, PrimitiveType.TriangleList){
+            Rasterizer = new RasterizerState{CullMode = CullMode.None};
 
             _objectData = new List<ObjectData>();
             _indicies = new int[maxObjects*indiciesPerObject];
@@ -39,11 +38,11 @@ namespace Drydock.Render{
 
         public void UpdateBuffers(){
             Debug.Assert(UpdateBufferManually, "cannot update a buffer that's set to automatic updating");
-            base.Indexbuffer.SetData(_indicies);
-            base.Vertexbuffer.SetData(_verticies);
+            base.BaseIndexBuffer.SetData(_indicies);
+            base.BaseVertexBuffer.SetData(_verticies);
         }
 
-        public void AddObject(IEquatable<T> identifier, int[] indicies, VertexPositionNormalTexture[] verticies){
+        public void AddObject(IEquatable<TIdentifier> identifier, int[] indicies, VertexPositionNormalTexture[] verticies){
             Debug.Assert(indicies.Length == _indiciesPerObject);
             Debug.Assert(verticies.Length == _verticiesPerObject);
 
@@ -66,12 +65,12 @@ namespace Drydock.Render{
             indicies.CopyTo(_indicies, index*_indiciesPerObject);
             verticies.CopyTo(_verticies, index*_verticiesPerObject);
             if (!UpdateBufferManually){
-                base.Indexbuffer.SetData(_indicies);
-                base.Vertexbuffer.SetData(_verticies);
+                base.BaseIndexBuffer.SetData(_indicies);
+                base.BaseVertexBuffer.SetData(_verticies);
             }
         }
 
-        public void RemoveObject(T identifier){
+        public void RemoveObject(TIdentifier identifier) {
             ObjectData objectToRemove = (
                                             from obj in _objectData
                                             where obj.Identifier.Equals(identifier)
@@ -86,7 +85,7 @@ namespace Drydock.Render{
                 _indicies[objectToRemove.ObjectOffset*_indiciesPerObject + i] = 0;
             }
             if (!UpdateBufferManually){
-                base.Indexbuffer.SetData(_indicies);
+                base.BaseIndexBuffer.SetData(_indicies);
             }
             _objectData.Remove(objectToRemove);
         }
@@ -99,10 +98,10 @@ namespace Drydock.Render{
             for (int i = 0; i < _maxObjects*_indiciesPerObject; i++){
                 _indicies[i] = 0;
             }
-            base.Indexbuffer.SetData(_indicies);
+            base.BaseIndexBuffer.SetData(_indicies);
         }
 
-        public bool EnableObject(IEquatable<T> identifier){
+        public bool EnableObject(IEquatable<TIdentifier> identifier){
             ObjectData objToEnable = null;
             foreach (var obj in _objectData){
                 if (obj.Identifier.Equals(identifier)){
@@ -115,12 +114,12 @@ namespace Drydock.Render{
             objToEnable.Enabled = true;
             objToEnable.Indicies.CopyTo(_indicies, objToEnable.ObjectOffset*_indiciesPerObject);
             if (!UpdateBufferManually){
-                base.Indexbuffer.SetData(_indicies);
+                base.BaseIndexBuffer.SetData(_indicies);
             }
             return true;
         }
 
-        public bool DisableObject(T identifier){
+        public bool DisableObject(TIdentifier identifier) {
             ObjectData objToDisable = null;
             foreach (var obj in _objectData){
                 if (obj.Identifier.Equals(identifier)){
@@ -134,7 +133,7 @@ namespace Drydock.Render{
             var indicies = new int[_indiciesPerObject];
             indicies.CopyTo(_indicies, objToDisable.ObjectOffset*_indiciesPerObject);
             if (!UpdateBufferManually){
-                base.Indexbuffer.SetData(_indicies);
+                base.BaseIndexBuffer.SetData(_indicies);
             }
             return true;
         }
@@ -142,7 +141,7 @@ namespace Drydock.Render{
         /// <summary>
         ///   really cool method that will take another objectbuffer and absorb its objects into this objectbuffer. also clears the other buffer afterwards.
         /// </summary>
-        public void AbsorbBuffer(ObjectBuffer<T> buffer){
+        public void AbsorbBuffer(ObjectBuffer<TIdentifier> buffer){
             bool buffUpdateState = UpdateBufferManually;
             UpdateBufferManually = true; //temporary for this heavy copy algo
 
@@ -170,14 +169,14 @@ namespace Drydock.Render{
 
         class ObjectData{
             // ReSharper disable MemberCanBePrivate.Local
-            public readonly IEquatable<T> Identifier;
+            public readonly IEquatable<TIdentifier> Identifier;
             public readonly int[] Indicies;
             public readonly int ObjectOffset;
             public readonly VertexPositionNormalTexture[] Verticies;
             public bool Enabled;
             // ReSharper restore MemberCanBePrivate.Local
 
-            public ObjectData(IEquatable<T> identifier, int objectOffset, int[] indicies, VertexPositionNormalTexture[] verticies){
+            public ObjectData(IEquatable<TIdentifier> identifier, int objectOffset, int[] indicies, VertexPositionNormalTexture[] verticies){
                 Enabled = true;
                 Identifier = identifier;
                 ObjectOffset = objectOffset;

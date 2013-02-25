@@ -22,18 +22,22 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
             // ReSharper restore CompareOfFloatsByEqualityOperator
             _hullData = hullData;
 
-            _ghostedLadderModel = new ObjectModelBuffer<int>(1);
-            Matrix trans = Matrix.CreateRotationX((float)-Math.PI / 2) * Matrix.CreateRotationY((float)-Math.PI / 2);
+            _ghostedLadderModel = new ObjectModelBuffer<int>(1, "TintedModel");
+            //Matrix trans = Matrix.CreateRotationX((float)-Math.PI / 2) * Matrix.CreateRotationY((float)-Math.PI / 2);
+            var trans = Matrix.Identity;
+
             _ghostedLadderModel.AddObject(0, Gbl.ContentManager.Load<Model>("models/ladder"), trans);
             _ghostedLadderModel.DisableObject(0);
         }
 
         protected override void EnableCursorGhost() {
             _ghostedLadderModel.EnableObject(0);
+            _ghostedLadderModel.ShaderParams["TintColor"].SetValue(Color.Green.ToVector4());
         }
 
         protected override void DisableCursorGhost() {
-            _ghostedLadderModel.DisableObject(0);
+            _ghostedLadderModel.ShaderParams["TintColor"].SetValue(Color.DarkRed.ToVector4());
+            //_ghostedLadderModel.DisableObject(0);
         }
 
         protected override void UpdateCursorGhost() {
@@ -45,7 +49,9 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         protected override void HandleCursorRelease(){
             var identifier = new ObjectIdentifier(ObjectType.Ladder, CursorPosition);
-            Matrix trans = Matrix.CreateRotationX((float)-Math.PI / 2) * Matrix.CreateRotationY((float)-Math.PI / 2) * Matrix.CreateTranslation(CursorPosition);
+            
+            //Matrix trans = Matrix.CreateRotationX((float)-Math.PI / 2) * Matrix.CreateRotationY((float)-Math.PI / 2) * Matrix.CreateTranslation(CursorPosition);
+            Matrix trans = Matrix.Identity * Matrix.CreateTranslation(CursorPosition);
             _hullData.CurObjBuffer.AddObject(identifier, Gbl.ContentManager.Load<Model>("models/ladder"), trans);
 
             var quadsToHide = new List<ObjectIdentifier>();

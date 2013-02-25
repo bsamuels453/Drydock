@@ -17,12 +17,12 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         public WallBuildTool(HullDataManager hullData) :
             base(hullData, hullData.WallResolution) {
-            _tempWallBuffer = new ObjectBuffer<WallSegmentIdentifier>(
+                _tempWallBuffer = new ObjectBuffer<WallSegmentIdentifier>(
                 hullData.DeckVertexes[0].Count()*2,
                 10,
                 20,
                 30,
-                "UI_InternalWallTex")
+                "InternalWalls")
                               {UpdateBufferManually = true};
 
             _tempWallIdentifiers = new List<WallSegmentIdentifier>();

@@ -23,7 +23,7 @@ namespace Drydock.Logic.DoodadEditorState {
         public readonly ObjectBuffer<ObjectIdentifier>[] DeckBuffers;
         public readonly float DeckHeight;
         public readonly List<Vector3>[] DeckVertexes;
-        public readonly ShipGeometryBuffer[] HullBuffers;
+        public readonly GeometryBuffer<VertexPositionNormalTexture>[] HullBuffers;
         public readonly int NumDecks;
         public readonly ObjectBuffer<WallSegmentIdentifier>[] WallBuffers;
         public readonly List<WallSegmentIdentifier>[] WallIdentifiers;
@@ -45,27 +45,18 @@ namespace Drydock.Logic.DoodadEditorState {
             ObjectBuffers = new ObjectModelBuffer<ObjectIdentifier>[NumDecks];
 
             for (int i = 0; i < ObjectBuffers.Count(); i++) {
-                ObjectBuffers[i] = new ObjectModelBuffer<ObjectIdentifier>(100);
+                ObjectBuffers[i] = new ObjectModelBuffer<ObjectIdentifier>(100, "TintedModel");
             }
 
             WallBuffers = new ObjectBuffer<WallSegmentIdentifier>[NumDecks];
             for (int i = 0; i < WallBuffers.Count(); i++) {
                 int potentialWalls = geometryInfo.FloorVertexes[i].Count() * 2;
-                WallBuffers[i] = new ObjectBuffer<WallSegmentIdentifier>(potentialWalls, 10, 20, 30, "UI_HullWallTex");
+                WallBuffers[i] = new ObjectBuffer<WallSegmentIdentifier>(potentialWalls, 10, 20, 30, "InternalWalls");
             }
 
             WallIdentifiers = new List<WallSegmentIdentifier>[NumDecks];
             for (int i = 0; i < WallIdentifiers.Length; i++) {
                 WallIdentifiers[i] = new List<WallSegmentIdentifier>();
-            }
-
-            //override default lighting
-            foreach (var buffer in DeckBuffers) {
-                buffer.DiffuseDirection = new Vector3(0, 1, 0);
-            }
-            foreach (var buffer in HullBuffers) {
-                buffer.DiffuseDirection = new Vector3(0, -1, 1);
-                buffer.CullMode = CullMode.None;
             }
             CurDeck = 0;
         }
@@ -73,7 +64,7 @@ namespace Drydock.Logic.DoodadEditorState {
         //these will save from having to do array[curDeck] all the time elsewhere in the editor
         public ObjectBuffer<ObjectIdentifier> CurDeckBuffer { get; private set; }
         public ObjectBuffer<WallSegmentIdentifier> CurWallBuffer { get; private set; }
-        public ShipGeometryBuffer CurHullBuffer { get; private set; }
+        public GeometryBuffer<VertexPositionNormalTexture> CurHullBuffer { get; private set; }
         public List<WallSegmentIdentifier> CurWallIdentifiers { get; private set; }
         public List<BoundingBox> CurDeckBoundingBoxes { get; private set; }
         public List<Vector3> CurDeckVertexes { get; private set; }
@@ -127,8 +118,8 @@ namespace Drydock.Logic.DoodadEditorState {
                     if (tempFloorBuff[i].Enabled == false) {
                         CurDeck--;
                         tempFloorBuff[i].Enabled = true;
-                        tempWallBuff[i].CullMode = CullMode.None;
                         tempWWallBuff[i].Enabled = true;
+                        tempWallBuff[i].CullMode = CullMode.None;
                         break;
                     }
                 }

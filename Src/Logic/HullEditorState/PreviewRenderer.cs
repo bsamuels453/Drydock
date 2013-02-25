@@ -14,7 +14,7 @@ namespace Drydock.Logic.HullEditorState {
     internal class PreviewRenderer : BodyCenteredCamera {
         const int _meshVertexWidth = 64; //this is in primitives
         readonly BezierCurveCollection _backCurves;
-        readonly ShipGeometryBuffer _geometryBuffer;
+        readonly GeometryBuffer<VertexPositionNormalTexture> _geometryBuffer;
         readonly int[] _indicies;
         readonly Vector3[,] _mesh;
         readonly RenderTarget _renderTarget;
@@ -40,8 +40,12 @@ namespace Drydock.Logic.HullEditorState {
             _indicies = MeshHelper.CreateIndiceArray((_meshVertexWidth) * (_meshVertexWidth));
             _verticies = MeshHelper.CreateTexcoordedVertexList((_meshVertexWidth) * (_meshVertexWidth));
 
-            _geometryBuffer = new ShipGeometryBuffer(_indicies.Count(), _verticies.Count(), (_meshVertexWidth) * (_meshVertexWidth) * 2, "UI_HullEditorHullTex");
-            _geometryBuffer.DiffuseDirection = new Vector3(0, -1, 1);
+            _geometryBuffer = new GeometryBuffer<VertexPositionNormalTexture>(
+                _indicies.Count(),
+                _verticies.Count(),
+                (_meshVertexWidth) * (_meshVertexWidth) * 2,
+                "HullEffect"
+            );
 
             _mesh = new Vector3[_meshVertexWidth, _meshVertexWidth];
 
@@ -49,7 +53,7 @@ namespace Drydock.Logic.HullEditorState {
             _topCurves = topCurves;
             _backCurves = backCurves;
 
-            _geometryBuffer.Indexbuffer.SetData(_indicies);
+            _geometryBuffer.IndexBuffer.SetData(_indicies);
             _renderTarget.Unbind();
         }
 
@@ -121,7 +125,7 @@ namespace Drydock.Logic.HullEditorState {
             MeshHelper.GenerateMeshNormals(_mesh, ref normals);
             MeshHelper.ConvertMeshToVertList(_mesh, normals, ref _verticies);
 
-            _geometryBuffer.Vertexbuffer.SetData(_verticies);
+            _geometryBuffer.VertexBuffer.SetData(_verticies);
 
             var p = new Vector3();
             p += _mesh[0, 0];

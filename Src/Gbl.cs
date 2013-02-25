@@ -46,19 +46,44 @@ namespace Drydock{
         static Gbl() {
             CheckHashes();
             RawLookup = new Dictionary<string, string>();
-            var files = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\Config\\");
-            foreach (var file in files) {
-                var sr = new StreamReader(file);
 
-                var newConfigVals = JsonConvert.DeserializeObject<Dictionary<string, string>>(sr.ReadToEnd());
-                sr.Close();
+            List<string> directories = new List<string>();
+            List<string> directoriesToSearch = new List<string>();
 
-                string prefix = newConfigVals["InternalAbbreviation"] + "_";
-                newConfigVals.Remove("InternalAbbreviation");
+            string currentDirectory = Directory.GetCurrentDirectory() + "\\Config\\";
+            directoriesToSearch.Add(currentDirectory);
+            
+            while (directoriesToSearch.Count > 0) {
+                string dir = directoriesToSearch[0];
+                directoriesToSearch.RemoveAt(0);
+                directoriesToSearch.AddRange(Directory.GetDirectories(dir).ToList());
+                directories.Add(dir);
+            }
+            try {
+                foreach (string directory in directories) {
+                    string[] files = Directory.GetFiles(directory);
+                    foreach (string file in files) {
+                        var sr = new StreamReader(file);
 
-                foreach (var configVal in newConfigVals) {
-                    RawLookup.Add(prefix + configVal.Key, configVal.Value);
+                        var newConfigVals = JsonConvert.DeserializeObject<Dictionary<string, string>>(sr.ReadToEnd());
+                        sr.Close();
+
+                        string prefix = newConfigVals["InternalAbbreviation"] + "_";
+                        newConfigVals.Remove("InternalAbbreviation");
+
+                        foreach (var configVal in newConfigVals) {
+                            try {
+                                RawLookup.Add(prefix + configVal.Key, configVal.Value);
+                            }
+                            catch (Exception e) {
+                                int f = 4;
+                            }
+                        }
+                    }
                 }
+            }
+            catch (Exception e){
+               int g = 5;
             }
         }
 
@@ -145,7 +170,7 @@ namespace Drydock{
                     obj = JsonConvert.DeserializeObject<T>(objValue);
                 }
                 catch (Exception ee) {
-                    obj = JsonFallbackParser.Parse<T>(objValue);
+                    obj = VectorParser.Parse<T>(objValue);
                 }
                 return obj;
             }
@@ -157,6 +182,83 @@ namespace Drydock{
             string scriptText = sr.ReadToEnd();
             sr.Close();
             return scriptText;
+        }
+
+        public static void LoadShader(string shaderName, out Effect effect){
+            effect = null;
+            var configs = new List<string>();
+            var configValues = new List<string>();
+            foreach (var valuePair in RawLookup){
+                if (valuePair.Key.Length < shaderName.Length+1)
+                    continue;
+                string sub = valuePair.Key.Substring(0, shaderName.Count());
+                if (sub.Contains(shaderName)) {
+                    configs.Add(valuePair.Key.Substring(shaderName.Count() + 1));
+                    configValues.Add(valuePair.Value);
+                }
+            }
+
+            for (int i = 0; i < configs.Count; i++){
+                if (configs[i] == "Shader"){
+                    effect = LoadContent<Effect>(configValues[i]).Clone();
+                    break;
+                }
+            }
+            if (effect == null){
+                throw new Exception("Shader not specified for " + shaderName);
+            }
+
+            //figure out its datatype
+            for (int i = 0; i < configs.Count; i++){
+                string name = configs[i];
+                string configVal = configValues[i];
+
+                if (configVal.Contains(",")) {
+                    //it's a vector
+                    var commas = from value in configVal
+                                 where value == ','
+                                 select value;
+                    int commaCount = commas.Count();
+                    switch (commaCount){
+                        case 1:
+                            var vec2 = VectorParser.Parse<Vector2>(configVal);
+                            effect.Parameters[name].SetValue(vec2);
+                            break;
+                        case 2:
+                            var vec3 = VectorParser.Parse<Vector3>(configVal);
+                            effect.Parameters[name].SetValue(vec3);
+                            break;
+                        case 3:
+                            var vec4 = VectorParser.Parse<Vector4>(configVal);
+                            effect.Parameters[name].SetValue(vec4);
+                            break;
+                        default:
+                            throw new Exception("vector4 is the largest dimension of vector supported");
+                    }
+                    continue;
+                }
+                //figure out if it's a string
+                var alphanumerics = from value in configVal
+                                    where char.IsLetter(value)
+                                    select value;
+                if (alphanumerics.Any()){
+                    if (name == "Shader")
+                        continue;
+                    //it's a string, and in the context of shader settings, strings always coorespond with texture names
+                    var texture = LoadContent<Texture2D>(configVal);
+                    effect.Parameters[name].SetValue(texture);
+                    continue;
+                }
+
+                if(configVal.Contains(".")){
+                    //it's a float
+                    effect.Parameters[name].SetValue(float.Parse(configVal));
+                    continue;
+                }
+
+                //assume its an integer
+                effect.Parameters[name].SetValue(int.Parse(configVal));
+            }
         }
 
         public static ReadOnlyCollection<byte[]> LoadBinary(string str) {
