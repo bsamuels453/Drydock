@@ -281,7 +281,6 @@ namespace Drydock.Logic.DoodadEditorState.Tools{
 
         protected virtual void DisableCursorGhost(){
             _cursorBuff.Enabled = false;
-            
         }
 
         protected virtual void UpdateCursorGhost(){

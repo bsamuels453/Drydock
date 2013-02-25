@@ -45,7 +45,7 @@ namespace Drydock.Logic.DoodadEditorState {
             ObjectBuffers = new ObjectModelBuffer<ObjectIdentifier>[NumDecks];
 
             for (int i = 0; i < ObjectBuffers.Count(); i++) {
-                ObjectBuffers[i] = new ObjectModelBuffer<ObjectIdentifier>(100);
+                ObjectBuffers[i] = new ObjectModelBuffer<ObjectIdentifier>(100, "TintedModel");
             }
 
             WallBuffers = new ObjectBuffer<WallSegmentIdentifier>[NumDecks];
