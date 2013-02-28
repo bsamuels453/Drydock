@@ -168,6 +168,7 @@
     <Compile Include="Control\InputSTate.cs" />
     <Compile Include="Control\UpdateInterfaces.cs" />
     <Compile Include="DebugTimer.cs" />
+    <Compile Include="Logic\DoodadEditorState\AirshipPackager.cs" />
     <Compile Include="VectorParser.cs" />
     <Compile Include="Logic\BodyCenteredCamera.cs" />
     <Compile Include="Logic\DoodadEditorState\DoodadEditor.cs" />
