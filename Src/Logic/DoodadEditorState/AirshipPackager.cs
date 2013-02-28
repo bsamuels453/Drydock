@@ -37,7 +37,7 @@ namespace Drydock.Logic.DoodadEditorState {
 
             for (int i = 0; i < hullData.NumDecks; i++){
                 ConcatDeckPlates(
-                    hullData.DeckBuffers[0].DumpObjectData(),
+                    hullData.DeckBuffers[i].DumpObjectData(),
                     0.5f,
                     out deckPlateInds[i],
                     out deckPlateVerts[i]
@@ -112,7 +112,7 @@ namespace Drydock.Logic.DoodadEditorState {
 
             var listInds = new List<int>();
             var listVerts = new List<VertexPositionNormalTexture>();
-            int numTiles = 0;
+            int numPlates = 0;
             var idxWinding = new[] { 0, 2, 1, 0, 3, 2};
             for (int xIdx = 0; xIdx < vertArr.GetLength(0) - 1; xIdx++) {
                 int zIdx=0;
@@ -148,14 +148,14 @@ namespace Drydock.Logic.DoodadEditorState {
                     addVertex(xIdx, zIdx, 1, 0);
                     addVertex(xIdx + 1, zIdx, 1, 1);
                     addVertex(xIdx + 1, initlZ, 0, 1);
-                    int offset = numTiles * 4;
+                    int offset = numPlates * 4;
 
                     var winding = (int[])idxWinding.Clone();
                     for (int i = 0; i < 6; i++) {
                         winding[i] += offset;
                     }
                     listInds.AddRange(winding);
-                    numTiles++;
+                    numPlates++;
 
                     //xxxx untested
                     if (!disabledVerts.Contains(new Tuple<int, int>(xIdx, zIdx))){
@@ -164,6 +164,25 @@ namespace Drydock.Logic.DoodadEditorState {
                 }
             }
 
+            //now add the plates that aren't part of the main mesh
+            var otherPlates = new List<ObjectBuffer<ObjectIdentifier>.ObjectData>();
+            foreach (var data in objectData){
+                if (data.Identifier.Equals(nullIdentifier))
+                    otherPlates.Add(data);
+            }
+            foreach (var data in otherPlates){
+                int lowest = data.Indicies[0];
+                int offset = numPlates * 4;
+
+                for (int i = 0; i < 6; i++){
+                    data.Indicies[i] -= lowest;
+                    data.Indicies[i] += offset;
+                }
+
+                listInds.AddRange(data.Indicies);
+                listVerts.AddRange(data.Verticies);
+                numPlates++;
+            }
             /*
             var bmp = new Bitmap(vertArr.GetLength(0), vertArr.GetLength(1));
             for (int x = 0; x < vertArr.GetLength(0); x++){
@@ -180,16 +199,44 @@ namespace Drydock.Logic.DoodadEditorState {
             verticies = listVerts;
         }
 
-        static public void Import() {
+        static public AirshipModel Import(string fileName) {
             var sw = new Stopwatch();
             sw.Start();
-            var sr = new StreamReader(Directory.GetCurrentDirectory() + "\\Data\\" + "Export.aship");
-            var v = JsonConvert.DeserializeObject(sr.ReadToEnd());
-            int fd = 3;
+            var sr = new StreamReader(Directory.GetCurrentDirectory() + "\\Data\\" + fileName);
+            var jObj = JObject.Parse(sr.ReadToEnd());
+            sr.Close();
+              
+            int numDecks = jObj["NumDecks"].ToObject<int>();
+
+            var hullVerts = jObj["HullVerticies"].ToObject<VertexPositionNormalTexture[][]>();
+            var hullInds = jObj["HullIndicies"].ToObject<int[][]>();
+
+            var deckVerts = jObj["DeckVerticies"].ToObject<VertexPositionNormalTexture[][]>();
+            var deckInds = jObj["DeckIndicies"].ToObject<int[][]>();
+
+            var ret = new AirshipModel();
+            ret.Decks = new GeometryBuffer<VertexPositionNormalTexture>[numDecks];
+            ret.HullLayers = new GeometryBuffer<VertexPositionNormalTexture>[numDecks];
+
+            for (int i = 0; i < numDecks; i++){
+                ret.Decks[i] = new GeometryBuffer<VertexPositionNormalTexture>(deckInds[i].Length, deckVerts[i].Length, deckVerts[i].Length / 2, "DeckFloor");
+                ret.Decks[i].IndexBuffer.SetData(deckInds[i]);
+                ret.Decks[i].VertexBuffer.SetData(deckVerts[i]);
+
+
+                ret.HullLayers[i] = new GeometryBuffer<VertexPositionNormalTexture>(hullInds[i].Length, hullVerts[i].Length, hullVerts[i].Length / 2, "DeckFloor");
+                ret.HullLayers[i].IndexBuffer.SetData(hullInds[i]);
+                ret.HullLayers[i].VertexBuffer.SetData(hullVerts[i]);
+            }
 
             sw.Stop();
             double d = sw.ElapsedMilliseconds;
-            int dd = 3;
+            return ret;
         }
+    }
+
+    internal class AirshipModel{
+        public GeometryBuffer<VertexPositionNormalTexture>[] Decks;
+        public GeometryBuffer<VertexPositionNormalTexture>[] HullLayers;
     }
 }
