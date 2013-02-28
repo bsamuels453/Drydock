@@ -29,8 +29,12 @@ namespace Drydock.Logic.DoodadEditorState {
                 hullVerts[i] = hullData.HullBuffers[i].DumpVerticies();
             }
 
+            var center = CalculateCenter(hullVerts);
+            jObj["Centroid"] = JToken.FromObject(center);
+
             jObj["HullVerticies"] = JToken.FromObject(hullVerts);
             jObj["HullIndicies"] = JToken.FromObject(hullInds);
+
 
             var deckPlateInds = new List<int>[hullData.NumDecks];
             var deckPlateVerts = new List<VertexPositionNormalTexture>[hullData.NumDecks];
@@ -50,6 +54,19 @@ namespace Drydock.Logic.DoodadEditorState {
             var sw = new StreamWriter(Directory.GetCurrentDirectory()+"\\Data\\"+fileName);
             sw.Write(JsonConvert.SerializeObject(jObj, Formatting.Indented));
             sw.Close();
+        }
+
+        static Vector3 CalculateCenter(VertexPositionNormalTexture[][] airshipVertexes){
+            var ret = new Vector3(0,0,0);
+            int numVerts = 0;
+            foreach (var layer in airshipVertexes){
+                numVerts += layer.Length;
+                foreach (var vert in layer){
+                    ret += vert.Position;
+                }
+            }
+            ret /= numVerts;
+            return ret;
         }
 
         static void ConcatDeckPlates(
@@ -89,6 +106,7 @@ namespace Drydock.Logic.DoodadEditorState {
 
             var vertArr = new bool[toArrX(maxX)+1, toArrZ(maxZ)+1];
             var disabledVerts = new List<Tuple<int,int>>();
+            //generate reference array
             foreach (var data in objectData){
                 if (data.Identifier.Equals(nullIdentifier))
                     continue;
@@ -110,6 +128,7 @@ namespace Drydock.Logic.DoodadEditorState {
                 }
             }
 
+            //generate strips of deck based on reference array
             var listInds = new List<int>();
             var listVerts = new List<VertexPositionNormalTexture>();
             int numPlates = 0;
@@ -205,8 +224,10 @@ namespace Drydock.Logic.DoodadEditorState {
             var sr = new StreamReader(Directory.GetCurrentDirectory() + "\\Data\\" + fileName);
             var jObj = JObject.Parse(sr.ReadToEnd());
             sr.Close();
-              
+
+            var ret = new AirshipModel();
             int numDecks = jObj["NumDecks"].ToObject<int>();
+            ret.Centroid = jObj["Centroid"].ToObject<Vector3>();
 
             var hullVerts = jObj["HullVerticies"].ToObject<VertexPositionNormalTexture[][]>();
             var hullInds = jObj["HullIndicies"].ToObject<int[][]>();
@@ -214,7 +235,6 @@ namespace Drydock.Logic.DoodadEditorState {
             var deckVerts = jObj["DeckVerticies"].ToObject<VertexPositionNormalTexture[][]>();
             var deckInds = jObj["DeckIndicies"].ToObject<int[][]>();
 
-            var ret = new AirshipModel();
             ret.Decks = new GeometryBuffer<VertexPositionNormalTexture>[numDecks];
             ret.HullLayers = new GeometryBuffer<VertexPositionNormalTexture>[numDecks];
 
@@ -236,6 +256,7 @@ namespace Drydock.Logic.DoodadEditorState {
     }
 
     internal class AirshipModel{
+        public Vector3 Centroid;
         public GeometryBuffer<VertexPositionNormalTexture>[] Decks;
         public GeometryBuffer<VertexPositionNormalTexture>[] HullLayers;
     }
