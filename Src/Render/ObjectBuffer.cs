@@ -169,6 +169,18 @@ namespace Drydock.Render{
             return _objectData.ToArray();
         }
 
+        public VertexPositionNormalTexture[] DumpVerticies() {
+            var data = new VertexPositionNormalTexture[base.BaseVertexBuffer.VertexCount];
+            BaseVertexBuffer.GetData(data);
+            return data;
+        }
+
+        public int[] DumpIndicies() {
+            var data = new int[base.BaseIndexBuffer.IndexCount];
+            BaseIndexBuffer.GetData(data);
+            return data;
+        }
+
         #region Nested type: ObjectData
 
         public class ObjectData{
