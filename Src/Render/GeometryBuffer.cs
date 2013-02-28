@@ -1,11 +1,12 @@
 ﻿#region
 
+using System.Diagnostics;
 using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
 namespace Drydock.Render{
-    internal class GeometryBuffer<T>: BaseGeometryBuffer<T>{
+    internal class GeometryBuffer<T>: BaseGeometryBuffer<T> where T:struct {
         public GeometryBuffer(
             int numIndicies, 
             int numVerticies,
@@ -28,6 +29,18 @@ namespace Drydock.Render{
 
         public CullMode CullMode {
             set { Rasterizer = new RasterizerState { CullMode = value }; }
+        }
+
+        public T[] DumpVerticies(){
+            T[] data = new T[BaseVertexBuffer.VertexCount];
+            base.BaseVertexBuffer.GetData(data);
+            return data;
+        }
+
+        public int[] DumpIndicies() {
+            int[] data = new int[BaseIndexBuffer.IndexCount];
+            base.BaseIndexBuffer.GetData(data);
+            return data;
         }
     }
 }
