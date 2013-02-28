@@ -165,9 +165,25 @@ namespace Drydock.Render{
             buffer.ClearObjects();
         }
 
+        public ObjectData[] DumpObjectData(){
+            return _objectData.ToArray();
+        }
+
+        public VertexPositionNormalTexture[] DumpVerticies() {
+            var data = new VertexPositionNormalTexture[base.BaseVertexBuffer.VertexCount];
+            BaseVertexBuffer.GetData(data);
+            return data;
+        }
+
+        public int[] DumpIndicies() {
+            var data = new int[base.BaseIndexBuffer.IndexCount];
+            BaseIndexBuffer.GetData(data);
+            return data;
+        }
+
         #region Nested type: ObjectData
 
-        class ObjectData{
+        public class ObjectData{
             // ReSharper disable MemberCanBePrivate.Local
             public readonly IEquatable<TIdentifier> Identifier;
             public readonly int[] Indicies;
