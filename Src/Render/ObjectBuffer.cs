@@ -165,9 +165,13 @@ namespace Drydock.Render{
             buffer.ClearObjects();
         }
 
+        public ObjectData[] DumpObjectData(){
+            return _objectData.ToArray();
+        }
+
         #region Nested type: ObjectData
 
-        class ObjectData{
+        public class ObjectData{
             // ReSharper disable MemberCanBePrivate.Local
             public readonly IEquatable<TIdentifier> Identifier;
             public readonly int[] Indicies;
